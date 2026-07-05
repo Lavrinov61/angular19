@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Флаер услуг — Своё Фото</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:105mm 148mm;margin:0}
+
+:root{
+  --bg:#0a0a0a;--bg2:#131210;--bg3:#1c1b18;
+  --am:#f59e0b;--am2:#fbbf24;--amd:#d97706;
+  --t1:#f5f5f5;--t2:#a0a0a0;--t3:#666;
+  --brd:rgba(255,255,255,.07);
+  --glow:rgba(245,158,11,.12);
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+
+body{
+  background:#1a1918;font-family:var(--fb);color:var(--t1);
+  display:flex;flex-direction:column;align-items:center;gap:50px;padding:50px 20px;
+}
+
+.tag{color:#555;font-size:9px;text-transform:uppercase;letter-spacing:.25em;margin-bottom:-38px}
+
+/* === CARD === */
+.card{
+  width:105mm;height:148mm;background:var(--bg);overflow:hidden;position:relative;
+  print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+@media screen{.card{box-shadow:0 20px 80px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.04);border-radius:4px}}
+@media print{
+  body{background:none;padding:0;gap:0}
+  .tag{display:none}
+  .card{page-break-after:always;box-shadow:none;border-radius:0}
+}
+
+/* noise */
+.card::before{
+  content:'';position:absolute;inset:0;z-index:0;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:128px 128px;pointer-events:none;
+}
+
+/* === LAYOUT === */
+.f{display:flex;flex-direction:column;height:100%;position:relative;z-index:1}
+
+/* === TOP BAR === */
+.f-top{
+  background:linear-gradient(90deg,var(--amd),var(--am) 50%,var(--amd));
+  color:#000;text-align:center;
+  padding:5px 10px;font-family:var(--fd);font-weight:700;
+  font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;
+  position:relative;
+}
+.f-top::after{
+  content:'';position:absolute;bottom:-6px;left:0;right:0;height:6px;
+  background:linear-gradient(to bottom,rgba(245,158,11,.08),transparent);
+  pointer-events:none;
+}
+
+/* === BRAND HEADER === */
+.f-brand{
+  text-align:center;padding:12px 18px 0;position:relative;
+}
+.f-brand::before{
+  content:'';position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(245,158,11,.09) 0%,transparent 70%);
+  pointer-events:none;
+}
+.f-brand-name{
+  font-family:var(--fd);font-weight:800;font-size:22px;
+  text-transform:uppercase;letter-spacing:.04em;
+  position:relative;z-index:1;
+}
+.f-brand-name span{color:var(--am)}
+.f-brand-sub{
+  font-size:8px;color:var(--t3);text-transform:uppercase;
+  letter-spacing:.18em;margin-top:2px;position:relative;z-index:1;
+}
+
+/* separator */
+.f-sep{
+  width:40px;height:1.5px;margin:10px auto;
+  background:linear-gradient(90deg,transparent,var(--amd),transparent);
+}
+
+/* === SERVICES === */
+.f-services{
+  padding:0 14px;display:flex;flex-direction:column;gap:8px;
+}
+
+.f-svc{
+  display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,rgba(255,255,255,.025),rgba(255,255,255,.008));
+  border:1px solid var(--brd);border-radius:8px;
+  padding:9px 11px;
+  position:relative;overflow:hidden;
+}
+/* subtle left accent */
+.f-svc::before{
+  content:'';position:absolute;left:0;top:15%;bottom:15%;width:2.5px;
+  background:var(--am);border-radius:0 2px 2px 0;
+}
+
+.f-svc-icon{
+  width:34px;height:34px;border-radius:8px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.04));
+  border:1px solid rgba(245,158,11,.15);
+  display:flex;align-items:center;justify-content:center;
+}
+.f-svc-icon svg{width:18px;height:18px;fill:var(--am)}
+
+.f-svc-body{min-width:0;flex:1}
+.f-svc-name{
+  font-family:var(--fd);font-weight:700;font-size:13px;
+  text-transform:uppercase;letter-spacing:.02em;line-height:1.15;
+}
+.f-svc-desc{
+  font-size:9.5px;color:var(--t2);margin-top:1px;line-height:1.3;
+}
+
+.f-svc-price{
+  font-family:var(--fd);font-weight:700;font-size:14px;
+  color:var(--am);flex-shrink:0;white-space:nowrap;
+  text-shadow:0 0 12px rgba(245,158,11,.2);
+}
+
+/* === PROMO BLOCK === */
+.f-promo{
+  margin:10px 12px 0;padding:10px 14px 11px;
+  border-radius:10px;text-align:center;
+  background:linear-gradient(160deg,rgba(245,158,11,.14) 0%,rgba(217,119,6,.04) 100%);
+  border:2px dashed var(--amd);
+  box-shadow:
+    0 0 40px rgba(245,158,11,.1),
+    0 0 80px rgba(245,158,11,.04),
+    inset 0 0 24px rgba(245,158,11,.03),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  position:relative;
+}
+/* corner accents */
+.f-promo::before,.f-promo::after{
+  content:'';position:absolute;width:14px;height:14px;
+  border-color:var(--am);border-style:solid;opacity:.35;
+}
+.f-promo::before{top:5px;left:5px;border-width:2px 0 0 2px;border-radius:3px 0 0 0}
+.f-promo::after{bottom:5px;right:5px;border-width:0 2px 2px 0;border-radius:0 0 3px 0}
+
+.f-promo-discount{
+  font-family:var(--fd);font-weight:800;font-size:32px;
+  color:var(--am);letter-spacing:.02em;line-height:1;
+  text-shadow:
+    0 0 24px rgba(245,158,11,.3),
+    0 0 48px rgba(245,158,11,.1),
+    0 2px 4px rgba(0,0,0,.5);
+}
+
+.f-promo-label{
+  font-family:var(--fd);font-size:9px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.2em;
+  color:var(--t2);margin-bottom:3px;
+}
+
+.f-promo-sep{
+  width:28px;height:1px;margin:5px auto;
+  background:linear-gradient(90deg,transparent,var(--amd),transparent);
+}
+
+.f-promo-code-wrap{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.f-promo-code-label{
+  font-size:8.5px;color:var(--t3);text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.f-promo-code{
+  font-family:var(--fd);font-weight:800;font-size:22px;
+  color:var(--am2);letter-spacing:.12em;
+  text-shadow:0 0 16px rgba(245,158,11,.25);
+}
+
+.f-promo-cta{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:5px;font-size:10px;font-weight:600;color:var(--t1);
+}
+.f-promo-cta .check{
+  width:14px;height:14px;border-radius:50%;
+  background:var(--am);display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.f-promo-cta .check svg{width:9px;height:9px}
+
+/* === BOTTOM BAR === */
+.f-bot{
+  margin-top:auto;
+  background:var(--bg3);border-top:1px solid var(--brd);
+  padding:7px 14px;
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+}
+.f-addr{
+  font-family:var(--fd);font-size:13px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.02em;
+}
+.f-hint{font-size:7.5px;color:var(--t3);margin-top:1px}
+.f-site{
+  font-family:var(--fd);font-size:11px;font-weight:600;
+  color:var(--am);letter-spacing:.04em;
+  text-align:right;
+}
+</style>
+</head>
+<body>
+
+<div class="tag">Односторонний A6 (105x148 мм) — услуги + промокод</div>
+<div class="card">
+<div class="f">
+
+  <!-- Top amber bar -->
+  <div class="f-top">Ежедневно 09:00 — 19:30 / Без выходных</div>
+
+  <!-- Brand -->
+  <div class="f-brand">
+    <div class="f-brand-name">Своё <span>Фото</span></div>
+    <div class="f-brand-sub">Фотостудия в центре Ростова</div>
+  </div>
+
+  <div class="f-sep"></div>
+
+  <!-- Three services -->
+  <div class="f-services">
+
+    <!-- 1. Фото на документы -->
+    <div class="f-svc">
+      <div class="f-svc-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+      </div>
+      <div class="f-svc-body">
+        <div class="f-svc-name">Фото на документы</div>
+        <div class="f-svc-desc">Паспорт, загран, визы — за 5 мин</div>
+      </div>
+    </div>
+
+    <!-- 2. Ксерокопия / Печать -->
+    <div class="f-svc">
+      <div class="f-svc-icon">
+        <svg viewBox="0 0 24 24"><path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/></svg>
+      </div>
+      <div class="f-svc-body">
+        <div class="f-svc-name">Ксерокопия / Печать</div>
+        <div class="f-svc-desc">Документы, фото, цветная печать</div>
+      </div>
+    </div>
+
+    <!-- 3. Сканирование -->
+    <div class="f-svc">
+      <div class="f-svc-icon">
+        <svg viewBox="0 0 24 24"><path d="M4.5 4.5h15v2h-15zM4.5 9h15v2h-15z"/><path d="M19.5 2h-15C3.67 2 3 2.67 3 3.5v17c0 .83.67 1.5 1.5 1.5h15c.83 0 1.5-.67 1.5-1.5v-17c0-.83-.67-1.5-1.5-1.5zM19 20H5V4h14v16z"/><path d="M4.5 13.5h10v1.5h-10zM4.5 17h7v1.5h-7z"/></svg>
+      </div>
+      <div class="f-svc-body">
+        <div class="f-svc-name">Сканирование</div>
+        <div class="f-svc-desc">Большие объёмы — быстро и выгодно</div>
+      </div>
+      <div class="f-svc-price">от 5 &#8381;</div>
+    </div>
+
+  </div>
+
+  <!-- Promo code block -->
+  <div class="f-promo">
+    <div class="f-promo-label">Ваша персональная скидка</div>
+    <div class="f-promo-discount">до 20%</div>
+    <div class="f-promo-sep"></div>
+    <div class="f-promo-code-wrap">
+      <div class="f-promo-code-label">промокод</div>
+      <div class="f-promo-code">{{CODE}}</div>
+    </div>
+    <div class="f-promo-sep"></div>
+    <div class="f-promo-cta">
+      <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+      Назовите промокод при визите
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="f-bot">
+    <div>
+      <div class="f-addr">пер. Соборный, 21</div>
+      <div class="f-hint">50 м от Большой Садовой</div>
+    </div>
+    <div class="f-site">svoefoto.ru</div>
+  </div>
+
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+groups:
+  - name: core-tracking
+    rules:
+      - alert: AdClicksRateLow
+        expr: rate(ad_clicks_total[1h]) * 3600 < 3
+        for: 3h
+        labels:
+          severity: critical
+          component: tracking
+        annotations:
+          summary: "Ad clicks rate below 3/hour for 3 hours"
+          description: "Possible tracking regression (like April 02-15 silent failure). Investigate tracking pipeline."
+
+      - alert: AdClicksErrorRateHigh
+        expr: rate(ad_clicks_errors_total[10m]) / ignoring(reason) group_left sum(rate(ad_clicks_total[10m])) > 0.05
+        for: 10m
+        labels:
+          severity: warning
+          component: tracking
+        annotations:
+          summary: "Ad click error rate > 5% for 10 minutes"
+          description: "Tracking error rate elevated — check DB connectivity and validation errors."
+
+      - alert: ConversionsZero
+        expr: increase(conversions_total[24h]) == 0
+        for: 15m
+        labels:
+          severity: warning
+          component: attribution
+        annotations:
+          summary: "No conversions registered in last 24h"
+          description: "Conversion pipeline may be broken. Check attribution.service bailouts."
+
+      - alert: VisitorSessionsFailRate
+        expr: rate(visitor_sessions_updated_total{result="error"}[10m]) / rate(visitor_sessions_updated_total[10m]) > 0.1
+        for: 10m
+        labels:
+          severity: warning
+          component: tracking
+        annotations:
+          summary: "visitor_sessions update fail rate > 10%"
+          description: "BullMQ worker failures or DB contention."
+
+      - alert: ConversionSkipRateSpike
+        expr: rate(conversions_skipped_total[10m]) > rate(conversions_skipped_total[1h] offset 1d) * 2
+        for: 30m
+        labels:
+          severity: info
+          component: attribution
+        annotations:
+          summary: "Conversion skip rate 2x higher than yesterday"
+          description: "Check conversions_skipped_total{reason} to identify bailout cause."
+
+      - alert: TgStartEventsNone
+        expr: increase(tg_start_events_total[6h]) == 0
+        for: 30m
+        labels:
+          severity: info
+          component: tracking
+        annotations:
+          summary: "No TG /start events in 6h"
+          description: "Telegram adapter may have stopped receiving updates."
+
+      - alert: PaymentLinksLowConversion
+        expr: rate(payment_links_paid_total[1h]) / rate(payment_links_created_total[1h]) < 0.3
+        for: 2h
+        labels:
+          severity: warning
+          component: payment-links
+        annotations:
+          summary: "Payment links paid/created < 30% for 2h"
+          description: "Клиенты создают ссылки, но не платят. Проверь доставку (chat/whatsapp/telegram) и UX страницы оплаты."
+
+      - alert: PaymentLinksHighExpiredLoss
+        expr: rate(payment_links_expired_total[30m]) / rate(payment_links_created_total[30m]) > 0.5
+        for: 30m
+        labels:
+          severity: warning
+          component: payment-links
+        annotations:
+          summary: ">50% payment links expire without payment"
+          description: "Высокий отток: больше половины ссылок истекают неоплаченными за последние 30 минут."

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Person 1 (left) -->
+  <circle cx="14" cy="14" r="5" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.2"/>
+  <path d="M6 30c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Person 2 (right) -->
+  <circle cx="34" cy="14" r="5" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.2"/>
+  <path d="M26 30c0-4.4 3.6-8 8-8s8 3.6 8 8" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Connection arc between them -->
+  <path d="M19 19 Q24 26 29 19" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+  <!-- Link/chain dots -->
+  <circle cx="24" cy="24" r="2.5" fill="#f59e0b" fill-opacity="0.5" stroke="#f59e0b" stroke-width="1"/>
+  <!-- Bottom join line -->
+  <path d="M14 38h20" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

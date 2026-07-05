@@ -1,0 +1,66 @@
+[package]
+name = "kb-api"
+version = "0.1.0"
+edition = "2024"
+description = "Knowledge Base API — Phase 0 of Express → Rust migration"
+
+[dependencies]
+# Web framework
+axum = { version = "0.8", features = ["macros"] }
+axum-extra = { version = "0.10", features = ["typed-header"] }
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "limit"] }
+tokio = { version = "1", features = ["full"] }
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio", "tls-rustls", "postgres", "uuid", "chrono", "json", "bigdecimal"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Auth
+jsonwebtoken = "9"
+
+# Types
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+bigdecimal = { version = "0.4", features = ["serde"] }
+
+# Observability
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# Config
+dotenvy = "0.15"
+
+# HTTP client (for embedding API)
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+
+# HTML parsing (competitor scraping)
+scraper = "0.22"
+regex = "1"
+
+# Chrome CDP for interactive scraping (calculators, dynamic content)
+chromiumoxide = { version = "0.9", default-features = false }
+futures = "0.3"
+
+# Rate limiting
+governor = { version = "0.8", features = ["std"] }
+
+# Encoding
+base64 = "0.22"
+
+# Hashing (screenshot change detection)
+sha2 = "0.10"
+
+# Error handling
+thiserror = "2"
+
+# Cron scheduling
+cron = "0.15"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

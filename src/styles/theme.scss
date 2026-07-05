@@ -1,0 +1,17 @@
+@use '@angular/material' as mat;
+
+// Тёмная тема — единственная тема приложения
+html {
+  @include mat.theme((
+    color: (primary: mat.$azure-palette, theme-type: dark),
+    typography: 'Plus Jakarta Sans',
+    density: 0,
+  ));
+  color-scheme: dark;
+}
+
+body {
+  background: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  margin: 0;
+}

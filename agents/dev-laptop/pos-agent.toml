@@ -1,0 +1,38 @@
+# POS Agent — Dev Laptop
+# Место: рядом с svf-pos-agent.exe как config.toml
+
+[agent]
+agent_id = "b0000004-0000-0000-0000-000000000004"
+studio_id = "00000000-0000-0000-0000-000000000000"
+agent_type = "pos_bridge"
+version = "0.1.0"
+
+[mqtt]
+host = "svoefoto.ru"
+port = 8883
+username = "pos_dev_laptop"
+password = "SvfDev2026AgentPass"
+use_tls = true
+
+[offline]
+db_path = "C:\\ProgramData\\SvoePhoto\\pos-agent\\offline.db"
+
+[heartbeat]
+interval_secs = 60
+
+[download]
+temp_dir = "C:\\ProgramData\\SvoePhoto\\pos-agent\\temp"
+timeout_secs = 120
+max_file_size = 104857600
+
+[inpas]
+url = "http://127.0.0.1:8081"
+timeout_secs = 30
+
+[atol]
+url = "http://127.0.0.1:16732"
+timeout_secs = 15
+taxation_type = "osn"
+# dll_path = "C:\\Program Files\\ATOL\\Drivers10\\bin\\fptr10.dll"
+# com_port = "COM7"
+# baud_rate = 115200

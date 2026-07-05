@@ -1,0 +1,72 @@
+<section class="settings-page">
+  <header class="mobile-title">
+    <a routerLink="/user-profile" aria-label="Назад"><mat-icon>arrow_back</mat-icon></a>
+    <h1>Профиль</h1>
+  </header>
+
+  <div class="profile-card">
+    <div class="profile-card__avatar">
+      @if (user()?.photoURL || user()?.photo_url) {
+        <img [src]="user()?.photoURL || user()?.photo_url" alt="Фото профиля" />
+      } @else {
+        <mat-icon>person</mat-icon>
+      }
+    </div>
+    <div class="profile-card__text">
+      <strong>{{ displayName() }}</strong>
+      <span>{{ roleLabel() }}</span>
+    </div>
+    <a class="edit-button" routerLink="/user-profile/account/edit">
+      <mat-icon>edit</mat-icon>
+      Редактировать
+    </a>
+  </div>
+
+  <section class="settings-section settings-section--primary">
+    <h2>Профиль</h2>
+    <div class="settings-grid">
+      @for (item of primaryItems; track item.title) {
+        <a
+          class="settings-card"
+          [class.settings-card--featured]="item.featured"
+          [class.settings-card--mobile-hidden]="item.mobileHidden"
+          [routerLink]="item.route"
+        >
+          <span class="item-icon"><mat-icon>{{ item.icon }}</mat-icon></span>
+          <span>
+            <strong>{{ item.title }}</strong>
+            <small>{{ item.description }}</small>
+          </span>
+          @if (item.badge) {
+            <em>{{ item.badge }}</em>
+          }
+        </a>
+      }
+    </div>
+  </section>
+
+  @for (group of groups; track group.title) {
+    <section class="settings-section">
+      <h2>{{ group.title }}</h2>
+      <div class="settings-grid">
+        @for (item of group.items; track item.title) {
+          <a
+            class="settings-card"
+            [class.settings-card--featured]="item.featured"
+            [class.settings-card--mobile-hidden]="item.mobileHidden"
+            [routerLink]="item.route"
+          >
+            <span class="item-icon"><mat-icon>{{ item.icon }}</mat-icon></span>
+            <span>
+              <strong>{{ item.title }}</strong>
+              <small>{{ item.description }}</small>
+            </span>
+            @if (item.badge) {
+              <em>{{ item.badge }}</em>
+            }
+          </a>
+        }
+      </div>
+    </section>
+  }
+</section>

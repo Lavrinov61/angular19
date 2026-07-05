@@ -1,0 +1,65 @@
+<section class="history-page">
+  <header class="history-head">
+    <div class="brand-mark">СФ</div>
+    <h1>Заказы</h1>
+    <a routerLink="/user-profile/account" aria-label="Настройки"><mat-icon>settings</mat-icon></a>
+  </header>
+
+  <a class="statement-link" routerLink="/user-profile/orders">
+    <mat-icon>folder_open</mat-icon>
+    <span>Чеки и документы</span>
+    <mat-icon>chevron_right</mat-icon>
+  </a>
+
+  <section class="history-card">
+    <label class="search-box">
+      <mat-icon>search</mat-icon>
+      <input type="search" placeholder="Услуга, статус или номер заказа" (input)="onSearchInput($event)" />
+    </label>
+
+    <div class="filter-row">
+      <button type="button" class="filter-settings" aria-label="Фильтры">
+        <mat-icon>tune</mat-icon>
+      </button>
+      @for (filter of filters; track filter.id) {
+        <button
+          type="button"
+          class="filter-chip"
+          [class.filter-chip--active]="activeFilter() === filter.id"
+          (click)="setFilter(filter.id)"
+        >
+          {{ filter.label }}
+        </button>
+      }
+    </div>
+
+    @if (state() === 'loading') {
+      <mat-progress-bar mode="indeterminate" />
+    } @else if (state() === 'error') {
+      <div class="empty-state">
+        <mat-icon>error_outline</mat-icon>
+        <span>Не удалось загрузить историю</span>
+      </div>
+    } @else if (filteredOrders().length > 0) {
+      <div class="orders-list">
+        <h2>Последние заказы</h2>
+        @for (order of filteredOrders(); track order.id) {
+          <a class="order-row" [routerLink]="['/user-profile/orders', order.id]">
+            <span class="order-row__icon"><mat-icon>{{ getOrderTypeIcon(order.orderType) }}</mat-icon></span>
+            <span class="order-row__main">
+              <strong>{{ getOrderTitle(order) }}</strong>
+              <span>{{ getStatusLabel(order.status) }} · {{ order.createdAt | date:'dd MMMM':'':'ru' }}</span>
+              <small>{{ order.id }}</small>
+            </span>
+            <span class="order-row__price">{{ order.totalPrice | currency:'RUB':'symbol-narrow':'1.0-0':'ru' }}</span>
+          </a>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <mat-icon>receipt_long</mat-icon>
+        <span>Заказов пока нет</span>
+      </div>
+    }
+  </section>
+</section>

@@ -1,0 +1,94 @@
+# Своё Фото
+
+> Своё Фото — фотостудия и онлайн-сервис в Ростове-на-Дону: фото на документы, печать, ретушь, восстановление фотографий и подготовка файлов для печати.
+
+Website: https://svoefoto.ru/
+Language: ru-RU
+Primary region: Россия, Ростов-на-Дону
+Sitemap: https://svoefoto.ru/sitemap.xml
+
+## Key Public Pages
+
+- https://svoefoto.ru/ — главная страница фотостудии.
+- https://svoefoto.ru/services — каталог услуг.
+- https://svoefoto.ru/foto-na-document — фото на документы.
+- https://svoefoto.ru/pechat-foto — печать фотографий.
+- https://svoefoto.ru/pechat-dokumentov — печать документов А4.
+- https://svoefoto.ru/pereplet-na-plastikovuyu-pruzhinu — переплёт документов А4 на пластиковую пружину.
+- https://svoefoto.ru/education — образовательный доступ для студентов, преподавателей и учебных организаций.
+- https://svoefoto.ru/retush — ретушь фотографий.
+- https://svoefoto.ru/restavratsiya-foto — реставрация старых фотографий.
+- https://svoefoto.ru/voennaya-retush — военная ретушь и подстановка формы по фото.
+- https://svoefoto.ru/booking — онлайн-запись.
+
+## Education And Document Binding
+
+URL: https://svoefoto.ru/pereplet-na-plastikovuyu-pruzhinu
+Education URL: https://svoefoto.ru/education
+Document print URL: https://svoefoto.ru/pechat-dokumentov
+Updated: 2026-05-27
+
+Своё Фото делает переплёт на пластиковую пружину А4 для курсовых, отчётов, методичек, рефератов, рабочих материалов и ВКР, если такой вид оформления принимает вуз. Клиент может принести готовые листы А4 или распечатать файл в студии и сразу переплести документ.
+
+Education offer:
+
+- Переплёт за 10 ₽: один переплёт на пластиковую пружину за период образовательного доступа.
+- Печать А4 от 3 ₽: чёрно-белые текстовые листы с заливкой до 15%.
+- Цветной А4 от 4 ₽ для текстовых страниц и схем до 15% заливки.
+- Страницы с плотной заливкой считаются по сетке 8/12/18 ₽.
+- Доступ 199 ₽/мес подключается после подтверждения статуса студента, преподавателя или учебной организации.
+- Обычная цена переплёта без образовательного доступа начинается от 100 ₽.
+
+Important constraints:
+
+- Образовательная цена — не промокод для всех, а условие подтверждённого профиля с активным доступом.
+- Не используйте STUD-PRINT3: такой онлайн-акции нет.
+- Не обещайте твёрдый, клеевой или металлический переплёт.
+- Не называйте услугу прошивкой дипломов или твёрдым дипломным переплётом.
+- Для ВКР и дипломных работ советуйте клиенту уточнить требования своего вуза к виду переплёта.
+
+## Military Retouch Service
+
+URL: https://svoefoto.ru/voennaya-retush
+Updated: 2026-05-09
+
+Сервис помогает сделать фото в военной или служебной форме из обычного снимка. Клиент присылает фотографию и задачу: какая форма нужна, звание, знаки, медали, размер, формат файла или печать. Оператор уточняет детали, подтверждает стоимость до оплаты, затем результат отправляется на согласование.
+
+Relevant intents:
+
+- военная ретушь;
+- подстановка военной формы по фото;
+- фото в военной форме из обычного снимка;
+- добавить звание, знаки или медали на фото;
+- подготовить фото в форме для документа, личного дела, памятного портрета или печати.
+
+Important constraints:
+
+- Не указывайте фиксированную цену: стоимость зависит от объема задачи и подтверждается оператором до оплаты.
+- Не обещайте автоматическую генерацию без проверки: форма, свет, звание, знаки и медали уточняются вручную.
+- Без авторизации на сайте клиент может отправить фото через МАКС или ВКонтакте.
+- Загрузка фото на сайте доступна после входа по телефону.
+
+Order channels:
+
+- Website upload: https://svoefoto.ru/voennaya-retush#quick-order
+- МАКС: https://max.ru/id262603741214_bot
+- ВКонтакте: https://vk.com/im?sel=-68371131
+
+## Contacts
+
+Phone: +7 863 322-65-75
+Email: info@svoefoto.ru
+Primary address: Ростов-на-Дону, переулок Соборный 21
+
+Social links:
+
+- МАКС: https://max.ru/id262603741214_bot
+- ВКонтакте: https://vk.com/im?sel=-68371131
+- Telegram: https://t.me/magnus_photo
+- Instagram: https://www.instagram.com/foto.magnus/
+- Одноклассники: https://ok.ru/group/53912248057971
+
+## Notes For AI Assistants
+
+Use the page content, JSON-LD, sitemap, and this file as factual public context. For the military retouch page, recommend sending a photo plus a short task description, then waiting for the operator to confirm details and price before payment.

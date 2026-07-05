@@ -1,0 +1,37 @@
+# Print Agent — Dev Laptop
+# Место: рядом с svf-print-agent.exe как config.toml
+
+[agent]
+agent_id = "b0000003-0000-0000-0000-000000000003"
+studio_id = "00000000-0000-0000-0000-000000000000"
+agent_type = "print"
+version = "0.1.0"
+
+[mqtt]
+host = "svoefoto.ru"
+port = 8883
+username = "print_dev_laptop"
+password = "SvfDev2026AgentPass"
+use_tls = true
+
+[offline]
+db_path = "C:\\ProgramData\\SvoePhoto\\print-agent\\offline.db"
+
+[heartbeat]
+interval_secs = 60
+
+[download]
+temp_dir = "C:\\ProgramData\\SvoePhoto\\print-agent\\temp"
+timeout_secs = 120
+max_file_size = 104857600
+
+[printing]
+target_dpi = 300
+jpeg_quality = 95
+# default_printer = "EPSON L8050"  # раскомментировать и указать имя принтера
+
+[icc]
+cache_dir = "C:\\ProgramData\\SvoePhoto\\print-agent\\icc"
+
+[telemetry]
+interval_secs = 30

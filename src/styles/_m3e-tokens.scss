@@ -1,0 +1,98 @@
+// M3 Expressive Design Tokens for Своё Фото
+// Spring-based motion, shape tokens, color tokens
+
+:root {
+  // === SPRING MOTION (CSS approximations) ===
+  // Spatial springs — WITH overshoot/bounce
+  --m3e-spring-fast: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --m3e-spring-fast-duration: 350ms;
+  --m3e-spring-default: cubic-bezier(0.34, 1.40, 0.64, 1);
+  --m3e-spring-default-duration: 500ms;
+  --m3e-spring-slow: cubic-bezier(0.34, 1.30, 0.64, 1);
+  --m3e-spring-slow-duration: 650ms;
+
+  // Effect springs — NO bounce (color, opacity)
+  --m3e-effect-fast: cubic-bezier(0.2, 0, 0, 1);
+  --m3e-effect-fast-duration: 200ms;
+  --m3e-effect-default: cubic-bezier(0.2, 0, 0, 1);
+  --m3e-effect-default-duration: 300ms;
+
+  // === SHAPE TOKENS (corner radius) ===
+  --m3e-corner-none: 0px;
+  --m3e-corner-xs: 4px;
+  --m3e-corner-sm: 8px;
+  --m3e-corner-md: 12px;
+  --m3e-corner-lg: 16px;
+  --m3e-corner-lg-inc: 20px;
+  --m3e-corner-xl: 28px;
+  --m3e-corner-xl-inc: 32px;
+  --m3e-corner-xxl: 48px;
+  --m3e-corner-full: 9999px; // pill
+
+  // === NAV BAR TOKENS ===
+  --m3e-nav-height: 64px;
+  --m3e-nav-pill-width: 56px;
+  --m3e-nav-pill-height: 32px;
+  --m3e-nav-icon-size: 24px;
+  --m3e-nav-label-size: 12px;
+
+  // === FAB TOKENS ===
+  --m3e-fab-medium: 80px;
+  --m3e-fab-regular: 56px;
+  --m3e-fab-elevation: 6px;
+  --m3e-fab-corner: var(--m3e-corner-lg);
+
+  // === FLOATING TOOLBAR ===
+  --m3e-toolbar-corner: var(--m3e-corner-xl);
+  --m3e-toolbar-elevation: 3px;
+
+  // === GAP DIVIDERS (not line dividers) ===
+  --m3e-gap-sm: 8px;
+  --m3e-gap-md: 12px;
+  --m3e-gap-lg: 16px;
+
+  // === TYPOGRAPHY — M3E type scale (baseline) ===
+  --m3e-display-large: 57px;
+  --m3e-display-medium: 45px;
+  --m3e-display-small: 36px;
+  --m3e-headline-large: 32px;
+  --m3e-headline-medium: 28px;
+  --m3e-headline-small: 24px;
+  --m3e-title-large: 22px;
+  --m3e-title-medium: 16px;
+  --m3e-title-small: 14px;
+  --m3e-body-large: 16px;
+  --m3e-body-medium: 14px;
+  --m3e-body-small: 12px;
+  --m3e-label-large: 14px;
+  --m3e-label-medium: 12px;
+  --m3e-label-small: 11px;
+
+  // === DURATION — M3E motion duration tokens ===
+  --m3e-duration-short1: 50ms;
+  --m3e-duration-short2: 100ms;
+  --m3e-duration-short3: 150ms;
+  --m3e-duration-short4: 200ms;
+  --m3e-duration-medium1: 250ms;
+  --m3e-duration-medium2: 300ms;
+  --m3e-duration-medium3: 350ms;
+  --m3e-duration-medium4: 400ms;
+  --m3e-duration-long1: 450ms;
+  --m3e-duration-long2: 500ms;
+
+  // === EASING — M3E emphasized (with overshoot) ===
+  --m3e-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+  --m3e-easing-emphasized: cubic-bezier(0.2, 0, 0, 1.2);
+  --m3e-easing-decelerate: cubic-bezier(0, 0, 0, 1);
+  --m3e-easing-accelerate: cubic-bezier(0.3, 0, 1, 1);
+
+  // === SPACING ===
+  --m3e-spacing-1: 4px;
+  --m3e-spacing-2: 8px;
+  --m3e-spacing-3: 12px;
+  --m3e-spacing-4: 16px;
+  --m3e-spacing-5: 24px;
+  --m3e-spacing-6: 32px;
+  --m3e-spacing-7: 40px;
+  --m3e-spacing-8: 48px;
+}

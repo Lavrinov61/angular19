@@ -1,0 +1,1 @@
+export const POS_AGENT_ONLINE_WINDOW_SECONDS = 120;

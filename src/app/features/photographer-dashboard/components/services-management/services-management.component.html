@@ -1,0 +1,178 @@
+@if (isAuthorized()) {
+  <div class="services-management">
+    <!-- Современная карточка заголовка -->
+    <mat-card class="header-card" appearance="outlined">
+      <mat-card-header>
+        <div mat-card-avatar class="header-avatar">
+          <mat-icon>camera_alt</mat-icon>
+        </div>
+        <mat-card-title>Управление услугами</mat-card-title>
+        <mat-card-subtitle>Настройте свои услуги и цены для клиентов</mat-card-subtitle>
+      </mat-card-header>
+      
+      <!-- Информация о фотографе -->
+      @if (photographerInfo(); as info) {
+        <mat-card-content>
+      <div class="photographer-stats">
+        <div class="stat-item">
+          <span class="stat-label">Фотограф</span>
+          <span class="stat-value">{{ info.name }}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Активные услуги</span>
+          <span class="stat-value">{{ info.enabledCount }} из {{ info.totalServices }}</span>
+        </div>
+        </div>
+      </mat-card-content>
+      }
+    </mat-card>
+
+    <!-- Основной контент -->
+    @if (!isLoadingState()) {
+      <div class="main-content">
+        @if (servicesForm()) {
+          <form [formGroup]="servicesForm()!" (ngSubmit)="onSave()">
+            <!-- Услуги по категориям -->
+            <div class="services-grid">
+              @for (category of serviceCategories(); track category || $index) {
+                <mat-card 
+                  class="category-card" 
+                  appearance="outlined">
+                  
+                  <!-- Показываем категорию только если в ней есть услуги -->
+                  @if (getServicesByCategory(category).length > 0) {
+                    <ng-container>
+            <mat-card-header>
+              <div mat-card-avatar class="category-avatar">
+                <mat-icon>{{ getCategoryIcon(category) }}</mat-icon>
+              </div>
+              <mat-card-title>{{ getCategoryDisplayName(category) }}</mat-card-title>
+              <mat-card-subtitle>{{ getServicesByCategory(category).length }} услуг</mat-card-subtitle>
+            </mat-card-header>
+            
+                      <mat-card-content>
+                        <div class="services-list" formArrayName="services">
+                          @for (service of getServicesByCategory(category); track service.id || $index; let i = $index) {
+                            <div class="service-item" 
+                                 [formGroupName]="getServiceIndexInForm(service.id)">
+                  
+                  <mat-card class="service-card" [class.service-card--active]="getServiceControl(service.id)?.get('isEnabled')?.value">
+                    <!-- Заголовок услуги -->
+                    <mat-card-header class="service-header">
+                      <mat-checkbox 
+                        formControlName="isEnabled"
+                        (change)="onServiceToggle(service.id, $event.checked)"
+                        class="service-checkbox">
+                        <span class="service-name">{{ service.name }}</span>
+                      </mat-checkbox>
+                      <div class="service-badge">
+                        <mat-chip color="primary" selected>
+                          <mat-icon>place</mat-icon>
+                          Выездная
+                        </mat-chip>
+                      </div>
+                    </mat-card-header>
+
+                              <mat-card-content>
+                                <!-- Описание услуги -->
+                                @if (service.description) {
+                                  <p class="service-description">
+                                    {{ service.description }}
+                                  </p>
+                                }
+
+                                <!-- Цена (показываем только если услуга активна) -->
+                                @if (getServiceControl(service.id)?.get('isEnabled')?.value) {
+                                  <div class="price-section">
+                        
+                        <mat-form-field appearance="outline" class="price-field">
+                          <mat-label>Цена за услугу</mat-label>
+                          <input matInput 
+                                 type="number" 
+                                 min="0"
+                                 formControlName="price"
+                                 [placeholder]="service.currentPrice ? service.currentPrice.toString() : '0'">
+                          <span matTextSuffix>₽</span>
+                                    <mat-hint>Ваша индивидуальная цена</mat-hint>
+                                  </mat-form-field>
+                                </div>
+                                }
+
+                                <!-- Текущая цена для справки -->
+                                @if (service.currentPrice && !getServiceControl(service.id)?.get('isEnabled')?.value) {
+                                  <div class="current-price-info">
+                                    <mat-chip class="price-chip">
+                                      <mat-icon>info</mat-icon>
+                                      Текущая цена: {{ service.currentPrice }}₽
+                                    </mat-chip>
+                                  </div>
+                                }
+                              </mat-card-content>
+                            </mat-card>
+                            </div>
+                          }
+                        </div>
+                      </mat-card-content>
+                    </ng-container>
+                  }
+                </mat-card>
+              }
+            </div>
+
+            <!-- Кнопки управления -->
+            <mat-card class="actions-card" appearance="outlined">
+              <mat-card-actions align="end">
+                <button type="button" 
+                        mat-button 
+                        (click)="onReset()"
+                        [disabled]="isSavingState()">
+                  <mat-icon>refresh</mat-icon>
+                  Сбросить
+                </button>
+                
+                <button type="submit" 
+                        mat-raised-button 
+                        color="primary"
+                        [disabled]="!servicesForm()?.dirty || isSavingState()">
+                  @if (isSavingState()) {
+                    <mat-icon>hourglass_empty</mat-icon>
+                  } @else {
+                    <mat-icon>save</mat-icon>
+                  }
+                  {{ isSavingState() ? 'Сохранение...' : 'Сохранить изменения' }}
+                </button>
+              </mat-card-actions>
+            </mat-card>
+          </form>
+        }
+      </div>
+    } @else {
+      <!-- Лоадер -->
+      <mat-card class="loading-card" appearance="outlined">
+        <mat-card-content>
+          <div class="loading-container">
+            <mat-spinner diameter="50" />
+            <p>Загружаем ваши услуги...</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+} @else {
+  <!-- Шаблон для неавторизованных пользователей -->
+  <mat-card class="unauthorized-card" appearance="outlined">
+    <mat-card-header>
+      <div mat-card-avatar class="error-avatar">
+        <mat-icon>lock</mat-icon>
+      </div>
+      <mat-card-title>Доступ ограничен</mat-card-title>
+      <mat-card-subtitle>Данная страница доступна только авторизованным фотографам</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" routerLink="/auth/login">
+        <mat-icon>login</mat-icon>
+        Войти в систему
+      </button>
+    </mat-card-actions>
+  </mat-card>
+}

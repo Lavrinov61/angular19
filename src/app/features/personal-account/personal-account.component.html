@@ -1,0 +1,327 @@
+<main class="personal-account-page">
+  <section class="personal-hero" appScrollReveal>
+    <header class="personal-mobile-header">
+      <a routerLink="/" class="personal-brand" (click)="closeMobileMenu()">
+        <img
+          src="/assets/static/logo-white.webp"
+          alt="Своё Фото"
+          width="116"
+          height="32"
+        />
+      </a>
+
+      <button
+        type="button"
+        class="personal-menu-button"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-controls="site-mobile-menu"
+        aria-label="Открыть меню"
+        (click)="toggleMobileMenu()"
+      >
+        <mat-icon>{{ mobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </header>
+
+    <app-site-mobile-menu
+      [open]="mobileMenuOpen()"
+      defaultAudienceId="personal"
+      (closed)="closeMobileMenu()"
+    />
+
+    <div class="personal-hero__art" aria-label="Личный аккаунт для фото, документов и печати">
+      <img
+        src="/assets/static/home/family-photo.webp"
+        alt="Личные фотографии, документы и печать Своё Фото"
+        width="640"
+        height="480"
+        loading="eager"
+      />
+
+      <div class="personal-dashboard" aria-hidden="true">
+        <div class="personal-dashboard__top">
+          <span></span>
+          <span></span>
+        </div>
+        <div class="personal-dashboard__metric personal-dashboard__metric--red">
+          <strong>3</strong>
+          <span>активных заказа</span>
+        </div>
+        <div class="personal-dashboard__metric">
+          <strong>10%</strong>
+          <span>на фотопечать</span>
+        </div>
+        <div class="personal-dashboard__lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="personal-hero__content">
+      <p class="personal-hero__eyebrow">Для личных заказов и семейного архива</p>
+      <h1>Личный аккаунт Своё Фото</h1>
+      <p class="personal-hero__lead">
+        Один профиль для фото на документы, печати, подарков, ретуши,
+        реставрации, записей, статусов, бонусов и подписки на личную печать.
+      </p>
+
+      <div class="personal-hero__chips" aria-label="Основные возможности">
+        <span>заказы в профиле</span>
+        <span>фото и документы</span>
+        <span>подписка и бонусы</span>
+      </div>
+
+      <div class="personal-hero__actions">
+        @if (isLoggedIn()) {
+          <a
+            mat-flat-button
+            routerLink="/user-profile"
+            class="personal-primary-button"
+          >
+            <mat-icon>account_circle</mat-icon>
+            Открыть кабинет
+          </a>
+        } @else {
+          <a
+            mat-flat-button
+            routerLink="/start-client"
+            [queryParams]="startClientQueryParams"
+            class="personal-primary-button"
+          >
+            <mat-icon>person_add</mat-icon>
+            Стать клиентом
+          </a>
+        }
+        <a
+          mat-stroked-button
+          href="#personal-account-benefits"
+          class="personal-secondary-button"
+        >
+          Что внутри
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="personal-sheet">
+    <section class="personal-promo" appScrollReveal>
+      @for (item of promoItems; track item.title) {
+        <article class="personal-promo-row">
+          <span
+            [class]="'personal-icon-art personal-icon-art--promo personal-icon-art--' + item.tone"
+            aria-hidden="true"
+          >
+            <span class="personal-icon-art__plate"></span>
+            <span class="personal-icon-art__disc personal-icon-art__disc--one"></span>
+            <span class="personal-icon-art__disc personal-icon-art__disc--two"></span>
+            <span class="personal-icon-art__icon">
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </span>
+          </span>
+          <div>
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.description }}</p>
+          </div>
+        </article>
+      }
+    </section>
+
+    <section
+      class="personal-features"
+      id="personal-account-benefits"
+      appScrollReveal
+    >
+      <div class="personal-section-heading">
+        <p>Внутри аккаунта</p>
+        <h2>15+ возможностей для личных заказов</h2>
+        <span>
+          Страница собирает личные сценарии, которые раньше приходилось искать
+          по общему каталогу: документы, печать, фотоархив, кабинет и подписку.
+        </span>
+      </div>
+
+      @for (group of featureGroups; track group.title) {
+        <section
+          class="feature-group"
+          [class.feature-group--wide]="group.layout === 'wide'"
+          [class.feature-group--mixed]="group.layout === 'mixed'"
+        >
+          <div class="feature-group__heading">
+            <h3>{{ group.title }}</h3>
+            @if (group.description) {
+              <p>{{ group.description }}</p>
+            }
+          </div>
+
+          <div class="feature-grid">
+            @for (card of group.cards; track card.title) {
+              <article
+                class="feature-card"
+                [class.feature-card--accent]="card.accent"
+                [class.feature-card--wide]="card.wide"
+              >
+                <span
+                  [class]="'personal-icon-art personal-icon-art--feature personal-icon-art--' + card.tone"
+                  aria-hidden="true"
+                >
+                  <span class="personal-icon-art__plate"></span>
+                  <span class="personal-icon-art__disc personal-icon-art__disc--one"></span>
+                  <span class="personal-icon-art__disc personal-icon-art__disc--two"></span>
+                  <span class="personal-icon-art__icon">
+                    <mat-icon>{{ card.icon }}</mat-icon>
+                  </span>
+                </span>
+                <div class="feature-card__body">
+                  <h4>{{ card.title }}</h4>
+                  <p>{{ card.description }}</p>
+                </div>
+                @if (card.metric) {
+                  <div class="feature-card__metric">
+                    <strong>{{ card.metric }}</strong>
+                    @if (card.note) {
+                      <span>{{ card.note }}</span>
+                    }
+                  </div>
+                }
+              </article>
+            }
+          </div>
+        </section>
+      }
+    </section>
+
+    <section
+      class="personal-tariff"
+      id="personal-account-tariff"
+      appScrollReveal
+    >
+      <div class="personal-tariff__visual">
+        <img
+          src="/assets/static/promo/pechat-dokumentov.webp"
+          alt=""
+          width="640"
+          height="360"
+          loading="lazy"
+        />
+      </div>
+      <div class="personal-tariff__content">
+        <p class="personal-kicker">Подписка</p>
+        <h2>Личная печать дешевле, когда профиль уже подключён</h2>
+        <ul>
+          @for (bullet of tariffBullets; track bullet.text) {
+            <li>
+              <mat-icon>{{ bullet.icon }}</mat-icon>
+              <span>{{ bullet.text }}</span>
+            </li>
+          }
+        </ul>
+
+        @if (isLoggedIn()) {
+          <a
+            mat-flat-button
+            routerLink="/user-profile/subscription"
+            class="personal-primary-button"
+          >
+            <mat-icon>card_membership</mat-icon>
+            Открыть подписку
+          </a>
+        } @else {
+          <a
+            mat-flat-button
+            routerLink="/start-client"
+            [queryParams]="startClientQueryParams"
+            class="personal-primary-button"
+          >
+            <mat-icon>person_add</mat-icon>
+            Подключить профиль
+          </a>
+        }
+      </div>
+    </section>
+
+    <section
+      class="personal-connect"
+      id="personal-account-connect"
+      appScrollReveal
+    >
+      <div class="personal-section-heading">
+        <p>Подключение</p>
+        <h2>Начните с личного профиля</h2>
+        <span>
+          Если аккаунт уже есть, войдите по телефону. Если нет, создайте
+          профиль и сразу переходите к нужной услуге.
+        </span>
+      </div>
+
+      <div class="connect-steps">
+        @for (step of connectionSteps; track step.title) {
+          <article class="connect-step">
+            <mat-icon>{{ step.icon }}</mat-icon>
+            <div>
+              <h3>{{ step.title }}</h3>
+              <p>{{ step.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="connect-note">
+        <mat-icon>verified_user</mat-icon>
+        <div>
+          <h3>Уже есть аккаунт?</h3>
+          <p>
+            Войдите по телефону и откройте кабинет с заказами, подпиской,
+            бонусами и согласованиями.
+          </p>
+        </div>
+        <a
+          mat-flat-button
+          routerLink="/auth/login"
+          [queryParams]="loginQueryParams"
+        >
+          Войти
+        </a>
+      </div>
+    </section>
+
+    <section class="personal-faq" id="personal-account-faq" appScrollReveal>
+      <div class="personal-section-heading">
+        <p>FAQ</p>
+        <h2>Частые вопросы</h2>
+      </div>
+
+      <mat-accordion class="personal-faq__accordion">
+        @for (faq of faqs; track faq.question) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ faq.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{ faq.answer }}</p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </section>
+  </div>
+
+  <div
+    class="mobile-sticky-cta"
+    [class.mobile-sticky-cta--visible]="stickyCtaVisible()"
+  >
+    @if (isLoggedIn()) {
+      <a mat-flat-button routerLink="/user-profile">
+        <mat-icon>account_circle</mat-icon>
+        Открыть кабинет
+      </a>
+    } @else {
+      <a
+        mat-flat-button
+        routerLink="/start-client"
+        [queryParams]="startClientQueryParams"
+      >
+        <mat-icon>person_add</mat-icon>
+        Стать клиентом
+      </a>
+    }
+  </div>
+</main>

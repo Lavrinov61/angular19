@@ -1,0 +1,363 @@
+<main class="start-client-page">
+  <section class="start-client-hero" appScrollReveal>
+    <div class="start-client-container start-client-hero__inner">
+      <div class="start-client-hero__content">
+        <p class="start-client-kicker">Стать клиентом</p>
+        <h1>Выберите предложения и станьте клиентом</h1>
+        <p class="start-client-hero__lead">
+          Сразу покажем условия для личных заказов, учёбы и бизнеса. После
+          регистрации откроется кабинет для заказов, документов и статусов.
+        </p>
+
+        <div class="audience-tabs" role="tablist" aria-label="Тип клиента">
+          @for (audience of audiences; track audience.id) {
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="selectedAudienceId() === audience.id"
+              [class.is-active]="selectedAudienceId() === audience.id"
+              (click)="selectAudience(audience.id)"
+            >
+              <mat-icon>{{ audience.icon }}</mat-icon>
+              <span>{{ audience.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="start-client-hero__visual" aria-hidden="true">
+        <div [class]="'client-showcase client-showcase--' + selectedAudience().offers[0].visual">
+          <span class="client-showcase__sheet client-showcase__sheet--back"></span>
+          <span class="client-showcase__sheet client-showcase__sheet--front">
+            <mat-icon>{{ offerVisualIcon(selectedAudience().offers[0].visual) }}</mat-icon>
+            <span class="client-showcase__line client-showcase__line--wide"></span>
+            <span class="client-showcase__line"></span>
+            <span class="client-showcase__line client-showcase__line--short"></span>
+          </span>
+          <span class="client-showcase__tile client-showcase__tile--red"></span>
+          <span class="client-showcase__tile client-showcase__tile--black"></span>
+          <span class="client-showcase__tile client-showcase__tile--white"></span>
+          <span class="client-showcase__code"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="start-client-container start-client-layout">
+    <div class="start-client-main">
+      <section class="audience-offers" appScrollReveal>
+        <div class="section-heading">
+          <p>{{ selectedAudience().label }}</p>
+          <h2>{{ selectedAudience().title }}</h2>
+          <span>{{ selectedAudience().description }}</span>
+        </div>
+
+        <div class="offer-list">
+          @for (offer of selectedAudience().offers; track offer.title) {
+            <article class="offer-card">
+              <div class="offer-card__visual">
+                <div [class]="'offer-graphic offer-graphic--' + offer.visual" aria-hidden="true">
+                  <span class="offer-graphic__sheet offer-graphic__sheet--back"></span>
+                  <span class="offer-graphic__sheet offer-graphic__sheet--front">
+                    <mat-icon>{{ offerVisualIcon(offer.visual) }}</mat-icon>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                  <span class="offer-graphic__accent offer-graphic__accent--red"></span>
+                  <span class="offer-graphic__accent offer-graphic__accent--dark"></span>
+                </div>
+              </div>
+
+              <div class="offer-card__body">
+                <span class="offer-card__badge">{{ offer.badge }}</span>
+                <h3>{{ offer.title }}</h3>
+                <p>{{ offer.subtitle }}</p>
+
+                <div class="offer-card__highlights" aria-label="Ключевые условия">
+                  @for (highlight of offer.highlights; track highlight.label) {
+                    <div>
+                      <strong>{{ highlight.value }}</strong>
+                      <span>{{ highlight.label }}</span>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <div class="offer-card__actions">
+                <button
+                  mat-flat-button
+                  type="button"
+                  class="offer-card__primary"
+                  (click)="startClient(selectedAudience().id)"
+                >
+                  <mat-icon>person_add</mat-icon>
+                  Стать клиентом
+                </button>
+                <a mat-stroked-button class="offer-card__secondary" [routerLink]="offer.route">
+                  {{ offer.actionLabel }}
+                </a>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+
+      <section class="tariffs-section" appScrollReveal>
+        <div class="section-heading">
+          <p>Тарифы</p>
+          <h2>Печать, фото и обработка по типам клиентов</h2>
+          <span>
+            Учебные условия самые дешёвые и включаются после подтверждения
+            образовательного статуса.
+          </span>
+        </div>
+
+        <div class="tariff-groups">
+          @for (group of tariffGroups(); track group.title) {
+            <article class="tariff-group">
+              <header class="tariff-group__head">
+                <mat-icon>{{ group.icon }}</mat-icon>
+                <h3>{{ group.title }}</h3>
+              </header>
+
+              <div class="tariff-table" role="table" [attr.aria-label]="group.title">
+                <div class="tariff-row tariff-row--head" role="row">
+                  <div role="columnheader">Услуга</div>
+                  @for (audience of audiences; track audience.id) {
+                    <div
+                      role="columnheader"
+                      [class.is-active]="selectedAudienceId() === audience.id"
+                    >
+                      {{ audience.label }}
+                    </div>
+                  }
+                </div>
+
+                @for (row of group.rows; track row.service) {
+                  <div class="tariff-row" role="row">
+                    <div role="cell">
+                      <strong>{{ row.service }}</strong>
+                      @if (row.note) {
+                        <span>{{ row.note }}</span>
+                      }
+                    </div>
+                    @for (price of row.prices; track price.audienceId) {
+                      <div
+                        role="cell"
+                        [class.is-active]="selectedAudienceId() === price.audienceId"
+                      >
+                        {{ price.value }}
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    </div>
+
+    <aside class="access-panel" id="start-client-access" appScrollReveal>
+      <div class="access-panel__mode" role="tablist" aria-label="Вход или регистрация">
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="selectedClientMode() === 'new'"
+          [class.is-active]="selectedClientMode() === 'new'"
+          (click)="selectClientMode('new')"
+        >
+          Стать клиентом
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="selectedClientMode() === 'existing'"
+          [class.is-active]="selectedClientMode() === 'existing'"
+          (click)="selectClientMode('existing')"
+        >
+          Уже клиент
+        </button>
+      </div>
+
+      <div class="access-panel__body">
+        <mat-icon class="access-panel__icon">
+          {{ selectedClientMode() === 'existing' ? 'login' : selectedAudience().icon }}
+        </mat-icon>
+
+        @switch (authStep()) {
+          @case ('form') {
+            @if (selectedClientMode() === 'existing') {
+              <h2>Войдите по телефону</h2>
+              <p>
+                Введите номер, который уже привязан к вашему профилю.
+                Позвоним и продиктуем код для входа.
+              </p>
+            } @else {
+              <h2>{{ selectedAudience().connectTitle }}</h2>
+              <p>{{ selectedAudience().connectDescription }}</p>
+            }
+
+            @if (authError()) {
+              <div class="access-error" role="alert">
+                <mat-icon>error_outline</mat-icon>
+                <span>{{ authError() }}</span>
+              </div>
+            }
+
+            <form class="access-form" (submit)="requestPhoneCode(); $event.preventDefault()">
+              <div
+                class="access-form__grid"
+                [class.access-form__grid--single]="selectedClientMode() === 'existing'"
+              >
+                @if (selectedClientMode() === 'new') {
+                  <label class="access-field" for="start-client-last-name">
+                    <span>Фамилия</span>
+                    <input
+                      #clientLastNameInput
+                      id="start-client-last-name"
+                      type="text"
+                      autocomplete="family-name"
+                      [value]="lastName()"
+                      (input)="onLastNameInput($event)"
+                    />
+                  </label>
+
+                  <label class="access-field" for="start-client-first-name">
+                    <span>Имя</span>
+                    <input
+                      id="start-client-first-name"
+                      type="text"
+                      autocomplete="given-name"
+                      [value]="firstName()"
+                      (input)="onFirstNameInput($event)"
+                    />
+                  </label>
+
+                  <label class="access-field" for="start-client-birth-date">
+                    <span>Дата рождения</span>
+                    <input
+                      id="start-client-birth-date"
+                      type="date"
+                      min="1900-01-01"
+                      [max]="maxBirthDate"
+                      autocomplete="bday"
+                      [value]="birthDate()"
+                      (input)="onBirthDateInput($event)"
+                    />
+                  </label>
+                }
+
+                <label class="access-field" for="start-client-phone">
+                  <span>Телефон</span>
+                  <div class="phone-control">
+                    <span>+7</span>
+                    <input
+                      #clientPhoneInput
+                      id="start-client-phone"
+                      type="tel"
+                      inputmode="numeric"
+                      autocomplete="tel-national"
+                      aria-label="Телефон"
+                      [value]="maskedPhone()"
+                      (input)="onPhoneInput($event)"
+                      (paste)="onPhonePaste($event)"
+                      (keydown)="onPhoneKeydown($event)"
+                    />
+                    @if (phoneDigits().length > 0) {
+                      <button
+                        type="button"
+                        class="phone-control__clear"
+                        aria-label="Очистить телефон"
+                        (click)="clearPhone()"
+                      >
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    }
+                  </div>
+                </label>
+              </div>
+
+              <button
+                mat-flat-button
+                class="access-panel__submit"
+                type="submit"
+                [disabled]="!formValid() || authRequesting()"
+              >
+                @if (authRequesting()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  {{ selectedClientMode() === 'existing' ? 'Войти' : 'Продолжить' }}
+                }
+              </button>
+            </form>
+          }
+
+          @case ('code') {
+            <h2>Введите код из звонка</h2>
+            <p>Код отправлен на номер {{ formattedPhone() }}.</p>
+
+            @if (authError()) {
+              <div class="access-error" role="alert">
+                <mat-icon>error_outline</mat-icon>
+                <span>{{ authError() }}</span>
+              </div>
+            }
+
+            <form class="access-form" (submit)="verifyPhoneCode(); $event.preventDefault()">
+              <button
+                type="button"
+                class="access-form__back"
+                (click)="backToForm()"
+              >
+                <mat-icon>arrow_back</mat-icon>
+                {{ selectedClientMode() === 'existing' ? 'Изменить телефон' : 'Изменить данные' }}
+              </button>
+
+              <label class="access-field access-field--code" for="start-client-code">
+                <span>Код подтверждения</span>
+                <input
+                  #clientCodeInput
+                  id="start-client-code"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  maxlength="4"
+                  [value]="code()"
+                  (input)="onCodeInput($event)"
+                />
+              </label>
+
+              <button
+                mat-flat-button
+                class="access-panel__submit"
+                type="submit"
+                [disabled]="!codeValid() || authLoading()"
+              >
+                @if (authLoading()) {
+                  <mat-spinner diameter="20" />
+                } @else {
+                  Подтвердить
+                }
+              </button>
+
+              <button
+                type="button"
+                class="access-form__resend"
+                [disabled]="!canResendCode()"
+                (click)="resendCode()"
+              >
+                @if (authCountdown() > 0) {
+                  Повторить через {{ authCountdown() }} сек.
+                } @else {
+                  Запросить код ещё раз
+                }
+              </button>
+            </form>
+          }
+        }
+      </div>
+    </aside>
+  </section>
+</main>

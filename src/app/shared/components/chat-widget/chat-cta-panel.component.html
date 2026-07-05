@@ -1,0 +1,29 @@
+<div class="cta-panel">
+  <header class="cta-header">
+    <div class="cta-heading">
+      <h2 class="cta-title">Написать в чат</h2>
+      <p class="cta-subtitle">Войдите по телефону, чтобы открыть чат на сайте.</p>
+    </div>
+    <button mat-icon-button class="cta-close" aria-label="Закрыть" (click)="onCloseClick()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <section class="cta-phone-card">
+    <div class="cta-phone-icon" aria-hidden="true">
+      <mat-icon>phone_in_talk</mat-icon>
+    </div>
+    <div class="cta-phone-copy">
+      <p class="cta-phone-title">Вход по номеру телефона</p>
+      <p class="cta-phone-subtitle">Позвоним и продиктуем короткий код. После входа вернём вас к чату.</p>
+    </div>
+    <a
+      routerLink="/auth/login"
+      [queryParams]="phoneLoginQueryParams()"
+      class="cta-phone-btn"
+    >
+      <mat-icon>login</mat-icon>
+      <span>Войти и открыть чат</span>
+    </a>
+  </section>
+</div>

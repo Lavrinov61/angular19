@@ -1,0 +1,222 @@
+<div class="payment-container">
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="loading-section">
+      <mat-spinner diameter="50" />
+      <p>Загрузка данных для оплаты...</p>
+    </div>
+  }
+
+  <!-- Main content -->
+  @if (!loading() && selection()) {
+    <div class="payment-content">
+    <h1>Оплата заказа</h1>
+    
+    <mat-stepper [linear]="true" #stepper>
+      <!-- Step 1: Order Summary -->
+      <mat-step [stepControl]="paymentForm">
+        <ng-template matStepLabel>Сводка заказа</ng-template>
+        <div class="step-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Детали заказа</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="order-summary">
+                <div class="summary-item">
+                  <span>Количество фото:</span>
+                  <strong>{{ selection()!.selectedPhotos.length }}</strong>
+                </div>
+                <div class="summary-item">
+                  <span>Форматы:</span>
+                  <strong>{{ getFormatsSummary() }}</strong>
+                </div>
+                <div class="summary-item">
+                  <span>Ретушь:</span>
+                  <strong>{{ getRetouchingSummary() }}</strong>
+                </div>
+                <mat-divider />
+                <div class="summary-total">
+                  <span>Итого:</span>
+                  <strong class="total-price">{{ calculateTotal() | currency:'RUB':'symbol':'1.0-0' }}</strong>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="step-actions">
+          <button mat-button matStepperNext>Далее</button>
+        </div>
+      </mat-step>
+
+      <!-- Step 2: Payment Method -->
+      <mat-step [stepControl]="paymentForm">
+        <ng-template matStepLabel>Способ оплаты</ng-template>
+        <div class="step-content">
+          <form [formGroup]="paymentForm">
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>Выберите способ оплаты</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <mat-radio-group formControlName="paymentMethod" class="payment-methods">
+                  <mat-radio-button value="card" class="payment-option">
+                    <div class="payment-option-content">
+                      <mat-icon>credit_card</mat-icon>
+                      <div>
+                        <strong>Банковская карта</strong>
+                        <p>Visa, MasterCard, МИР</p>
+                      </div>
+                    </div>
+                  </mat-radio-button>
+                  
+                  <mat-radio-button value="cash" class="payment-option">
+                    <div class="payment-option-content">
+                      <mat-icon>money</mat-icon>
+                      <div>
+                        <strong>Наличными</strong>
+                        <p>Оплата при получении</p>
+                      </div>
+                    </div>
+                  </mat-radio-button>
+                  
+                  <mat-radio-button value="online" class="payment-option">
+                    <div class="payment-option-content">
+                      <mat-icon>account_balance_wallet</mat-icon>
+                      <div>
+                        <strong>Электронный кошелек</strong>
+                        <p>ЮMoney, Qiwi, WebMoney</p>
+                      </div>
+                    </div>
+                  </mat-radio-button>
+                </mat-radio-group>
+              </mat-card-content>
+            </mat-card>
+          </form>
+        </div>
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Назад</button>
+          <button mat-button matStepperNext [disabled]="!paymentForm.get('paymentMethod')?.value">Далее</button>
+        </div>
+      </mat-step>
+
+      <!-- Step 3: Payment Details -->
+      <mat-step [stepControl]="paymentForm">
+        <ng-template matStepLabel>Детали оплаты</ng-template>
+        <div class="step-content">
+          <form [formGroup]="paymentForm">
+            @if (paymentForm.get('paymentMethod')?.value === 'card') {
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>Данные карты</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Номер карты</mat-label>
+                    <input matInput formControlName="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
+                  </mat-form-field>
+                  
+                  <div class="form-row">
+                    <mat-form-field appearance="outline">
+                      <mat-label>Срок действия</mat-label>
+                      <input matInput formControlName="cardExpiry" placeholder="MM/YY" maxlength="5">
+                    </mat-form-field>
+                    
+                    <mat-form-field appearance="outline">
+                      <mat-label>CVV</mat-label>
+                      <input matInput formControlName="cardCvv" type="password" placeholder="000" maxlength="3">
+                    </mat-form-field>
+                  </div>
+                  
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Имя держателя карты</mat-label>
+                    <input matInput formControlName="cardHolder" placeholder="IVAN IVANOV">
+                  </mat-form-field>
+                </mat-card-content>
+              </mat-card>
+            }
+            
+            @if (paymentForm.get('paymentMethod')?.value === 'online') {
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>Выберите электронный кошелек</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <mat-radio-group formControlName="walletType">
+                    <mat-radio-button value="yoomoney">ЮMoney</mat-radio-button>
+                    <mat-radio-button value="qiwi">Qiwi</mat-radio-button>
+                    <mat-radio-button value="webmoney">WebMoney</mat-radio-button>
+                  </mat-radio-group>
+                </mat-card-content>
+              </mat-card>
+            }
+          </form>
+        </div>
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Назад</button>
+          <button mat-button matStepperNext [disabled]="paymentForm.invalid">Далее</button>
+        </div>
+      </mat-step>
+
+      <!-- Step 4: Confirmation -->
+      <mat-step>
+        <ng-template matStepLabel>Подтверждение</ng-template>
+        <div class="step-content">
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Подтверждение заказа</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="confirmation-summary">
+                <h3>Сводка заказа</h3>
+                <div class="summary-details">
+                  <div class="detail-row">
+                    <span>Количество фото:</span>
+                    <strong>{{ selection()!.selectedPhotos.length }}</strong>
+                  </div>
+                  <div class="detail-row">
+                    <span>Способ оплаты:</span>
+                    <strong>{{ getPaymentMethodLabel() }}</strong>
+                  </div>
+                  <mat-divider />
+                  <div class="detail-row total">
+                    <span>К оплате:</span>
+                    <strong class="total-price">{{ calculateTotal() | currency:'RUB':'symbol':'1.0-0' }}</strong>
+                  </div>
+                </div>
+              </div>
+              
+              <mat-checkbox formControlName="agreeToTerms" class="terms-checkbox">
+                Я согласен с условиями оплаты и возврата
+              </mat-checkbox>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button color="primary" 
+                      (click)="processPayment()" 
+                      [disabled]="!paymentForm.get('agreeToTerms')?.value || processing()">
+                <mat-icon>payment</mat-icon>
+                Оплатить {{ calculateTotal() | currency:'RUB':'symbol':'1.0-0' }}
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>Назад</button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && !selection()) {
+    <div class="empty-state">
+    <mat-icon>payment</mat-icon>
+    <h3>Заказ не найден</h3>
+    <p>Не удалось загрузить данные заказа для оплаты.</p>
+    <button mat-raised-button color="primary" (click)="goBack()">
+      Вернуться к выборам
+    </button>
+    </div>
+  }
+</div>

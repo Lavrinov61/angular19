@@ -1,0 +1,280 @@
+.orders-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+// Header
+.orders-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .search-field {
+    width: 280px;
+    font-size: 14px;
+
+    @media (max-width: 599px) {
+      width: 100%;
+    }
+  }
+}
+
+// Filters
+.filters-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
+
+.chip-vip {
+  background: var(--crm-accent-container) !important;
+  color: var(--crm-accent) !important;
+}
+
+.chip-urgent {
+  background: var(--crm-status-error-container) !important;
+  color: var(--crm-status-error) !important;
+}
+
+// Stats
+.orders-stats {
+  font-size: 13px;
+  color: var(--crm-text-secondary);
+  margin-bottom: 12px;
+}
+
+// Loading
+.loading-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 32px;
+  justify-content: center;
+  color: var(--crm-text-secondary);
+}
+
+// Table
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--crm-border);
+}
+
+.orders-table {
+  width: 100%;
+
+  .cell-id {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--crm-text-secondary);
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cell-client {
+    .client-name {
+      font-size: 14px;
+    }
+
+    .client-phone {
+      font-size: 12px;
+      color: var(--crm-text-secondary);
+    }
+  }
+
+  .cell-amount {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .cell-date {
+    font-size: 12px;
+    color: var(--crm-text-secondary);
+    white-space: nowrap;
+  }
+}
+
+.order-row {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--crm-surface-hover) !important;
+  }
+
+  &.expanded-row {
+    background: var(--crm-surface-active) !important;
+  }
+}
+
+.mini-chip {
+  font-size: 11px !important;
+  height: 22px !important;
+  min-height: 22px !important;
+  padding: 0 8px !important;
+}
+
+.payment-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.payment-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+
+  &.pay-paid { color: var(--crm-status-success); }
+  &.pay-pending { color: var(--crm-status-warning); }
+  &.pay-none { color: var(--crm-text-muted); }
+  &.pay-failed { color: var(--crm-status-error); }
+  &.pay-refunded { color: var(--crm-status-info); }
+  &.pay-expired { color: var(--crm-text-muted); }
+  &.pay-cancelled { color: var(--crm-text-muted); }
+}
+
+// Order status chips
+.os-new { background: var(--crm-status-info-container) !important; }
+.os-pending_payment { background: var(--crm-status-warning-container) !important; }
+.os-processing { background: var(--crm-status-success-container) !important; }
+.os-ready { background: var(--crm-status-info-container) !important; }
+.os-completed { background: var(--crm-status-success-container) !important; }
+.os-cancelled { background: var(--crm-surface-raised) !important; color: var(--crm-text-muted) !important; }
+.os-payment_failed { background: var(--crm-status-error-container) !important; }
+.os-expired { background: var(--crm-surface-raised) !important; }
+
+// Expanded Detail
+.expanded-detail {
+  margin: -1px 0 16px;
+  padding: 16px;
+  border: 1px solid var(--crm-border);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+
+  .detail-section {
+    h4 {
+      margin: 0 0 4px;
+      font-size: 13px;
+      color: var(--crm-text-secondary);
+      font-weight: 500;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+
+  .item-row {
+    font-size: 13px;
+    padding: 2px 0;
+  }
+
+  .promo-badge {
+    font-size: 13px;
+    color: var(--crm-status-success);
+    font-weight: 500;
+  }
+}
+
+// Mobile Cards
+.orders-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-card {
+  padding: 12px 16px;
+
+  &.card-vip {
+    border-left: 4px solid var(--crm-accent);
+  }
+
+  &.card-urgent {
+    border-left: 4px solid var(--crm-status-error);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+
+    .card-id {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--crm-text-secondary);
+    }
+  }
+
+  .card-client {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    margin-bottom: 8px;
+
+    .card-phone {
+      color: var(--crm-accent);
+      text-decoration: none;
+    }
+  }
+
+  .card-bottom {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .card-amount {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .card-time {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--crm-text-secondary);
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+}
+
+// Empty
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 48px;
+  color: var(--crm-text-secondary);
+}
+
+// Paginator
+mat-paginator {
+  margin-top: 12px;
+}

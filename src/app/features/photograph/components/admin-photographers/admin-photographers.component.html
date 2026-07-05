@@ -1,0 +1,282 @@
+<div class="admin-photographers-container">
+  <h1 class="admin-title">Управление фотографами</h1>
+
+  @if (isLoading) {
+    <div class="loading-overlay">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+
+  <!-- Список фотографов -->
+  @if (!selectedPhotographer && !isLoading) {
+    <mat-card>
+    <mat-card-header>
+      <mat-card-title>Список фотографов</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="photographers-actions">
+        <button mat-raised-button color="primary" (click)="newPhotographer()">
+          <mat-icon>add</mat-icon> Добавить фотографа
+        </button>
+      </div>
+
+      <table mat-table [dataSource]="photographers" class="photographers-table">
+        <!-- Колонка изображения -->
+        <ng-container matColumnDef="image">
+          <th mat-header-cell *matHeaderCellDef>Фото</th>
+          <td mat-cell *matCellDef="let photographer">
+            <div class="photographer-avatar">
+              <img [src]="photographer.profileImage || 'assets/images/no-photo.jpg'" alt="{{ photographer.name }}">
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Колонка имени -->
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Имя</th>
+          <td mat-cell *matCellDef="let photographer">
+            <div class="photographer-name">
+              <strong>{{ photographer.name }}</strong>
+              <span class="photographer-title">{{ photographer.title }}</span>
+            </div>
+          </td>
+        </ng-container>        <!-- Колонка специализации -->
+        <ng-container matColumnDef="specialization">
+          <th mat-header-cell *matHeaderCellDef>Специализация</th>
+          <td mat-cell *matCellDef="let photographer">
+            <div class="specialization-list">
+              @for (spec of photographer.specializations?.slice(0, 3); track spec || $index) {
+                <span class="specialization-tag">
+                  {{ spec }}
+                </span>
+              }
+              @if (photographer.specializations?.length > 3) {
+                <span>
+                  +{{ photographer.specializations.length - 3 }}
+                </span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Колонка статуса -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Статус</th>
+          <td mat-cell *matCellDef="let photographer">
+            <span class="status-badge" [class.active]="photographer.active">
+              {{ photographer.active ? 'Активен' : 'Неактивен' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Колонка действий -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Действия</th>
+          <td mat-cell *matCellDef="let photographer">
+            <button mat-icon-button color="primary" (click)="editPhotographer(photographer)" matTooltip="Редактировать">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deletePhotographer(photographer)" matTooltip="Удалить">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+        <!-- Строка, которая отображается при отсутствии данных -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="5">
+            <div class="no-data">
+              <mat-icon>sentiment_dissatisfied</mat-icon>
+              <p>Фотографы не найдены</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+  }
+
+  <!-- Форма редактирования/создания фотографа -->
+  @if (selectedPhotographer || photographerForm.dirty) {
+    <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ selectedPhotographer ? 'Редактирование фотографа' : 'Новый фотограф' }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-tab-group>
+        <mat-tab label="Основная информация">
+          <div class="tab-content">
+            <form [formGroup]="photographerForm" (ngSubmit)="savePhotographer()">
+              <div class="form-container">
+                <div class="form-column">
+                  <!-- Основная информация -->
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Имя</mat-label>
+                    <input matInput formControlName="name" placeholder="Введите имя" (blur)="generateSlug()">
+                    @if (photographerForm.get('name')?.hasError('required')) {
+                      <mat-error>
+                        Имя обязательно
+                      </mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>URL-идентификатор</mat-label>
+                    <input matInput formControlName="slug" placeholder="например, ivan-petrov">
+                    <mat-hint>Используется в URL профиля</mat-hint>
+                    @if (photographerForm.get('slug')?.hasError('pattern')) {
+                      <mat-error>
+                        Только строчные буквы, цифры и дефис
+                      </mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Должность</mat-label>
+                    <input matInput formControlName="title" placeholder="Фотограф, Ретушер и т.д.">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Описание</mat-label>
+                    <textarea matInput formControlName="description" rows="4" placeholder="Опыт работы, стиль фотографии..."></textarea>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Специализация</mat-label>
+                    <mat-select formControlName="specialization" multiple>
+                      @for (category of serviceCategories; track category || $index) {
+                        <mat-option [value]="category">
+                          {{ category }}
+                        </mat-option>
+                      }
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="rating-field">
+                    <span class="rating-label">Рейтинг:</span>
+                    <mat-slider min="1" max="5" step="0.5" discrete>
+                      <input matSliderThumb formControlName="rating">
+                    </mat-slider>
+                    <span>{{ photographerForm.get('rating')?.value }}</span>
+                  </div>
+
+                  <mat-slide-toggle formControlName="isActive" color="primary">
+                    Активен
+                  </mat-slide-toggle>
+                </div>
+
+                <div class="form-column">                  <!-- Изображение профиля -->
+                  <div class="image-upload-container">
+                    <div class="image-preview" 
+                         [style.background-image]="previewUrl ? 'url(' + previewUrl + ')' : 'none'"
+                         appDragDrop
+                         (fileDropped)="onFilesDropped($event)">
+                      @if (!previewUrl) {
+                        <span>
+                          <mat-icon>cloud_upload</mat-icon>
+                          <p>Перетащите фото сюда или нажмите кнопку ниже</p>
+                        </span>
+                      }
+                    </div>
+
+                    <div class="image-upload-actions">
+                      <button type="button" mat-stroked-button (click)="fileInput.click()">
+                        <mat-icon>add_photo_alternate</mat-icon> Выбрать фото
+                      </button>
+                      <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none">
+
+                      <button type="button" mat-raised-button color="primary" 
+                              [disabled]="!selectedFile || isUploadingImage" 
+                              (click)="uploadImage()">
+                        <mat-icon>cloud_upload</mat-icon> Загрузить
+                      </button>
+                    </div>
+
+                    <!-- Прогресс загрузки -->
+                    @if (isUploadingImage) {
+                      <mat-progress-bar mode="determinate" [value]="uploadProgress"></mat-progress-bar>
+                    }
+                    
+                    <!-- Информация о выбранном файле -->
+                    @if (selectedFile) {
+                      <div class="file-info">
+                        <span class="file-name">{{ selectedFile.name }}</span>
+                        <span class="file-size">{{ formatFileSize(selectedFile.size) }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Контактная информация -->
+                  <h3>Контактная информация</h3>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="contactEmail" type="email" placeholder="email@example.com">
+                    @if (photographerForm.get('contactEmail')?.hasError('email')) {
+                      <mat-error>
+                        Некорректный email
+                      </mat-error>
+                    }
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Телефон</mat-label>
+                    <input matInput formControlName="contactPhone" placeholder="+7 (___) ___-__-__">
+                  </mat-form-field>
+
+                  <!-- Рабочие часы -->
+                  <h3>Рабочие часы</h3>
+                  <div formGroupName="workingHours" class="working-hours">
+                    <div class="weekdays">
+                      <mat-checkbox formControlName="monday">Пн</mat-checkbox>
+                      <mat-checkbox formControlName="tuesday">Вт</mat-checkbox>
+                      <mat-checkbox formControlName="wednesday">Ср</mat-checkbox>
+                      <mat-checkbox formControlName="thursday">Чт</mat-checkbox>
+                      <mat-checkbox formControlName="friday">Пт</mat-checkbox>
+                      <mat-checkbox formControlName="saturday">Сб</mat-checkbox>
+                      <mat-checkbox formControlName="sunday">Вс</mat-checkbox>
+                    </div>
+
+                    <div class="time-range">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Начало</mat-label>
+                        <input matInput formControlName="startTime" type="time">
+                      </mat-form-field>
+
+                      <span>-</span>
+
+                      <mat-form-field appearance="outline">
+                        <mat-label>Конец</mat-label>
+                        <input matInput formControlName="endTime" type="time">
+                      </mat-form-field>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" mat-stroked-button (click)="selectedPhotographer = null" [disabled]="isSubmitting">
+                  Отмена
+                </button>
+                <button type="submit" mat-raised-button color="primary" [disabled]="photographerForm.invalid || isSubmitting">
+                  <mat-icon>save</mat-icon> Сохранить
+                </button>
+              </div>
+            </form>
+          </div>
+        </mat-tab>
+        @if (selectedPhotographer) {
+          <mat-tab label="Портфолио">
+            <div class="tab-content">
+              <p>Портфолио будет доступно после завершения миграции на новый API</p>
+            </div>
+          </mat-tab>
+        }
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>

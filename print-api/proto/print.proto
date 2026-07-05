@@ -1,0 +1,241 @@
+syntax = "proto3";
+package svf.print;
+
+// ── Enums ──
+
+enum JobState {
+  JOB_STATE_UNSPECIFIED = 0;
+  QUEUED = 1;
+  SENDING = 2;
+  APPLYING_ICC = 3;
+  RENDERING_LAYOUT = 4;
+  PRINTING = 5;
+  COMPLETED = 6;
+  FAILED = 7;
+  CANCELLED = 8;
+  RETRYING = 9;
+}
+
+enum CommandType {
+  COMMAND_TYPE_UNSPECIFIED = 0;
+  PRINT = 1;
+  CANCEL = 2;
+  STATUS_REQUEST = 3;
+  ICC_SYNC = 4;
+  PREVIEW_REQUEST = 5;
+}
+
+enum FitMode {
+  FIT_MODE_UNSPECIFIED = 0;
+  FIT = 1;
+  FILL = 2;
+  STRETCH = 3;
+  ACTUAL = 4;
+}
+
+enum ColorMode {
+  COLOR_MODE_UNSPECIFIED = 0;
+  COLOR = 1;
+  BW = 2;
+}
+
+enum Orientation {
+  ORIENTATION_UNSPECIFIED = 0;
+  AUTO = 1;
+  PORTRAIT = 2;
+  LANDSCAPE = 3;
+}
+
+enum RenderingIntent {
+  RENDERING_INTENT_UNSPECIFIED = 0;
+  PERCEPTUAL = 1;
+  RELATIVE_COLORIMETRIC = 2;
+  SATURATION = 3;
+  ABSOLUTE_COLORIMETRIC = 4;
+}
+
+// ── Finishing ──
+
+enum FinishingOp {
+  FINISHING_OP_UNSPECIFIED = 0;
+  STAPLE_TOP_LEFT = 1;
+  STAPLE_TOP_RIGHT = 2;
+  STAPLE_DUAL_LEFT = 3;
+  STAPLE_DUAL_TOP = 4;
+  PUNCH_2_HOLE = 5;
+  PUNCH_4_HOLE = 6;
+  FOLD_HALF = 7;
+  FOLD_Z = 8;
+  BOOKLET = 9;
+}
+
+message FinishingSettings {
+  repeated FinishingOp operations = 1;
+}
+
+// ── Messages ──
+
+message LayoutSettings {
+  int32 rows = 1;
+  int32 cols = 2;
+  float cut_margin_mm = 3;
+  bool cut_marks = 4;
+  float cut_mark_length_mm = 5;
+  float cut_mark_offset_mm = 6;
+}
+
+message PrintCommand {
+  string job_id = 1;
+  string printer_id = 2;
+  CommandType command_type = 3;
+  string file_url = 4;
+  string file_name = 5;
+  int32 copies = 6;
+  string paper_size = 7;
+  ColorMode color_mode = 8;
+  string quality = 9;
+  bool duplex = 10;
+  Orientation orientation = 11;
+  bool borderless = 12;
+  string media_type = 13;
+  FitMode fit_mode = 14;
+  string icc_profile_key = 15;
+  LayoutSettings layout = 16;
+  string service_slug = 17;
+  string document_template_slug = 18;
+  string idempotency_key = 19;
+  RenderingIntent rendering_intent = 20;
+  string paper_source = 21;              // Tray/bin name: "auto", "tray1", "tray2", etc.
+  FinishingSettings finishing = 22;      // Staple, punch, fold, booklet operations
+
+  // Canon C3226i extended features
+  bool collate = 23;                    // Подборка по копиям
+  int32 nup = 24;                      // N-Up: 1, 2, 4, 6, 9, 16
+  string binding = 25;                  // "none", "booklet"
+  string staple_position = 26;          // "none", "top_left", "top_right", "bottom_left", "bottom_right", "dual_left", "dual_right", "dual_top", "dual_bottom", "saddle_stitch"
+  string hole_punch = 27;              // "none", "left", "right", "top", "bottom"
+  string hole_punch_type = 28;         // "none", "2_hole", "3_hole", "4_hole"
+  int32 resolution_dpi = 29;           // 600, 1200
+  bool color_auto_detect = 30;         // Авто-определение цвета
+  string stapleless_position = 31;     // "none", "top_left", "top_right", "bottom_left", "bottom_right"
+
+  // PrintTicket extended fields
+  string resolution = 32;              // PageResolution string (600, 1200, best, etc.)
+  string color_management = 33;        // PageColorManagement (none, driver, system)
+  int32 pages_per_sheet = 34;          // DocumentNUp (1, 2, 4, 6, 9, 16) — alias for nup
+  bool booklet = 35;                   // DocumentBinding booklet mode
+  bool red_eye_fix = 36;               // PageFixRedEye (Epson)
+  bool bidirectional = 37;             // PageBidirectional (Epson)
+  bool quiet_mode = 38;                // Vendor quiet mode
+  string staple = 39;                  // DocumentStaple string alias for staple_position
+
+  // Copy center features (Canon C3226i) — fields 40-46
+  string duplex_mode = 40;             // "long_edge" | "short_edge" — for booklets
+  int32 scaling_percent = 41;          // 25-400, 0 = auto
+  string output_bin = 42;              // "auto" | "standard" | "finisher_bin1" | "face_up"
+  string toner_save = 43;             // "off" | "on" — Canon economy mode
+  string department_id = 44;           // Canon Department ID for billing/accounting
+  string secure_pin = 45;             // 4-digit PIN for Canon Secure Print
+  string gray_mode = 46;              // "true_gray" | "black_only" — grayscale rendering
+
+  // Mirror and rotation (server-applied before sending)
+  bool mirror = 47;                    // Зеркальная печать (для сублимации)
+  int32 rotation_degrees = 48;         // Поворот: 0, 90, 180, 270
+
+  // Crop region (normalized 0.0–1.0)
+  float crop_x = 49;
+  float crop_y = 50;
+  float crop_width = 51;
+  float crop_height = 52;
+
+  // Watermark
+  string watermark_text = 53;          // Текст водяного знака (пустая строка = нет)
+  float watermark_opacity = 54;        // Прозрачность 0.0-1.0 (default 0.3)
+  string watermark_position = 55;      // "center" | "diagonal" | "top" | "bottom"
+
+  // Banner page
+  bool banner_page = 56;               // Печатать титульную страницу
+
+  // Page range (specific pages to print)
+  repeated int32 page_range = 57;
+}
+
+message PrintStatus {
+  string job_id = 1;
+  JobState state = 2;
+  string error_message = 3;
+  int32 progress_percent = 4;
+  int32 pages_printed = 5;
+  int32 total_pages = 6;
+  ConsumableUsage consumable_usage = 7;
+  int64 timestamp_ms = 8;
+  string trace_id = 9;
+}
+
+message ConsumableUsage {
+  float cyan_ml = 1;
+  float magenta_ml = 2;
+  float yellow_ml = 3;
+  float black_ml = 4;
+  float light_cyan_ml = 5;
+  float light_magenta_ml = 6;
+  int32 sheets_used = 7;
+  string media_type = 8;
+  string paper_size = 9;
+}
+
+message TelemetryReport {
+  string bridge_id = 1;
+  string printer_id = 2;
+  bool is_online = 3;
+  string state = 4;
+  repeated string state_reasons = 5;
+  string supplies_json = 6;
+  string trays_json = 7;
+  string counters_json = 8;
+  string errors_json = 9;
+  string model = 10;
+  string manufacturer = 11;
+  string serial_number = 12;
+  string firmware_version = 13;
+  ConsumableUsage consumable_usage = 14;
+  int64 timestamp_ms = 15;
+}
+
+message IccSyncRequest {
+  string profile_id = 1;
+  string profile_name = 2;
+  string media_type = 3;
+  string file_url = 4;
+  bool is_default = 5;
+}
+
+message PreviewRequest {
+  string job_id = 1;
+  string file_url = 2;
+  string paper_size = 3;
+  FitMode fit_mode = 4;
+  string icc_profile_key = 5;
+  LayoutSettings layout = 6;
+  int32 preview_width_px = 7;
+  int32 preview_height_px = 8;
+}
+
+message PreviewResult {
+  string job_id = 1;
+  bytes preview_image = 2;
+  string content_type = 3;
+  int32 width_px = 4;
+  int32 height_px = 5;
+}
+
+message BridgeHeartbeat {
+  string bridge_id = 1;
+  string agent_type = 2;
+  string agent_version = 3;
+  string cups_version = 4;
+  string os_info = 5;
+  string hostname = 6;
+  int64 uptime_seconds = 7;
+  int64 timestamp_ms = 8;
+}

@@ -1,0 +1,356 @@
+:host {
+  display: block;
+  --document-red: #ef3124;
+  --document-red-dark: #d82b20;
+  --document-ink: #101217;
+  --document-muted: #626b78;
+  --document-border: #dde2ea;
+  --document-soft: #f4f5f7;
+  --document-soft-red: #fff2f1;
+
+  color: var(--document-ink);
+  background: #ffffff;
+}
+
+.document-page {
+  min-height: 100vh;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.document-container {
+  width: min(100% - 40px, 1180px);
+  margin: 0 auto;
+}
+
+.document-kicker {
+  margin: 0 0 12px;
+  color: var(--document-red);
+  font-size: 13px;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.document-hero {
+  color: #ffffff;
+  background: var(--document-ink);
+}
+
+.document-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 680px) minmax(320px, 420px);
+  gap: clamp(32px, 6vw, 76px);
+  align-items: center;
+  min-height: min(760px, calc(100svh - 120px));
+  padding: clamp(58px, 7vw, 92px) 0 clamp(48px, 6vw, 78px);
+}
+
+.document-hero__copy {
+  min-width: 0;
+}
+
+.document-hero h1 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(48px, 5.6vw, 82px);
+  line-height: 0.96;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.document-hero__lead {
+  max-width: 680px;
+  margin: 24px 0 0;
+  color: rgb(255 255 255 / 82%);
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.55;
+  font-weight: 650;
+}
+
+.document-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.document-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 15px;
+  line-height: 1.15;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-decoration: none;
+  text-align: center;
+  white-space: normal;
+  transition:
+    transform 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.document-button:hover {
+  transform: translateY(-1px);
+}
+
+.document-button mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+}
+
+.document-button--primary {
+  background: var(--document-red);
+  color: #ffffff;
+  box-shadow: 0 14px 30px rgb(239 49 36 / 24%);
+}
+
+.document-button--primary:hover {
+  background: var(--document-red-dark);
+}
+
+.document-button--dark {
+  border-color: rgb(255 255 255 / 14%);
+  background: #2d2f36;
+  color: #ffffff;
+}
+
+.document-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 32px;
+}
+
+.document-metrics article {
+  display: grid;
+  gap: 7px;
+  min-height: 122px;
+  padding: 16px;
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 8px;
+  background: rgb(255 255 255 / 5%);
+}
+
+.document-metrics mat-icon {
+  color: var(--document-red);
+}
+
+.document-metrics strong {
+  font-size: 18px;
+  line-height: 1.16;
+  font-weight: 950;
+}
+
+.document-metrics span {
+  color: rgb(255 255 255 / 68%);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.document-hero__visual {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: 430px;
+  padding: 18px;
+  border-radius: 8px;
+  background: var(--document-red);
+  overflow: hidden;
+}
+
+.document-hero__visual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.28;
+  mix-blend-mode: multiply;
+}
+
+.document-price-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 300px);
+  margin-left: auto;
+  padding: 22px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: var(--document-ink);
+  box-shadow: 0 22px 60px rgb(0 0 0 / 24%);
+}
+
+.document-price-card span,
+.document-price-card small {
+  display: block;
+  color: var(--document-muted);
+  font-weight: 850;
+}
+
+.document-price-card strong {
+  display: block;
+  margin: 8px 0;
+  color: var(--document-red);
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 950;
+}
+
+.document-order {
+  scroll-margin-top: 132px;
+  padding: clamp(56px, 7vw, 86px) 0;
+  background: var(--document-soft);
+}
+
+.document-section {
+  padding: clamp(56px, 7vw, 82px) 0;
+  background: #ffffff;
+}
+
+.document-section--faq {
+  background: var(--document-soft);
+}
+
+.document-section__heading {
+  max-width: 780px;
+  margin-bottom: 30px;
+}
+
+.document-section__heading h2 {
+  margin: 0;
+  color: var(--document-ink);
+  font-size: clamp(34px, 4vw, 48px);
+  line-height: 1.06;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.document-steps,
+.document-faq__list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.document-steps article,
+.document-faq__list article {
+  min-height: 220px;
+  padding: 22px;
+  border: 1px solid var(--document-border);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 14px 42px rgb(16 18 23 / 5%);
+}
+
+.document-steps mat-icon {
+  width: 42px;
+  height: 42px;
+  color: var(--document-red);
+  font-size: 42px;
+}
+
+.document-steps h3,
+.document-faq__list h3 {
+  margin: 18px 0 10px;
+  color: var(--document-ink);
+  font-size: 20px;
+  line-height: 1.18;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.document-steps p,
+.document-faq__list p {
+  margin: 0;
+  color: var(--document-muted);
+  line-height: 1.55;
+}
+
+.document-faq {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.55fr) minmax(0, 1fr);
+  gap: 34px;
+}
+
+.document-faq__list {
+  grid-template-columns: 1fr;
+}
+
+.document-faq__list article {
+  min-height: auto;
+}
+
+@media (max-width: 1040px) {
+  .document-hero__grid,
+  .document-faq {
+    grid-template-columns: 1fr;
+  }
+
+  .document-hero__grid {
+    min-height: auto;
+  }
+
+  .document-hero__visual {
+    max-width: 520px;
+  }
+
+  .document-metrics,
+  .document-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .document-container {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .document-hero__grid {
+    padding: 44px 0 36px;
+    gap: 28px;
+  }
+
+  .document-hero h1 {
+    font-size: 42px;
+    line-height: 1;
+  }
+
+  .document-hero__lead {
+    font-size: 17px;
+  }
+
+  .document-actions,
+  .document-button {
+    width: 100%;
+  }
+
+  .document-metrics,
+  .document-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .document-hero__visual {
+    min-height: 320px;
+  }
+
+  .document-price-card {
+    width: 100%;
+  }
+
+  .document-order {
+    scroll-margin-top: 116px;
+    padding: 48px 0 58px;
+  }
+}

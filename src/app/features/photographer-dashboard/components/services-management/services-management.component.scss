@@ -1,0 +1,164 @@
+// Services Management — layout only, mobile-first + Material tokens
+
+.services-management {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (min-width: 840px) { padding: 24px; gap: 24px; }
+
+  .header-card {
+    .header-avatar {
+      background-color: var(--mat-sys-primary);
+      color: var(--mat-sys-on-primary);
+    }
+
+    .photographer-stats {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 16px;
+
+      @media (min-width: 840px) { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+      .stat-item {
+        padding: 16px;
+        border-radius: 12px;
+        background-color: var(--mat-sys-surface-container);
+        border: 1px solid var(--mat-sys-outline-variant);
+
+        .stat-label { display: block; color: var(--mat-sys-on-surface-variant); margin-bottom: 8px; }
+        .stat-value { display: block; font-size: 20px; font-weight: 500; color: var(--mat-sys-on-surface); }
+      }
+    }
+  }
+
+  .main-content {
+    .services-grid {
+      display: grid;
+      gap: 20px;
+
+      .category-card {
+        .category-avatar {
+          background-color: var(--mat-sys-primary);
+          color: var(--mat-sys-on-primary);
+        }
+
+        .services-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+
+          .service-item {
+            .service-card {
+              &.service-card--active { border-color: var(--mat-sys-primary); }
+
+              mat-card-header.service-header {
+                padding: 16px;
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                flex-direction: column;
+
+                @media (min-width: 840px) { flex-direction: row; gap: 12px; }
+
+                .service-checkbox {
+                  flex: 1;
+                  .service-name { font-weight: 500; }
+                }
+
+                .service-badge {
+                  mat-chip { mat-icon { margin-right: 4px; } }
+                }
+              }
+
+              mat-card-content {
+                padding: 0 16px 16px;
+
+                .service-description { line-height: 1.5; margin: 8px 0 16px; }
+
+                .price-section {
+                  .price-field { width: 100%; max-width: 200px; }
+                }
+
+                .current-price-info {
+                  margin-top: 12px;
+                  .price-chip { mat-icon { margin-right: 4px; } }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .actions-card {
+    border-radius: 12px;
+    border: 1px solid var(--mat-sys-outline-variant);
+    background: var(--mat-sys-surface-container-low);
+
+    mat-card-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      padding: 20px 24px;
+      flex-direction: column;
+
+      @media (min-width: 840px) { flex-direction: row; }
+
+      button {
+        border-radius: 20px;
+        font-weight: 500;
+        height: 40px;
+        padding: 0 20px;
+
+        @media (max-width: 839px) { width: 100%; }
+
+        mat-icon { margin-right: 8px; }
+      }
+    }
+  }
+
+  .loading-card,
+  .unauthorized-card {
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--mat-sys-outline-variant);
+    background: var(--mat-sys-surface);
+
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      padding: 40px 20px;
+
+      p { color: var(--mat-sys-on-surface-variant); margin: 0; }
+    }
+
+    .error-avatar { background: var(--mat-sys-error); color: var(--mat-sys-on-error); }
+
+    mat-card-header {
+      text-align: center;
+      mat-card-title { color: var(--mat-sys-on-surface); font-weight: 500; }
+      mat-card-subtitle { color: var(--mat-sys-on-surface-variant); }
+    }
+
+    mat-card-actions {
+      justify-content: center;
+      padding: 20px;
+
+      button {
+        border-radius: 20px;
+        font-weight: 500;
+        height: 40px;
+        padding: 0 24px;
+        mat-icon { margin-right: 8px; }
+      }
+    }
+  }
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Визитки — Своё Фото (FLR670)</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:105mm 148mm;margin:0}
+:root{
+  --bg:#0a0a0a;--bg2:#131210;--bg3:#1c1b18;
+  --am:#f59e0b;--am2:#fbbf24;--amd:#d97706;
+  --t1:#f5f5f5;--t2:#c0c0c0;--t3:#888;
+  --brd:rgba(255,255,255,.07);
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+body{background:#1a1918;font-family:var(--fb);color:var(--t1);display:flex;flex-direction:column;align-items:center;gap:50px;padding:50px 20px}
+.tag{color:#555;font-size:9px;text-transform:uppercase;letter-spacing:.25em;margin-bottom:-38px}
+
+.card{width:105mm;height:148mm;background:var(--bg);overflow:hidden;position:relative;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+@media screen{.card{box-shadow:0 20px 80px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.04);border-radius:4px}}
+@media print{body{background:none;padding:0;gap:0}.tag{display:none}.card{page-break-after:always;box-shadow:none;border-radius:0}}
+.card::before{content:'';position:absolute;inset:0;z-index:0;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:128px 128px;pointer-events:none}
+
+.f{display:flex;flex-direction:column;height:100%;position:relative;z-index:1}
+
+.f-top{background:linear-gradient(90deg,var(--amd),var(--am) 50%,var(--amd));color:#000;text-align:center;padding:5px 10px;font-family:var(--fd);font-weight:700;font-size:8.5px;letter-spacing:.15em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:8px}
+.f-top-brand{font-size:11px;font-weight:800;letter-spacing:.04em}
+
+.f-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 16px;position:relative}
+.f-hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.08) 0%,transparent 70%);pointer-events:none}
+.f-offer{font-family:var(--fd);font-weight:800;font-size:28px;text-transform:uppercase;line-height:1;letter-spacing:-.01em;position:relative;z-index:1}
+.f-offer b{color:var(--am);text-shadow:0 0 20px rgba(245,158,11,.3)}
+.f-sub{font-family:var(--fd);font-weight:700;font-size:16px;color:var(--am2);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;position:relative;z-index:1}
+.f-trust{font-size:8.5px;font-weight:600;color:var(--t2);margin-top:6px;position:relative;z-index:1;letter-spacing:.02em}
+.f-trust b{color:var(--am2);font-weight:700}
+
+.f-promo{margin:0 14px;padding:8px 12px 10px;position:relative;z-index:1;border-radius:10px;background:linear-gradient(160deg,rgba(245,158,11,.12) 0%,rgba(217,119,6,.04) 100%);border:2px dashed var(--amd);box-shadow:0 0 40px rgba(245,158,11,.1),inset 0 0 20px rgba(245,158,11,.03);text-align:center}
+.f-promo::before,.f-promo::after{content:'';position:absolute;width:14px;height:14px;border-color:var(--am);border-style:solid;opacity:.35}
+.f-promo::before{top:5px;left:5px;border-width:2px 0 0 2px;border-radius:3px 0 0 0}
+.f-promo::after{bottom:5px;right:5px;border-width:0 2px 2px 0;border-radius:0 0 3px 0}
+.f-promo-label{font-family:var(--fd);font-size:8.5px;font-weight:600;text-transform:uppercase;letter-spacing:.18em;color:var(--t3)}
+.f-promo-sticker{width:50mm;height:14mm;margin:3px auto;background:#fff;border-radius:4px;border:1px solid #e5e5e5;display:flex;align-items:center;gap:2mm;padding:0 3mm;position:relative;overflow:hidden;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.f-promo-sticker .st-accent{position:absolute;left:0;top:0;bottom:0;width:1.5mm;background:linear-gradient(180deg,#f59e0b,#d97706)}
+.f-promo-sticker .st-code{font-family:var(--fd);font-weight:800;font-size:16px;letter-spacing:.08em;color:#000;text-transform:uppercase;line-height:1;white-space:nowrap}
+.f-promo-sticker .st-div{width:1px;height:8mm;background:#d97706;flex-shrink:0;opacity:.5}
+.f-promo-sticker .st-date{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15;white-space:nowrap}
+.f-promo-sticker .st-dl{font-family:var(--fd);font-size:7px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.12em}
+.f-promo-sticker .st-dv{font-family:var(--fd);font-size:10px;font-weight:700;color:#d97706;letter-spacing:.02em}
+.f-promo-cta{display:inline-flex;align-items:center;gap:4px;margin-top:2px;font-size:10px;font-weight:700;color:var(--t1);letter-spacing:.02em}
+.f-promo-cta .check{width:14px;height:14px;border-radius:50%;background:var(--am);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.f-promo-cta .check svg{width:9px;height:9px}
+
+.f-content{padding:8px 20px 0;position:relative;z-index:1}
+.f-li{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:500;padding:1.5px 0;color:var(--t2);line-height:1.3}
+.f-li .dot{width:4px;height:4px;border-radius:50%;flex-shrink:0;background:var(--am)}
+.f-li--accent{color:var(--am2);font-weight:600}
+.f-row{display:flex;justify-content:space-between;align-items:baseline;padding:2.5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:10px;font-weight:500;color:var(--t2)}
+.f-row:last-child{border-bottom:none}
+.f-row .v{color:var(--am);font-family:var(--fd);font-weight:700;font-size:10.5px;flex-shrink:0;margin-left:8px}
+
+.f-bot{margin-top:auto;background:var(--bg3);border-top:1px solid var(--brd);padding:8px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.f-bot-info{min-width:0}
+.f-bot-brand{font-family:var(--fd);font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.f-bot-brand span{color:var(--am)}
+.f-addr{font-size:8.5px;color:var(--t2);margin-top:1px}
+.f-addr b{color:var(--am2);font-weight:600}
+.f-contact{font-size:8px;color:var(--t2);margin-top:2px;display:flex;align-items:center;gap:4px}
+.f-contact svg{width:10px;height:10px;flex-shrink:0}
+.f-contact b{color:var(--t1);font-weight:600}
+.f-site{font-size:9px;color:var(--t3);margin-top:1px;letter-spacing:.04em}
+.f-qr{width:50px;height:50px;background:#fff;border-radius:4px;padding:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.f-qr svg{width:100%;height:100%}
+</style>
+</head>
+<body>
+
+<div class="tag">A6 односторонний — Визитки (FLR670)</div>
+<div class="card">
+<div class="f">
+
+  <div class="f-top">
+    <span class="f-top-brand">Своё Фото</span>
+    <span>·</span>
+    <span>Ежедневно 09:00 — 19:30</span>
+  </div>
+
+  <div class="f-hero">
+    <div class="f-offer">Скидка <b>100₽</b><br>на визитки</div>
+    <div class="f-sub">100 визиток от 600₽</div>
+  </div>
+
+  <div class="f-promo">
+    <div class="f-promo-label">Твой промокод</div>
+    <div class="f-promo-sticker"><div class="st-accent"></div><div class="st-code">FLR670</div><div class="st-div"></div><div class="st-date"><span class="st-dl">действует</span><span class="st-dv">с 30 апреля</span></div></div>
+    <div class="f-promo-cta">
+      <span class="check"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+      Покажи флаер на кассе
+    </div>
+  </div>
+
+  <div class="f-content">
+    <div class="f-row"><span>Визитки бумажные (100 шт)</span><span class="v">600 ₽</span></div>
+    <div class="f-row"><span>Визитки пластиковые (50 шт)</span><span class="v">1000 ₽</span></div>
+    <div class="f-row"><span>Образцы (2 шт)</span><span class="v">100 ₽</span></div>
+    <div class="f-row"><span>Дизайн по вашему макету</span><span class="v">бесплатно</span></div>
+  </div>
+
+  <div class="f-bot">
+    <div class="f-bot-info">
+      <div class="f-bot-brand">Своё <span>Фото</span></div>
+      <div class="f-addr">Соборный 21 — <b>50 м от Садовой</b></div>
+      <div class="f-contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        <b>@magnus_photo</b> — Telegram
+      </div>
+      <div class="f-site">svoefoto.ru</div>
+    </div>
+    <div class="f-qr">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" shape-rendering="crispEdges"><path fill="#ffffff" d="M0 0h25v25H0z"/><path stroke="#000000" d="M0 0.5h7m1 0h1m2 0h3m4 0h7M0 1.5h1m5 0h1m1 0h4m2 0h1m3 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h1m2 0h1m1 0h1m4 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m3 0h4m1 0h2m1 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h2m5 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m2 0h2m3 0h1m3 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M9 7.5h1m1 0h1m1 0h1m1 0h2M0 8.5h1m2 0h6m1 0h2m1 0h1m2 0h2m2 0h1m1 0h3M0 9.5h1m1 0h2m1 0h1m1 0h4m1 0h4m1 0h1m1 0h5M1 10.5h1m1 0h5m1 0h2m2 0h1m1 0h1m2 0h2m1 0h1m2 0h1M0 11.5h2m6 0h1m1 0h1m1 0h2m3 0h1m3 0h4M1 12.5h1m2 0h1m1 0h1m1 0h2m2 0h2m1 0h1m2 0h1m5 0h1M0 13.5h1m1 0h1m2 0h1m1 0h3m3 0h4m3 0h1m2 0h1M0 14.5h2m2 0h3m4 0h3m1 0h1m1 0h1m2 0h5M0 15.5h1m1 0h1m1 0h2m2 0h1m1 0h2m3 0h1m1 0h1m1 0h1m1 0h2m1 0h1M0 16.5h1m2 0h1m2 0h3m5 0h1m1 0h5m1 0h2M8 17.5h7m1 0h1m3 0h1m1 0h2M0 18.5h7m1 0h1m2 0h1m4 0h1m1 0h1m1 0h1m3 0h1M0 19.5h1m5 0h1m1 0h1m3 0h1m1 0h3m3 0h1m2 0h1M0 20.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h9m3 0h1M0 21.5h1m1 0h3m1 0h1m1 0h3m3 0h1m2 0h2m4 0h2M0 22.5h1m1 0h3m1 0h1m2 0h2m1 0h1m1 0h1m2 0h1m2 0h5M0 23.5h1m5 0h1m2 0h2m3 0h1m3 0h3m1 0h3M0 24.5h7m1 0h2m3 0h2m1 0h1m1 0h1m2 0h1m2 0h1"/></svg>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</body>
+</html>

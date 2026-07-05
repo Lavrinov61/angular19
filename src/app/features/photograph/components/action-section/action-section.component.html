@@ -1,0 +1,115 @@
+<section class="action-section">
+  <!-- Decorative floating elements -->
+  <div class="decorative-element element-1"></div>
+  <div class="decorative-element element-2"></div>
+  <div class="decorative-element element-3"></div>
+  
+  <div class="action-container">
+    <div class="cta-content">
+      <h2 class="cta-title">{{photographer().ctaTitle}}</h2>
+      <p class="cta-subtitle">{{photographer().ctaSubtitle}}</p>
+      
+      <div class="cta-buttons">
+        <button mat-raised-button color="primary" class="book-button" (click)="bookNow()">
+          <mat-icon>calendar_today</mat-icon>
+          Забронировать съемку
+        </button>
+        
+        <a mat-stroked-button color="accent" [href]="'mailto:' + photographer().contactInfo.email" class="contact-button">
+          <mat-icon>email</mat-icon>
+          Написать сообщение
+        </a>
+      </div>
+    </div>
+    
+    <div class="contact-details">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Контактная информация</mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <div class="contact-item">
+            <mat-icon>phone</mat-icon>
+            <a [href]="'tel:' + photographer().contactInfo.phone">{{photographer().contactInfo.phone}}</a>
+          </div>
+          
+          <div class="contact-item">
+            <mat-icon>email</mat-icon>
+            <a [href]="'mailto:' + photographer().contactInfo.email">{{photographer().contactInfo.email}}</a>
+          </div>
+          
+          @if (photographer().location) {
+            <div class="contact-item">
+              <mat-icon>location_on</mat-icon>
+              <span>{{photographer().location}}</span>
+            </div>
+          }
+          
+          @if (photographer().workingHours) {
+            <div class="contact-item">
+              <mat-icon>schedule</mat-icon>
+              <span>{{photographer().workingHours}}</span>
+            </div>
+          }
+
+          <div class="social-links">
+            @if (photographer().contactInfo.telegram) {
+              <a
+                 [href]="getSocialLink('telegram', photographer().contactInfo.telegram)"
+                 target="_blank"
+                 matTooltip="Telegram">
+                <mat-icon svgIcon="channel-telegram" />
+              </a>
+            }
+
+            @if (photographer().contactInfo.whatsapp) {
+              <a class="social-link social-link--whatsapp"
+                 [href]="getSocialLink('whatsapp', photographer().contactInfo.whatsapp)"
+                 target="_blank"
+                 rel="noopener"
+                 [attr.aria-label]="whatsappAriaLabel()"
+                 [matTooltip]="whatsappAriaLabel()">
+                <mat-icon svgIcon="channel-whatsapp" />
+              </a>
+            }
+            
+            @if (photographer().contactInfo.instagram) {
+              <a 
+                 [href]="getSocialLink('instagram', photographer().contactInfo.instagram)" 
+                 target="_blank" 
+                 matTooltip="Instagram">
+                <mat-icon>photo_camera</mat-icon>
+              </a>
+            }
+
+            @if (photographer().contactInfo.whatsapp && whatsappNotice()) {
+              <span class="social-warning">{{ whatsappUnavailableText() }}</span>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  
+  @if (photographer().languages && photographer().languages.length > 0) {
+    <div class="languages-container">
+    <div class="languages">
+      <mat-icon>translate</mat-icon>
+      <span>Языки: </span>
+      <span class="language-list">{{photographer().languages.join(', ')}}</span>
+    </div>
+    </div>
+  }
+</section>
+
+  
+  @if (photographer().languages && photographer().languages.length > 0) {
+    <div class="languages-container">
+    <div class="languages">
+      <mat-icon>translate</mat-icon>
+      <span>Языки: </span>
+      <span class="language-list">{{photographer().languages.join(', ')}}</span>
+    </div>
+    </div>
+  }

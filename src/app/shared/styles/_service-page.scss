@@ -1,0 +1,521 @@
+// Shared Service Page Styles — Editorial Bold Dark Theme
+// @use in each service page SCSS: @use '../../shared/styles/service-page' as sp;
+// Then: @include sp.page-base; @include sp.hero; etc.
+
+// ===== Page base =====
+@mixin page-base {
+  overflow-x: clip;
+  max-width: 100vw;
+
+  .section-container {
+    max-width: var(--ed-content-width, 1200px);
+    margin: 0 auto;
+    padding: 0 16px;
+    @media (min-width: 840px) { padding: 0 32px; }
+    @media (min-width: 1600px) { padding: 0 48px; }
+    @media (min-width: 1920px) { padding: 0 64px; }
+  }
+
+  .section-title {
+    font-family: var(--ed-font-display, 'Oswald', sans-serif);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--ed-on-surface, #f5f5f5);
+    @media (min-width: 1600px) { font-size: 3.5rem; }
+    @media (min-width: 2560px) { font-size: 4.5rem; }
+  }
+
+  .section-subtitle {
+    text-align: center;
+    color: var(--ed-on-surface-variant, #a0a0a0);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
+
+// ===== Hero Section =====
+@mixin hero {
+  .hero-section {
+    background: var(--ed-surface, #0a0a0a);
+    color: var(--ed-on-surface, #f5f5f5);
+    padding: 48px 16px;
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    @media (min-width: 840px) { padding: 80px 32px; }
+
+    // Subtle gradient overlay
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, color-mix(in srgb, var(--ed-accent) 6%, transparent) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      max-width: var(--ed-content-width, 1200px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      text-align: center;
+      width: 100%;
+      position: relative;
+
+      @media (min-width: 840px) {
+        grid-template-columns: 1fr 1fr;
+        text-align: left;
+        gap: 48px;
+      }
+    }
+
+    .hero-text {
+      .hero-title {
+        font-family: var(--ed-font-display, 'Oswald', sans-serif);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        text-transform: uppercase;
+        line-height: 0.95;
+        margin-bottom: 16px;
+
+        .highlight { color: var(--ed-accent, #f59e0b); }
+      }
+
+      .hero-subtitle {
+        margin-bottom: 24px;
+        color: var(--ed-on-surface-variant, rgba(255, 255, 255, 0.7));
+        line-height: 1.6;
+      }
+
+      .hero-benefits {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+
+        .benefit-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          justify-content: center;
+          color: var(--ed-on-surface-variant, rgba(255, 255, 255, 0.8));
+
+          mat-icon { color: var(--ed-accent, #f59e0b); }
+
+          @media (min-width: 840px) { justify-content: flex-start; }
+        }
+      }
+
+      .hero-cta {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+
+        @media (min-width: 840px) { align-items: flex-start; }
+
+        .price-info {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          @media (min-width: 840px) { align-items: flex-start; }
+
+          .price {
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--ed-accent, #f59e0b);
+          }
+
+          .price-note {
+            font-size: 0.85rem;
+            color: var(--ed-on-surface-muted, rgba(255, 255, 255, 0.5));
+          }
+        }
+      }
+    }
+
+    .hero-image {
+      display: flex;
+      justify-content: center;
+
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: var(--ed-border-radius-lg, 16px);
+        box-shadow: var(--ed-shadow-lg, 0 8px 32px rgba(0, 0, 0, 0.5));
+      }
+    }
+  }
+}
+
+// ===== Services Grid Section =====
+@mixin services-grid {
+  .services-section {
+    padding: 48px 16px;
+    background: var(--ed-surface-container, #1a1a1a);
+
+    @media (min-width: 840px) { padding: 80px 32px; }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 24px;
+
+      @media (min-width: 600px) { grid-template-columns: repeat(2, 1fr); }
+      @media (min-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+      @media (min-width: 1600px) { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .service-card {
+      background: var(--ed-surface-container-high, #222222);
+      padding: 24px;
+      border-radius: var(--ed-border-radius-md, 12px);
+      text-align: center;
+      border: 1px solid var(--ed-outline-variant, transparent);
+      transition: border-color 300ms, transform 300ms;
+
+      &:hover {
+        border-color: var(--ed-accent, #f59e0b);
+        transform: translateY(-2px);
+      }
+
+      .service-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 12px;
+        background: var(--ed-accent-container, rgba(245, 158, 11, 0.12));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon { color: var(--ed-accent, #f59e0b); }
+      }
+
+      .service-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--ed-on-surface, #f5f5f5);
+      }
+
+      .service-description {
+        color: var(--ed-on-surface-variant, #a0a0a0);
+        margin-bottom: 16px;
+        font-size: 0.875rem;
+      }
+
+      .service-specs {
+        margin-bottom: 16px;
+
+        .spec-item {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 6px;
+          font-size: 0.875rem;
+
+          .spec-label { color: var(--ed-on-surface-variant, #a0a0a0); }
+          .spec-value { font-weight: 600; color: var(--ed-on-surface, #f5f5f5); }
+        }
+      }
+
+      .service-price {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--ed-accent, #f59e0b);
+
+        .price-unit {
+          font-size: 0.875rem;
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}
+
+// ===== Process Section =====
+@mixin process {
+  .process-section {
+    padding: 48px 16px;
+    background: var(--ed-surface-dim, #111111);
+
+    @media (min-width: 840px) { padding: 80px 32px; }
+
+    .process-steps {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .step-item {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 20px;
+      background: var(--ed-surface-container, #1a1a1a);
+      border-radius: var(--ed-border-radius-md, 12px);
+      border: 1px solid var(--ed-outline-variant, transparent);
+      text-align: center;
+
+      @media (min-width: 840px) {
+        grid-template-columns: 60px 1fr 60px;
+        gap: 24px;
+        align-items: center;
+        text-align: left;
+      }
+
+      .step-number {
+        width: 48px;
+        height: 48px;
+        background: var(--ed-accent, #f59e0b);
+        color: var(--ed-on-accent, #0a0a0a);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        justify-self: center;
+      }
+
+      .step-content {
+        .step-title {
+          font-weight: 600;
+          margin-bottom: 6px;
+          color: var(--ed-on-surface, #f5f5f5);
+        }
+
+        .step-description {
+          color: var(--ed-on-surface-variant, #a0a0a0);
+          font-size: 0.875rem;
+        }
+      }
+
+      .step-icon {
+        justify-self: center;
+        mat-icon { color: var(--ed-accent, #f59e0b); }
+      }
+    }
+  }
+}
+
+// ===== Advantages Section =====
+@mixin advantages {
+  .advantages-section {
+    padding: 48px 16px;
+    background: var(--ed-surface-container, #1a1a1a);
+
+    @media (min-width: 840px) { padding: 80px 32px; }
+
+    .advantages-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-top: 24px;
+
+      @media (min-width: 600px) { grid-template-columns: repeat(2, 1fr); }
+      @media (min-width: 1024px) { grid-template-columns: repeat(3, 1fr); }
+      @media (min-width: 1600px) { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .advantage-card {
+      background: var(--ed-surface-container-high, #222222);
+      padding: 24px;
+      border-radius: var(--ed-border-radius-md, 12px);
+      text-align: center;
+      border: 1px solid var(--ed-outline-variant, transparent);
+      transition: border-color 300ms;
+
+      &:hover { border-color: var(--ed-accent, #f59e0b); }
+
+      .advantage-icon {
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 12px;
+        background: var(--ed-accent-container, rgba(245, 158, 11, 0.12));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon { color: var(--ed-accent, #f59e0b); }
+      }
+
+      .advantage-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--ed-on-surface, #f5f5f5);
+      }
+
+      .advantage-description {
+        color: var(--ed-on-surface-variant, #a0a0a0);
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+// ===== Requirements Section =====
+@mixin requirements {
+  .requirements-section {
+    padding: 48px 16px;
+    background: var(--ed-surface-dim, #111111);
+
+    @media (min-width: 840px) { padding: 80px 32px; }
+
+    .requirements-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-top: 24px;
+
+      @media (min-width: 840px) {
+        grid-template-columns: 1fr 1fr;
+        align-items: center;
+      }
+    }
+
+    .requirements-list {
+      h3 { margin-bottom: 16px; color: var(--ed-on-surface, #f5f5f5); }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 24px;
+
+        li {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          margin-bottom: 12px;
+          color: var(--ed-on-surface-variant, #a0a0a0);
+
+          mat-icon { color: var(--ed-accent, #f59e0b); flex-shrink: 0; }
+        }
+      }
+
+      .help-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px;
+        background: var(--ed-accent-container, rgba(245, 158, 11, 0.08));
+        border-radius: var(--ed-border-radius-sm, 8px);
+        border: 1px solid var(--ed-outline-variant, transparent);
+
+        mat-icon { color: var(--ed-accent, #f59e0b); }
+        span { color: var(--ed-on-accent-container, #fef3c7); font-size: 0.875rem; }
+      }
+    }
+
+    .requirements-image img {
+      width: 100%;
+      height: auto;
+      border-radius: var(--ed-border-radius-lg, 16px);
+      box-shadow: var(--ed-shadow-md, 0 4px 16px rgba(0, 0, 0, 0.4));
+    }
+  }
+}
+
+// ===== Testimonials & FAQ =====
+@mixin testimonials-faq {
+  .testimonials-section {
+    padding: 48px 16px;
+    background: var(--ed-surface-container, #1a1a1a);
+    @media (min-width: 840px) { padding: 80px 32px; }
+  }
+
+  .faq-section {
+    padding: 48px 16px;
+    background: var(--ed-surface-dim, #111111);
+    @media (min-width: 840px) { padding: 80px 32px; }
+
+    .faq-accordion { margin-top: 24px; }
+  }
+}
+
+// ===== CTA Section =====
+@mixin cta {
+  .cta-section {
+    padding: 48px 16px;
+    background: var(--ed-surface-container-high, #222222);
+    color: var(--ed-on-surface, #f5f5f5);
+    text-align: center;
+    border-top: 1px solid var(--ed-outline-variant, transparent);
+    border-bottom: 1px solid var(--ed-outline-variant, transparent);
+
+    @media (min-width: 840px) { padding: 80px 32px; }
+
+    .cta-content {
+      max-width: 700px;
+      margin: 0 auto;
+
+      .cta-title {
+        font-family: var(--ed-font-display, 'Oswald', sans-serif);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+      }
+
+      .cta-subtitle {
+        margin-bottom: 24px;
+        color: var(--ed-on-surface-variant, rgba(255, 255, 255, 0.7));
+      }
+
+      .cta-benefits {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+
+        @media (min-width: 840px) { flex-direction: row; gap: 24px; }
+
+        .cta-benefit {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: var(--ed-on-surface-variant, rgba(255, 255, 255, 0.8));
+
+          mat-icon { color: var(--ed-accent, #f59e0b); }
+        }
+      }
+
+      .cta-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 24px;
+        flex-direction: column;
+        align-items: center;
+
+        @media (min-width: 840px) { flex-direction: row; align-items: stretch; }
+      }
+
+      .cta-urgency {
+        font-weight: 600;
+        margin: 0;
+        color: var(--ed-accent, #f59e0b);
+      }
+    }
+  }
+}
+
+// ===== All common mixins at once =====
+@mixin all {
+  @include page-base;
+  @include hero;
+  @include services-grid;
+  @include process;
+  @include advantages;
+  @include testimonials-faq;
+  @include cta;
+}

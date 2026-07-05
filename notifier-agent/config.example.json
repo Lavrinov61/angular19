@@ -1,0 +1,17 @@
+{
+  "serverUrl": "http://10.200.0.10:3000",
+  "socketPath": "/socket.io/",
+  "agentId": "soborny-pult-01",
+  "studioId": "11111111-1111-4111-8111-111111111111",
+  "userId": null,
+  "token": "PUT_RANDOM_MACHINE_TOKEN_HERE",
+  "requirePrivateServerUrl": true,
+  "heartbeatIntervalMs": 30000,
+  "sound": {
+    "enabled": true,
+    "macosSound": "/System/Library/Sounds/Glass.aiff"
+  },
+  "toast": {
+    "enabled": true
+  }
+}

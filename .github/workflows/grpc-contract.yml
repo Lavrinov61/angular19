@@ -1,0 +1,32 @@
+name: gRPC Contract
+
+on:
+  push:
+    paths:
+      - 'proto/**'
+      - 'svf-gateway/**'
+      - 'scripts/grpc-*.sh'
+      - '.github/workflows/grpc-contract.yml'
+  pull_request:
+    paths:
+      - 'proto/**'
+      - 'svf-gateway/**'
+      - 'scripts/grpc-*.sh'
+      - '.github/workflows/grpc-contract.yml'
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: bufbuild/buf-setup-action@v1
+
+      - name: Install Rust toolchain
+        run: rustup toolchain install stable --profile minimal
+
+      - name: Run gRPC contract checks
+        env:
+          GRPC_CONTRACT_BASELINE: ${{ vars.GRPC_CONTRACT_BASELINE }}
+        run: scripts/grpc-contract-check.sh

@@ -1,0 +1,108 @@
+<div class="sod-root">
+  <!-- Header -->
+  <div class="sod-header">
+    <div class="sod-header-left">
+      <div class="sod-header-icon">
+        <mat-icon>{{ headerIcon() }}</mat-icon>
+      </div>
+      <div>
+        <div class="sod-title">{{ title() }}</div>
+        <div class="sod-subtitle">{{ data.clientName || 'Клиент' }}</div>
+      </div>
+    </div>
+    <button class="sod-close" (click)="cancel()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="sod-loading">
+      <mat-spinner diameter="36" />
+    </div>
+  }
+
+  <!-- Error -->
+  @if (error()) {
+    <div class="sod-error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error() }}</span>
+      <button mat-button (click)="loadPlans()">Повторить</button>
+    </div>
+  }
+
+  <!-- Step: Select -->
+  @if (!loading() && !error() && step() === 'select') {
+    <!-- Category chips -->
+    <app-offer-category-chips
+      [categories]="availableCategories()"
+      [selectedCategory]="selectedCategory()"
+      (categorySelected)="selectCategory($event)"
+    />
+
+    <!-- Plans grid -->
+    @if (filteredPlans().length > 0) {
+      <div class="sod-plans-grid">
+        @for (plan of filteredPlans(); track plan.id) {
+          <app-offer-plan-card
+            [plan]="plan"
+            [selected]="selectedPlan()?.id === plan.id"
+            [mode]="mode()"
+            (planSelected)="selectPlan($event)"
+          />
+        }
+      </div>
+    } @else {
+      <div class="sod-empty">
+        <mat-icon>subscriptions</mat-icon>
+        <p>Нет планов в этой категории</p>
+      </div>
+    }
+
+    <!-- Continue button -->
+    @if (selectedPlan()) {
+      <div class="sod-actions">
+        <button
+          mat-flat-button
+          class="sod-btn-continue"
+          (click)="step.set('preview')"
+        >
+          Предпросмотр
+          <mat-icon>arrow_forward</mat-icon>
+        </button>
+      </div>
+    }
+  }
+
+  <!-- Step: Preview -->
+  @if (step() === 'preview' && selectedPlan()) {
+    <div class="sod-preview-step">
+      <button class="sod-back" (click)="step.set('select')">
+        <mat-icon>arrow_back</mat-icon>
+        Назад к выбору
+      </button>
+
+      <app-offer-message-preview
+        [plan]="selectedPlan()!"
+        [clientName]="data.clientName"
+        [mode]="mode()"
+      />
+
+      <div class="sod-actions">
+        <button
+          mat-flat-button
+          class="sod-btn-send"
+          [disabled]="sending()"
+          (click)="sendOffer()"
+        >
+          @if (sending()) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>send</mat-icon>
+          }
+          {{ sendLabel() }}
+        </button>
+      </div>
+    </div>
+  }
+</div>

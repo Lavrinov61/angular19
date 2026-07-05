@@ -1,0 +1,257 @@
+@use './styles/fonts.scss';
+@use './styles/theme.scss';
+@use './styles/token-compatibility.scss';
+@use './styles/token-compatibility-extended.scss';
+@use './styles/editorial-tokens.scss';
+@use './styles/crm-tokens.scss';
+@use './styles/m3e-tokens.scss';
+@use './styles/status-chips.scss';
+@use './app/shared/styles/editorial-animations';
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; width: 100%; overflow-x: clip; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+// Fix: Angular Material sidenav не обновляет margin-left при динамическом изменении ширины.
+// Перехватываем управление через CSS-переменную --app-sidenav-width.
+.mat-drawer-side ~ .mat-drawer-content {
+  margin-left: var(--app-sidenav-width, 0px) !important;
+  transition: margin-left 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// ══════════════════════════════════════════════════
+// Menu panel styles (CDK overlay — requires global scope)
+// Editorial dark theme: #1a1a1a surface, #f59e0b accent
+// ══════════════════════════════════════════════════
+
+// ── Shared mat-menu panel overrides ──
+.notification-menu,
+.user-menu {
+  &.mat-mdc-menu-panel {
+    background: #1a1a1a !important;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+    min-width: 300px;
+
+    // Dark scrollbar
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a3a #1a1a1a;
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 3px; }
+  }
+
+  // Menu items — editorial hover
+  .mat-mdc-menu-item {
+    color: #a0a0a0 !important;
+    border-radius: 8px;
+    margin: 2px 8px;
+
+    &:hover {
+      background: rgba(245, 158, 11, 0.08) !important;
+      color: #f5f5f5 !important;
+    }
+
+    .mat-icon { color: #a0a0a0; }
+    &:hover .mat-icon { color: #f5f5f5; }
+  }
+
+  .mat-mdc-menu-content { padding: 8px 0 !important; }
+  mat-divider { border-top-color: #2a2a2a !important; margin: 4px 16px !important; }
+}
+
+.notification-menu {
+  .notification-list {
+    max-height: calc(80vh - 160px);
+    overflow-y: auto;
+    padding: 0 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a3a transparent;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: #3a3a3a; border-radius: 2px; }
+  }
+  .notification-item {
+    display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 8px; margin: 4px 0;
+    &.unread { background-color: rgba(245, 158, 11, 0.08); border-left: 3px solid #f59e0b; }
+    &:hover { background-color: rgba(255, 255, 255, 0.04); }
+  }
+  .notification-icon { flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 2px; color: #a0a0a0; }
+  .notification-content { flex: 1; min-width: 0; }
+  .notification-title, .notification-message { overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; }
+  .notification-title { color: #f5f5f5; margin-bottom: 4px; font-weight: 500; }
+  .notification-message { color: #a0a0a0; margin-bottom: 6px; font-size: 13px; }
+  .notification-time { color: #666666; font-size: 12px; }
+  .notification-actions { flex-shrink: 0; }
+  .no-notifications { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 32px 16px; color: #666666;
+    mat-icon { color: #3a3a3a; font-size: 32px; width: 32px; height: 32px; }
+  }
+  .notification-header {
+    display: flex; align-items: center; justify-content: space-between; padding: 16px;
+    h3 { color: #f5f5f5; font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0; }
+    .mark-all-read-btn { color: #f59e0b; }
+  }
+  .view-all-btn {
+    color: #f59e0b !important;
+    &:hover { color: #fbbf24 !important; background: rgba(245, 158, 11, 0.08) !important; }
+    .mat-icon { color: #f59e0b !important; }
+  }
+}
+
+.user-menu {
+  .user-info, .guest-info { display: flex; align-items: center; gap: 16px; padding: 16px; background-color: #222222; border-radius: 12px; margin: 8px; }
+  .user-details { flex: 1; min-width: 0; }
+  .user-name { color: #f5f5f5; margin-bottom: 4px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-email, .user-message { color: #a0a0a0; font-size: 13px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; }
+  .user-icon-large { color: #f59e0b !important; }
+  .role-badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 11px;
+    &.admin { background-color: rgba(239, 68, 68, 0.15); color: #ef4444; }
+    &.employee { background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+    &.client { background-color: rgba(34, 197, 94, 0.15); color: #22c55e; }
+  }
+  .mdc-list-item { border-radius: 8px; margin: 2px 0;
+    &.logout-item { color: #ef4444 !important; .mat-icon { color: #ef4444 !important; }
+      &:hover { background-color: rgba(239, 68, 68, 0.1) !important; color: #f87171 !important; .mat-icon { color: #f87171 !important; } }
+    }
+  }
+  .menu-badge { display: inline-flex; align-items: center; justify-content: center; margin-left: auto; background-color: #ef4444; color: #fff; border-radius: 50%; min-width: 20px; height: 20px; padding: 0 4px; font-size: 11px; }
+}
+
+// Snackbar styles (CDK overlay — requires global scope)
+.success-snackbar { background: var(--mat-sys-tertiary-container); color: var(--mat-sys-on-tertiary-container); }
+.error-snackbar { background: var(--mat-sys-error-container); color: var(--mat-sys-on-error-container); }
+
+// Toast service styles — CRM-aware (CDK overlay)
+html.crm-active {
+  .toast-success .mdc-snackbar__surface { background: rgba(52, 211, 153, 0.15) !important; color: #34d399 !important; }
+  .toast-error .mdc-snackbar__surface { background: rgba(248, 113, 113, 0.15) !important; color: #f87171 !important; }
+  .toast-info .mdc-snackbar__surface { background: rgba(96, 165, 250, 0.15) !important; color: #60a5fa !important; }
+  .toast-warning .mdc-snackbar__surface { background: rgba(251, 191, 36, 0.15) !important; color: #fbbf24 !important; }
+  .toast-success, .toast-error, .toast-info, .toast-warning {
+    .mdc-snackbar__label { color: inherit !important; }
+    .mat-mdc-snack-bar-action { color: rgba(255,255,255,0.7) !important; }
+  }
+}
+// Toast service styles — public site fallback
+html:not(.crm-active) {
+  .toast-success .mdc-snackbar__surface { background: #1b5e20 !important; color: #fff !important; }
+  .toast-error .mdc-snackbar__surface { background: #b71c1c !important; color: #fff !important; }
+  .toast-info .mdc-snackbar__surface { background: #0d47a1 !important; color: #fff !important; }
+  .toast-warning .mdc-snackbar__surface { background: #e65100 !important; color: #fff !important; }
+  .toast-success, .toast-error, .toast-info, .toast-warning {
+    .mdc-snackbar__label { color: #fff !important; }
+    .mat-mdc-snack-bar-action { color: rgba(255,255,255,0.9) !important; }
+  }
+}
+
+// ══════════════════════════════════════════════════
+// CRM unified popup/dialog/tooltip styles
+// Dark theme: #1a1a1a surface, amber accent
+// ══════════════════════════════════════════════════
+
+html.crm-active {
+  // ── MatDialog — dark glass surface ──
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background: #1a1a1a !important;
+    border: 1px solid #2a2a2a;
+    border-radius: 16px !important;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6) !important;
+    color: #f5f5f5;
+  }
+  .mat-mdc-dialog-title { color: #f5f5f5 !important; font-family: 'Oswald', sans-serif !important; }
+  .mat-mdc-dialog-content { color: #a0a0a0 !important; }
+  .mat-mdc-dialog-actions {
+    .mat-mdc-button:not(.mat-primary):not(.mat-accent):not(.mat-warn) {
+      color: #a0a0a0 !important;
+    }
+  }
+  .print-fullscreen-dialog-panel,
+  .print-dialog-panel,
+  .batch-print-dialog-panel,
+  .document-set-print-dialog-panel,
+  .payment-dialog-panel {
+    width: calc(100vw - 8px) !important;
+    max-width: 100vw !important;
+    height: calc(100vh - 8px) !important;
+    max-height: 100vh !important;
+
+    .mat-mdc-dialog-container,
+    .mdc-dialog__container,
+    .mdc-dialog__surface {
+      height: 100%;
+      max-height: inherit;
+    }
+
+    .mdc-dialog__surface {
+      overflow: hidden;
+      border-radius: 12px !important;
+    }
+  }
+
+  .workday-dialog-panel {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+
+    .mdc-dialog__surface {
+      border: none !important;
+      border-radius: 0 !important;
+    }
+  }
+
+  // ── Светлый confirm-диалог (перебивает тёмный crm-active surface) ──
+  .sf-confirm-dialog-panel {
+    .mdc-dialog__surface {
+      background: #ffffff !important;
+      border: 1px solid #ececec !important;
+      border-radius: 18px !important;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.18) !important;
+      color: #1a1a1a !important;
+    }
+  }
+
+  // ── MatMenu — consistent dark panel for ALL menus ──
+  .mat-mdc-menu-panel {
+    background: #1a1a1a !important;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+  .mat-mdc-menu-content { padding: 4px 0 !important; }
+  .mat-mdc-menu-item {
+    color: #e0e0e0 !important;
+    &:hover { background: rgba(245, 158, 11, 0.08) !important; color: #f5f5f5 !important; }
+    .mat-icon { color: #a0a0a0; }
+    &:hover .mat-icon { color: #f5f5f5; }
+  }
+
+  // ── MatTooltip — dark theme ──
+  .mat-mdc-tooltip .mdc-tooltip__surface {
+    background: #2a2a2a !important;
+    color: #f5f5f5 !important;
+    border-radius: 8px !important;
+    font-size: 12px !important;
+    border: 1px solid #3a3a3a;
+  }
+
+  // ── Staff Chat Toast ──
+  .staff-chat-toast {
+    .mdc-snackbar__surface {
+      background: #1a1a1a !important;
+      border: 1px solid rgba(245, 158, 11, 0.3) !important;
+      border-radius: 12px !important;
+      max-width: 420px !important;
+    }
+    .mdc-snackbar__label {
+      color: #f0f0f0 !important;
+      font-size: 13px !important;
+      line-height: 1.4 !important;
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+    }
+    .mat-mdc-snack-bar-action {
+      color: #f59e0b !important;
+      font-weight: 600 !important;
+    }
+  }
+}

@@ -1,0 +1,183 @@
+<div class="alfa-testimonials-page">
+  <section class="reviews-hero">
+    <div class="reviews-shell reviews-hero__grid">
+      <div class="reviews-hero__copy">
+        <a class="hero-rating" href="#reviews-list" aria-label="Перейти к отзывам клиентов">
+          <span class="hero-rating__stars" aria-hidden="true">
+            @for (star of stars; track star) {
+              <mat-icon>star</mat-icon>
+            }
+          </span>
+          <span>{{ data().overallRating }} по отзывам клиентов</span>
+        </a>
+
+        <h1>Отзывы о Своём Фото</h1>
+        <p class="reviews-hero__lead">
+          Клиенты сами рассказывают, как прошли фото на документы, печать, ретушь
+          и визит в студию. Мы не покупаем оценки и оставляем ссылки на источники.
+        </p>
+
+        <div class="reviews-hero__actions">
+          <a mat-flat-button class="primary-action" href="https://yandex.ru/maps/-/CHaIjZP9" target="_blank" rel="noopener">
+            <mat-icon>rate_review</mat-icon>
+            Оставить отзыв
+          </a>
+          <a mat-flat-button class="secondary-action" routerLink="/booking">
+            <mat-icon>event_available</mat-icon>
+            Записаться
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-proof" aria-label="Показатели доверия">
+        <div class="hero-proof__card hero-proof__card--rating">
+          <span class="hero-proof__eyebrow">Средний рейтинг</span>
+          <strong>{{ data().overallRating }}</strong>
+          <span class="hero-proof__stars" aria-hidden="true">
+            @for (star of stars; track star) {
+              <mat-icon>star</mat-icon>
+            }
+          </span>
+        </div>
+
+        <div class="hero-proof__card hero-proof__card--reviews">
+          <span class="hero-proof__eyebrow">Всего отзывов</span>
+          <strong>{{ data().reviewCount }}</strong>
+          <span>на картах и в сервисах</span>
+        </div>
+
+        <div class="hero-proof__note">
+          <mat-icon>verified</mat-icon>
+          <span>Проверяемые источники: Яндекс и 2ГИС</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="reviews-stage">
+    <section class="proof-section">
+      <div class="reviews-shell">
+        <div class="proof-panel">
+          <div class="proof-panel__header">
+            <span class="section-kicker">Доверие без накрутки</span>
+            <h2>Показываем отзывы так, чтобы их можно было проверить</h2>
+          </div>
+
+          <div class="proof-panel__cards">
+            @for (card of proofCards; track card.label) {
+              <article class="proof-card">
+                <span class="proof-card__icon">
+                  <mat-icon>{{ card.icon }}</mat-icon>
+                </span>
+                <strong>{{ card.value }}</strong>
+                <h3>{{ card.label }}</h3>
+                <p>{{ card.description }}</p>
+              </article>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sources-section" aria-labelledby="sources-title">
+      <div class="reviews-shell sources-section__grid">
+        <div class="sources-section__copy">
+          <span class="section-kicker">Источники</span>
+          <h2 id="sources-title">Проверьте отзывы на картах</h2>
+          <p>
+            Каждая кнопка ведёт на публичную страницу площадки. Можно открыть рейтинг,
+            свежие записи и адрес конкретной студии.
+          </p>
+        </div>
+
+        <div class="source-cards">
+          @for (platform of platforms(); track platform.url; let i = $index) {
+            <a
+              class="source-card source-card--{{ i + 1 }}"
+              [href]="platform.url"
+              target="_blank"
+              rel="noopener">
+              <span class="source-card__icon">
+                <mat-icon>{{ platform.icon }}</mat-icon>
+              </span>
+              <span class="source-card__body">
+                <strong>{{ platform.name }}</strong>
+                <span>Проверить отзывы</span>
+              </span>
+              <mat-icon class="source-card__arrow">arrow_forward</mat-icon>
+            </a>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews-showcase" id="reviews-list" aria-labelledby="reviews-title">
+      <div class="reviews-shell">
+        <div class="reviews-showcase__header">
+          <div>
+            <span class="section-kicker">Голоса клиентов</span>
+            <h2 id="reviews-title">Что пишут после визита</h2>
+          </div>
+          <p>Реальные отзывы за всё время работы студии.</p>
+        </div>
+
+        <div class="reviews-grid">
+          @for (review of testimonials(); track review.id; let i = $index) {
+            <article class="review-card" [class.review-card--spotlight]="i === 0">
+              <div class="review-card__top">
+                <span class="review-card__stars" aria-label="Оценка {{ review.rating }} из 5">
+                  @for (star of stars; track star) {
+                    <mat-icon>star</mat-icon>
+                  }
+                </span>
+                @if (review.source) {
+                  <a class="review-card__source" [href]="review.source.url" target="_blank" rel="noopener">
+                    {{ review.source.name }}
+                    <mat-icon>arrow_outward</mat-icon>
+                  </a>
+                }
+              </div>
+
+              <blockquote>{{ review.content }}</blockquote>
+
+              <footer class="review-card__footer">
+                <div class="review-card__avatar" aria-hidden="true">{{ getInitials(review.author) }}</div>
+                <div>
+                  <cite>{{ review.author }}</cite>
+                  @if (review.service) {
+                    <span>{{ review.service }}</span>
+                  }
+                </div>
+              </footer>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="reviews-cta">
+      <div class="reviews-shell">
+        <div class="reviews-cta__inner">
+          <div>
+            <span class="section-kicker">После визита</span>
+            <h2>Будем рады вашему честному отзыву</h2>
+            <p>
+              Если мы помогли с фото, печатью или ретушью, расскажите о результате
+              на удобной площадке. Это помогает новым клиентам выбрать студию.
+            </p>
+          </div>
+          <div class="reviews-cta__actions">
+            <a mat-flat-button class="primary-action" href="https://yandex.ru/maps/-/CHaIjZP9" target="_blank" rel="noopener">
+              <mat-icon>rate_review</mat-icon>
+              Оставить отзыв
+            </a>
+            <a mat-flat-button class="dark-action" routerLink="/booking">
+              <mat-icon>calendar_month</mat-icon>
+              Записаться онлайн
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>

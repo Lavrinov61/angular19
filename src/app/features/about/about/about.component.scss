@@ -1,0 +1,387 @@
+// About Page — Editorial Bold
+
+.about-page {
+  background: var(--ed-surface, #0a0a0a);
+  color: var(--ed-on-surface, #f5f5f5);
+}
+
+.container {
+  max-width: var(--ed-max-width, 1400px);
+  margin: 0 auto;
+  padding: 0 16px;
+
+  @media (min-width: 600px) { padding: 0 24px; }
+  @media (min-width: 1200px) { padding: 0 40px; }
+}
+
+// ── Hero ──
+.hero {
+  position: relative;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ed-surface-dim, #111);
+  overflow: hidden;
+
+  @media (min-width: 840px) { min-height: 80vh; }
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--ed-surface, #0a0a0a) 0%, transparent 60%);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 16px;
+}
+
+.hero-title {
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: clamp(3rem, 12vw, 8rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
+  margin-bottom: 16px;
+  color: var(--ed-on-surface, #f5f5f5);
+}
+
+.hero-subtitle {
+  font-family: var(--ed-font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  font-weight: 500;
+  color: var(--ed-on-surface-variant, #a0a0a0);
+  margin-bottom: 48px;
+}
+
+.scroll-hint {
+  .mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: var(--ed-on-surface-muted, #666);
+    animation: bounce 2s infinite;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+// ── Philosophy ──
+.philosophy {
+  padding: 100px 0;
+  text-align: center;
+
+  @media (min-width: 840px) { padding: 140px 0; }
+}
+
+.philosophy-statement {
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: clamp(2rem, 8cqw, 5rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ed-on-surface, #f5f5f5);
+  margin-bottom: 32px;
+
+  .accent {
+    color: var(--ed-accent, #f59e0b);
+  }
+}
+
+.philosophy-body {
+  font-family: var(--ed-font-body, 'Plus Jakarta Sans', sans-serif);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--ed-on-surface-variant, #a0a0a0);
+  max-width: 640px;
+  margin: 0 auto;
+
+  strong {
+    color: var(--ed-on-surface, #f5f5f5);
+    font-weight: 600;
+  }
+}
+
+// ── Section Title (reused) ──
+.section-title {
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--ed-on-surface, #f5f5f5);
+  margin-bottom: 48px;
+  text-align: center;
+}
+
+// ── Team ──
+.team {
+  padding: 80px 0;
+  background: var(--ed-surface-dim, #111);
+
+  @media (min-width: 840px) { padding: 100px 0; }
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  @media (min-width: 600px) { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+}
+
+.team-card {
+  display: block;
+  text-decoration: none;
+  text-align: center;
+  padding: 40px 24px;
+  background: var(--ed-surface-container, #1a1a1a);
+  border: 1px solid var(--ed-outline-variant, #2a2a2a);
+  border-radius: var(--ed-border-radius-md, 8px);
+  transition: border-color 200ms, transform 200ms;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--ed-accent, #f59e0b);
+    transform: translateY(-4px);
+  }
+}
+
+.team-photo-placeholder {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--ed-accent-container, #451a03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+
+  .mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: var(--ed-accent, #f59e0b);
+  }
+}
+
+.team-name {
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--ed-on-surface, #f5f5f5);
+  margin-bottom: 4px;
+}
+
+.team-role {
+  font-size: 0.9rem;
+  color: var(--ed-on-surface-muted, #666);
+  margin-bottom: 8px;
+}
+
+.team-tagline {
+  font-size: 0.85rem;
+  color: var(--ed-on-surface-variant, #a0a0a0);
+  font-style: italic;
+  line-height: 1.4;
+  margin-top: 8px;
+}
+
+.team-photo {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 20px;
+}
+
+.team-initials {
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ed-accent, #f59e0b);
+}
+
+// ── Studios ──
+.studios {
+  padding: 80px 0;
+
+  @media (min-width: 840px) { padding: 100px 0; }
+}
+
+.studios-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+
+  @media (min-width: 600px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.studio-card {
+  background: var(--ed-surface-container, #1a1a1a);
+  border: 1px solid var(--ed-outline-variant, #2a2a2a);
+  border-radius: var(--ed-border-radius-md, 8px);
+  overflow: hidden;
+  transition: border-color 200ms;
+
+  &:hover { border-color: var(--ed-accent, #f59e0b); }
+}
+
+.studio-photo-placeholder {
+  height: 180px;
+  background: var(--ed-surface-dim, #111);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: var(--ed-on-surface-muted, #666);
+  }
+}
+
+.studio-info {
+  padding: 24px;
+}
+
+.studio-name {
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ed-on-surface, #f5f5f5);
+  margin-bottom: 12px;
+}
+
+.studio-address,
+.studio-hours {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--ed-on-surface-muted, #666);
+  margin-bottom: 8px;
+
+  .mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--ed-on-surface-muted, #666);
+  }
+}
+
+.studio-route {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ed-accent, #f59e0b);
+  text-decoration: none;
+
+  .mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover { text-decoration: underline; }
+}
+
+// ── Stats ──
+.stats-section {
+  padding: 80px 0;
+  background: var(--ed-surface-dim, #111);
+
+  @media (min-width: 840px) { padding: 100px 0; }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  @media (min-width: 600px) { grid-template-columns: repeat(4, 1fr); gap: 32px; }
+}
+
+.stat-block {
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  font-weight: 800;
+  color: var(--ed-accent, #f59e0b);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--ed-on-surface-muted, #666);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+// ── CTA ──
+.cta-section {
+  padding: 80px 0;
+  background: var(--ed-accent, #f59e0b);
+  text-align: center;
+
+  @media (min-width: 840px) { padding: 100px 0; }
+}
+
+.cta-title {
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--ed-on-accent, #0a0a0a);
+  margin-bottom: 12px;
+}
+
+.cta-subtitle {
+  font-size: 1.05rem;
+  color: var(--ed-on-accent, #0a0a0a);
+  opacity: 0.7;
+  margin-bottom: 32px;
+}
+
+.cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 36px;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 1rem;
+  background: var(--ed-surface, #0a0a0a);
+  color: var(--ed-on-surface, #f5f5f5);
+  text-decoration: none;
+  transition: transform 200ms;
+
+  &:hover { transform: translateY(-2px); }
+}

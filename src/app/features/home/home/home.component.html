@@ -1,0 +1,431 @@
+<div class="home-page">
+  <section class="bank-hero" appScrollReveal>
+    <div class="home-shell hero-grid">
+      <a class="hero-card hero-card--primary" routerLink="/education">
+        <div class="hero-copy">
+          <span class="hero-kicker">Для учащихся и учителей</span>
+          <h1>Печать для учёбы от 3&nbsp;₽</h1>
+          <p>
+            Печатайте конспекты, методички и документы A4 по образовательной цене после подтверждения статуса.
+            Для школьников, студентов, преподавателей и сотрудников учебных заведений.
+          </p>
+          <span class="hero-action">Подключить доступ</span>
+        </div>
+        <span class="hero-main-art" aria-hidden="true">
+          <span class="hero-main-art__shadow"></span>
+          <span class="hero-main-art__ticket hero-main-art__ticket--top">A4 3 ₽</span>
+          <span class="hero-main-art__ticket hero-main-art__ticket--bottom">Учёба</span>
+          <span class="hero-main-art__phone">
+            <span class="hero-main-art__phone-screen">
+              <mat-icon>print</mat-icon>
+            </span>
+          </span>
+          <span class="hero-main-art__card hero-main-art__card--red">A4</span>
+          <span class="hero-main-art__link-card">
+            <mat-icon>school</mat-icon>
+          </span>
+          <span class="hero-main-art__coin hero-main-art__coin--one">3₽</span>
+          <span class="hero-main-art__coin hero-main-art__coin--two">PDF</span>
+        </span>
+      </a>
+
+      <a class="hero-card hero-card--side hero-card--sky" routerLink="/foto-na-document">
+        <span class="hero-card__title">Фото на документы</span>
+        <span class="hero-mini-art" aria-hidden="true">
+          <span class="hero-mini-art__sheet"></span>
+          <span class="hero-mini-art__circle"></span>
+          <mat-icon>badge</mat-icon>
+        </span>
+      </a>
+
+      <a class="hero-card hero-card--side hero-card--blue" routerLink="/pechat-foto">
+        <span class="hero-card__title">Печать фото</span>
+        <span class="hero-mini-art hero-mini-art--dark" aria-hidden="true">
+          <span class="hero-mini-art__sheet"></span>
+          <span class="hero-mini-art__circle"></span>
+          <mat-icon>photo_library</mat-icon>
+        </span>
+      </a>
+
+      <a class="hero-card hero-card--wide hero-card--peach" routerLink="/restavratsiya-foto">
+        <span class="hero-card__title">Ретушь и реставрация старых фото</span>
+        <span class="hero-wide-art" aria-hidden="true">
+          <span class="hero-wide-art__page"></span>
+          <span class="hero-wide-art__page"></span>
+          <mat-icon>auto_fix_high</mat-icon>
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <section class="white-stage" appScrollReveal>
+    <div class="home-shell">
+      <div class="section-head">
+        <h2>Выбирайте нужное</h2>
+        <div class="segmented" role="tablist" aria-label="Фильтр услуг">
+          @for (tab of audienceTabs; track tab.id) {
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="activeAudienceId() === tab.id"
+              [class.active]="activeAudienceId() === tab.id"
+              (click)="selectAudience(tab.id)"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="product-grid">
+        @for (card of visibleProductCards(); track card.title) {
+          <a [class]="'product-card product-card--' + card.tone" [routerLink]="card.link">
+            <span class="product-card__copy">
+              <strong>{{ card.title }}</strong>
+              <small>{{ card.subtitle }}</small>
+            </span>
+            <span class="product-card__visual" aria-hidden="true">
+              <span class="product-card__plate"></span>
+              <span class="product-card__disc product-card__disc--one"></span>
+              <span class="product-card__disc product-card__disc--two"></span>
+              <span class="product-card__icon">
+                <mat-icon>{{ card.icon }}</mat-icon>
+              </span>
+            </span>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="calculator-section" appScrollReveal>
+    <div class="home-shell">
+      <div class="section-head">
+        <h2>Выберите, что нужно сделать</h2>
+        <div class="segmented" role="tablist" aria-label="Калькулятор услуг">
+          @for (tab of calculatorTabs; track tab.id) {
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="activeCalculatorId() === tab.id"
+              [class.active]="activeCalculatorId() === tab.id"
+              (click)="selectCalculator(tab.id)"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="calc-card">
+        <div class="calc-controls">
+          <label>
+            <span>{{ activeCalculator().inputLabel }}</span>
+            <strong>{{ activeCalculator().amount }}</strong>
+            <small>{{ activeCalculator().helper }}</small>
+          </label>
+
+          <div class="chip-grid" aria-label="Варианты услуги">
+            @for (term of activeCalculator().terms; track term) {
+              <button type="button" [class.active]="term === activeCalculator().selectedTerm">{{ term }}</button>
+            }
+          </div>
+
+          <div class="switch-list">
+            @for (option of activeCalculator().options; track option.label) {
+              <div class="switch-row">
+                <span class="fake-switch" [class.enabled]="option.enabled"></span>
+                <span>{{ option.label }}</span>
+                <mat-icon>info</mat-icon>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="calc-offer">
+          <h3>{{ activeCalculator().offerTitle }}</h3>
+          <div class="offer-table">
+            <div class="offer-row offer-row--head">
+              <span>Печать</span>
+              @for (column of activeCalculator().columns; track column) {
+                <span>{{ column }}</span>
+              }
+            </div>
+            @for (row of activeCalculator().rows; track row.label) {
+              <div class="offer-row">
+                <span>{{ row.label }}</span>
+                @for (value of row.values; track value) {
+                  <strong>{{ value }}</strong>
+                }
+              </div>
+            }
+          </div>
+          <p class="calc-offer__note">{{ activeCalculator().offerNote }}</p>
+          <div class="calc-actions">
+            <a mat-flat-button class="secondary-action" [routerLink]="activeCalculator().secondaryLink">
+              {{ activeCalculator().secondaryCta }}
+            </a>
+            <a mat-flat-button color="primary" class="primary-action" [routerLink]="activeCalculator().link">
+              {{ activeCalculator().cta }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="promo-section" appScrollReveal>
+    <div class="home-shell">
+      <div class="section-head section-head--accounts">
+        <div class="section-head__copy">
+          <h2>Экономьте на регулярной печати</h2>
+          <p>Сравниваем обычную цену и цену с подпиской. Печать та же, итоговая цена ниже.</p>
+        </div>
+        <a mat-flat-button color="primary" class="section-head__action" routerLink="/subscriptions">Оформить подписку</a>
+      </div>
+
+      <div class="account-benefits" aria-label="Аккаунты и подписка">
+        @for (account of accountCards; track account.title) {
+          <a
+            [class]="'account-card account-card--' + account.tone"
+            routerLink="/subscriptions"
+            [queryParams]="account.queryParams"
+          >
+            <span class="account-card__topline">
+              <span class="account-card__badge">{{ account.badge }}</span>
+              <span class="account-card__icon" aria-hidden="true">
+                <mat-icon>{{ account.icon }}</mat-icon>
+              </span>
+            </span>
+            <strong>{{ account.title }}</strong>
+            <span class="account-card__highlight">{{ account.highlight }}</span>
+            <p>{{ account.description }}</p>
+            <ul>
+              @for (benefit of account.benefits; track benefit) {
+                <li>
+                  <mat-icon>check</mat-icon>
+                  <span>{{ benefit }}</span>
+                </li>
+              }
+            </ul>
+            <span class="account-card__action">
+              {{ account.cta }}
+              <mat-icon>arrow_forward</mat-icon>
+            </span>
+          </a>
+        }
+
+        <a class="subscription-panel" routerLink="/subscriptions">
+          <span class="subscription-panel__badge">подписка</span>
+          <div class="subscription-panel__main">
+            <span class="subscription-panel__icon" aria-hidden="true">
+              <mat-icon>workspace_premium</mat-icon>
+            </span>
+            <div>
+              <strong>Ещё дешевле с подпиской</strong>
+              <p>Подключаете один раз и печатаете документы или фотографии по сниженной цене.</p>
+            </div>
+          </div>
+          <div class="subscription-panel__highlights">
+            @for (highlight of subscriptionHighlights; track highlight.label) {
+              <span>
+                <small>{{ highlight.label }}</small>
+                <strong>{{ highlight.value }}</strong>
+              </span>
+            }
+          </div>
+          <span class="subscription-panel__action">
+            Смотреть подписку
+            <mat-icon>arrow_forward</mat-icon>
+          </span>
+        </a>
+      </div>
+
+      <div class="benefit-panel">
+        <div class="benefit-copy">
+          <h2>Личный кабинет для заказов и бонусов</h2>
+          <p>Смотрите историю заказов, согласовывайте обработку, записывайтесь на съемку и копите баллы за печать.</p>
+          <a mat-flat-button color="primary" routerLink="/user-profile">Открыть кабинет</a>
+        </div>
+        <div class="benefit-cards">
+          @for (benefit of benefitCards; track benefit.title) {
+            <a [class]="'mini-benefit mini-benefit--' + benefit.tone" [routerLink]="benefit.link">
+              @if (benefit.badge) {
+                <span class="mini-benefit__badge">{{ benefit.badge }}</span>
+              }
+              <strong>{{ benefit.title }}</strong>
+              <small>{{ benefit.description }}</small>
+              <span class="mini-benefit__art" aria-hidden="true">
+                <span class="mini-benefit__shape mini-benefit__shape--one"></span>
+                <span class="mini-benefit__shape mini-benefit__shape--two"></span>
+                <mat-icon>{{ benefit.icon }}</mat-icon>
+              </span>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="service-section" appScrollReveal>
+    <div class="home-shell">
+      <h2>Сервисы</h2>
+      <div class="service-layout">
+        <div class="rates-card">
+          <div class="rates-head">
+            <h3>Что можно заказать</h3>
+            <span>Без расчёта</span>
+          </div>
+          <div class="rate-row">
+            <span>Фото на документы</span>
+            <strong>студия или онлайн</strong>
+          </div>
+          <div class="rate-row">
+            <span>Печать фотографий</span>
+            <strong>форматы и бумага</strong>
+          </div>
+          <div class="rate-row">
+            <span>Печать документов</span>
+            <strong>PDF и копии</strong>
+          </div>
+          <div class="rate-row">
+            <span>Ретушь</span>
+            <strong>после оценки</strong>
+          </div>
+          <p>Стоимость покажем после выбора формата, бумаги, тиража и сложности обработки.</p>
+        </div>
+
+        <div class="service-grid">
+          @for (card of serviceCards; track card.title) {
+            <button type="button" class="service-card" [class.service-card--dark]="card.dark" (click)="handleServiceCard(card)">
+              <span>
+                <strong>{{ card.title }}</strong>
+                <small>{{ card.description }}</small>
+              </span>
+              <mat-icon>{{ card.icon }}</mat-icon>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="useful-section" appScrollReveal>
+    <div class="home-shell">
+      <h2>Читайте главное о фото и печати</h2>
+      <div class="story-panel">
+        <a class="story-main" routerLink="/services">
+          <span>Гид по услугам</span>
+          <strong>Как быстро подготовить заказ и не переделывать макет</strong>
+          <mat-icon>arrow_forward</mat-icon>
+        </a>
+
+        <div class="story-list">
+          @for (story of storyCards; track story.title) {
+            <a class="story-item" [routerLink]="story.link">
+              <span>
+                <small>{{ story.meta }}</small>
+                <strong>{{ story.title }}</strong>
+                <em>{{ story.description }}</em>
+              </span>
+              <mat-icon>{{ story.icon }}</mat-icon>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about-section" appScrollReveal>
+    <div class="home-shell">
+      <div class="section-head">
+        <h2>О Своё Фото</h2>
+        <div class="segmented segmented--compact" role="tablist" aria-label="Информация о компании">
+          @for (tab of aboutTabs; track tab.id) {
+            <button
+              type="button"
+              role="tab"
+              [attr.aria-selected]="activeAboutTabId() === tab.id"
+              [class.active]="activeAboutTabId() === tab.id"
+              (click)="selectAboutTab(tab.id)"
+            >
+              {{ tab.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="about-grid">
+        @if (activeAboutTabId() === 'studios') {
+          <div class="about-card about-card--dark about-card--studios">
+            <h3>Печатаем, снимаем и реставрируем с 1999 года</h3>
+            <p>Студия в Ростове-на-Дону, онлайн-заказы по всей России и живая поддержка в чате.</p>
+            <span class="about-art" aria-hidden="true">
+              <span class="about-art__base"></span>
+              <span class="about-art__print about-art__print--main">
+                <mat-icon>badge</mat-icon>
+              </span>
+              <span class="about-art__print about-art__print--photo">
+                <mat-icon>photo_camera</mat-icon>
+              </span>
+              <span class="about-art__print about-art__print--restore">
+                <mat-icon>auto_fix_high</mat-icon>
+              </span>
+              <span class="about-art__roll"></span>
+              <span class="about-art__year">1999</span>
+            </span>
+          </div>
+          <div class="about-stack">
+            @for (stat of statsCards; track stat.label) {
+              <div class="stat-card">
+                <strong>{{ stat.value }}</strong>
+                <span>{{ stat.label }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="about-card about-card--reviews">
+            <h3>Отзывы о студиях и заказах</h3>
+            <p>Показываем сохраненную подборку отзывов с площадками-источниками.</p>
+            <div class="review-list">
+              @for (review of reviewCards; track review.author) {
+                <article class="review-row">
+                  <div class="review-row__copy">
+                    <span class="review-row__meta">{{ review.city }} · {{ review.sourceName }}</span>
+                    <strong>{{ review.author }}</strong>
+                    <p>{{ review.text }}</p>
+                  </div>
+                  <div class="review-row__aside">
+                    <span class="review-row__rating">
+                      <mat-icon>star</mat-icon>
+                      {{ review.rating }}/5
+                    </span>
+                    <a [href]="review.sourceUrl" target="_blank" rel="noopener">Источник</a>
+                  </div>
+                </article>
+              }
+            </div>
+            <a mat-flat-button color="primary" class="about-reviews-link" routerLink="/testimonials">Все отзывы</a>
+          </div>
+          <div class="about-stack about-stack--reviews">
+            @for (stat of reviewStats; track stat.label) {
+              <div class="stat-card stat-card--review">
+                <mat-icon>{{ stat.icon }}</mat-icon>
+                <strong>{{ stat.value }}</strong>
+                <span>{{ stat.label }}</span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="smart-search">
+        <div>
+          <h2>Нужна помощь с заказом?</h2>
+          <p>Выберите тему обращения: заказ, печать, документы, ретушь или бизнес-задача.</p>
+        </div>
+        <button mat-flat-button color="primary" type="button" (click)="openStudioChat()">Выбрать тему</button>
+      </div>
+    </div>
+  </section>
+</div>

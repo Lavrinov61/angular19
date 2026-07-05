@@ -1,0 +1,363 @@
+<div class="bookings-page">
+  <header class="bookings-hero">
+    <div class="bookings-hero__content">
+      <p class="bookings-eyebrow">Записи на съёмку</p>
+      <h1>Мои записи</h1>
+      @if (upcoming()[0]; as nextBooking) {
+        <p class="bookings-hero__lead">
+          Ближайшая: {{ formatDate(nextBooking.start_time) }}, {{ timeRange(nextBooking) }}
+        </p>
+      } @else {
+        <p class="bookings-hero__lead">Нет предстоящих записей</p>
+      }
+      <div class="bookings-hero__actions">
+        <a mat-flat-button routerLink="/booking" class="new-booking-btn">
+          <mat-icon>add</mat-icon>
+          <span>Новая запись</span>
+        </a>
+        <a mat-button routerLink="/user-profile/services" class="services-btn">
+          <mat-icon>apps</mat-icon>
+          <span>Все услуги</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="bookings-hero__stats" aria-label="Статистика записей">
+      <div class="hero-stat hero-stat--active">
+        <small>Предстоящие</small>
+        <strong>{{ upcoming().length }}</strong>
+      </div>
+      <div class="hero-stat">
+        <small>Прошедшие</small>
+        <strong>{{ past().length }}</strong>
+      </div>
+      <div class="hero-stat">
+        <small>Отменённые</small>
+        <strong>{{ cancelled().length }}</strong>
+      </div>
+    </div>
+  </header>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="36" />
+      <span>Загружаем записи...</span>
+    </div>
+  } @else {
+    <mat-tab-group class="bookings-tabs" animationDuration="200ms" mat-stretch-tabs="false" mat-align-tabs="start">
+
+      <!-- Предстоящие -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">Предстоящие</span>
+          @if (upcoming().length) {
+            <span class="tab-count">{{ upcoming().length }}</span>
+          }
+        </ng-template>
+
+        <div class="tab-body">
+          @if (!upcoming().length) {
+            <div class="empty-state">
+              <div class="empty-visual" aria-hidden="true">
+                <span class="empty-visual__sheet empty-visual__sheet--back"></span>
+                <span class="empty-visual__sheet">
+                  <mat-icon>event_available</mat-icon>
+                </span>
+              </div>
+              <div class="empty-state__copy">
+                <p class="bookings-eyebrow">Предстоящие</p>
+                <h3>Нет предстоящих записей</h3>
+                <p>Выберите студию и удобное время для следующей съёмки.</p>
+                <div class="empty-state__actions">
+                  <a mat-flat-button routerLink="/booking" class="empty-cta">
+                    <mat-icon>add</mat-icon>
+                    <span>Записаться</span>
+                  </a>
+                  <a mat-button routerLink="/user-profile/services" class="empty-secondary">
+                    <span>Все услуги</span>
+                    <mat-icon>arrow_forward</mat-icon>
+                  </a>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="booking-list">
+              @for (b of upcoming(); track b.id) {
+                <div class="booking-card" [class.upcoming]="isUpcoming(b)"
+                     [class.expanded]="expandedBookingId() === b.id"
+                     tabindex="0" role="button"
+                     (click)="showDetails(b)" (keydown.enter)="showDetails(b)">
+                  <div class="card-left">
+                    <div class="card-date">
+                      <span class="date-day">{{ formatDate(b.start_time) }}</span>
+                      <span class="date-time">{{ timeRange(b) }}</span>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="card-title">{{ b.service_name || 'Фотосессия' }}</div>
+                    <div class="card-meta">
+                      <span class="meta-item">
+                        <mat-icon>location_on</mat-icon>
+                        {{ b.studio_name }}
+                      </span>
+                      @if (getStudioAddress(b)) {
+                        <span class="booking-address">
+                          <mat-icon>place</mat-icon>
+                          {{ getStudioAddress(b) }}
+                        </span>
+                      }
+                    </div>
+                    <div class="card-status" [attr.data-status]="b.status">
+                      <mat-icon>{{ statusIcon(b.status) }}</mat-icon>
+                      {{ statusLabel(b.status) }}
+                    </div>
+                  </div>
+                  <div class="card-actions">
+                    @if (isUpcoming(b)) {
+                      <a mat-icon-button routerLink="/chat" class="phone-btn"
+                         aria-label="Написать в чат" (click)="$event.stopPropagation()">
+                        <mat-icon>chat_bubble</mat-icon>
+                      </a>
+                    }
+                    @if (b.status !== 'cancelled' && b.status !== 'completed' && b.status !== 'no-show') {
+                      <button mat-icon-button (click)="cancelBooking(b); $event.stopPropagation()" class="cancel-btn"
+                              aria-label="Отменить запись">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    }
+                  </div>
+                </div>
+                @if (expandedBookingId() === b.id) {
+                  <div class="booking-details-expanded">
+                    <div class="detail-row">
+                      <span class="detail-label">Услуга:</span>
+                      <span>{{ b.service_name || 'Фотосессия' }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Студия:</span>
+                      <span>{{ b.studio_name }}</span>
+                    </div>
+                    @if (getStudioAddress(b)) {
+                      <div class="detail-row">
+                        <span class="detail-label">Адрес:</span>
+                        <span>{{ getStudioAddress(b) }}</span>
+                      </div>
+                    }
+                    <div class="detail-row">
+                      <span class="detail-label">Дата:</span>
+                      <span>{{ formatDate(b.start_time) }}, {{ timeRange(b) }}</span>
+                    </div>
+                    @if (b.notes) {
+                      <div class="detail-row">
+                        <span class="detail-label">Комментарий:</span>
+                        <span>{{ b.notes }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Прошедшие -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">Прошедшие</span>
+          @if (past().length) {
+            <span class="tab-count muted">{{ past().length }}</span>
+          }
+        </ng-template>
+
+        <div class="tab-body">
+          @if (!past().length) {
+            <div class="empty-state">
+              <div class="empty-visual" aria-hidden="true">
+                <span class="empty-visual__sheet empty-visual__sheet--back"></span>
+                <span class="empty-visual__sheet">
+                  <mat-icon>history</mat-icon>
+                </span>
+              </div>
+              <div class="empty-state__copy">
+                <p class="bookings-eyebrow">Прошедшие</p>
+                <h3>Пока пусто</h3>
+                <p>Прошедших записей пока нет.</p>
+              </div>
+            </div>
+          } @else {
+            <div class="booking-list">
+              @for (b of past(); track b.id) {
+                <div class="booking-card past"
+                     [class.expanded]="expandedBookingId() === b.id"
+                     tabindex="0" role="button"
+                     (click)="showDetails(b)" (keydown.enter)="showDetails(b)">
+                  <div class="card-left">
+                    <div class="card-date">
+                      <span class="date-day">{{ formatDate(b.start_time) }}</span>
+                      <span class="date-time">{{ timeRange(b) }}</span>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="card-title">{{ b.service_name || 'Фотосессия' }}</div>
+                    <div class="card-meta">
+                      <span class="meta-item">
+                        <mat-icon>location_on</mat-icon>
+                        {{ b.studio_name }}
+                      </span>
+                      @if (getStudioAddress(b)) {
+                        <span class="booking-address">
+                          <mat-icon>place</mat-icon>
+                          {{ getStudioAddress(b) }}
+                        </span>
+                      }
+                    </div>
+                    <div class="card-status" [attr.data-status]="b.status">
+                      <mat-icon>{{ statusIcon(b.status) }}</mat-icon>
+                      {{ statusLabel(b.status) }}
+                    </div>
+                  </div>
+                  <div class="card-actions">
+                    <a mat-icon-button routerLink="/booking" aria-label="Записаться снова"
+                       (click)="$event.stopPropagation()">
+                      <mat-icon>replay</mat-icon>
+                    </a>
+                  </div>
+                </div>
+                @if (expandedBookingId() === b.id) {
+                  <div class="booking-details-expanded">
+                    <div class="detail-row">
+                      <span class="detail-label">Услуга:</span>
+                      <span>{{ b.service_name || 'Фотосессия' }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Студия:</span>
+                      <span>{{ b.studio_name }}</span>
+                    </div>
+                    @if (getStudioAddress(b)) {
+                      <div class="detail-row">
+                        <span class="detail-label">Адрес:</span>
+                        <span>{{ getStudioAddress(b) }}</span>
+                      </div>
+                    }
+                    <div class="detail-row">
+                      <span class="detail-label">Дата:</span>
+                      <span>{{ formatDate(b.start_time) }}, {{ timeRange(b) }}</span>
+                    </div>
+                    @if (b.notes) {
+                      <div class="detail-row">
+                        <span class="detail-label">Комментарий:</span>
+                        <span>{{ b.notes }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+      <!-- Отменённые -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">Отменённые</span>
+          @if (cancelled().length) {
+            <span class="tab-count muted">{{ cancelled().length }}</span>
+          }
+        </ng-template>
+
+        <div class="tab-body">
+          @if (!cancelled().length) {
+            <div class="empty-state">
+              <div class="empty-visual" aria-hidden="true">
+                <span class="empty-visual__sheet empty-visual__sheet--back"></span>
+                <span class="empty-visual__sheet">
+                  <mat-icon>block</mat-icon>
+                </span>
+              </div>
+              <div class="empty-state__copy">
+                <p class="bookings-eyebrow">Отменённые</p>
+                <h3>Нет отменённых записей</h3>
+                <p>Отменённых записей нет.</p>
+              </div>
+            </div>
+          } @else {
+            <div class="booking-list">
+              @for (b of cancelled(); track b.id) {
+                <div class="booking-card cancelled"
+                     [class.expanded]="expandedBookingId() === b.id"
+                     tabindex="0" role="button"
+                     (click)="showDetails(b)" (keydown.enter)="showDetails(b)">
+                  <div class="card-left">
+                    <div class="card-date">
+                      <span class="date-day">{{ formatDate(b.start_time) }}</span>
+                      <span class="date-time">{{ timeRange(b) }}</span>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <div class="card-title">{{ b.service_name || 'Фотосессия' }}</div>
+                    <div class="card-meta">
+                      <span class="meta-item">
+                        <mat-icon>location_on</mat-icon>
+                        {{ b.studio_name }}
+                      </span>
+                      @if (getStudioAddress(b)) {
+                        <span class="booking-address">
+                          <mat-icon>place</mat-icon>
+                          {{ getStudioAddress(b) }}
+                        </span>
+                      }
+                    </div>
+                    <div class="card-status" data-status="cancelled">
+                      <mat-icon>cancel</mat-icon>
+                      Отменена
+                    </div>
+                  </div>
+                  <div class="card-actions">
+                    <a mat-icon-button routerLink="/booking" aria-label="Записаться снова"
+                       (click)="$event.stopPropagation()">
+                      <mat-icon>replay</mat-icon>
+                    </a>
+                  </div>
+                </div>
+                @if (expandedBookingId() === b.id) {
+                  <div class="booking-details-expanded">
+                    <div class="detail-row">
+                      <span class="detail-label">Услуга:</span>
+                      <span>{{ b.service_name || 'Фотосессия' }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="detail-label">Студия:</span>
+                      <span>{{ b.studio_name }}</span>
+                    </div>
+                    @if (getStudioAddress(b)) {
+                      <div class="detail-row">
+                        <span class="detail-label">Адрес:</span>
+                        <span>{{ getStudioAddress(b) }}</span>
+                      </div>
+                    }
+                    @if (b.notes) {
+                      <div class="detail-row">
+                        <span class="detail-label">Комментарий:</span>
+                        <span>{{ b.notes }}</span>
+                      </div>
+                    }
+                  </div>
+                }
+              }
+            </div>
+          }
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  }
+
+  <div class="page-footer">
+    <a mat-button routerLink="/user-profile" class="back-link">
+      <mat-icon>arrow_back</mat-icon>
+      Назад к профилю
+    </a>
+  </div>
+</div>

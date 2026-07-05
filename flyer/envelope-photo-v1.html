@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Конверт для фото — Своё Фото (2 шт на A4)</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:210mm 297mm;margin:0}
+:root{
+  --bg:#0a0a0a;--bg3:#1c1b18;
+  --am:#f59e0b;--am2:#fbbf24;--amd:#d97706;
+  --t1:#f5f5f5;--t2:#c0c0c0;--t3:#888;
+  --brd:rgba(255,255,255,.07);
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+body{background:#e8e8e8;font-family:var(--fb);color:var(--t1);display:flex;justify-content:center;padding:30px}
+
+/* ─── A4 лист ─── */
+.a4{width:210mm;height:297mm;background:#fff;position:relative;display:flex;flex-direction:column}
+@media screen{.a4{box-shadow:0 4px 40px rgba(0,0,0,.3)}}
+@media print{body{background:#fff;padding:0}.a4{box-shadow:none}}
+
+/* Половинка A5 — конверт центрируется внутри */
+.half{width:210mm;height:148.5mm;display:flex;align-items:center;justify-content:center;position:relative}
+
+/* Линия реза */
+.half+.half::before{content:'';position:absolute;top:0;left:10mm;right:10mm;border-top:.5px dashed #bbb}
+@media print{.half+.half::before{border-top-color:#ccc}}
+
+/* ─── Конверт ─── */
+.envelope{
+  width:200mm;height:138mm;
+  background:var(--bg);display:flex;position:relative;overflow:hidden;
+  print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+/* Noise */
+.envelope::before{content:'';position:absolute;inset:0;z-index:0;opacity:.03;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:128px 128px}
+
+/* Fold mark */
+.fold-t,.fold-b{position:absolute;left:50%;width:0;border-left:.5px solid rgba(255,255,255,.1);z-index:20}
+.fold-t{top:0;height:4mm}.fold-b{bottom:0;height:4mm}
+
+/* ─── Panel ─── */
+.panel{width:50%;height:100%;display:flex;flex-direction:column;position:relative;z-index:1}
+.p-top{background:linear-gradient(90deg,var(--amd),var(--am) 50%,var(--amd));color:#000;text-align:center;padding:4px 8px;font-family:var(--fd);font-weight:700;font-size:7.5px;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:6px;flex-shrink:0}
+.p-top b{font-size:9.5px;font-weight:800;letter-spacing:.04em}
+.p-bot{margin-top:auto;background:var(--bg3);border-top:1px solid var(--brd);padding:6px 10px;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-shrink:0}
+.p-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 10px;position:relative;z-index:1}
+.p-body::before{content:'';position:absolute;top:35%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.06) 0%,transparent 70%);pointer-events:none}
+
+/* Brackets */
+.brackets{position:absolute;inset:24px 12px 42px;z-index:0;pointer-events:none}
+.brackets::before,.brackets::after{content:'';position:absolute;width:14px;height:14px;border-color:var(--am);border-style:solid;opacity:.18}
+.brackets::before{top:0;left:0;border-width:1.5px 0 0 1.5px}
+.brackets::after{bottom:0;right:0;border-width:0 1.5px 1.5px 0}
+
+/* ═══ FRONT ═══ */
+.e-brand{font-family:var(--fd);font-weight:800;font-size:28px;text-transform:uppercase;letter-spacing:.04em;line-height:.92;z-index:1}
+.e-brand span{color:var(--am);text-shadow:0 0 16px rgba(245,158,11,.2)}
+.e-tagline{font-size:9px;font-weight:500;color:var(--t2);margin-top:4px;z-index:1}
+.e-qr{width:80px;height:80px;margin-top:8px;background:#fff;border-radius:4px;display:flex;align-items:center;justify-content:center;z-index:1}
+.qr-placeholder{font-family:var(--fd);font-size:10px;font-weight:700;color:#bbb}
+.e-qr-label{font-family:var(--fd);font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-top:4px;z-index:1}
+.e-phone{margin-top:8px;font-size:10.5px;font-weight:700;color:var(--t1);letter-spacing:.02em;z-index:1}
+.e-msg-row{margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;z-index:1}
+.e-msg{display:inline-flex;align-items:center;gap:3px;font-size:7.5px;font-weight:500;color:var(--t2)}
+.e-msg svg{width:11px;height:11px;flex-shrink:0}
+.e-msg b{font-weight:600;color:var(--t1)}
+.front .p-bot{flex-direction:column;align-items:center;gap:1px;text-align:center;padding:5px 10px}
+.f-addr{display:flex;gap:8px;font-size:7.5px;color:var(--t2)}
+.f-addr b{color:var(--am2);font-weight:600}
+.f-hours{font-family:var(--fd);font-size:7px;color:var(--t3);letter-spacing:.08em;text-transform:uppercase}
+.f-site{font-size:7.5px;color:var(--t3)}
+
+/* ═══ BACK ═══ */
+.e-heading{font-family:var(--fd);font-weight:800;font-size:22px;text-transform:uppercase;line-height:1;letter-spacing:.02em;z-index:1}
+.e-heading span{color:var(--am);text-shadow:0 0 16px rgba(245,158,11,.2)}
+.e-sub{font-size:8.5px;font-weight:500;color:var(--t2);margin-top:3px;z-index:1}
+.e-services{margin-top:8px;display:flex;flex-direction:column;gap:3px;width:100%;max-width:190px;text-align:left;z-index:1}
+.e-svc{display:flex;align-items:center;gap:6px;font-size:8.5px;font-weight:500;color:var(--t2);line-height:1.25}
+.e-svc .dot{width:3.5px;height:3.5px;border-radius:50%;flex-shrink:0;background:var(--am)}
+.e-svc--accent{color:var(--am2);font-weight:600}
+.e-svc--accent .dot{box-shadow:0 0 5px rgba(245,158,11,.3)}
+
+/* Promo block */
+.e-promo{margin-top:8px;padding:5px 8px 6px;z-index:1;border-radius:6px;background:linear-gradient(160deg,rgba(245,158,11,.1) 0%,rgba(217,119,6,.03) 100%);border:1.5px dashed var(--amd);text-align:center;width:100%;max-width:200px;position:relative}
+.e-promo::before,.e-promo::after{content:'';position:absolute;width:10px;height:10px;border-color:var(--am);border-style:solid;opacity:.25}
+.e-promo::before{top:4px;left:4px;border-width:1.5px 0 0 1.5px;border-radius:2px 0 0 0}
+.e-promo::after{bottom:4px;right:4px;border-width:0 1.5px 1.5px 0;border-radius:0 0 2px 0}
+.promo-offer{font-family:var(--fd);font-size:14px;font-weight:800;color:var(--am);text-transform:uppercase;letter-spacing:.03em;line-height:1}
+.promo-offer small{font-size:9px;font-weight:600;color:var(--t2);text-transform:none;letter-spacing:0;display:block;margin-top:1px}
+.promo-sticker{width:40mm;height:10mm;margin:4px auto;background:#fff;border-radius:3px;border:1px solid #e5e5e5;display:flex;align-items:center;gap:1.5mm;padding:0 2mm;position:relative;overflow:hidden;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.st-accent{position:absolute;left:0;top:0;bottom:0;width:1mm;background:linear-gradient(180deg,#f59e0b,#d97706)}
+.st-code{font-family:var(--fd);font-weight:800;font-size:12px;letter-spacing:.06em;color:#000;text-transform:uppercase;line-height:1;white-space:nowrap}
+.st-div{width:1px;height:6mm;background:#d97706;flex-shrink:0;opacity:.4}
+.st-info{display:flex;flex-direction:column;align-items:flex-start;line-height:1.1;white-space:nowrap}
+.st-info-top{font-family:var(--fd);font-size:5.5px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:.08em}
+.st-info-val{font-family:var(--fd);font-size:8px;font-weight:700;color:#d97706}
+.promo-cta{display:inline-flex;align-items:center;gap:3px;margin-top:2px;font-size:7.5px;font-weight:600;color:var(--t1)}
+.promo-cta .chk{width:11px;height:11px;border-radius:50%;background:var(--am);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.promo-cta .chk svg{width:7px;height:7px}
+
+.back .p-bot{gap:8px}
+.b-brand{font-family:var(--fd);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.b-brand span{color:var(--am)}
+.b-contact{font-size:7.5px;color:var(--t2);margin-top:1px;display:flex;align-items:center;gap:3px}
+.b-contact svg{width:9px;height:9px;flex-shrink:0;color:#26A5E4}
+.b-contact b{color:var(--t1);font-weight:600}
+.b-site{font-size:7px;color:var(--t3)}
+.b-qr{width:56px;height:56px;flex-shrink:0;background:#fff;border-radius:2px;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<div class="a4">
+
+  <!-- ═══ Половина 1 ═══ -->
+  <div class="half">
+    <div class="envelope">
+      <div class="fold-t"></div><div class="fold-b"></div>
+
+      <div class="panel back">
+        <div class="brackets"></div>
+        <div class="p-top"><b>Своё Фото</b><span>·</span><span>Ежедневно 09:00 — 19:30</span></div>
+        <div class="p-body">
+          <div class="e-heading">Всё в одном<br><span>месте</span></div>
+          <div class="e-sub">Не нужно искать — всё рядом:</div>
+          <div class="e-services">
+            <div class="e-svc e-svc--accent"><span class="dot"></span>Печать фото с телефона и флешки</div>
+            <div class="e-svc"><span class="dot"></span>Ксерокопия · Сканирование · Ламинирование</div>
+            <div class="e-svc"><span class="dot"></span>Реставрация старых фотографий</div>
+            <div class="e-svc"><span class="dot"></span>Портреты, семейные и парные съёмки</div>
+            <div class="e-svc"><span class="dot"></span>Кружки, магниты, подарки с вашим фото</div>
+            <div class="e-svc"><span class="dot"></span>Визитки, листовки, полиграфия</div>
+          </div>
+          <div class="e-promo">
+            <div class="promo-offer">Скидка 100 ₽<small>на 100 визиток</small></div>
+            <div class="promo-sticker"><div class="st-accent"></div><div class="st-code">SLC908</div><div class="st-div"></div><div class="st-info"><span class="st-info-top">действует</span><span class="st-info-val">с 30 апреля</span></div></div>
+            <div class="promo-cta"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Покажи конверт на кассе</div>
+          </div>
+        </div>
+        <div class="p-bot">
+          <div><div class="b-brand">Своё <span>Фото</span></div><div class="b-contact"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><b>@magnus_photo</b></div><div class="b-site">svoefoto.ru</div></div>
+          <div class="b-qr"><div class="qr-placeholder">QR</div></div>
+        </div>
+      </div>
+
+      <div class="panel front">
+        <div class="brackets"></div>
+        <div class="p-top"><b>Своё Фото</b><span>·</span><span>Фотостудия в Ростове-на-Дону</span></div>
+        <div class="p-body">
+          <div class="e-brand">Своё<br><span>Фото</span></div>
+          <div class="e-tagline">Печатаем как надо. Снимаем с душой.</div>
+          <div class="e-qr"><div class="qr-placeholder">QR</div></div>
+          <div class="e-qr-label">Наши контакты и адреса</div>
+          <div class="e-phone">+7 (901) 417-86-68</div>
+          <div class="e-msg-row">
+            <span class="e-msg"><svg viewBox="0 0 24 24" fill="#26A5E4"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><b>@magnus_photo</b></span>
+            <span class="e-msg"><svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><b>+7 901 417-86-68</b></span>
+            <span class="e-msg"><svg viewBox="0 0 24 24" fill="#0077FF"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.678.847 2.49 2.27 4.676 2.853 4.676.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.644v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.253-1.406 2.149-3.574 2.149-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.644-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.78 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z"/></svg><b>svoefoto</b></span>
+          </div>
+        </div>
+        <div class="p-bot">
+          <div class="f-addr"><span>Соборный 21 — <b>50 м от Садовой</b></span><span>2-я Баррикадная 4</span></div>
+          <div class="f-hours">Ежедневно 09:00 — 19:30</div>
+          <div class="f-site">svoefoto.ru</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Половина 2 (копия) ═══ -->
+  <div class="half">
+    <div class="envelope">
+      <div class="fold-t"></div><div class="fold-b"></div>
+
+      <div class="panel back">
+        <div class="brackets"></div>
+        <div class="p-top"><b>Своё Фото</b><span>·</span><span>Ежедневно 09:00 — 19:30</span></div>
+        <div class="p-body">
+          <div class="e-heading">Всё в одном<br><span>месте</span></div>
+          <div class="e-sub">Не нужно искать — всё рядом:</div>
+          <div class="e-services">
+            <div class="e-svc e-svc--accent"><span class="dot"></span>Печать фото с телефона и флешки</div>
+            <div class="e-svc"><span class="dot"></span>Ксерокопия · Сканирование · Ламинирование</div>
+            <div class="e-svc"><span class="dot"></span>Реставрация старых фотографий</div>
+            <div class="e-svc"><span class="dot"></span>Портреты, семейные и парные съёмки</div>
+            <div class="e-svc"><span class="dot"></span>Кружки, магниты, подарки с вашим фото</div>
+            <div class="e-svc"><span class="dot"></span>Визитки, листовки, полиграфия</div>
+          </div>
+          <div class="e-promo">
+            <div class="promo-offer">Скидка 100 ₽<small>на 100 визиток</small></div>
+            <div class="promo-sticker"><div class="st-accent"></div><div class="st-code">SLC908</div><div class="st-div"></div><div class="st-info"><span class="st-info-top">действует</span><span class="st-info-val">с 30 апреля</span></div></div>
+            <div class="promo-cta"><span class="chk"><svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Покажи конверт на кассе</div>
+          </div>
+        </div>
+        <div class="p-bot">
+          <div><div class="b-brand">Своё <span>Фото</span></div><div class="b-contact"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><b>@magnus_photo</b></div><div class="b-site">svoefoto.ru</div></div>
+          <div class="b-qr"><div class="qr-placeholder">QR</div></div>
+        </div>
+      </div>
+
+      <div class="panel front">
+        <div class="brackets"></div>
+        <div class="p-top"><b>Своё Фото</b><span>·</span><span>Фотостудия в Ростове-на-Дону</span></div>
+        <div class="p-body">
+          <div class="e-brand">Своё<br><span>Фото</span></div>
+          <div class="e-tagline">Печатаем как надо. Снимаем с душой.</div>
+          <div class="e-qr"><div class="qr-placeholder">QR</div></div>
+          <div class="e-qr-label">Наши контакты и адреса</div>
+          <div class="e-phone">+7 (901) 417-86-68</div>
+          <div class="e-msg-row">
+            <span class="e-msg"><svg viewBox="0 0 24 24" fill="#26A5E4"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><b>@magnus_photo</b></span>
+            <span class="e-msg"><svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><b>+7 901 417-86-68</b></span>
+            <span class="e-msg"><svg viewBox="0 0 24 24" fill="#0077FF"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.408 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.678.847 2.49 2.27 4.676 2.853 4.676.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.644v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.253-1.406 2.149-3.574 2.149-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.644-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.78 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z"/></svg><b>svoefoto</b></span>
+          </div>
+        </div>
+        <div class="p-bot">
+          <div class="f-addr"><span>Соборный 21 — <b>50 м от Садовой</b></span><span>2-я Баррикадная 4</span></div>
+          <div class="f-hours">Ежедневно 09:00 — 19:30</div>
+          <div class="f-site">svoefoto.ru</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Trophy cup body -->
+  <path d="M14 8h20v16c0 5.5-4.5 10-10 10s-10-4.5-10-10V8Z"
+        stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="#f59e0b" fill-opacity="0.15"/>
+  <!-- Left handle -->
+  <path d="M14 12H8a4 4 0 0 0 0 8h6" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Right handle -->
+  <path d="M34 12h6a4 4 0 0 1 0 8h-6" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Stem -->
+  <path d="M24 34v6" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Base -->
+  <path d="M16 40h16" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Star inside cup -->
+  <path d="M24 14L25.4 18.3H30L26.3 20.7L27.7 25L24 22.6L20.3 25L21.7 20.7L18 18.3H22.6Z"
+        fill="#f59e0b" fill-opacity="0.5" stroke="#f59e0b" stroke-width="0.8" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,254 @@
+<div class="orders-page">
+
+  <!-- Header -->
+  <div class="orders-header">
+    <h1>Заказы</h1>
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Поиск</mat-label>
+      <input matInput placeholder="ID, имя или телефон" [value]="searchQuery()" (input)="onSearchInput($event)">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Status Filters -->
+  <div class="filters-row">
+    <mat-chip-listbox [value]="statusFilter()" (change)="onStatusFilter($event.value)">
+      <mat-chip-option value="">Все</mat-chip-option>
+      <mat-chip-option value="new">Новые</mat-chip-option>
+      <mat-chip-option value="pending_payment">Ожидание оплаты</mat-chip-option>
+      <mat-chip-option value="processing">В работе</mat-chip-option>
+      <mat-chip-option value="ready">Готовы</mat-chip-option>
+      <mat-chip-option value="completed">Завершены</mat-chip-option>
+      <mat-chip-option value="cancelled">Отменены</mat-chip-option>
+    </mat-chip-listbox>
+
+    <mat-chip-listbox [value]="priorityFilter()" (change)="onPriorityFilter($event.value)">
+      <mat-chip-option value="">Все</mat-chip-option>
+      <mat-chip-option value="vip" class="chip-vip">VIP</mat-chip-option>
+      <mat-chip-option value="urgent" class="chip-urgent">Срочные</mat-chip-option>
+      <mat-chip-option value="normal">Обычные</mat-chip-option>
+    </mat-chip-listbox>
+  </div>
+
+  <!-- Stats -->
+  <div class="orders-stats">
+    <span>Найдено: <strong>{{ totalOrders() }}</strong> заказов</span>
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading-row">
+      <mat-spinner diameter="32"></mat-spinner>
+      <span>Загрузка заказов...</span>
+    </div>
+  }
+
+  <!-- Desktop Table -->
+  @if (!loading() && isDesktop()) {
+    <div class="table-container">
+      <table mat-table [dataSource]="orders()" class="orders-table">
+
+        <!-- Order ID -->
+        <ng-container matColumnDef="order_id">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let order" class="cell-id">{{ order.order_id }}</td>
+        </ng-container>
+
+        <!-- Client -->
+        <ng-container matColumnDef="client">
+          <th mat-header-cell *matHeaderCellDef>Клиент</th>
+          <td mat-cell *matCellDef="let order" class="cell-client">
+            <div class="client-name">{{ order.contact_name || '—' }}</div>
+            <div class="client-phone">{{ order.contact_phone || '' }}</div>
+          </td>
+        </ng-container>
+
+        <!-- Amount -->
+        <ng-container matColumnDef="total_price">
+          <th mat-header-cell *matHeaderCellDef>Сумма</th>
+          <td mat-cell *matCellDef="let order" class="cell-amount">{{ order.total_price }}₽</td>
+        </ng-container>
+
+        <!-- Priority -->
+        <ng-container matColumnDef="priority">
+          <th mat-header-cell *matHeaderCellDef>Приоритет</th>
+          <td mat-cell *matCellDef="let order">
+            @if (order.priority !== 'normal') {
+              <mat-chip class="mini-chip" [class.chip-vip]="order.priority === 'vip'" [class.chip-urgent]="order.priority === 'urgent'">
+                {{ priorityLabel(order.priority) }}
+              </mat-chip>
+            }
+          </td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Статус</th>
+          <td mat-cell *matCellDef="let order">
+            <mat-chip class="mini-chip" [class]="'os-' + order.status">{{ orderStatusLabel(order.status) }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Payment -->
+        <ng-container matColumnDef="payment_status">
+          <th mat-header-cell *matHeaderCellDef>Оплата</th>
+          <td mat-cell *matCellDef="let order">
+            <div class="payment-cell">
+              <mat-icon class="payment-icon" [class]="'pay-' + order.payment_status">{{ paymentStatusIcon(order.payment_status) }}</mat-icon>
+              <span>{{ paymentStatusLabel(order.payment_status) }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Date -->
+        <ng-container matColumnDef="created_at">
+          <th mat-header-cell *matHeaderCellDef>Дата</th>
+          <td mat-cell *matCellDef="let order" class="cell-date">{{ formatRelativeTime(order.created_at) }}</td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let order">
+            <button mat-icon-button [matMenuTriggerFor]="actionMenu" aria-label="Действия">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #actionMenu="matMenu">
+              <button mat-menu-item (click)="changeStatus(order, 'processing')">
+                <mat-icon>play_arrow</mat-icon> В работу
+              </button>
+              <button mat-menu-item (click)="changeStatus(order, 'ready')">
+                <mat-icon>check</mat-icon> Готов
+              </button>
+              <button mat-menu-item (click)="changeStatus(order, 'completed')">
+                <mat-icon>done_all</mat-icon> Завершён
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="openDelayDialog(order)">
+                <mat-icon>schedule_send</mat-icon> Задерживается
+              </button>
+              <button mat-menu-item (click)="changeStatus(order, 'cancelled')">
+                <mat-icon>close</mat-icon> Отменить
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            (click)="toggleExpand(row)"
+            [class.expanded-row]="expandedOrder() === row.order_id"
+            class="order-row"></tr>
+      </table>
+    </div>
+
+    <!-- Expanded Detail (below table) -->
+    @if (expandedOrder()) {
+      <mat-card class="expanded-detail">
+        @if (expandedOrderData(); as order) {
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>Состав заказа</h4>
+              @for (item of order.items; track $index) {
+                <div class="item-row">{{ formatItem(item) }}</div>
+              }
+            </div>
+            @if (order.delivery_address) {
+              <div class="detail-section">
+                <h4>Доставка</h4>
+                <p>{{ order.delivery_address }}</p>
+                @if (order.tracking_number) {
+                  <p>Трекинг: {{ order.tracking_number }}</p>
+                }
+              </div>
+            }
+            @if (order.comments) {
+              <div class="detail-section">
+                <h4>Комментарий</h4>
+                <p>{{ order.comments }}</p>
+              </div>
+            }
+            @if (order.receipt_url) {
+              <div class="detail-section">
+                <a mat-button [href]="order.receipt_url" target="_blank">
+                  <mat-icon>receipt</mat-icon> Чек
+                </a>
+              </div>
+            }
+            @if (order.promo_code) {
+              <div class="detail-section">
+                <span class="promo-badge">Промокод: {{ order.promo_code }} (-{{ order.promo_discount }}₽)</span>
+              </div>
+            }
+          </div>
+        }
+      </mat-card>
+    }
+  }
+
+  <!-- Mobile Card View -->
+  @if (!loading() && !isDesktop()) {
+    <div class="orders-cards">
+      @for (order of orders(); track order.order_id) {
+        <mat-card class="order-card" [class.card-vip]="order.priority === 'vip'" [class.card-urgent]="order.priority === 'urgent'">
+          <div class="card-header">
+            <span class="card-id">{{ order.order_id }}</span>
+            @if (order.priority !== 'normal') {
+              <mat-chip class="mini-chip" [class.chip-vip]="order.priority === 'vip'" [class.chip-urgent]="order.priority === 'urgent'">
+                {{ priorityLabel(order.priority) }}
+              </mat-chip>
+            }
+          </div>
+          <div class="card-client">
+            @if (order.contact_name) {
+              <span>{{ order.contact_name }}</span>
+            }
+            @if (order.contact_phone) {
+              <a [href]="'tel:' + order.contact_phone" class="card-phone">{{ order.contact_phone }}</a>
+            }
+          </div>
+          <div class="card-bottom">
+            <span class="card-amount">{{ order.total_price }}₽</span>
+            <mat-chip class="mini-chip" [class]="'os-' + order.status">{{ orderStatusLabel(order.status) }}</mat-chip>
+            <mat-icon class="payment-icon" [class]="'pay-' + order.payment_status">{{ paymentStatusIcon(order.payment_status) }}</mat-icon>
+            <span class="card-time">{{ formatRelativeTime(order.created_at) }}</span>
+          </div>
+          <div class="card-actions">
+            <button mat-icon-button [matMenuTriggerFor]="mobileMenu" aria-label="Действия">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #mobileMenu="matMenu">
+              <button mat-menu-item (click)="changeStatus(order, 'processing')">В работу</button>
+              <button mat-menu-item (click)="changeStatus(order, 'ready')">Готов</button>
+              <button mat-menu-item (click)="changeStatus(order, 'completed')">Завершён</button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="openDelayDialog(order)">
+                <mat-icon>schedule_send</mat-icon> Задерживается
+              </button>
+              <button mat-menu-item (click)="changeStatus(order, 'cancelled')">Отменить</button>
+            </mat-menu>
+          </div>
+        </mat-card>
+      }
+      @empty {
+        <div class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <span>Заказов не найдено</span>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Paginator -->
+  @if (!loading() && totalOrders() > 0) {
+    <mat-paginator
+      [length]="totalOrders()"
+      [pageSize]="pageSize()"
+      [pageIndex]="currentPage() - 1"
+      [pageSizeOptions]="[10, 25, 50]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  }
+
+</div>

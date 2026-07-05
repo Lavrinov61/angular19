@@ -1,0 +1,744 @@
+:host {
+  display: block;
+  --binding-red: #ef3124;
+  --binding-red-dark: #d4291e;
+  --binding-ink: #101217;
+  --binding-muted: #626b78;
+  --binding-border: #e3e6eb;
+  --binding-soft: #f5f6f8;
+  --binding-soft-red: #fff3f2;
+
+  color: var(--binding-ink);
+  background: #ffffff;
+}
+
+.binding-page {
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.binding-section-inner {
+  width: min(100% - 40px, 1180px);
+  margin: 0 auto;
+}
+
+.binding-kicker {
+  margin: 0 0 12px;
+  color: var(--binding-red);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.binding-hero {
+  position: relative;
+  min-height: auto;
+  display: grid;
+  align-items: stretch;
+  isolation: isolate;
+  color: #ffffff;
+  background: #090a0d;
+}
+
+.binding-hero__background,
+.binding-hero__shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.binding-hero__background {
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  z-index: -3;
+}
+
+.binding-hero__shade {
+  z-index: -2;
+  background: linear-gradient(90deg, #090a0d 0%, #090a0d 72%, var(--binding-red) 72%, var(--binding-red) 100%);
+}
+
+.binding-hero__inner {
+  width: min(100% - 40px, 1180px);
+  margin: 0 auto;
+  padding: clamp(58px, 7vw, 96px) 0 clamp(54px, 6vw, 76px);
+  display: grid;
+  grid-template-columns: minmax(0, 700px) minmax(280px, 360px);
+  gap: 48px;
+  align-items: center;
+}
+
+.binding-hero__content {
+  min-width: 0;
+}
+
+.binding-hero h1 {
+  margin: 0;
+  max-width: 780px;
+  color: #ffffff;
+  font-size: clamp(52px, 5vw, 72px);
+  line-height: 0.95;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.binding-hero h1 span {
+  display: block;
+  color: var(--binding-red);
+}
+
+.binding-hero__lead {
+  max-width: 720px;
+  margin: 26px 0 0;
+  color: rgb(255 255 255 / 88%);
+  font-size: 20px;
+  line-height: 1.55;
+  font-weight: 650;
+}
+
+.binding-hero__benefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 28px 0 0;
+}
+
+.binding-hero__benefits span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 8px;
+  background: rgb(8 9 12 / 38%);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+}
+
+.binding-hero__benefits mat-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  color: var(--binding-red);
+}
+
+.binding-hero__actions,
+.binding-education-actions,
+.binding-final-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.binding-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 24px;
+  border-radius: 12px;
+  font-size: 0.98rem;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-decoration: none;
+  text-align: center;
+  white-space: normal;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.binding-action.mat-mdc-unelevated-button,
+.binding-action.mat-mdc-outlined-button {
+  height: auto;
+  padding: 0 24px;
+  border-radius: 12px;
+  --mdc-filled-button-container-shape: 12px;
+  --mdc-outlined-button-container-shape: 12px;
+}
+
+.binding-action:hover {
+  transform: translateY(-1px);
+}
+
+.binding-action mat-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 0;
+  font-size: 20px;
+}
+
+.binding-action--primary {
+  --mdc-filled-button-container-color: var(--binding-red);
+  --mdc-filled-button-label-text-color: #ffffff;
+  --mat-filled-button-state-layer-color: #ffffff;
+  --mat-filled-button-ripple-color: rgb(255 255 255 / 16%);
+}
+
+.binding-action--primary.mat-mdc-unelevated-button:not(:disabled) {
+  background: var(--binding-red);
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgb(239 49 36 / 26%);
+}
+
+.binding-action--primary.mat-mdc-unelevated-button:not(:disabled):hover {
+  background: var(--binding-red-dark);
+}
+
+.binding-action--ghost {
+  --mdc-outlined-button-label-text-color: #ffffff;
+  --mdc-outlined-button-outline-color: rgb(255 255 255 / 18%);
+  --mat-outlined-button-state-layer-color: #ffffff;
+  --mat-outlined-button-ripple-color: rgb(255 255 255 / 12%);
+}
+
+.binding-action--ghost.mat-mdc-outlined-button:not(:disabled),
+.binding-action--light.mat-mdc-outlined-button:not(:disabled) {
+  border-color: rgb(255 255 255 / 18%);
+  background: #2d2f36;
+  color: #ffffff;
+}
+
+.binding-action--ghost.mat-mdc-outlined-button:not(:disabled):hover,
+.binding-action--light.mat-mdc-outlined-button:not(:disabled):hover {
+  border-color: rgb(255 255 255 / 24%);
+  background: #363941;
+}
+
+.binding-action--light {
+  --mdc-outlined-button-label-text-color: #ffffff;
+  --mdc-outlined-button-outline-color: rgb(16 18 23 / 10%);
+  --mat-outlined-button-state-layer-color: #ffffff;
+  --mat-outlined-button-ripple-color: rgb(255 255 255 / 12%);
+}
+
+.binding-hero__product {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  min-height: 340px;
+  padding: 30px;
+  border: 0;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 24px 72px rgb(0 0 0 / 28%);
+  text-align: center;
+}
+
+.binding-hero__product img {
+  width: min(100%, 190px);
+  height: auto;
+  object-fit: contain;
+}
+
+.binding-hero__product strong {
+  margin-top: 12px;
+  color: var(--binding-red);
+  font-size: 54px;
+  line-height: 1;
+  font-weight: 950;
+}
+
+.binding-hero__product span {
+  margin-top: 8px;
+  color: var(--binding-muted);
+  font-size: 15px;
+  font-weight: 850;
+}
+
+.binding-price-strip {
+  padding: 24px 0;
+  background: #ffffff;
+  border-bottom: 1px solid var(--binding-border);
+}
+
+.binding-price-strip__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.binding-metric-card,
+.binding-use-card,
+.binding-process-step,
+.binding-education-price,
+.binding-related-card,
+.binding-note {
+  border: 1px solid var(--binding-border);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgb(16 18 23 / 5%);
+}
+
+.binding-metric-card {
+  min-height: 152px;
+  padding: 18px;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+
+.binding-metric-card mat-icon,
+.binding-use-card mat-icon,
+.binding-process-step mat-icon,
+.binding-related-card mat-icon {
+  color: var(--binding-red);
+}
+
+.binding-metric-card span,
+.binding-education-price span {
+  color: #596170;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.binding-metric-card strong,
+.binding-education-price strong {
+  color: var(--binding-ink);
+  font-size: 26px;
+  line-height: 1.1;
+  font-weight: 950;
+}
+
+.binding-metric-card p,
+.binding-use-card p,
+.binding-process-step p,
+.binding-education-price p,
+.binding-note p,
+.binding-section-heading span,
+.binding-final-cta span {
+  margin: 0;
+  color: #596170;
+  line-height: 1.55;
+}
+
+.binding-section {
+  padding: 76px 0;
+}
+
+.binding-section--white {
+  background: #ffffff;
+}
+
+.binding-section--education {
+  color: var(--binding-ink);
+  background:
+    linear-gradient(135deg, #fff7f6 0%, #ffffff 44%, #f5f6f8 100%);
+}
+
+.binding-section--split {
+  background: var(--binding-soft);
+}
+
+.binding-section--related {
+  background: var(--binding-soft);
+  color: var(--binding-ink);
+}
+
+.binding-section-heading {
+  max-width: 720px;
+  margin-bottom: 30px;
+}
+
+.binding-section-heading p {
+  margin: 0 0 8px;
+  color: var(--binding-red);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.binding-section-heading h2,
+.binding-education-copy h2,
+.binding-requirements h2,
+.binding-final-cta h2 {
+  margin: 0;
+  color: inherit;
+  font-size: 38px;
+  line-height: 1.12;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.binding-use-grid,
+.binding-process,
+.binding-related-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.binding-use-card,
+.binding-process-step {
+  min-height: 232px;
+  padding: 22px;
+}
+
+.binding-use-card h3,
+.binding-process-step h3,
+.binding-note h3 {
+  margin: 16px 0 10px;
+  color: var(--binding-ink);
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 950;
+  letter-spacing: 0;
+}
+
+.binding-education-layout,
+.binding-details-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+  gap: 36px;
+  align-items: center;
+}
+
+.binding-education-copy p:not(.binding-kicker) {
+  max-width: 680px;
+  margin: 18px 0 0;
+  color: #343b46;
+  font-size: 18px;
+  line-height: 1.65;
+  font-weight: 650;
+}
+
+.binding-education-prices {
+  display: grid;
+  gap: 12px;
+}
+
+.binding-education-price {
+  min-height: 108px;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.binding-education-price > div {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 14px;
+  align-items: baseline;
+}
+
+.binding-education-price mat-icon {
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--binding-red);
+  background: var(--binding-soft-red);
+  font-size: 24px;
+}
+
+.binding-education-price span {
+  grid-column: 1;
+  min-width: 0;
+}
+
+.binding-education-price strong {
+  grid-column: 2;
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.binding-education-price p {
+  grid-column: 1 / -1;
+}
+
+.binding-process-step {
+  position: relative;
+}
+
+.binding-process-step__number {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--binding-soft-red);
+  color: var(--binding-red);
+  font-weight: 950;
+}
+
+.binding-process-step ul,
+.binding-requirements ul {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.binding-process-step li {
+  margin-top: 8px;
+  color: #3f4754;
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.binding-requirements ul {
+  display: grid;
+  gap: 14px;
+}
+
+.binding-requirements li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  color: #2f3640;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 750;
+}
+
+.binding-requirements mat-icon {
+  color: var(--binding-red);
+}
+
+.binding-note {
+  padding: 28px;
+  background: #ffffff;
+}
+
+.binding-note > mat-icon {
+  width: 48px;
+  height: 48px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--binding-red);
+  background: var(--binding-soft-red);
+  font-size: 28px;
+}
+
+.binding-note .binding-action {
+  margin-top: 24px;
+}
+
+.binding-faq {
+  display: grid;
+  gap: 10px;
+}
+
+.binding-faq ::ng-deep .mat-expansion-panel {
+  border: 1px solid var(--binding-border);
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  color: var(--binding-ink) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.binding-faq ::ng-deep .mat-expansion-panel-header {
+  min-height: 64px;
+  background: #ffffff !important;
+}
+
+.binding-faq ::ng-deep .mat-expansion-panel-header-title {
+  color: var(--binding-ink);
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+.binding-faq ::ng-deep .mat-expansion-indicator::after {
+  color: var(--binding-muted);
+}
+
+.binding-faq ::ng-deep .mat-expansion-panel-body {
+  background: #ffffff;
+}
+
+.binding-faq p {
+  margin: 0 0 18px;
+  color: #596170;
+  line-height: 1.65;
+}
+
+.binding-section--related .binding-section-heading p {
+  color: var(--binding-red);
+}
+
+.binding-section--related .binding-section-heading span {
+  color: var(--binding-muted);
+}
+
+.binding-related-card {
+  min-height: 132px;
+  padding: 20px;
+  display: grid;
+  gap: 8px;
+  color: var(--binding-ink);
+  text-decoration: none;
+  background: #ffffff;
+  border-color: var(--binding-border);
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.binding-related-card:hover {
+  transform: translateY(-2px);
+  border-color: rgb(239 49 36 / 48%);
+  background: #ffffff;
+}
+
+.binding-related-card span {
+  font-size: 16px;
+  font-weight: 950;
+}
+
+.binding-related-card strong {
+  color: var(--binding-red);
+  font-weight: 950;
+}
+
+.binding-final-cta {
+  padding: 52px 0;
+  color: var(--binding-ink);
+  background: #ffffff;
+  border-top: 1px solid var(--binding-border);
+}
+
+.binding-final-cta__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.binding-final-cta .binding-kicker,
+.binding-final-cta span {
+  color: var(--binding-muted);
+}
+
+.binding-final-cta h2 {
+  color: var(--binding-ink);
+}
+
+.binding-final-cta .binding-kicker {
+  color: var(--binding-red);
+}
+
+.binding-order {
+  scroll-margin-top: 132px;
+  padding: 72px 0 92px;
+  background: #f4f5f7;
+  border-top: 1px solid var(--binding-border);
+}
+
+@media (max-width: 1040px) {
+  .binding-hero__inner,
+  .binding-education-layout,
+  .binding-details-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .binding-hero__product {
+    min-height: 300px;
+    max-width: 420px;
+  }
+
+  .binding-price-strip__grid,
+  .binding-use-grid,
+  .binding-process,
+  .binding-related-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .binding-section-inner,
+  .binding-hero__inner {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .binding-hero {
+    min-height: auto;
+  }
+
+  .binding-hero__shade {
+    background:
+      linear-gradient(180deg, #090a0d 0%, #090a0d 74%, var(--binding-red) 74%, var(--binding-red) 100%);
+  }
+
+  .binding-hero__inner {
+    padding: 44px 0 34px;
+    gap: 26px;
+  }
+
+  .binding-hero h1 {
+    font-size: 42px;
+    line-height: 1;
+  }
+
+  .binding-hero__lead {
+    font-size: 17px;
+  }
+
+  .binding-hero__actions,
+  .binding-education-actions,
+  .binding-final-cta__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .binding-action {
+    width: 100%;
+  }
+
+  .binding-hero__product {
+    min-height: 260px;
+    padding: 20px;
+  }
+
+  .binding-hero__product strong {
+    font-size: 44px;
+  }
+
+  .binding-price-strip__grid,
+  .binding-use-grid,
+  .binding-process,
+  .binding-related-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .binding-section {
+    padding: 56px 0;
+  }
+
+  .binding-section-heading h2,
+  .binding-education-copy h2,
+  .binding-requirements h2,
+  .binding-final-cta h2 {
+    font-size: 30px;
+  }
+
+  .binding-final-cta__inner {
+    display: grid;
+  }
+
+  .binding-order {
+    scroll-margin-top: 116px;
+    padding: 54px 0 70px;
+  }
+}

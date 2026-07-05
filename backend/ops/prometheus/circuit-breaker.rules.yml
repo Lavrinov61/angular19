@@ -1,0 +1,43 @@
+groups:
+  - name: circuit-breaker
+    interval: 30s
+    rules:
+      - alert: CircuitBreakerOpenTooLong
+        expr: circuit_breaker_state == 2
+        for: 2m
+        labels:
+          severity: critical
+          service: circuit-breaker
+        annotations:
+          summary: "Circuit breaker {{ $labels.name }} OPEN >2m"
+          description: "Breaker {{ $labels.name }} находится в состоянии OPEN более 2 минут. Внешний сервис недоступен или выдаёт 5xx."
+
+      - alert: CircuitBreakerFallbackHigh
+        expr: rate(circuit_breaker_fallback_requests_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: circuit-breaker
+        annotations:
+          summary: "Circuit breaker {{ $labels.service }} fallback rate >10 req/s"
+          description: "Высокий rate отклонённых запросов — возможен каскад."
+
+      - alert: CircuitBreakerFlapping
+        expr: rate(circuit_breaker_trips_total[15m]) > 5
+        for: 10m
+        labels:
+          severity: warning
+          service: circuit-breaker
+        annotations:
+          summary: "Circuit breaker {{ $labels.service }} flapping (>5 trips / 15m)"
+          description: "Частые трипы breaker'а. Возможны intermittent failures внешнего сервиса."
+
+      - alert: CircuitBreakerCallSlow
+        expr: histogram_quantile(0.95, sum(rate(circuit_breaker_call_duration_seconds_bucket[5m])) by (le, service)) > 3
+        for: 5m
+        labels:
+          severity: warning
+          service: circuit-breaker
+        annotations:
+          summary: "Circuit breaker {{ $labels.service }} p95 call duration >3s"
+          description: "Деградация latency — внешний сервис на грани порога timeout."

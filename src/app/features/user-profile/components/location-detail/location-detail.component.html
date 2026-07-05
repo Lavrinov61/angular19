@@ -1,0 +1,247 @@
+<!-- Location Detail Component Template -->
+<div class="location-detail-container">
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-section">
+      <mat-spinner diameter="50" />
+      <p>Загрузка информации о локации...</p>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error() && !loading()) {
+    <div class="error-section">
+      <mat-icon>error_outline</mat-icon>
+      <h3>Ошибка загрузки</h3>
+      <p>{{ error() }}</p>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        Вернуться к списку
+      </button>
+    </div>
+  }
+
+  <!-- Main Content -->
+  @if (location() && !loading()) {
+    <div class="location-content">
+    <!-- Header with navigation -->
+    <div class="location-header">
+      <div class="header-navigation">
+        <button mat-icon-button (click)="goBack()" matTooltip="Назад к списку локаций">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-actions">
+          <button mat-icon-button 
+                  [color]="isFavorite() ? 'accent' : ''"
+                  (click)="toggleFavorite()" 
+                  [matTooltip]="isFavorite() ? 'Удалить из избранного' : 'Добавить в избранное'">
+            <mat-icon>{{ isFavorite() ? 'favorite' : 'favorite_border' }}</mat-icon>
+          </button>
+          <button mat-icon-button (click)="shareLocation()" matTooltip="Поделиться">
+            <mat-icon>share</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="location-title-section">
+        <div class="title-info">
+          <h1>{{ location()!.name }}</h1>
+          <div class="location-meta">
+            <div class="rating-info">
+              <div class="stars">
+                @for (star of [1,2,3,4,5]; track star) {
+                  <mat-icon [class.filled]="star <= (location()!.rating || 0)">
+                    {{ star <= (location()!.rating || 0) ? 'star' : 'star_border' }}
+                  </mat-icon>
+                }
+              </div>
+              <span class="rating-value">{{ location()!.rating || 0 }}</span>
+              <span class="reviews-count">· Все отзывы настоящие</span>
+            </div>
+            <div class="category-chip">
+              <mat-chip>{{ getCategoryLabel(location()!.category) }}</mat-chip>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location Image Gallery -->
+    <div class="location-gallery">
+      @if (location()!.images && location()!.images.length > 0) {
+        <div class="gallery-main">
+          <img [src]="location()!.images[0].url" 
+               [alt]="location()!.images[0].caption || location()!.images[0].name || location()!.name"
+               class="main-image">
+        </div>
+        @if (location()!.images.length > 1) {
+          <div class="gallery-thumbnails">
+            @for (image of location()!.images.slice(1, 5); track image.id || $index) {
+              <img [src]="image.url"
+                   [alt]="image.caption || image.name || location()!.name"
+                   class="thumbnail"
+                   (click)="selectImage($index + 1)"
+                   (keydown.enter)="selectImage($index + 1)"
+                   tabindex="0">
+            }
+          </div>
+        }
+      } @else {
+        <div class="no-image-placeholder">
+          <mat-icon>image</mat-icon>
+          <p>Изображения отсутствуют</p>
+        </div>
+      }
+    </div>
+
+    <!-- Location Details Tabs -->
+    <mat-tab-group class="location-tabs">
+      <!-- Overview Tab -->
+      <mat-tab label="Обзор">
+        <div class="tab-content">
+          <div class="location-description">
+            <h3>Описание</h3>
+            <p>{{ location()!.description || 'Описание отсутствует' }}</p>
+          </div>
+
+          <div class="location-details-grid">
+            <div class="detail-item">
+              <mat-icon>location_on</mat-icon>
+              <div class="detail-content">
+                <h4>Адрес</h4>
+                <p>{{ location()!.address }}</p>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <mat-icon>access_time</mat-icon>
+              <div class="detail-content">
+                <h4>Лучшее время</h4>
+                <p>{{ getTimeOfDayText(location()!.bestTimeOfDay) }}</p>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <mat-icon>terrain</mat-icon>
+              <div class="detail-content">
+                <h4>Сложность</h4>
+                <p>{{ getDifficultyLabel(location()!.difficulty) }}</p>
+              </div>
+            </div>
+
+            <div class="detail-item">
+              <mat-icon>directions_walk</mat-icon>
+              <div class="detail-content">
+                <h4>Доступность</h4>
+                <p>{{ location()!.accessibility === 'full' ? 'Доступно для всех' : 'Требуется физическая подготовка' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="location-features">
+            <h3>Особенности</h3>
+            <div class="features-list">
+              @for (feature of location()!.features || []; track feature || $index) {
+                <div class="feature-item">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>{{ feature }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Reviews Tab -->
+      <mat-tab label="Отзывы">
+        <div class="tab-content">
+          <div class="reviews-section">
+            @if (reviews() && reviews().length > 0) {
+              @for (review of reviews(); track review.id || $index) {
+                <div class="review-card">
+                  <div class="review-header">
+                    <div class="reviewer-info">
+                      <div class="reviewer-avatar">
+                        <mat-icon>person</mat-icon>
+                      </div>
+                      <div class="reviewer-details">
+                        <h4>{{ review.userName || 'Анонимный пользователь' }}</h4>
+                        <div class="review-rating">
+                          @for (star of [1,2,3,4,5]; track star) {
+                            <mat-icon [class.filled]="star <= review.rating">
+                              {{ star <= review.rating ? 'star' : 'star_border' }}
+                            </mat-icon>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <span class="review-date">{{ review.date | date:'dd.MM.yyyy' }}</span>
+                  </div>
+                  <p class="review-text">{{ review.text }}</p>
+                  @if (review.photos && review.photos.length > 0) {
+                    <div class="review-photos">
+                      @for (photo of review.photos; track photo || $index) {
+                        <img [src]="photo" alt="Фото из отзыва" class="review-photo">
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            } @else {
+              <div class="no-reviews">
+                <mat-icon>rate_review</mat-icon>
+                <p>Пока нет отзывов об этой локации</p>
+              </div>
+            }
+          </div>
+
+          <div class="add-review-section">
+            <button mat-raised-button color="primary">
+              Оставить отзыв
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Booking Tab -->
+      <mat-tab label="Бронирование">
+        <div class="tab-content">
+          <div class="booking-info">
+            <h3>Забронировать локацию</h3>
+            <p>Выберите удобное время для фотосессии</p>
+          </div>
+
+          <div class="booking-calendar">
+            <div class="available-slots">
+              <h4>Доступные слоты на ближайшие 2 недели</h4>
+              <!-- Здесь будет календарь с доступными слотами -->
+              <div class="slots-placeholder">
+                <mat-icon>event</mat-icon>
+                <p>Календарь бронирования будет добавлен в следующей версии</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="booking-actions">
+            <button mat-raised-button color="primary" (click)="bookLocation()">
+              <mat-icon>event</mat-icon>
+              Забронировать
+            </button>
+            <button mat-stroked-button (click)="contactPhotographer()">
+              <mat-icon>chat</mat-icon>
+              Связаться с фотографом
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <!-- Bottom Actions -->
+    <div class="bottom-actions">
+      <button mat-fab extended color="primary" (click)="bookLocation()">
+        <mat-icon>event</mat-icon>
+        Забронировать
+      </button>
+    </div>
+  </div>
+  }
+</div>

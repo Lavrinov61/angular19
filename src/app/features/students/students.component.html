@@ -1,0 +1,573 @@
+<main class="education-smart-page">
+  <section class="education-hero" appScrollReveal>
+    <header class="education-mobile-header">
+      <a routerLink="/" class="education-brand" (click)="closeMobileMenu()">
+        <img
+          src="/assets/static/logo-white.webp"
+          alt="Своё Фото"
+          width="116"
+          height="32"
+        />
+      </a>
+
+      <button
+        type="button"
+        class="education-menu-button"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-controls="site-mobile-menu"
+        aria-label="Открыть меню"
+        (click)="toggleMobileMenu()"
+      >
+        <mat-icon>{{ mobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </header>
+
+    <app-site-mobile-menu
+      [open]="mobileMenuOpen()"
+      defaultAudienceId="study"
+      (closed)="closeMobileMenu()"
+    />
+
+    <div class="education-hero__art">
+      <img
+        src="/assets/static/education-smart/education-hero.webp"
+        alt="Документы А4, принтер и образовательный доступ Своё Фото"
+        width="720"
+        height="520"
+        loading="eager"
+      />
+    </div>
+
+    <div class="education-hero__content">
+      <p class="education-hero__eyebrow">Студентам, преподавателям и сотрудникам учебных заведений</p>
+      <h1>Образовательный аккаунт Своё&nbsp;Фото</h1>
+      <p class="education-hero__lead">
+        Студенческая цена на печать документов: от 3 ₽ за А4 с подпиской, от 5 ₽ без неё. Без промокодов.
+      </p>
+
+      <div class="education-hero__chips" aria-label="Основные условия">
+        <span>Ч/б А4 от 3 ₽</span>
+        <span>Переплёт 10 ₽</span>
+        <span>Премиум-фото от 10 ₽</span>
+      </div>
+
+      <div class="education-hero__actions">
+        <a
+          mat-flat-button
+          href="#education-access-connect"
+          (click)="scrollToConnect($event)"
+          class="education-primary-button"
+        >
+          <mat-icon>school</mat-icon>
+          Подключить доступ
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="education-sheet">
+    <section
+      class="education-compare"
+      id="education-access-pricing"
+      appScrollReveal
+    >
+      <div class="education-section-heading">
+        <p>Что внутри доступа</p>
+        <h2>Два тарифа: подтвердите статус и выбирайте</h2>
+        <span>
+          Подтвердите статус и печатайте дешевле сразу. Подписка опускает
+          цены ещё ниже. Лимиты одинаковые на обоих тарифах: 100 документов
+          и 100 фото за 30 дней.
+        </span>
+      </div>
+
+      <div
+        class="compare"
+        role="table"
+        aria-label="Сравнение тарифов образовательного доступа"
+      >
+        <div class="compare__row compare__row--head" role="row">
+          <div class="compare__corner" role="columnheader">Тариф</div>
+          <div class="compare__plan compare__plan--free" role="columnheader">
+            <span class="compare__plan-name">Без подписки</span>
+            <strong class="compare__plan-price">Бесплатно</strong>
+            <span class="compare__plan-note">только подтверждение статуса</span>
+          </div>
+          <div class="compare__plan compare__plan--sub" role="columnheader">
+            <span class="compare__badge" aria-label="Рекомендуемый тариф">Выгоднее</span>
+            <span class="compare__plan-name">С подпиской</span>
+            <strong class="compare__plan-price">199 ₽<small>/мес</small></strong>
+            <span class="compare__plan-note">или 1999 ₽ за год, экономия 389 ₽</span>
+          </div>
+        </div>
+
+        @for (row of compareRows; track row.label) {
+          <div class="compare__row" role="row">
+            <div class="compare__feature" role="rowheader">
+              <mat-icon aria-hidden="true">{{ row.icon }}</mat-icon>
+              <span>{{ row.label }}</span>
+            </div>
+            <div class="compare__value compare__value--free" role="cell">
+              {{ row.free }}
+            </div>
+            <div class="compare__value compare__value--sub" role="cell">
+              {{ row.sub }}
+            </div>
+          </div>
+        }
+
+        <div class="compare__row compare__row--cta" role="row">
+          <div class="compare__corner" aria-hidden="true"></div>
+          <div class="compare__cta compare__cta--free" role="cell">
+            <a
+              mat-stroked-button
+              href="#education-access-connect"
+              (click)="scrollToConnect($event)"
+            >
+              Подключить
+            </a>
+          </div>
+          <div class="compare__cta compare__cta--sub" role="cell">
+            <a
+              mat-flat-button
+              href="#education-access-connect"
+              (click)="scrollToConnect($event)"
+            >
+              Оформить
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <p class="education-compare__hint">
+        Тариф выбираете после подтверждения статуса: можно остаться без
+        подписки или оформить её за 199 ₽ в месяц прямо в кабинете.
+      </p>
+    </section>
+
+    <section
+      class="education-connect"
+      id="education-access-connect"
+      appScrollReveal
+    >
+      <div class="education-section-heading">
+        <p>Подключение</p>
+        <h2>Подтвердите статус и начните печатать</h2>
+      </div>
+
+      <div class="connect-tabs" role="tablist" aria-label="Тип клиента">
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="selectedEducationClientMode() === 'existing'"
+          [class.is-active]="selectedEducationClientMode() === 'existing'"
+          (click)="selectEducationClientMode('existing')"
+        >
+          Уже клиент
+        </button>
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="selectedEducationClientMode() === 'new'"
+          [class.is-active]="selectedEducationClientMode() === 'new'"
+          (click)="selectEducationClientMode('new')"
+        >
+          Стать клиентом
+        </button>
+      </div>
+
+      <div class="connect-panel">
+        <div class="connect-panel__content connect-panel__content--auth">
+          <mat-icon>{{ selectedEducationClientMode() === 'existing' ? 'login' : 'how_to_reg' }}</mat-icon>
+          @switch (educationAuthStep()) {
+              @case ('form') {
+                @if (selectedEducationClientMode() === 'existing') {
+                  <h3>Войдите по телефону</h3>
+                  <p>
+                    Введите номер, который уже привязан к вашему профилю. Позвоним
+                    и продиктуем код для входа в личный кабинет.
+                  </p>
+                } @else {
+                  <h3>Заполните данные для доступа</h3>
+                  <p>
+                    Укажите фамилию, имя, дату рождения и телефон. После звонка с
+                    кодом создадим профиль, и здесь же можно загрузить документ на проверку.
+                  </p>
+                }
+
+                @if (educationAuthError()) {
+                  <div class="education-auth-error" role="alert">
+                    <mat-icon>error_outline</mat-icon>
+                    <span>{{ educationAuthError() }}</span>
+                  </div>
+                }
+
+                <form class="education-auth-form" (submit)="requestEducationPhoneCode(); $event.preventDefault()">
+                  <div
+                    class="education-auth-grid"
+                    [class.education-auth-grid--single]="selectedEducationClientMode() === 'existing'"
+                  >
+                    @if (selectedEducationClientMode() === 'new') {
+                      <div class="education-auth-field">
+                        <label for="education-last-name">Фамилия</label>
+                        <input
+                          #educationLastNameInput
+                          id="education-last-name"
+                          type="text"
+                          autocomplete="family-name"
+                          [value]="educationLastName()"
+                          (input)="onEducationLastNameInput($event)"
+                        />
+                      </div>
+
+                      <div class="education-auth-field">
+                        <label for="education-first-name">Имя</label>
+                        <input
+                          id="education-first-name"
+                          type="text"
+                          autocomplete="given-name"
+                          [value]="educationFirstName()"
+                          (input)="onEducationFirstNameInput($event)"
+                        />
+                      </div>
+
+                      <div class="education-auth-field">
+                        <label for="education-birth-date">Дата рождения</label>
+                        <input
+                          id="education-birth-date"
+                          type="date"
+                          autocomplete="bday"
+                          [value]="educationBirthDate()"
+                          (input)="onEducationBirthDateInput($event)"
+                        />
+                      </div>
+                    }
+
+                    <div class="education-auth-field">
+                      <label for="education-phone">Телефон</label>
+                      <div class="education-phone-control">
+                        <span>+7</span>
+                        <input
+                          #educationPhoneInput
+                          id="education-phone"
+                          type="tel"
+                          inputmode="numeric"
+                          autocomplete="tel-national"
+                          aria-label="Телефон"
+                          [value]="educationMaskedPhone()"
+                          (input)="onEducationPhoneInput($event)"
+                          (paste)="onEducationPhonePaste($event)"
+                          (keydown)="onEducationPhoneKeydown($event)"
+                        />
+                        @if (educationPhoneDigits().length > 0) {
+                          <button
+                            type="button"
+                            class="education-phone-clear"
+                            aria-label="Очистить телефон"
+                            (click)="clearEducationPhone()"
+                          >
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    mat-flat-button
+                    class="education-auth-submit"
+                    type="submit"
+                    [disabled]="!educationFormValid() || educationAuthRequesting()"
+                  >
+                    @if (educationAuthRequesting()) {
+                      <mat-spinner diameter="20" />
+                    } @else {
+                      {{ selectedEducationClientMode() === 'existing' ? 'Войти' : 'Продолжить' }}
+                    }
+                  </button>
+                </form>
+              }
+
+              @case ('code') {
+                <h3>Введите код из звонка</h3>
+                <p>
+                  Код отправлен на номер {{ educationFormattedPhone() }}.
+                </p>
+
+                @if (educationAuthError()) {
+                  <div class="education-auth-error" role="alert">
+                    <mat-icon>error_outline</mat-icon>
+                    <span>{{ educationAuthError() }}</span>
+                  </div>
+                }
+
+                <form class="education-auth-form" (submit)="verifyEducationPhoneCode(); $event.preventDefault()">
+                  <button
+                    type="button"
+                    class="education-auth-back"
+                    (click)="backToEducationForm()"
+                  >
+                    <mat-icon>arrow_back</mat-icon>
+                    {{ selectedEducationClientMode() === 'existing' ? 'Изменить телефон' : 'Изменить данные' }}
+                  </button>
+
+                  <div class="education-auth-field education-auth-field--code">
+                    <label for="education-code">Код подтверждения</label>
+                    <input
+                      #educationCodeInput
+                      id="education-code"
+                      type="text"
+                      inputmode="numeric"
+                      autocomplete="one-time-code"
+                      maxlength="4"
+                      [value]="educationCode()"
+                      (input)="onEducationCodeInput($event)"
+                    />
+                  </div>
+
+                  <button
+                    mat-flat-button
+                    class="education-auth-submit"
+                    type="submit"
+                    [disabled]="!educationCodeValid() || educationAuthLoading()"
+                  >
+                    @if (educationAuthLoading()) {
+                      <mat-spinner diameter="20" />
+                    } @else {
+                      Подтвердить
+                    }
+                  </button>
+
+                  <button
+                    type="button"
+                    class="education-auth-resend"
+                    [disabled]="!canResendEducationCode()"
+                    (click)="resendEducationCode()"
+                  >
+                    @if (educationAuthCountdown() > 0) {
+                      Повторить через {{ educationAuthCountdown() }} сек.
+                    } @else {
+                      Запросить код ещё раз
+                    }
+                  </button>
+                </form>
+              }
+
+              @case ('document') {
+                @if (educationDocLoadingStatus()) {
+                  <div class="education-auth-form education-doc-loading">
+                    <mat-spinner diameter="28" />
+                  </div>
+                } @else if (educationDocStatusKind() === 'verified') {
+                  <div class="education-doc-status" role="status">
+                    <mat-icon>verified</mat-icon>
+                    <div>
+                      <h3>Доступ уже активен</h3>
+                      <p>
+                        Доступ к студенческим ценам уже активен. Загружать документ
+                        повторно не нужно.
+                      </p>
+                      <button
+                        mat-flat-button
+                        class="education-auth-submit"
+                        type="button"
+                        (click)="goToCabinet()"
+                      >
+                        Перейти в кабинет
+                      </button>
+                    </div>
+                  </div>
+                } @else if (educationDocStatusKind() === 'pending') {
+                  <div class="education-doc-status" role="status">
+                    <mat-icon>hourglass_top</mat-icon>
+                    <div>
+                      <h3>Заявка на проверке</h3>
+                      <p>
+                        Заявка уже на проверке. Мы сообщим о результате в личном
+                        кабинете.
+                      </p>
+                      <button
+                        mat-flat-button
+                        class="education-auth-submit"
+                        type="button"
+                        (click)="goToCabinet()"
+                      >
+                        Открыть кабинет
+                      </button>
+                    </div>
+                  </div>
+                } @else if (educationDocStatusKind() === 'revoked') {
+                  <div class="education-doc-status" role="status">
+                    <mat-icon>info</mat-icon>
+                    <div>
+                      <h3>Статус отозван</h3>
+                      <p>
+                        Образовательный статус отозван. Обратитесь к сотруднику.
+                      </p>
+                      <button
+                        mat-flat-button
+                        class="education-auth-submit"
+                        type="button"
+                        (click)="goToCabinet()"
+                      >
+                        Открыть кабинет
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <h3>Загрузите документ на проверку</h3>
+                  <p>
+                    Выберите роль, укажите учебное заведение и приложите фото
+                    документа. Мы подтвердим студенческие цены после проверки.
+                  </p>
+
+                  @if (educationDocError()) {
+                    <div class="education-auth-error" role="alert">
+                      <mat-icon>error_outline</mat-icon>
+                      <span>{{ educationDocError() }}</span>
+                    </div>
+                  }
+
+                  <form
+                    class="education-auth-form"
+                    (submit)="submitDocumentUpload(); $event.preventDefault()"
+                  >
+                    <div class="education-auth-field">
+                      <label for="education-doc-role">Кто вы</label>
+                      <select
+                        id="education-doc-role"
+                        class="education-doc-select"
+                        [value]="educationDocRole()"
+                        (change)="onEducationDocRoleChange($event)"
+                      >
+                        @for (opt of educationDocRoleOptions; track opt.value) {
+                          <option [value]="opt.value">{{ opt.label }}</option>
+                        }
+                      </select>
+                    </div>
+
+                    <p class="education-doc-hint">{{ educationDocHint() }}</p>
+
+                    <div class="education-auth-field">
+                      <label for="education-doc-institution">Учебное заведение</label>
+                      <input
+                        #educationDocInstitutionInput
+                        id="education-doc-institution"
+                        type="text"
+                        autocomplete="organization"
+                        [value]="educationDocInstitution()"
+                        (input)="onEducationDocInstitutionInput($event)"
+                      />
+                    </div>
+
+                    <div class="education-auth-field">
+                      <label for="education-doc-file">Фото документа</label>
+                      <label class="education-auth-file" for="education-doc-file">
+                        <mat-icon>upload_file</mat-icon>
+                        <span>{{ educationDocFileName() }}</span>
+                        <input
+                          id="education-doc-file"
+                          type="file"
+                          [attr.accept]="educationDocAccept"
+                          (change)="onEducationDocFileSelected($event)"
+                        />
+                      </label>
+                    </div>
+
+                    <button
+                      mat-flat-button
+                      class="education-auth-submit"
+                      type="submit"
+                      [disabled]="!educationDocFormValid() || educationDocSubmitting()"
+                    >
+                      @if (educationDocSubmitting()) {
+                        <mat-spinner diameter="20" />
+                      } @else {
+                        Отправить на проверку
+                      }
+                    </button>
+
+                    <button
+                      type="button"
+                      class="education-auth-secondary"
+                      (click)="goToCabinet()"
+                    >
+                      Загрузить позже в кабинете
+                    </button>
+                  </form>
+                }
+              }
+
+              @case ('done') {
+                <div class="education-doc-status" role="status">
+                  <mat-icon>check_circle</mat-icon>
+                  <div>
+                    <h3>Заявка отправлена на проверку</h3>
+                    <p>
+                      Спасибо! Проверим документ и подтвердим студенческие цены.
+                      Статус появится в личном кабинете.
+                    </p>
+                    <button
+                      mat-flat-button
+                      class="education-auth-submit"
+                      type="button"
+                      (click)="goToCabinet()"
+                    >
+                      Перейти в кабинет
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+        </div>
+      </div>
+
+      <div class="connect-studio-note">
+        <mat-icon>storefront</mat-icon>
+        <div>
+          <h3>Можно подключить прямо в студии</h3>
+          <p>
+            Покажите сотруднику студенческий билет, справку об обучении
+            или удостоверение преподавателя, и мы оформим
+            доступ на месте.
+          </p>
+        </div>
+        <a mat-stroked-button routerLink="/contacts">
+          Найти студию
+        </a>
+      </div>
+    </section>
+
+    <section class="education-faq" id="education-access-faq" appScrollReveal>
+      <div class="education-section-heading">
+        <p>FAQ</p>
+        <h2>Частые вопросы</h2>
+      </div>
+
+      <mat-accordion class="education-faq__accordion">
+        @for (faq of faqs; track faq.question) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ faq.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{ faq.answer }}</p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </section>
+  </div>
+
+  <div
+    class="mobile-sticky-cta"
+    [class.mobile-sticky-cta--visible]="stickyCtaVisible()"
+  >
+    <a
+      mat-flat-button
+      href="#education-access-connect"
+      (click)="scrollToConnect($event)"
+    >
+      <mat-icon>school</mat-icon>
+      Подключить доступ
+    </a>
+  </div>
+</main>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Ground line -->
+  <path d="M8 38h32" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Stem -->
+  <path d="M24 38V22" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Left leaf -->
+  <path d="M24 30C21 28 14 26 11 18C15 14 23 19 24 27" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="#f59e0b" fill-opacity="0.2"/>
+  <!-- Right leaf -->
+  <path d="M24 24C27 22 34 20 37 12C33 8 25 13 24 21" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="#f59e0b" fill-opacity="0.2"/>
+  <!-- Bud/tip -->
+  <circle cx="24" cy="19" r="3" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.35"/>
+</svg>

@@ -1,0 +1,58 @@
+<nav class="bottom-nav">
+  <div class="bottom-nav-container">
+    @for (item of navItems; track trackByHref($index, item)) {
+      <a
+         [routerLink]="item.href"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: item.href === '/'}"
+         class="bottom-nav-item"
+         matRipple
+         [matRippleCentered]="true"
+         [matRippleRadius]="24"
+         [attr.aria-label]="item.label">
+        <span class="bottom-nav-icon-wrap">
+          <span class="bottom-nav-pill"></span>
+          <mat-icon class="bottom-nav-icon" aria-hidden="true">
+            {{item.activeIcon && isActive(item.href) ? item.activeIcon : item.icon}}
+          </mat-icon>
+        </span>
+        <span class="bottom-nav-label">{{item.label}}</span>
+      </a>
+    }
+
+    <!-- Profile / Login -->
+    @if (authService.isAuthenticated()) {
+      <a
+        routerLink="/user-profile"
+        routerLinkActive="active"
+        class="bottom-nav-item"
+        matRipple
+        [matRippleCentered]="true"
+        [matRippleRadius]="24"
+        aria-label="Профиль">
+        <span class="bottom-nav-icon-wrap">
+          <span class="bottom-nav-pill"></span>
+          <mat-icon class="bottom-nav-icon" aria-hidden="true">
+            {{ isActive('/user-profile') ? 'person' : 'person_outline' }}
+          </mat-icon>
+        </span>
+        <span class="bottom-nav-label">Профиль</span>
+      </a>
+    } @else {
+      <a
+        routerLink="/auth/login"
+        routerLinkActive="active"
+        class="bottom-nav-item"
+        matRipple
+        [matRippleCentered]="true"
+        [matRippleRadius]="24"
+        aria-label="Войти">
+        <span class="bottom-nav-icon-wrap">
+          <span class="bottom-nav-pill"></span>
+          <mat-icon class="bottom-nav-icon" aria-hidden="true">login</mat-icon>
+        </span>
+        <span class="bottom-nav-label">Войти</span>
+      </a>
+    }
+  </div>
+</nav>

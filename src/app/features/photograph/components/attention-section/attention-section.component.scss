@@ -1,0 +1,73 @@
+// Attention Section — editorial dark cinematic layout, mobile-first
+
+.attention-section.new-design {
+  background: var(--ed-surface, #0a0a0a);
+  color: var(--ed-on-surface, #f5f5f5);
+  padding: 3rem 1rem;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+
+  @media (min-width: 960px) { padding: 6rem 2rem; }
+
+  .hero-content-grid {
+    max-width: 1200px; margin: 0 auto; display: grid;
+    grid-template-columns: 1fr; gap: 3rem; align-items: center; width: 100%; text-align: center;
+    @media (min-width: 960px) { grid-template-columns: 1fr 1fr; gap: 4rem; text-align: left; }
+  }
+
+  .hero-text-content {
+    .hero-title {
+      font-family: var(--ed-font-display, 'Oswald', sans-serif);
+      font-size: 2.5rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em;
+      line-height: 1.1; margin-bottom: 1.5rem;
+      @media (min-width: 960px) { font-size: 3.5rem; }
+      .highlight { color: var(--ed-accent, #f59e0b); }
+    }
+
+    .hero-subtitle {
+      font-size: 1.2rem; color: var(--ed-on-surface-variant, #a0a0a0); margin-bottom: 2.5rem; line-height: 1.6; max-width: 500px;
+      margin-left: auto; margin-right: auto;
+      @media (min-width: 840px) { margin-left: 0; margin-right: 0; }
+      @media (min-width: 960px) { font-size: 1.4rem; }
+    }
+
+    .hero-benefits {
+      display: flex; flex-direction: column; gap: 1rem; margin-bottom: 3rem; align-items: center;
+      @media (min-width: 960px) { align-items: flex-start; }
+
+      .benefit-item {
+        display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.2rem;
+        background: var(--ed-surface-container-high, #222); border-radius: 25px;
+        border: 1px solid var(--ed-outline-variant, #2a2a2a);
+
+        a {
+          color: inherit;
+          text-decoration: underline;
+          text-underline-offset: 2px;
+        }
+      }
+    }
+
+    .hero-cta {
+      display: flex; gap: 1rem; justify-content: center;
+      @media (min-width: 960px) { justify-content: flex-start; }
+
+      .cta-button, .secondary-cta {
+        font-size: 1.2rem; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700;
+      }
+      .cta-button { background: var(--ed-accent, #f59e0b); color: var(--ed-on-accent, #0a0a0a); }
+      .secondary-cta { border: 2px solid var(--ed-outline-variant, #2a2a2a); color: var(--ed-on-surface, #f5f5f5); background: transparent; }
+    }
+  }
+
+  .hero-media-content {
+    display: flex; align-items: center; justify-content: center;
+
+    .hero-image-wrapper {
+      border-radius: 30px; overflow: hidden;
+
+      .hero-image { width: 100%; max-width: 500px; height: auto; aspect-ratio: 3/4; object-fit: cover; }
+    }
+  }
+}

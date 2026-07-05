@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Флаер A6 — Фото на документы — Своё Фото</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:105mm 148mm;margin:0}
+
+:root{
+  --bg:#0a0a0a;--bg2:#131210;--bg3:#1c1b18;
+  --am:#f59e0b;--am2:#fbbf24;--amd:#d97706;
+  --t1:#f5f5f5;--t2:#a0a0a0;--t3:#666;
+  --brd:rgba(255,255,255,.07);
+  --glow:rgba(245,158,11,.12);
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+
+body{
+  background:#222;font-family:var(--fb);color:var(--t1);
+  display:flex;flex-direction:column;align-items:center;gap:50px;padding:50px 20px;
+}
+
+.tag{color:#555;font-size:9px;text-transform:uppercase;letter-spacing:.25em;margin-bottom:-38px}
+
+/* === CARD === */
+.card{
+  width:105mm;height:148mm;background:var(--bg);overflow:hidden;position:relative;
+  print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+@media screen{.card{box-shadow:0 16px 60px rgba(0,0,0,.7);border-radius:4px}}
+@media print{
+  body{background:none;padding:0;gap:0}
+  .tag{display:none}
+  .card{page-break-after:always;box-shadow:none;border-radius:0}
+}
+
+/* ========== FRONT ========== */
+.f{display:flex;flex-direction:column;height:100%}
+
+.f-top{
+  background:var(--am);color:#000;text-align:center;
+  padding:5px 10px;font-family:var(--fd);font-weight:600;
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+}
+
+.f-hero{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:14px 20px 10px;
+  position:relative;
+}
+.f-hero::after{
+  content:'';position:absolute;top:6%;left:50%;transform:translateX(-50%);
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,var(--glow),transparent 70%);
+  pointer-events:none;
+}
+
+.f-h{
+  font-family:var(--fd);font-weight:800;font-size:34px;
+  text-transform:uppercase;line-height:.96;letter-spacing:.01em;
+  position:relative;z-index:1;margin-bottom:4px;
+}
+.f-h b{color:var(--am);font-weight:800}
+.f-sub{
+  font-family:var(--fd);font-weight:600;font-size:16px;
+  color:var(--am2);text-transform:uppercase;letter-spacing:.08em;
+  position:relative;z-index:1;margin-bottom:14px;
+}
+
+/* document list */
+.f-docs{
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;gap:5px;
+  text-align:left;width:100%;max-width:220px;
+  margin-bottom:16px;
+}
+.f-doc{
+  display:flex;align-items:center;gap:8px;
+  font-size:11.5px;font-weight:500;
+}
+.f-doc::before{
+  content:'';width:4px;height:4px;border-radius:50%;
+  background:var(--am);flex-shrink:0;
+}
+
+/* promo code */
+.f-promo{
+  position:relative;z-index:1;
+  background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.04));
+  border:1.5px dashed var(--amd);border-radius:10px;
+  padding:8px 20px;text-align:center;
+  box-shadow:0 0 24px var(--glow);
+}
+.f-promo .pl{font-size:8.5px;color:var(--t2);margin-bottom:2px}
+.f-promo .pc{
+  font-family:var(--fd);font-size:28px;font-weight:700;
+  color:var(--am);letter-spacing:.18em;
+}
+.f-promo .pv{font-size:9.5px;font-weight:500;color:var(--t2);margin-top:2px}
+
+/* bottom address */
+.f-bot{
+  background:var(--bg3);border-top:1px solid var(--brd);
+  padding:8px 18px;display:flex;align-items:center;justify-content:space-between;
+}
+.f-addr{font-family:var(--fd);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+.f-hint{font-size:8.5px;color:var(--t3);margin-top:1px}
+
+/* camera icon */
+.f-icon{
+  position:relative;z-index:1;margin-bottom:10px;
+  width:44px;height:44px;border-radius:50%;
+  background:var(--bg2);border:1.5px solid var(--brd);
+  display:flex;align-items:center;justify-content:center;
+}
+.f-icon svg{width:22px;height:22px;fill:var(--am)}
+
+/* ========== BACK ========== */
+.b{display:flex;flex-direction:column;height:100%;padding:14px 16px 12px}
+
+.b-head{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--brd);
+}
+.b-brand{
+  font-family:var(--fd);font-weight:700;font-size:18px;
+  text-transform:uppercase;letter-spacing:.04em;
+}
+.b-brand span{color:var(--am)}
+.b-tag{
+  font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;
+  border-left:1px solid var(--brd);padding-left:10px;line-height:1.4;
+}
+
+/* also section */
+.b-also{margin-bottom:14px}
+.b-st{
+  font-family:var(--fd);font-size:8.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--am);margin-bottom:6px;
+}
+.b-r{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:11px;
+}
+.b-r:last-child{border-bottom:none}
+.b-r .v{color:var(--am);font-family:var(--fd);font-weight:600;font-size:11.5px}
+
+/* contacts */
+.b-ct{
+  background:var(--bg2);border-radius:8px;padding:8px 12px;margin-bottom:12px;
+}
+.b-cr{display:flex;align-items:center;gap:8px;padding:3px 0;font-size:10.5px}
+.b-cr svg{width:13px;height:13px;fill:var(--am);flex-shrink:0}
+.b-cr .label{color:var(--t3);font-size:8px;text-transform:uppercase;letter-spacing:.1em;min-width:50px}
+
+/* cta */
+.b-cta{
+  text-align:center;font-size:11px;color:var(--t2);
+  margin-bottom:12px;line-height:1.5;
+}
+.b-cta strong{color:var(--t1);font-weight:600}
+
+/* qr */
+.b-qr{
+  display:flex;align-items:center;gap:12px;margin-top:auto;
+  padding-top:10px;border-top:1px solid var(--brd);
+}
+.b-qb{
+  width:80px;height:80px;background:#888;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:#fff;font-family:var(--fd);font-weight:600;
+  letter-spacing:.08em;
+}
+.b-qi{font-size:9px;color:var(--t3);line-height:1.5}
+.b-qi strong{color:var(--t1);font-size:11px;display:block;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<!-- ============ ЛИЦЕВАЯ СТОРОНА ============ -->
+<div class="tag">Лицевая сторона — A6 (105x148 мм)</div>
+<div class="card">
+<div class="f">
+
+  <div class="f-top">Ежедневно 09:00 — 19:30 / Без выходных</div>
+
+  <div class="f-hero">
+    <div class="f-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4z"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
+    </div>
+    <div class="f-h">Фото на<br><b>документы</b></div>
+    <div class="f-sub">Готово за 5 минут</div>
+
+    <div class="f-docs">
+      <div class="f-doc">Паспорт РФ</div>
+      <div class="f-doc">Загранпаспорт</div>
+      <div class="f-doc">Студенческий</div>
+      <div class="f-doc">Визы</div>
+      <div class="f-doc">Другие документы</div>
+    </div>
+
+    <div class="f-promo">
+      <div class="pl">Скидка по промокоду</div>
+      <div class="pc">{{CODE}}</div>
+      <div class="pv">Назовите при визите</div>
+    </div>
+  </div>
+
+  <div class="f-bot">
+    <div>
+      <div class="f-addr">пер. Соборный, 21</div>
+      <div class="f-hint">50 м от Большой Садовой</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ============ ОБОРОТНАЯ СТОРОНА ============ -->
+<div class="tag">Оборотная сторона</div>
+<div class="card">
+<div class="b">
+
+  <div class="b-head">
+    <div class="b-brand">Своё <span>Фото</span></div>
+    <div class="b-tag">Фотостудия<br>в центре Ростова</div>
+  </div>
+
+  <div class="b-also">
+    <div class="b-st">Также у нас</div>
+    <div class="b-r"><span>Печать фото 10x15</span><span class="v">от 19 &#8381;</span></div>
+    <div class="b-r"><span>Ксерокопия</span><span class="v">10 &#8381;</span></div>
+    <div class="b-r"><span>Ламинирование</span><span class="v">100 &#8381;</span></div>
+  </div>
+
+  <div class="b-ct">
+    <div class="b-cr">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+      <span>пер. Соборный, 21</span>
+    </div>
+    <div class="b-cr">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+      <span>ул. 2-ая Баррикадная, 4</span>
+    </div>
+    <div class="b-cr">
+      <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      <span>+7 (901) 417-86-68</span>
+    </div>
+    <div class="b-cr">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      <span>svoefoto.ru</span>
+    </div>
+  </div>
+
+  <div class="b-cta">
+    <strong>Напишите в чат или запишитесь на сайте</strong><br>
+    Telegram: @magnus_photo
+  </div>
+
+  <div class="b-qr">
+    <div class="b-qb">QR</div>
+    <div class="b-qi">
+      <strong>svoefoto.ru</strong>
+      Отсканируйте для перехода<br>на сайт или в чат
+    </div>
+  </div>
+
+</div>
+</div>
+
+</body>
+</html>

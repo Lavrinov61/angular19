@@ -1,0 +1,234 @@
+<div class="online-hub-page" [class.telegram-webview]="isTelegramWebView()">
+
+  <!-- Баннер для Telegram WebView -->
+  @if (isTelegramWebView()) {
+    <div class="telegram-banner">
+      <span>Для лучшего опыта откройте в браузере</span>
+      <a class="telegram-open-btn" [href]="currentUrl()" target="_blank" rel="noopener">
+        <mat-icon>open_in_browser</mat-icon>
+        Открыть в браузере
+      </a>
+    </div>
+  }
+
+  <!-- Hero + Chat Combined -->
+  <section class="hero-combined" id="inline-chat">
+    <div class="hero-bg">
+      <div class="hero-bg-gradient"></div>
+      <div class="hero-bg-orb hero-bg-orb--1"></div>
+      <div class="hero-bg-orb hero-bg-orb--2"></div>
+    </div>
+
+    <div class="hero-marquee">
+      <div class="marquee">
+        @for (text of heroData.marqueeText; track text) {
+          <span class="marquee-item">{{ text }}</span>
+          <span class="marquee-separator">✦</span>
+        }
+        @for (text of heroData.marqueeText; track text) {
+          <span class="marquee-item">{{ text }}</span>
+          <span class="marquee-separator">✦</span>
+        }
+      </div>
+    </div>
+
+    <div class="hero-split">
+      <!-- Left: Hero Content -->
+      <div class="hero-left">
+        <h1 class="hero-title">
+          <span class="title-line">{{ heroData.title }}</span>
+        </h1>
+        <p class="hero-subtitle">{{ heroData.subtitle }}</p>
+        <p class="hero-description">{{ heroData.description }}</p>
+
+        <div class="hero-price-badge">
+          <span class="price-text">{{ heroData.price }}</span>
+        </div>
+
+        <div class="hero-cta">
+          <a mat-raised-button class="cta-primary" href="#services" (click)="scrollToServices($event)">
+            <mat-icon>storefront</mat-icon>
+            {{ heroData.ctaText }}
+          </a>
+          @if (isMobile()) {
+            <a mat-stroked-button class="cta-secondary" href="/contacts" (click)="openChat(); $event.preventDefault()">
+              <mat-icon>chat</mat-icon>
+              Написать в чат
+            </a>
+          }
+        </div>
+
+        <!-- Фичи и онлайн-статус (десктоп) -->
+        @if (inlineChatVisible()) {
+          <div class="hero-features">
+            <div class="hero-feature">
+              <mat-icon>schedule</mat-icon>
+              <span>9:00-21:00</span>
+            </div>
+            <div class="hero-feature">
+              <mat-icon>public</mat-icon>
+              <span>По всей России</span>
+            </div>
+            <div class="hero-feature">
+              <mat-icon>verified</mat-icon>
+              <span>Гарантия качества</span>
+            </div>
+          </div>
+          <div class="hero-online">
+            <span class="online-indicator"></span>
+            <span>Сейчас онлайн</span>
+          </div>
+        }
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Преимущества формата -->
+  <section class="benefits-section">
+    <div class="section-container">
+      <div class="section-header-modern">
+        <span class="section-label">Удобный формат</span>
+        <h2 class="section-title-modern">Почему онлайн?</h2>
+      </div>
+
+      <div class="benefits-grid-modern">
+        @for (benefit of formatBenefits; track benefit.title; let i = $index) {
+          <div class="benefit-card-modern" [style.--delay]="i * 0.1 + 's'">
+            <div class="benefit-glow"></div>
+            <div class="benefit-icon-modern">
+              <mat-icon>{{ benefit.icon }}</mat-icon>
+            </div>
+            <h3>{{ benefit.title }}</h3>
+            <p>{{ benefit.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Карточки услуг -->
+  <section class="services-section" id="services">
+    <div class="section-container">
+      <div class="section-header-modern">
+        <span class="section-label">Услуги</span>
+        <h2 class="section-title-modern">Наши онлайн-услуги</h2>
+      </div>
+
+      <div class="services-grid-modern">
+        @for (service of serviceCards; track service.url) {
+          <div class="service-tile">
+            @if (service.tag) {
+              <div class="tile-badge">{{ service.tag }}</div>
+            }
+            <div class="tile-icon">
+              <mat-icon>{{ service.icon }}</mat-icon>
+            </div>
+            <h3 class="tile-name">{{ service.title }}</h3>
+            <div class="tile-price">
+              <span class="tile-amount">{{ service.price }}</span>
+            </div>
+            <ul class="tile-features">
+              @for (feature of service.features; track feature) {
+                <li>
+                  <mat-icon>check</mat-icon>
+                  <span>{{ feature }}</span>
+                </li>
+              }
+            </ul>
+            <div class="tile-actions">
+              <a class="tile-cta primary" [routerLink]="service.url">Подробнее</a>
+              <a class="tile-cta" href="/contacts" (click)="openChat(); $event.preventDefault()">Написать в чат</a>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Процесс работы -->
+  <section class="process-wrapper">
+    <app-process-slider [steps]="processSteps" title="Как это работает" />
+  </section>
+
+  <!-- Преимущества -->
+  <section class="advantages-modern">
+    <div class="section-container">
+      <div class="section-header-modern">
+        <span class="section-label">Почему мы</span>
+        <h2 class="section-title-modern">Качество, которому доверяют</h2>
+      </div>
+      <div class="advantages-bento">
+        @for (adv of advantages; track adv.title; let i = $index) {
+          <div class="bento-card" [class]="'bento-' + i">
+            <div class="bento-icon-wrap">
+              <mat-icon>{{ adv.icon }}</mat-icon>
+            </div>
+            <h3 class="bento-title">{{ adv.title }}</h3>
+            <p class="bento-desc">{{ adv.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Отзывы -->
+  <section class="testimonials-section">
+    <div class="section-container">
+      <div class="section-header-modern">
+        <span class="section-label">Отзывы</span>
+        <h2 class="section-title-modern">Что говорят клиенты</h2>
+      </div>
+      <app-testimonials variant="card" />
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="section-container">
+      <div class="section-header-modern">
+        <span class="section-label">FAQ</span>
+        <h2 class="section-title-modern">Частые вопросы</h2>
+      </div>
+
+      <div class="faq-modern">
+        @for (faq of faqItems; track faq.question) {
+          <mat-expansion-panel class="faq-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ faq.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{ faq.answer }}</p>
+          </mat-expansion-panel>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section-modern">
+    <div class="section-container">
+      <div class="cta-glass">
+        <h2>{{ contactCta.title }}</h2>
+        <p class="cta-sub">{{ contactCta.subtitle }}</p>
+        <p class="cta-accent">{{ contactCta.urgency }}</p>
+        <a class="cta-glow" href="/contacts" (click)="openChat(); $event.preventDefault()">
+          <mat-icon>chat</mat-icon>
+          Написать в чат
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <app-contacts-section [contacts]="contactsData" />
+
+  <!-- Footer -->
+  <footer class="page-footer-modern">
+    <div class="section-container">
+      <p class="footer-brand">Своё Фото, онлайн-услуги по всей России</p>
+      <p class="footer-loc">Ростов-на-Дону &bull; Работаем удалённо</p>
+    </div>
+  </footer>
+
+  <app-cart />
+</div>

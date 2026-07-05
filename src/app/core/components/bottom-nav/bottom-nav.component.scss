@@ -1,0 +1,110 @@
+// Bottom Navigation — M3 Expressive Flexible Nav Bar
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--m3e-nav-height, 64px);
+  background: var(--ed-surface-container, #141414);
+  z-index: 1000;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+
+  @media (min-width: 600px) { display: none; }
+}
+
+.bottom-nav-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100%;
+  padding: 0 4px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  max-width: 80px;
+  text-decoration: none;
+  color: var(--ed-on-surface-variant, #a0a0a0);
+  padding: 0;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--m3e-effect-fast-duration, 200ms) var(--m3e-effect-fast, cubic-bezier(0.2, 0, 0, 1));
+
+  &:hover { color: var(--ed-on-surface, #e5e5e5); }
+
+  &.active {
+    color: var(--ed-accent, #f59e0b);
+
+    .bottom-nav-icon {
+      color: var(--ed-on-accent, #0a0a0a);
+    }
+
+    .bottom-nav-label {
+      color: var(--ed-accent, #f59e0b);
+      font-weight: 600;
+    }
+
+    // M3E pill indicator behind active icon
+    .bottom-nav-pill {
+      background: var(--ed-accent, #f59e0b);
+      transform: scaleX(1);
+      opacity: 1;
+    }
+  }
+}
+
+// Pill indicator wrapper
+.bottom-nav-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--m3e-nav-pill-width, 56px);
+  height: var(--m3e-nav-pill-height, 32px);
+}
+
+.bottom-nav-pill {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--m3e-corner-full, 9999px);
+  background: transparent;
+  transform: scaleX(0.5);
+  opacity: 0;
+  transition:
+    transform var(--m3e-spring-fast-duration, 350ms) var(--m3e-spring-fast, cubic-bezier(0.34, 1.56, 0.64, 1)),
+    background var(--m3e-effect-fast-duration, 200ms) var(--m3e-effect-fast, cubic-bezier(0.2, 0, 0, 1)),
+    opacity var(--m3e-effect-fast-duration, 200ms) var(--m3e-effect-fast, cubic-bezier(0.2, 0, 0, 1));
+}
+
+.bottom-nav-icon {
+  position: relative;
+  z-index: 1;
+  font-size: var(--m3e-nav-icon-size, 24px);
+  width: var(--m3e-nav-icon-size, 24px);
+  height: var(--m3e-nav-icon-size, 24px);
+}
+
+.bottom-nav-label {
+  font-size: var(--m3e-nav-label-size, 12px);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  max-width: 72px;
+  line-height: 1;
+}

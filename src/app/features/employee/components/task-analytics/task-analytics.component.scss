@@ -1,0 +1,232 @@
+.analytics {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.analytics-header {
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+
+.period-filters {
+  margin-bottom: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+// KPI Grid
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+
+  @media (max-width: 840px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kpi-card {
+  text-align: center;
+  padding: 20px 12px;
+
+  .kpi-value {
+    font-size: 32px;
+    font-weight: 700;
+  }
+
+  .kpi-label {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  &.good .kpi-value { color: var(--crm-status-success); }
+  &.warn .kpi-value { color: var(--crm-status-warning); }
+  &.bad .kpi-value { color: var(--crm-status-error); }
+}
+
+// Table Card
+.table-card {
+  margin-bottom: 16px;
+  padding: 16px;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead th {
+  text-align: left;
+  padding: 8px 12px;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+  border-bottom: 2px solid var(--mat-sys-outline-variant);
+}
+
+tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+}
+
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+
+.type-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.bar-cell {
+  width: 100px;
+}
+
+.bar {
+  height: 6px;
+  background: var(--mat-sys-primary);
+  border-radius: 3px;
+  min-width: 2px;
+  transition: width 0.3s;
+}
+
+.priority-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+
+  &.p-urgent { background: var(--crm-status-error); }
+  &.p-high { background: var(--crm-status-warning); }
+  &.p-normal { background: var(--crm-status-success); }
+  &.p-low { background: var(--crm-text-muted); }
+}
+
+td.good { color: var(--crm-status-success); font-weight: 600; }
+td.warn { color: var(--crm-status-warning); font-weight: 600; }
+td.bad { color: var(--crm-status-error); font-weight: 600; }
+
+// Day Chart
+.chart-card {
+  margin-bottom: 16px;
+  padding: 16px;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+}
+
+.day-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 120px;
+  padding: 0 4px;
+}
+
+.day-bar-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.day-bars {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+  height: 100px;
+}
+
+.day-bar {
+  width: 12px;
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+  transition: height 0.3s;
+
+  &.created { background: var(--mat-sys-primary-container); }
+  &.completed { background: var(--mat-sys-primary); }
+
+  @media (max-width: 599px) {
+    width: 8px;
+  }
+}
+
+.day-label {
+  font-size: 10px;
+  color: var(--mat-sys-on-surface-variant);
+  margin-top: 4px;
+}
+
+.day-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 4px;
+  vertical-align: middle;
+
+  &.created { background: var(--mat-sys-primary-container); }
+  &.completed { background: var(--mat-sys-primary); }
+}
+
+// Empty
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--mat-sys-on-surface-variant);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+  }
+}

@@ -1,0 +1,58 @@
+[package]
+name = "svf-agent-core"
+version = "0.1.0"
+edition = "2024"
+description = "Shared infrastructure for SvoePhoto field agents (MQTT, config, offline store, heartbeat, auto-update)"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full", "signal"] }
+
+# MQTT client (same as print-api and rust-agent)
+rumqttc = { version = "0.24", features = ["use-rustls", "websocket"] }
+
+# TLS: bundled Mozilla CA roots (no native cert store → safe for cross-compiled Windows)
+rustls = { version = "0.22", default-features = false }
+webpki-roots = "0.26"
+
+# Protobuf (shared contract)
+prost = "0.13"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# SQLite (offline job queue)
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# HTTP client (download artifacts for auto-update)
+reqwest = { version = "0.12", features = ["rustls-tls"], default-features = false }
+
+# Types
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-appender = "0.2"
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# Crypto (hash verification)
+sha2 = "0.10"
+hex = "0.4"
+
+[dev-dependencies]
+tempfile = "3"
+
+[build-dependencies]
+prost-build = "0.13"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

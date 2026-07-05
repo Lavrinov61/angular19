@@ -1,0 +1,256 @@
+<!-- Immortal Polk Stander Page -->
+<div class="immortal-polk-stander-page">
+  <!-- Hero Section - ATTENTION -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="highlight">Штендеры для Бессмертного полка</span> в Ростове-на-Дону
+        </h1>
+        <p class="hero-subtitle">
+          Увековечьте память своих героев! Изготавливаем качественные штендеры 
+          для участия в шествии Бессмертного полка.
+        </p>
+        <div class="hero-benefits">
+          <div class="benefit-item">
+            <mat-icon>schedule</mat-icon>
+            <span>Готово за 1 час</span>
+          </div>
+          <div class="benefit-item">
+            <mat-icon>verified</mat-icon>
+            <span>Высокое качество печати</span>
+          </div>
+          <div class="benefit-item">
+            <mat-icon>favorite</mat-icon>
+            <span>С заботой о памяти</span>
+          </div>
+        </div>
+        <div class="hero-cta">
+          <button mat-raised-button color="primary" class="cta-button" (click)="scrollToContacts()">
+            <mat-icon>photo</mat-icon>
+            Заказать штендер
+          </button>
+          <div class="price-info">
+            <span class="price">от {{price}} ₽</span>
+            <span class="price-note">стандартный размер</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img 
+          src="/assets/images/immortal-polk-hero.jpg" 
+          alt="Штендеры для Бессмертного полка Своё Фото"
+          loading="eager"
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section - INTEREST -->
+  <section class="services-section" id="services">
+    <div class="section-container">
+      <h2 class="section-title">Размеры и цены штендеров</h2>
+      <p class="section-subtitle">
+        Выберите подходящий размер для вашего штендера
+      </p>
+      
+      <div class="services-grid">
+        @for (stander of standerSizes; track stander.title || stander.icon || $index) {
+          <div class="service-card">
+            <div class="service-icon">
+              <mat-icon>{{stander.icon}}</mat-icon>
+            </div>
+            <h3 class="service-title">{{stander.title}}</h3>
+            <p class="service-description">{{stander.description}}</p>
+            <div class="service-specs">
+              @for (spec of stander.specifications; track spec.label || $index) {
+                <div class="spec-item">
+                  <span class="spec-label">{{spec.label}}:</span>
+                  <span class="spec-value">{{spec.value}}</span>
+                </div>
+              }
+            </div>
+            <div class="service-price">
+              <span class="price">{{stander.price}}</span>
+              <span class="price-unit">₽</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="urgent-notice">
+        <mat-icon>flash_on</mat-icon>
+        <span>Срочное изготовление за 1 час: +150 ₽</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section - INTEREST/DESIRE -->
+  <section class="process-section">
+    <div class="section-container">
+      <h2 class="section-title">Как мы изготавливаем штендеры</h2>
+      <div class="process-steps">
+        @for (step of processSteps; track step.title || step.icon || $index; let i = $index) {
+          <div class="step-item">
+            <div class="step-number">{{i + 1}}</div>
+            <div class="step-content">
+              <h3 class="step-title">{{step.title}}</h3>
+              <p class="step-description">{{step.description}}</p>
+            </div>
+            <div class="step-icon">
+              <mat-icon>{{step.icon}}</mat-icon>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantages Section - DESIRE -->
+  <section class="advantages-section">
+    <div class="section-container">
+      <h2 class="section-title">Почему выбирают наши штендеры</h2>
+      <div class="advantages-grid">
+        @for (advantage of advantages; track advantage.title || advantage.icon || $index) {
+          <div class="advantage-card">
+            <div class="advantage-icon">
+              <mat-icon>{{advantage.icon}}</mat-icon>
+            </div>
+            <h3 class="advantage-title">{{advantage.title}}</h3>
+            <p class="advantage-description">{{advantage.description}}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Requirements Section - INTEREST -->
+  <section class="requirements-section">
+    <div class="section-container">
+      <h2 class="section-title">Требования к фотографии</h2>
+      <div class="requirements-content">
+        <div class="requirements-list">
+          <h3>Для лучшего результата:</h3>
+          <ul>
+            @for (requirement of photoRequirements; track requirement || $index) {
+              <li>
+                <mat-icon>check_circle</mat-icon>
+                <span>{{requirement}}</span>
+              </li>
+            }
+          </ul>
+          <div class="help-note">
+            <mat-icon>info</mat-icon>
+            <span>Наши специалисты помогут обработать и улучшить качество любой фотографии</span>
+          </div>
+        </div>
+        <div class="requirements-image">
+          <img 
+            src="/assets/images/photo-restoration.jpg" 
+            alt="Обработка фотографий для штендеров"
+            loading="lazy"
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section - DESIRE -->
+  <section class="testimonials-section">
+    <div class="section-container">
+      <h2 class="section-title">Отзывы клиентов</h2>
+      <app-testimonials variant="card" />
+    </div>
+  </section>
+
+  <!-- FAQ Section - INTEREST -->
+  <section class="faq-section">
+    <div class="section-container">
+      <h2 class="section-title">Частые вопросы</h2>
+      <mat-accordion class="faq-accordion">
+        @for (faq of faqItems; track faq.question || $index) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{faq.question}}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p [innerHTML]="faq.answer"></p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <!-- Memory Section - EMOTIONAL -->
+  <section class="memory-section">
+    <div class="section-container">
+      <div class="memory-content">
+        <h2 class="memory-title">Сохраняем память о героях</h2>
+        <p class="memory-text">
+          Каждый штендер, это дань уважения подвигу наших предков. 
+          Мы понимаем важность этого события и с особой заботой относимся 
+          к изготовлению каждого штендера для Бессмертного полка.
+        </p>
+        <div class="memory-stats">
+          <div class="stat-item">
+            <div class="stat-number">1000+</div>
+            <div class="stat-label">штендеров изготовлено</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">5</div>
+            <div class="stat-label">лет участвуем в акции</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">довольных клиентов</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section - ACTION -->
+  <section class="cta-section">
+    <div class="section-container">
+      <div class="cta-content">
+        <h2 class="cta-title">Увековечьте память своего героя</h2>
+        <p class="cta-subtitle">
+          Закажите качественный штендер прямо сейчас. Мы сделаем всё с особой заботой и вниманием к деталям.
+        </p>
+        <div class="cta-benefits">
+          <div class="cta-benefit">
+            <mat-icon>flash_on</mat-icon>
+            <span>Быстрое изготовление</span>
+          </div>
+          <div class="cta-benefit">
+            <mat-icon>thumb_up</mat-icon>
+            <span>Высокое качество</span>
+          </div>
+          <div class="cta-benefit">
+            <mat-icon>favorite</mat-icon>
+            <span>С заботой о памяти</span>
+          </div>
+        </div>
+        <div class="cta-buttons">
+          <button mat-raised-button color="primary" class="primary-cta" (click)="scrollToContacts()">
+            <mat-icon>photo</mat-icon>
+            Заказать штендер
+          </button>
+          <button mat-stroked-button color="primary" class="secondary-cta" (click)="callPhone()">
+            <mat-icon>call</mat-icon>
+            Позвонить сейчас
+          </button>
+        </div>
+        <p class="cta-urgency">
+          🕊️ Особенная акция: при заказе 3+ штендеров, скидка 10%
+        </p>
+      </div>
+    </div>
+  </section>
+
+<!-- Modern Contacts Section - переиспользуемый компонент -->  <app-contacts-section [contacts]="contacts"
+    [addresses]="addresses"
+    [isMobile]="isMobile()"
+    [isTablet]="isTablet()"
+    [isDesktop]="isDesktop()" />
+</div>
+

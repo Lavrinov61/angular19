@@ -1,0 +1,387 @@
+<!-- Universal Landing Page Template -->
+<div class="landing-page">
+  <!-- Hero Section -->
+  <section class="hero-section" [class.has-chat]="inlineChatVisible()">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="highlight">{{ data().heroHighlight }}</span> {{ data().heroTitle }}
+        </h1>
+        <p class="hero-subtitle">{{ data().heroSubtitle }}</p>
+
+        <div class="hero-benefits">
+          @for (benefit of data().heroBenefits; track benefit.text) {
+            <div class="benefit-item">
+              <mat-icon>{{ benefit.icon }}</mat-icon>
+              <span>{{ benefit.text }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="hero-price">
+          @if (enrichedData().urgentPrice) {
+            <span class="price-old">{{ enrichedData().urgentPrice }}₽</span>
+          }
+          <span class="price-value">{{ enrichedData().price }}₽</span>
+          <span class="price-label">{{ enrichedData().priceLabel }}</span>
+          @if (enrichedData().urgentPrice) {
+            <span class="price-badge">Акция</span>
+          }
+        </div>
+
+        <div class="hero-cta">
+          <a mat-raised-button class="cta-button" href="/contacts" (click)="onBookOnline(); $event.preventDefault()">
+            {{ data().heroCtaText }}
+          </a>
+          @if (!inlineChatVisible()) {
+            <a mat-stroked-button class="cta-button chat-button" href="/contacts" (click)="openLandingChat(); $event.preventDefault()">
+              <mat-icon>chat</mat-icon>
+              <span>Написать в чат</span>
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Desktop: Chat Panel -->
+      <div class="hero-media">
+        @if (data().heroImage) {
+          <img [src]="data().heroImage" [alt]="data().title" class="hero-image" loading="eager" appParallax [speed]="0.1">
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Action Section -->
+  <section class="quick-action-section" appScrollReveal>
+    <div class="section-container">
+      <header class="action-header">
+        <h2 class="section-title">Что дальше?</h2>
+        <p class="section-description">Выберите удобный способ оформить заказ</p>
+      </header>
+
+      <div class="action-buttons">
+        @if (isOnlineService()) {
+          <!-- Для онлайн-услуг -->
+          <button class="action-button primary" (click)="openLandingChat()">
+            <div class="button-content">
+              <div class="button-icon"><mat-icon>{{ data().quickActions?.primaryIcon || 'chat' }}</mat-icon></div>
+              <div class="button-text">
+                <div class="button-title">{{ data().quickActions?.primaryTitle || 'Написать в чат' }}</div>
+                <div class="button-description">{{ data().quickActions?.primaryDescription || 'Оформим заказ онлайн' }}</div>
+              </div>
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+          </button>
+
+          <button class="action-button" (click)="scrollToContacts()">
+            <div class="button-content">
+              <div class="button-icon"><mat-icon>{{ data().quickActions?.secondaryIcon || 'send' }}</mat-icon></div>
+              <div class="button-text">
+                <div class="button-title">{{ data().quickActions?.secondaryTitle || 'Написать в мессенджер' }}</div>
+                <div class="button-description">{{ data().quickActions?.secondaryDescription || 'Telegram, МАКС, VK' }}</div>
+              </div>
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+          </button>
+        } @else if (isPhotoService()) {
+          <!-- Для фотоуслуг -->
+          <a href="/booking" class="action-button primary">
+            <div class="button-content">
+              <div class="button-icon"><mat-icon>event</mat-icon></div>
+              <div class="button-text">
+                <div class="button-title">Записаться онлайн</div>
+                <div class="button-description">На удобную дату и время</div>
+              </div>
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+          </a>
+
+          <button class="action-button" (click)="showMapOptions()">
+            <div class="button-content">
+              <div class="button-icon"><mat-icon>camera_alt</mat-icon></div>
+              <div class="button-text">
+                <div class="button-title">Приехать сейчас</div>
+                <div class="button-description">Среднее время ожидания ~15 минут</div>
+              </div>
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+          </button>
+        } @else {
+          <!-- Для печати и других услуг -->
+          <button class="action-button primary" (click)="showMapOptions()">
+            <div class="button-content">
+              <div class="button-icon"><mat-icon>{{ data().quickActions?.primaryIcon || 'store' }}</mat-icon></div>
+              <div class="button-text">
+                <div class="button-title">{{ data().quickActions?.primaryTitle || 'Приехать в студию' }}</div>
+                <div class="button-description">{{ data().quickActions?.primaryDescription || 'Оформим заказ на месте' }}</div>
+              </div>
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+          </button>
+
+          <button class="action-button" (click)="scrollToContacts()">
+            <div class="button-content">
+              <div class="button-icon"><mat-icon>{{ data().quickActions?.secondaryIcon || 'chat' }}</mat-icon></div>
+              <div class="button-text">
+                <div class="button-title">{{ data().quickActions?.secondaryTitle || 'Отправить файлы онлайн' }}</div>
+                <div class="button-description">{{ data().quickActions?.secondaryDescription || 'Через Telegram или МАКС' }}</div>
+              </div>
+            </div>
+            <mat-icon class="arrow">arrow_forward</mat-icon>
+          </button>
+        }
+
+        <button class="action-button" (click)="scrollToContacts()">
+          <div class="button-content">
+            <div class="button-icon"><mat-icon>help_outline</mat-icon></div>
+            <div class="button-text">
+              <div class="button-title">Есть вопросы?</div>
+              <div class="button-description">Свяжитесь с нами</div>
+            </div>
+          </div>
+          <mat-icon class="arrow">arrow_forward</mat-icon>
+        </button>
+      </div>
+
+      <div class="action-footer">
+        <div class="info-cards">
+          @if (isOnlineService()) {
+            <div class="info-card">
+              <mat-icon class="info-icon">public</mat-icon>
+              <div class="info-content">
+                <div class="info-label">География</div>
+                <div class="info-value">По всей России</div>
+              </div>
+            </div>
+            <div class="info-card">
+              <mat-icon class="info-icon">schedule</mat-icon>
+              <div class="info-content">
+                <div class="info-label">Принимаем заказы</div>
+                <div class="info-value">9:00-21:00, ежедневно</div>
+              </div>
+            </div>
+          } @else {
+            @for (addr of addresses; track addr.id) {
+              <div class="info-card">
+                <mat-icon class="info-icon">location_on</mat-icon>
+                <div class="info-content">
+                  <div class="info-label">{{ addr.name }}</div>
+                  <div class="info-value">{{ addr.address }}</div>
+                </div>
+              </div>
+            }
+            <div class="info-card">
+              <mat-icon class="info-icon">schedule</mat-icon>
+              <div class="info-content">
+                <div class="info-label">Время работы</div>
+                <div class="info-value">Пн-Вс 9:00-19:30</div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Map Options Modal -->
+  <div class="map-modal-overlay" [class.show]="showMapModal" (click)="hideMapOptions()" (keydown.enter)="hideMapOptions()" tabindex="0">
+    <div class="map-modal-content" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" tabindex="0">
+      <div class="modal-header">
+        <h3>Выберите карты для построения маршрута</h3>
+        <button class="close-btn" (click)="hideMapOptions()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="map-options">
+        @for (addr of addresses; track addr.id) {
+          @if (addr.mapLinks?.['2gis']) {
+            <a [href]="addr.mapLinks?.['2gis']" target="_blank" class="map-option" (click)="hideMapOptions()">
+              <div class="map-icon gis">
+                <img src="/assets/static/services/2gis-logo.webp" alt="2ГИС" class="logo-img">
+              </div>
+              <div class="map-info">
+                <div class="map-name">2ГИС, {{ addr.name }}</div>
+                <div class="map-description">Построить маршрут</div>
+              </div>
+              <mat-icon class="arrow">arrow_forward</mat-icon>
+            </a>
+          }
+          @if (addr.mapLinks?.yandex) {
+            <a [href]="addr.mapLinks?.yandex" target="_blank" class="map-option" (click)="hideMapOptions()">
+              <div class="map-icon yandex">
+                <img src="/assets/static/services/yandex-maps-logo.svg" alt="Яндекс Карты" class="logo-img">
+              </div>
+              <div class="map-info">
+                <div class="map-name">Яндекс, {{ addr.name }}</div>
+                <div class="map-description">Построить маршрут</div>
+              </div>
+              <mat-icon class="arrow">arrow_forward</mat-icon>
+            </a>
+          }
+        }
+        <a href="https://maps.app.goo.gl/fDfseyJXHf5X6UE97" target="_blank" class="map-option" (click)="hideMapOptions()">
+          <div class="map-icon google">
+            <img src="/assets/static/services/google-maps-sign-logo.svg" alt="Google Карты" class="logo-img">
+          </div>
+          <div class="map-info">
+            <div class="map-name">Google Карты</div>
+            <div class="map-description">Построить маршрут</div>
+          </div>
+          <mat-icon class="arrow">arrow_forward</mat-icon>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Specifications Section -->
+  <section class="specs-section" appScrollReveal>
+    <div class="section-container">
+      <h2 class="section-title">Цены и характеристики</h2>
+      <div class="specs-grid">
+        @for (spec of enrichedData().specifications; track spec.label) {
+          <div class="spec-card">
+            <div class="spec-label">{{ spec.label }}</div>
+            <div class="spec-value">{{ spec.value }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section (только если есть фото) -->
+  @if (data().photoSamples && data().photoSamples.length > 0) {
+    <section class="gallery-section" appScrollReveal>
+      <div class="section-container">
+        <h2 class="section-title">{{ data().galleryTitle || 'Примеры работ' }}</h2>
+        @if (data().gallerySubtitle) {
+          <p class="section-subtitle">{{ data().gallerySubtitle }}</p>
+        }
+
+        <div class="gallery-grid">
+          @for (sample of data().photoSamples; track sample.src; let i = $index) {
+            <div class="gallery-item" (click)="openPhotoModal(i)" (keydown.enter)="openPhotoModal(i)" tabindex="0">
+              <img [src]="sample.src" [alt]="sample.alt" loading="lazy">
+              <div class="gallery-overlay">
+                <div class="overlay-content">
+                  <mat-icon>zoom_in</mat-icon>
+                  <p>{{ sample.description }}</p>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Requirements Section -->
+  @if (data().requirements && data().requirements.length > 0) {
+    <section class="requirements-section" appScrollReveal>
+      <div class="section-container">
+        <h2 class="section-title">{{ data().requirementsTitle || 'Что нужно для заказа' }}</h2>
+        <div class="requirements-content">
+          <div class="requirements-list">
+            <ul>
+              @for (req of data().requirements; track req) {
+                <li>
+                  <mat-icon>check_circle</mat-icon>
+                  <span>{{ req }}</span>
+                </li>
+              }
+            </ul>
+          </div>
+          @if (data().photoSamples && data().photoSamples.length > 0) {
+            <div class="requirements-image">
+              <img [src]="data().photoSamples[0].src" [alt]="'Пример ' + data().title" loading="lazy">
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Process Section -->
+  <app-process-slider [steps]="processStepsForSlider"
+    [title]="data().processTitle || 'Как это работает'"
+    [autoSlide]="true"
+    [slideInterval]="5000" />
+
+  <!-- Advantages Section -->
+  <app-advantages-section [advantages]="data().advantages"
+    [title]="data().advantagesTitle || 'Почему выбирают нас'"
+    [subtitle]="data().advantagesSubtitle || 'Качество и сервис, которому доверяют'" />
+
+  <!-- Testimonials Section -->
+  <section class="testimonials-section" appScrollReveal>
+    <div class="section-container">
+      <h2 class="section-title">Отзывы клиентов</h2>
+      <app-testimonials variant="card" />
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  @if (data().faqItems && data().faqItems.length > 0) {
+    <section class="faq-section" appScrollReveal>
+      <div class="section-container">
+        <h2 class="section-title">Частые вопросы</h2>
+        <mat-accordion class="faq-accordion">
+          @for (faq of data().faqItems; track faq.question) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ faq.question }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <p [innerHTML]="faq.answer"></p>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      </div>
+    </section>
+  }
+
+  <!-- Related Services -->
+  @if (enrichedData().relatedServices && enrichedData().relatedServices.length > 0) {
+    <section class="related-section" appScrollReveal>
+      <div class="section-container">
+        <h2 class="section-title">Похожие услуги</h2>
+        <div class="related-grid">
+          @for (service of enrichedData().relatedServices; track service.url) {
+            <a [href]="service.url" class="related-card">
+              <mat-icon>{{ service.icon }}</mat-icon>
+              <div class="related-info">
+                <h3>{{ service.title }}</h3>
+                <span class="related-price">{{ service.price }}₽</span>
+              </div>
+              <mat-icon class="arrow">arrow_forward</mat-icon>
+            </a>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- CTA Section -->
+  <section class="cta-section" appScrollReveal>
+    <div class="section-container">
+      <div class="cta-content">
+        <h2 class="cta-title">{{ data().cta?.title || getDefaultCtaTitle() }}</h2>
+        <p class="cta-subtitle">{{ data().cta?.subtitle || getDefaultCtaSubtitle() }}</p>
+        <div class="cta-buttons">
+          <a mat-raised-button class="primary-cta" href="/contacts" (click)="onBookOnline(); $event.preventDefault()">
+            {{ data().cta?.primaryButtonText || getDefaultCtaButton() }}
+          </a>
+          <a mat-stroked-button class="secondary-cta" href="tel:+78633226575" (click)="onCallPhone(); $event.preventDefault()">
+            {{ data().cta?.secondaryButtonText || 'Позвонить' }}
+          </a>
+        </div>
+        <p class="cta-urgency">{{ data().cta?.urgencyText || getDefaultCtaUrgency() }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacts Section -->
+  <app-contacts-section [contacts]="contactsData"
+    [addresses]="addresses"
+    [isMobile]="isMobile()"
+    [isTablet]="isTablet()"
+    [isDesktop]="isDesktop()" />
+</div>

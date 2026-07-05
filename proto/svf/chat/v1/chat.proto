@@ -1,0 +1,384 @@
+syntax = "proto3";
+package svf.chat.v1;
+
+import "google/protobuf/timestamp.proto";
+import "common/v1/common.proto";
+
+option java_package = "ru.svoefoto.proto.chat.v1";
+option java_multiple_files = true;
+
+// ── Chat Service — auth-only customer chat BFF ──
+
+service ChatService {
+  // Current authenticated user's active customer chat.
+  rpc GetCurrentSession(GetCurrentSessionRequest) returns (GetCurrentSessionResponse);
+
+  // Message history for an owned session.
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse);
+
+  // Send a customer message with client-side idempotency.
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+
+  // Mark operator/bot messages as read by the authenticated customer.
+  rpc MarkRead(MarkReadRequest) returns (MarkReadResponse);
+
+  // Fetch delivery status for client-generated message ids.
+  rpc GetDeliveryStatuses(GetDeliveryStatusesRequest) returns (GetDeliveryStatusesResponse);
+
+  // Direct-to-S3 chat upload flow backed by existing Express routes.
+  rpc StartChatUpload(StartChatUploadRequest) returns (StartChatUploadResponse);
+  rpc CompleteChatUpload(CompleteChatUploadRequest) returns (CompleteChatUploadResponse);
+  rpc CompleteChatBundleUpload(CompleteChatBundleUploadRequest) returns (CompleteChatBundleUploadResponse);
+}
+
+// ── Client -> Server Events ──
+
+message ChatStreamRequest {
+  oneof event {
+    JoinSession join = 1;
+    SendMessage send = 2;
+    TypingIndicator typing = 3;
+    ReadReceipt read = 4;
+    ButtonClick button = 5;
+    LeaveSession leave = 6;
+  }
+}
+
+message JoinSession {
+  string session_id = 1;
+}
+
+message SendMessage {
+  string session_id = 1;
+  string content = 2;
+  MessageType type = 3;
+  string media_url = 4;           // if already uploaded via UploadMedia
+  string client_message_id = 5;   // for idempotency + offline queue
+}
+
+message TypingIndicator {
+  string session_id = 1;
+  bool is_typing = 2;
+}
+
+message ReadReceipt {
+  string session_id = 1;
+  string last_read_message_id = 2;
+}
+
+message ButtonClick {
+  string session_id = 1;
+  string button_value = 2;
+  string button_label = 3;
+}
+
+message LeaveSession {
+  string session_id = 1;
+}
+
+// ── Server -> Client Events ──
+
+message ChatStreamResponse {
+  oneof event {
+    IncomingMessage message = 1;
+    OperatorTyping typing = 2;
+    MessageStatus status = 3;
+    CartUpdate cart = 4;
+    SessionUpdate session = 5;
+    SystemEvent system = 6;
+  }
+}
+
+message IncomingMessage {
+  string id = 1;
+  string session_id = 2;
+  SenderType sender_type = 3;
+  string sender_name = 4;
+  MessageType message_type = 5;
+  string content = 6;
+  string attachment_url = 7;
+  InteractiveContent interactive = 8;
+  google.protobuf.Timestamp created_at = 9;
+  repeated string gallery_attachment_urls = 10;
+}
+
+message OperatorTyping {
+  string session_id = 1;
+  bool is_typing = 2;
+  string operator_name = 3;
+}
+
+message MessageStatus {
+  string client_message_id = 1;
+  string server_message_id = 2;
+  DeliveryStatus status = 3;
+}
+
+message CartUpdate {
+  string session_id = 1;
+  repeated CartItem items = 2;
+  svf.common.v1.Money total = 3;
+}
+
+message CartItem {
+  string id = 1;
+  string name = 2;
+  int32 quantity = 3;
+  svf.common.v1.Money price = 4;
+}
+
+message SessionUpdate {
+  string session_id = 1;
+  SessionStatus status = 2;
+  string assigned_operator_name = 3;
+}
+
+message SystemEvent {
+  SystemEventType type = 1;
+  string message = 2;
+  map<string, string> metadata = 3;
+}
+
+// ── Enums ──
+
+enum SenderType {
+  SENDER_TYPE_UNSPECIFIED = 0;
+  SENDER_TYPE_VISITOR = 1;
+  SENDER_TYPE_OPERATOR = 2;
+  SENDER_TYPE_BOT = 3;
+}
+
+enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED = 0;
+  MESSAGE_TYPE_TEXT = 1;
+  MESSAGE_TYPE_IMAGE = 2;
+  MESSAGE_TYPE_FILE = 3;
+  MESSAGE_TYPE_INTERACTIVE = 4;
+}
+
+enum DeliveryStatus {
+  DELIVERY_STATUS_UNSPECIFIED = 0;
+  DELIVERY_STATUS_SENT = 1;
+  DELIVERY_STATUS_DELIVERED = 2;
+  DELIVERY_STATUS_READ = 3;
+  DELIVERY_STATUS_FAILED = 4;
+}
+
+enum SessionStatus {
+  SESSION_STATUS_UNSPECIFIED = 0;
+  SESSION_STATUS_OPEN = 1;
+  SESSION_STATUS_WAITING = 2;
+  SESSION_STATUS_ACTIVE = 3;
+  SESSION_STATUS_RESOLVED = 4;
+  SESSION_STATUS_CLOSED = 5;
+}
+
+enum SystemEventType {
+  SYSTEM_EVENT_TYPE_UNSPECIFIED = 0;
+  SYSTEM_EVENT_TYPE_MAINTENANCE = 1;
+  SYSTEM_EVENT_TYPE_VERSION_UPDATE = 2;
+  SYSTEM_EVENT_TYPE_SESSION_TIMEOUT = 3;
+}
+
+// ── Request/Response messages ──
+
+message CreateSessionRequest {
+  string visitor_id = 1;
+  string visitor_name = 2;
+  string selected_service = 3;
+  int32 selected_price = 4;
+  string page_url = 5;
+  string channel = 6; // "online", "studio"
+}
+
+message CreateSessionResponse {
+  ChatSession session = 1;
+  repeated IncomingMessage messages = 2;
+  bool is_existing = 3;
+}
+
+message ChatSession {
+  string id = 1;
+  string visitor_id = 2 [deprecated = true];
+  string visitor_name = 3 [deprecated = true];
+  string selected_service = 4 [deprecated = true];
+  int32 selected_price = 5 [deprecated = true];
+  string channel = 6;
+  SessionStatus status = 7;
+  google.protobuf.Timestamp created_at = 8;
+  string contact_id = 9;
+  int32 unread_count = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message GetCurrentSessionRequest {
+  bool include_messages = 1;
+}
+
+message GetCurrentSessionResponse {
+  ChatSession session = 1;
+  repeated IncomingMessage messages = 2;
+}
+
+message GetHistoryRequest {
+  string session_id = 1;
+  string visitor_id = 2 [deprecated = true];
+  svf.common.v1.PaginationRequest pagination = 3;
+  string after_id = 4; // incremental: messages after this ID
+}
+
+message GetHistoryResponse {
+  repeated IncomingMessage messages = 1;
+  svf.common.v1.Pagination pagination = 2;
+}
+
+message SendMessageRequest {
+  string session_id = 1;
+  string content = 2;
+  MessageType message_type = 3;
+  string attachment_url = 4;
+  string client_message_id = 5;
+  string reply_to_message_id = 6;
+  ButtonClick button = 7;
+}
+
+message SendMessageResponse {
+  IncomingMessage message = 1;
+  IncomingMessage bot_response = 2;
+}
+
+message MarkReadRequest {
+  string session_id = 1;
+}
+
+message MarkReadResponse {
+  int32 read_count = 1;
+}
+
+message GetDeliveryStatusesRequest {
+  string session_id = 1;
+  repeated string client_message_ids = 2;
+}
+
+message GetDeliveryStatusesResponse {
+  repeated ClientMessageDeliveryStatus statuses = 1;
+}
+
+message StartChatUploadRequest {
+  string session_id = 1;
+  repeated ChatUploadCandidate files = 2;
+}
+
+message ChatUploadCandidate {
+  string file_name = 1;
+  string content_type = 2;
+  int64 size_bytes = 3;
+}
+
+message ChatPresignedUpload {
+  string s3_key = 1;
+  string upload_url = 2;
+  string content_type = 3;
+}
+
+message StartChatUploadResponse {
+  repeated ChatPresignedUpload uploads = 1;
+}
+
+message CompletedChatUploadFile {
+  string s3_key = 1;
+  string file_name = 2;
+  string content_type = 3;
+  int64 size_bytes = 4;
+}
+
+message CompleteChatUploadRequest {
+  string session_id = 1;
+  repeated CompletedChatUploadFile files = 2;
+  string caption = 3;
+  bool suppress_bot = 4;
+}
+
+message CompleteChatUploadResponse {
+  IncomingMessage message = 1;
+  repeated IncomingMessage messages = 2;
+  IncomingMessage bot_response = 3;
+  int32 count = 4;
+  string attachment_url = 5;
+}
+
+message BundleOrderSelectedOption {
+  string option_slug = 1;
+  int32 quantity = 2;
+}
+
+message BundleOrderConfig {
+  string category_slug = 1;
+  string selected_doc = 2;
+  repeated string selected_docs = 3;
+  string customer_note = 4;
+  repeated BundleOrderSelectedOption selected_options = 5;
+  int64 configurator_total = 6; // RUB, matches existing Express payload
+}
+
+message CompleteChatBundleUploadRequest {
+  string session_id = 1;
+  repeated CompletedChatUploadFile files = 2;
+  BundleOrderConfig order_config = 3;
+}
+
+message CompleteChatBundleUploadResponse {
+  IncomingMessage gallery_message = 1;
+  IncomingMessage bot_response = 2;
+  int32 count = 3;
+  string order_id = 4;
+  svf.common.v1.Money order_total = 5;
+}
+
+message ClientMessageDeliveryStatus {
+  string client_message_id = 1;
+  DeliveryStatus status = 2;
+  google.protobuf.Timestamp delivered_at = 3;
+  google.protobuf.Timestamp read_at = 4;
+}
+
+message UploadMediaRequest {
+  oneof data {
+    MediaMetadata metadata = 1;  // first message: file info
+    bytes chunk = 2;             // subsequent messages: file data
+  }
+}
+
+message MediaMetadata {
+  string session_id = 1;
+  string visitor_id = 2;
+  string file_name = 3;
+  string content_type = 4;
+  int64 size_bytes = 5;
+  string caption = 6;
+}
+
+message UploadMediaResponse {
+  string url = 1;
+  string thumbnail_url = 2;
+  svf.common.v1.MediaAttachment attachment = 3;
+}
+
+message InteractiveContent {
+  string type = 1; // "buttons", "carousel"
+  repeated InteractiveButton buttons = 2;
+}
+
+message InteractiveButton {
+  string label = 1;
+  string value = 2;
+}
+
+message LinkUserRequest {
+  string visitor_id = 1;
+}
+
+message LinkUserResponse {
+  bool success = 1;
+  int32 linked_sessions = 2;
+}

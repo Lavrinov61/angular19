@@ -1,0 +1,6 @@
+# Apply to /etc/prometheus/prometheus.yml — append to scrape_configs:
+  - job_name: 'fingerprint-server'
+    static_configs:
+      - targets: ['localhost:5055']
+    metrics_path: /api/fingerprint/metrics
+    scrape_interval: 30s

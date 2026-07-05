@@ -1,0 +1,81 @@
+@use '../../../shared/styles/service-page' as sp;
+
+.premium-print-page {
+  @include sp.all;
+
+  // Premium-print-specific: service card with formats list
+  .services-section .service-card {
+    .formats-list {
+      margin-bottom: 16px;
+
+      .format-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--ed-outline-variant, #2a2a2a);
+
+        &:last-child { border-bottom: none; }
+
+        .format-name { font-weight: 500; color: var(--ed-on-surface, #f5f5f5); }
+        .format-price { font-weight: 600; color: var(--ed-accent, #f59e0b); }
+      }
+    }
+
+    .service-features {
+      .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+        font-size: 0.75rem;
+
+        mat-icon { color: var(--ed-accent, #f59e0b); font-size: 1rem; }
+        span { color: var(--ed-on-surface-variant, #a0a0a0); }
+      }
+    }
+  }
+
+  // Premium-print-specific: quality section
+  .quality-section {
+    padding: 32px 16px;
+    background: var(--ed-surface, #0a0a0a);
+    @media (min-width: 840px) { padding: 48px 32px; }
+
+    .quality-content {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin-top: 24px;
+
+      @media (min-width: 840px) { grid-template-columns: 1fr 1fr; align-items: center; }
+
+      .quality-text {
+        .section-title {
+          text-align: center;
+          @media (min-width: 840px) { text-align: left; }
+        }
+
+        .quality-features .quality-feature {
+          display: flex;
+          gap: 12px;
+          margin-bottom: 24px;
+          align-items: flex-start;
+
+          mat-icon { color: var(--ed-accent, #f59e0b); margin-top: 4px; }
+
+          .feature-content {
+            h3 { font-weight: 600; margin-bottom: 6px; color: var(--ed-on-surface, #f5f5f5); }
+            p { color: var(--ed-on-surface-variant, #a0a0a0); margin: 0; font-size: 0.75rem; }
+          }
+        }
+      }
+
+      .quality-image img {
+        width: 100%;
+        height: auto;
+        border-radius: var(--ed-border-radius-md, 12px);
+      }
+    }
+  }
+}

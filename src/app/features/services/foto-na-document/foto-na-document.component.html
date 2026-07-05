@@ -1,0 +1,417 @@
+<div class="foto-document-page">
+  <section class="doc-hero" appScrollReveal>
+    <div class="doc-shell doc-hero__grid">
+      <div class="doc-hero__copy">
+        <a class="hero-rating" routerLink="/testimonials" aria-label="Перейти к отзывам">
+          <span class="hero-rating__stars" aria-hidden="true">
+            @for (star of ratingStars; track star) {
+              <mat-icon>star</mat-icon>
+            }
+          </span>
+          <span>5.0 по отзывам клиентов</span>
+        </a>
+
+        <h1>Фото на документы в студии</h1>
+        <p class="doc-hero__lead">
+          Снимаем несколько дублей, вручную ретушируем выбранный кадр и печатаем комплект
+          под требования паспорта, визы, прав, пропуска или другого документа.
+        </p>
+
+        <div class="doc-hero__actions">
+          <a mat-flat-button class="primary-action" [routerLink]="bookingLink">
+            <mat-icon>event_available</mat-icon>
+            Записаться онлайн
+          </a>
+          <a mat-flat-button class="secondary-action" [href]="'tel:' + addressInfo.phone">
+            <mat-icon>call</mat-icon>
+            Позвонить
+          </a>
+        </div>
+
+        <p class="doc-hero__walkin">Можно без записи: ежедневно 9:00-19:30</p>
+
+        <div class="hero-facts" aria-label="Ключевые преимущества">
+          @for (fact of heroFacts; track fact.value) {
+            <div class="hero-fact">
+              <mat-icon>{{ fact.icon }}</mat-icon>
+              <strong>{{ fact.value }}</strong>
+              <span>{{ fact.label }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="hero-product" aria-label="Примеры фото на документы">
+        <figure class="hero-product__portrait">
+          <img
+            [src]="heroPhotoSample.src"
+            [alt]="heroPhotoSample.alt"
+            width="1440"
+            height="960"
+            fetchpriority="high" />
+        </figure>
+
+        <div class="hero-product__sheet hero-product__sheet--front" aria-hidden="true">
+          <mat-icon>badge</mat-icon>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="hero-product__sheet hero-product__sheet--back" aria-hidden="true">
+          <mat-icon>description</mat-icon>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="hero-product__status" aria-hidden="true">
+          <mat-icon>verified</mat-icon>
+          Требования проверены
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="white-stage">
+    <section class="features-section" appScrollReveal>
+      <div class="doc-shell">
+        <div class="section-head section-head--wide">
+          <h2>Документное фото без случайностей</h2>
+          <p>
+            Быстрый визит в студию, спокойная съемка, ручная подготовка кадра
+            и готовый комплект под требования конкретного документа.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          @for (card of featureCards; track card.title; let i = $index) {
+            <article class="feature-card feature-card--{{ card.tone }}" appScrollReveal [delay]="i * 70">
+              <div class="feature-card__copy">
+                <span class="feature-card__icon">
+                  <mat-icon>{{ card.icon }}</mat-icon>
+                </span>
+                <h3>{{ card.title }}</h3>
+                <p>{{ card.description }}</p>
+              </div>
+              <img [src]="card.image" [alt]="card.alt" loading="lazy" width="360" height="270" />
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="retouch-section" appScrollReveal>
+      <div class="doc-shell retouch-section__grid">
+        <div class="retouch-section__copy">
+          <span class="section-kicker">Ретушь</span>
+          <h2>Ручная ретушь вместо автоматического фильтра</h2>
+          <p>
+            Фото должно соответствовать требованиям документа и при этом выглядеть естественно.
+            Кадр вручную готовит ретушер, а результат показываем перед печатью.
+          </p>
+          <div class="retouch-note">
+            <mat-icon>brush</mat-icon>
+            <span>Выравниваем тон кожи, свет и фон без изменения узнаваемости лица.</span>
+          </div>
+        </div>
+
+        <div class="retouch-section__visual">
+          <app-before-after-slider
+            before="/assets/static/home/before-retouch.webp"
+            after="/assets/static/home/after-retouch.webp"
+            label="Ручная ретушь" />
+        </div>
+      </div>
+
+      <div class="doc-shell">
+        <div class="retouch-levels">
+          @for (level of retouchingLevels; track level.slug; let i = $index) {
+            <article class="retouch-card" [class.retouch-card--popular]="level.popular" appScrollReveal [delay]="i * 80">
+              @if (level.popular) {
+                <span class="retouch-card__badge">Частый выбор</span>
+              }
+              <span class="retouch-card__icon">
+                <mat-icon>{{ level.icon }}</mat-icon>
+              </span>
+              <h3>{{ level.title }}</h3>
+              <p>{{ level.description }}</p>
+              <ul>
+                @for (feature of level.features; track feature) {
+                  <li>
+                    <mat-icon>check</mat-icon>
+                    <span>{{ feature }}</span>
+                  </li>
+                }
+              </ul>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="documents-section" appScrollReveal>
+      <div class="doc-shell documents-section__grid">
+        <div class="documents-section__panel">
+          <div class="section-head">
+            <h2>Для детей, взрослых и разных документов</h2>
+            <p>Знаем требования к размеру, фону и посадке. Если нужен нестандартный формат, уточним параметры на месте.</p>
+          </div>
+
+          <div class="audience-list">
+            @for (card of audienceCards; track card.title) {
+              <article class="audience-card">
+                <mat-icon>{{ card.icon }}</mat-icon>
+                <div>
+                  <h3>{{ card.title }}</h3>
+                  <p>{{ card.description }}</p>
+                </div>
+              </article>
+            }
+          </div>
+        </div>
+
+        <div class="documents-section__panel documents-section__panel--types">
+          <span class="section-kicker">Форматы</span>
+          <div class="doc-pills">
+            @for (doc of documentTypes; track doc) {
+              <span class="doc-pill">{{ doc }}</span>
+            }
+          </div>
+          <div class="format-preview" aria-hidden="true">
+            <div class="format-preview__sheet">
+              <img
+                class="format-preview__photo"
+                [src]="formatPreviewSample.src"
+                alt=""
+                loading="lazy"
+                width="1440"
+                height="960" />
+              <span class="format-preview__line format-preview__line--wide"></span>
+              <span class="format-preview__line"></span>
+              <span class="format-preview__line format-preview__line--short"></span>
+            </div>
+            <div class="format-preview__specs">
+              @for (spec of documentSpecs; track spec.value) {
+                <span>
+                  <strong>{{ spec.value }}</strong>
+                  {{ spec.label }}
+                </span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="montage-section" appScrollReveal>
+      <div class="doc-shell">
+        <div class="section-head section-head--wide">
+          <h2>Дополнительная подготовка кадра</h2>
+          <p>По запросу заменим фон, подготовим вариант с формой или сделаем комплект под несколько документов.</p>
+        </div>
+
+        <div class="montage-grid">
+          @for (feature of montageFeatures; track feature.title; let i = $index) {
+            <article class="montage-card" appScrollReveal [delay]="i * 70">
+              <mat-icon>{{ feature.icon }}</mat-icon>
+              <h3>{{ feature.title }}</h3>
+              <p>{{ feature.description }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="workflow-section" appScrollReveal>
+      <div class="doc-shell">
+        <div class="section-head section-head--wide">
+          <h2>Как проходит визит</h2>
+          <nav class="mode-tabs" aria-label="Способ заказа">
+            <a class="active" routerLink="/foto-na-document" aria-current="page">В студии</a>
+            <a routerLink="/foto-na-documenty-online">Онлайн</a>
+          </nav>
+        </div>
+
+        <div class="stepper">
+          @for (step of processSteps; track step.number) {
+            <article class="step-card">
+              <div class="step-card__number">
+                <span>{{ step.number }}</span>
+              </div>
+              <mat-icon>{{ step.icon }}</mat-icon>
+              <h3>{{ step.title }}</h3>
+              <p>{{ step.description }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="dark-cta" appScrollReveal>
+      <div class="doc-shell dark-cta__panel">
+        <div class="dark-cta__copy">
+          <span class="section-kicker">Запись</span>
+          <h2>Закрепите удобное время или приходите без записи</h2>
+          <p>Цена в студии начинается от {{ studioPrice() }} ₽. Итог зависит от документа, печати, цифровой версии и выбранной ретуши.</p>
+          <div class="dark-cta__actions">
+            <a mat-flat-button class="primary-action" [routerLink]="bookingLink">
+              <mat-icon>event_available</mat-icon>
+              Записаться онлайн
+            </a>
+            <a mat-flat-button class="dark-action" routerLink="/foto-na-documenty-online">
+              <mat-icon>cloud_upload</mat-icon>
+              Заказать онлайн
+            </a>
+          </div>
+        </div>
+
+        <div class="dark-cta__visual" aria-hidden="true">
+          <img [src]="darkCtaPhotoSample.src" alt="" loading="lazy" width="1440" height="960" />
+          <span class="dark-cta__paper dark-cta__paper--one"></span>
+          <span class="dark-cta__paper dark-cta__paper--two"></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery-section" appScrollReveal>
+      <div class="doc-shell">
+        <div class="section-head section-head--wide">
+          <h2>Примеры работ</h2>
+          <p>Так выглядят готовые фото: ровный фон, корректный размер и аккуратная обработка.</p>
+        </div>
+
+        <div class="gallery-strip">
+          @for (sample of photoSamples; track sample.src; let i = $index) {
+            <figure class="gallery-card" appScrollReveal [delay]="i * 60">
+              <img [src]="sample.src" [alt]="sample.alt" loading="lazy" width="360" height="240" />
+              <figcaption>{{ sample.label }}</figcaption>
+            </figure>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials-wrapper" appScrollReveal>
+      <app-testimonials variant="card" [showBookingCta]="false" />
+    </section>
+
+    <section class="faq-section" appScrollReveal>
+      <div class="doc-shell faq-section__grid">
+        <div class="faq-section__head">
+          <span class="section-kicker">FAQ</span>
+          <h2>Частые вопросы</h2>
+        </div>
+
+        <div class="faq-section__content">
+          <div class="faq-tabs" role="tablist" aria-label="Раздел частых вопросов">
+            @for (tab of faqTabs; track tab.id) {
+              <button
+                type="button"
+                role="tab"
+                [attr.aria-selected]="activeFaqTab() === tab.id"
+                [class.active]="activeFaqTab() === tab.id"
+                (click)="selectFaqTab(tab.id)"
+              >
+                {{ tab.label }}
+              </button>
+            }
+          </div>
+
+          <mat-accordion class="faq-accordion">
+            @for (item of filteredFaqItems(); track item.question) {
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>{{ item.question }}</mat-panel-title>
+                </mat-expansion-panel-header>
+                <p>{{ item.answer }}</p>
+              </mat-expansion-panel>
+            }
+          </mat-accordion>
+        </div>
+      </div>
+    </section>
+
+    <section class="final-cta" appScrollReveal>
+      <div class="doc-shell final-cta__panel">
+        <div>
+          <h2>Выберите удобную студию</h2>
+          <p>Подготовим фото под документ, распечатаем комплект и при необходимости отдадим файл.</p>
+        </div>
+
+        <div class="final-cta__actions">
+          <a mat-flat-button class="primary-action" [routerLink]="bookingLink">
+            <mat-icon>event_available</mat-icon>
+            Записаться
+          </a>
+          <a mat-flat-button class="secondary-action" [href]="telegramLink" target="_blank" rel="noopener">
+            <mat-icon svgIcon="channel-telegram" />
+            Telegram
+          </a>
+        </div>
+
+        <div class="studio-choice-grid" aria-label="Студии для фото на документы">
+          @for (studio of studioChoices; track studio.id) {
+            <article class="studio-choice-card">
+              <div class="studio-choice-card__head">
+                <span class="studio-choice-card__icon">
+                  <mat-icon>storefront</mat-icon>
+                </span>
+                <div>
+                  <h3>{{ studio.name }}</h3>
+                  <span>{{ studio.landmark }}</span>
+                </div>
+              </div>
+
+              <div class="studio-choice-card__address">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ studio.address }}</span>
+              </div>
+
+              <div class="studio-choice-card__facts">
+                <span>
+                  <mat-icon>schedule</mat-icon>
+                  {{ studio.workHours }}
+                </span>
+                <span>
+                  <mat-icon>directions_walk</mat-icon>
+                  Можно без записи
+                </span>
+                <span>
+                  <mat-icon>timer</mat-icon>
+                  Обычно 15 минут
+                </span>
+              </div>
+
+              <div class="studio-choice-card__actions">
+                <a mat-flat-button class="studio-choice-card__book" [routerLink]="bookingLink">
+                  <mat-icon>event_available</mat-icon>
+                  Записаться
+                </a>
+                @if (studio.routeUrl) {
+                  <a mat-button class="studio-choice-card__route" [href]="studio.routeUrl" target="_blank" rel="noopener">
+                    <mat-icon>map</mat-icon>
+                    Маршрут
+                  </a>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <app-contacts-section
+      variant="document"
+      [contacts]="documentContacts"
+      [addresses]="addresses"
+      [isMobile]="isMobile()"
+      [isTablet]="isTablet()"
+      [isDesktop]="isDesktop()" />
+  </main>
+
+  @if ((isMobile() || isTablet()) && showStickyCta()) {
+    <div class="sticky-cta">
+      <a mat-flat-button class="sticky-cta__btn" [routerLink]="bookingLink">
+        Записаться онлайн
+      </a>
+    </div>
+  }
+</div>

@@ -1,0 +1,21 @@
+{
+  "name": "mcp-soborny-admin",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "mcp-soborny-admin": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build --silent && node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "typescript": "^5.9.3"
+  }
+}

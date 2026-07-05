@@ -1,0 +1,48 @@
+<section class="attention-section new-design">
+  <div class="hero-content-grid">
+    <!-- Left Column: Text Content -->
+    <div class="hero-text-content">
+      <h1 class="hero-title">
+        <span class="highlight">{{ photographer().name }}</span>
+      </h1>
+      <h2 class="hero-subtitle">{{ photographer().heroSubtitle }}</h2>
+
+      <div class="hero-benefits">
+        <div class="benefit-item">
+          <mat-icon>camera_alt</mat-icon>
+          <span>{{ photographer().experience }}</span>
+        </div>
+        <div class="benefit-item">
+          <mat-icon>star</mat-icon>
+          <span>
+            5.0 &middot;
+            <a routerLink="/testimonials">Все отзывы настоящие</a>
+          </span>
+        </div>
+        @for (spec of photographer().specialization.slice(0, 2); track spec.id || spec.name || $index) {
+          <div class="benefit-item">
+            <mat-icon>{{spec.icon || 'photo_camera'}}</mat-icon>
+            <span>{{ spec.name }}</span>
+          </div>
+        }
+      </div>
+      
+      <div class="hero-cta">
+        <a mat-raised-button class="cta-button" [href]="photographer().bookingLink" target="_blank">
+          Записаться
+        </a>
+        <a mat-stroked-button class="secondary-cta" [href]="'tel:' + photographer().contactInfo.phone">
+          Позвонить
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Column: Media Content -->
+    <div class="hero-media-content">
+      <div class="hero-image-wrapper">
+        <img [src]="photographer().heroImage" [alt]="photographer().name" class="hero-image">
+      </div>
+    </div>
+  </div>
+</section>
+

@@ -1,0 +1,279 @@
+<main class="business-account-page">
+  <section class="business-hero" appScrollReveal>
+    <header class="business-mobile-header">
+      <a routerLink="/" class="business-brand" (click)="closeMobileMenu()">
+        <img
+          src="/assets/static/logo-white.webp"
+          alt="Своё Фото"
+          width="116"
+          height="32"
+        />
+      </a>
+
+      <button
+        type="button"
+        class="business-menu-button"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        aria-controls="site-mobile-menu"
+        aria-label="Открыть меню"
+        (click)="toggleMobileMenu()"
+      >
+        <mat-icon>{{ mobileMenuOpen() ? 'close' : 'menu' }}</mat-icon>
+      </button>
+    </header>
+
+    <app-site-mobile-menu
+      [open]="mobileMenuOpen()"
+      defaultAudienceId="business"
+      (closed)="closeMobileMenu()"
+    />
+
+    <div class="business-hero__art" aria-label="Бизнес-аккаунт для фото сотрудников, печати и документов">
+      <img
+        src="/assets/static/services/document-print.webp"
+        alt="Фото сотрудников, документы, печать и бизнес-аккаунт Своё Фото"
+        width="640"
+        height="480"
+        loading="eager"
+      />
+
+      <div class="business-dashboard" aria-hidden="true">
+        <div class="business-dashboard__top">
+          <span></span>
+          <span></span>
+        </div>
+        <div class="business-dashboard__metric business-dashboard__metric--red">
+          <strong>12</strong>
+          <span>сотрудников</span>
+        </div>
+        <div class="business-dashboard__metric">
+          <strong>38</strong>
+          <span>фото и печать</span>
+        </div>
+        <div class="business-dashboard__lines">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="business-hero__content">
+      <p class="business-hero__eyebrow">Юрлицам и ИП • ранний доступ</p>
+      <h1>Бизнес-аккаунт Своё Фото</h1>
+      <p class="business-hero__lead">
+        B2B-доступ для фото сотрудников, пропусков, медкнижек, анкет, личных
+        дел, школ, вузов, курсов, корпоративных баз, регулярной печати и
+        индивидуальных выездных фотосъёмок.
+      </p>
+
+      <div class="business-hero__chips" aria-label="Основные возможности">
+        <span>фото сотрудников</span>
+        <span>выездные съёмки</span>
+        <span>счета и акты</span>
+      </div>
+
+      <div class="business-hero__actions">
+        <a
+          mat-flat-button
+          routerLink="/chat"
+          [queryParams]="businessChatQueryParams"
+          class="business-primary-button"
+        >
+          <mat-icon>business_center</mat-icon>
+          Обсудить подключение
+        </a>
+        <a
+          mat-stroked-button
+          href="#business-account-capabilities"
+          class="business-secondary-button"
+        >
+          Что внутри
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <div class="business-sheet">
+    <section class="business-promo" appScrollReveal>
+      @for (item of promoItems; track item.title) {
+        <article class="business-promo-row">
+          <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+          <div>
+            <h2>{{ item.title }}</h2>
+            <p>{{ item.description }}</p>
+          </div>
+        </article>
+      }
+    </section>
+
+    <section
+      class="business-capabilities"
+      id="business-account-capabilities"
+      appScrollReveal
+    >
+      <div class="business-section-heading">
+        <p>Внутри аккаунта</p>
+        <h2>Возможности для корпоративных фото-задач, печати и документов</h2>
+        <span>
+          Полный production-контур ещё в разработке, поэтому страница показывает
+          целевую систему и путь раннего подключения через менеджера.
+        </span>
+      </div>
+
+      @for (group of capabilityGroups; track group.title) {
+        <section
+          class="capability-group"
+          [class.capability-group--wide]="group.layout === 'wide'"
+          [class.capability-group--mixed]="group.layout === 'mixed'"
+        >
+          <div class="capability-group__heading">
+            <h3>{{ group.title }}</h3>
+            @if (group.description) {
+              <p>{{ group.description }}</p>
+            }
+          </div>
+
+          <div class="capability-grid">
+            @for (card of group.cards; track card.title) {
+              <article
+                class="capability-card"
+                [class.capability-card--accent]="card.accent"
+                [class.capability-card--wide]="card.wide"
+              >
+                <mat-icon aria-hidden="true">{{ card.icon }}</mat-icon>
+                <div class="capability-card__body">
+                  <h4>{{ card.title }}</h4>
+                  <p>{{ card.description }}</p>
+                </div>
+                @if (card.metric) {
+                  <div class="capability-card__metric">
+                    <strong>{{ card.metric }}</strong>
+                    @if (card.note) {
+                      <span>{{ card.note }}</span>
+                    }
+                  </div>
+                }
+              </article>
+            }
+          </div>
+        </section>
+      }
+    </section>
+
+    <section
+      class="business-billing"
+      id="business-account-billing"
+      appScrollReveal
+    >
+      <div class="business-billing__visual">
+        <img
+          src="/assets/static/services/premium-print.webp"
+          alt=""
+          width="640"
+          height="360"
+          loading="lazy"
+        />
+      </div>
+      <div class="business-billing__content">
+        <p class="business-kicker">Финансовый контур</p>
+        <h2>Безнал, сверка и документы без ручных таблиц</h2>
+        <ul>
+          @for (bullet of billingBullets; track bullet.text) {
+            <li>
+              <mat-icon>{{ bullet.icon }}</mat-icon>
+              <span>{{ bullet.text }}</span>
+            </li>
+          }
+        </ul>
+
+        <a
+          mat-flat-button
+          routerLink="/chat"
+          [queryParams]="businessChatQueryParams"
+          class="business-primary-button"
+        >
+          <mat-icon>support_agent</mat-icon>
+          Написать менеджеру
+        </a>
+      </div>
+    </section>
+
+    <section
+      class="business-connect"
+      id="business-account-connect"
+      appScrollReveal
+    >
+      <div class="business-section-heading">
+        <p>Подключение</p>
+        <h2>Начните с заявки на ранний доступ</h2>
+        <span>
+          Сейчас мы согласуем B2B-сценарии вручную, а автоматизацию подключаем
+          по мере готовности модулей.
+        </span>
+      </div>
+
+      <div class="connect-steps">
+        @for (step of connectionSteps; track step.title) {
+          <article class="connect-step">
+            <mat-icon>{{ step.icon }}</mat-icon>
+            <div>
+              <h3>{{ step.title }}</h3>
+              <p>{{ step.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+
+      <div class="connect-note">
+        <mat-icon>fact_check</mat-icon>
+        <div>
+          <h3>Пилот не заменяет юридическое согласование</h3>
+          <p>
+            Форму акта или УПД, НДС, ЭДО, постоплату и лимиты фиксируем перед
+            запуском компании в работу.
+          </p>
+        </div>
+        <a
+          mat-flat-button
+          routerLink="/chat"
+          [queryParams]="businessChatQueryParams"
+        >
+          Оставить заявку
+        </a>
+      </div>
+    </section>
+
+    <section class="business-faq" id="business-account-faq" appScrollReveal>
+      <div class="business-section-heading">
+        <p>FAQ</p>
+        <h2>Частые вопросы</h2>
+      </div>
+
+      <mat-accordion class="business-faq__accordion">
+        @for (faq of faqs; track faq.question) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ faq.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{ faq.answer }}</p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </section>
+  </div>
+
+  <div
+    class="mobile-sticky-cta"
+    [class.mobile-sticky-cta--visible]="stickyCtaVisible()"
+  >
+    <a
+      mat-flat-button
+      routerLink="/chat"
+      [queryParams]="businessChatQueryParams"
+    >
+      <mat-icon>business_center</mat-icon>
+      Обсудить подключение
+    </a>
+  </div>
+</main>

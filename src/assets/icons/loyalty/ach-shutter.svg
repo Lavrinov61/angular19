@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Outer ring -->
+  <circle cx="24" cy="24" r="18" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.05"/>
+  <!-- 6 iris blades (rotated triangles meeting at center hex) -->
+  <!-- Blade top -->
+  <path d="M24 6L31 19L17 19Z" fill="#f59e0b" fill-opacity="0.25" stroke="#f59e0b" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Blade upper-right -->
+  <path d="M40.6 15L31 19L31 29Z" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Blade lower-right -->
+  <path d="M40.6 33L31 29L17 29Z" fill="#f59e0b" fill-opacity="0.25" stroke="#f59e0b" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Blade bottom -->
+  <path d="M24 42L17 29L31 29Z" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Blade lower-left -->
+  <path d="M7.4 33L17 29L17 19Z" fill="#f59e0b" fill-opacity="0.25" stroke="#f59e0b" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Blade upper-left -->
+  <path d="M7.4 15L17 19L31 19Z" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b" stroke-width="1" stroke-linejoin="round"/>
+  <!-- Center aperture -->
+  <circle cx="24" cy="24" r="5" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.35"/>
+</svg>

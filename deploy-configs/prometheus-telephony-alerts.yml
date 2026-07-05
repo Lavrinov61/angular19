@@ -1,0 +1,82 @@
+groups:
+  - name: telephony-voice-otp
+    rules:
+      # Дозвон есть (call_history_resolved=connected), но робот ни разу не начал
+      # проигрывать код (playback_started=spoke) — главная боль аудита 2026-05-29.
+      - alert: VoiceOtpConnectedNoSpoke
+        expr: rate(voice_otp_calls_total{result="connected"}[30m]) > 0 and rate(voice_otp_calls_total{result="spoke"}[30m]) == 0
+        for: 20m
+        labels:
+          severity: critical
+          component: telephony
+        annotations:
+          summary: "Voice OTP: дозвон есть, робот не диктует код"
+          description: "connected растёт, spoke=0 за 30m. Робот не озвучивает код — клиенты не входят. Проверить ASR/TTS YandexV3 в сценарии flash-call-otp и phone_otp_events (connected без playback_started)."
+
+      - alert: VoiceOtpFailureSpike
+        expr: rate(voice_otp_calls_total{result="failed"}[15m]) / clamp_min(rate(voice_otp_calls_total{result="accepted"}[15m]), 0.0001) > 0.3
+        for: 15m
+        labels:
+          severity: critical
+          component: telephony
+        annotations:
+          summary: "Voice OTP: доля упавших звонков > 30%"
+          description: "Клиенты не получают код голосом. Проверить Voximplant cloud, caller-ids, баланс."
+
+      - alert: VoiceOtpQueueStuck
+        expr: bullmq_queue_depth{queue="voice-otp-dispatch",state="waiting"} > 0
+        for: 5m
+        labels:
+          severity: warning
+          component: telephony
+        annotations:
+          summary: "Voice OTP: очередь диспетчера не разгребается"
+          description: "voice-otp-dispatch waiting>0 более 5m. Голосовой OTP блокирует логины — проверить воркер и свободные линии."
+
+  - name: telephony-survey-asr
+    rules:
+      - alert: AsrEmptyTranscriptHigh
+        expr: rate(asr_empty_transcript_total[1h]) / clamp_min(rate(telephony_service_survey_total{event="completed"}[1h]), 0.0001) > 0.5
+        for: 1h
+        labels:
+          severity: warning
+          component: telephony
+        annotations:
+          summary: "ASR: >50% опросов без распознанного текста"
+          description: "Возможно не настроен ASRProfileList в Voximplant console (silent failure pickRussianAsrProfile)."
+
+  - name: telephony-inbound
+    rules:
+      - alert: TelephonyMissedRateHigh
+        expr: rate(telephony_missed_calls_total[30m]) / clamp_min(rate(telephony_incoming_calls_total[30m]), 0.0001) > 0.5
+        for: 30m
+        labels:
+          severity: warning
+          component: telephony
+        annotations:
+          summary: "Телефония: пропущено > 50% входящих за 30m"
+          description: "Операторы не отвечают / SIP-форвардинг упал. Проверить здоровье VoIP линии (GET /api/telephony/health/voip-phone)."
+
+  - name: telephony-webhook-auth
+    rules:
+      # После флипа enforce — легитимный сценарий режется (нет/битая подпись) → потеря звонков.
+      - alert: VoximplantWebhookRejectedInEnforce
+        expr: increase(voximplant_webhook_auth_total{outcome=~"rejected_missing|rejected_bad_sig|rejected_misconfig"}[15m]) > 0
+        for: 5m
+        labels:
+          severity: critical
+          component: telephony
+        annotations:
+          summary: "Voximplant webhook: отклонения аутентификации"
+          description: "Подделка ИЛИ рассинхрон секрета repo↔cloud после enforce. Проверить раскатку секрета во все 3 сценария."
+
+      # Нельзя флипать enforce, пока есть неподписанные запросы (сценарии не раскатаны).
+      - alert: VoximplantWebhookUnsignedGrace
+        expr: increase(voximplant_webhook_auth_total{outcome="grace_unsigned"}[3h]) > 0
+        for: 3h
+        labels:
+          severity: info
+          component: telephony
+        annotations:
+          summary: "Voximplant webhook: остаются неподписанные запросы (grace)"
+          description: "Пока grace_unsigned>0 — НЕ переключать VOXIMPLANT_WEBHOOK_AUTH_MODE=enforce. Раскатать HMAC-подпись во все сценарии."

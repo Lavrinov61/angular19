@@ -1,0 +1,239 @@
+<!-- Premium Print Page -->
+<link rel="canonical" href="https://svoefoto.ru/premium-print" />
+<div class="premium-print-page">
+  <!-- Hero Section - ATTENTION -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="highlight">Премиум печать</span> фотографий в Ростове-на-Дону
+        </h1>
+        <p class="hero-subtitle">
+          Высокое качество, моментальная печать и идеальная цветопередача. 
+          Присылайте фото онлайн, это легко!
+        </p>
+        <div class="hero-benefits">
+          <div class="benefit-item">
+            <mat-icon>high_quality</mat-icon>
+            <span>Премиум качество</span>
+          </div>
+          <div class="benefit-item">
+            <mat-icon>schedule</mat-icon>
+            <span>Готово за 30 минут</span>
+          </div>
+          <div class="benefit-item">
+            <mat-icon>palette</mat-icon>
+            <span>Идеальная цветопередача</span>
+          </div>
+        </div>
+        <div class="hero-cta">
+          <button mat-raised-button color="primary" class="cta-button" (click)="scrollToContacts()">
+            <mat-icon>cloud_upload</mat-icon>
+            Отправить фото на печать
+          </button>
+          <div class="price-info">
+            <span class="price">от {{basePrice()}} ₽</span>
+            <span class="price-note">за фото 10×15</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img 
+          src="/assets/images/premium-print-hero.jpg" 
+          alt="Премиум печать фотографий в Своё Фото"
+          loading="eager"
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section - INTEREST -->
+  <section class="services-section" id="services">
+    <div class="section-container">
+      <h2 class="section-title">Виды печати фотографий</h2>
+      <p class="section-subtitle">
+        Выберите подходящий тип печати для ваших фотографий
+      </p>
+      
+      <div class="services-grid">
+        @for (service of printServices(); track service.title || service.icon || $index) {
+          <div class="service-card">
+            <div class="service-icon">
+              <mat-icon>{{service.icon}}</mat-icon>
+            </div>
+            <h3 class="service-title">{{service.title}}</h3>
+            <p class="service-description">{{service.description}}</p>
+            
+            <div class="formats-list">
+              @for (format of service.formats; track format.name || $index) {
+                <div class="format-item">
+                  <span class="format-name">{{format.name}}</span>
+                  <span class="format-price">{{format.price}} ₽</span>
+                </div>
+              }
+            </div>
+            
+            <div class="service-features">
+              @for (feature of service.features; track feature || $index) {
+                <div class="feature-item">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>{{feature}}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section - INTEREST/DESIRE -->
+  <section class="process-section">
+    <div class="section-container">
+      <h2 class="section-title">Как заказать печать фотографий</h2>
+      <div class="process-steps">
+        @for (step of processSteps; track step.title || step.icon || $index; let i = $index) {
+          <div class="step-item">
+            <div class="step-number">{{i + 1}}</div>
+            <div class="step-content">
+              <h3 class="step-title">{{step.title}}</h3>
+              <p class="step-description">{{step.description}}</p>
+            </div>
+            <div class="step-icon">
+              <mat-icon>{{step.icon}}</mat-icon>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantages Section - DESIRE -->
+  <section class="advantages-section">
+    <div class="section-container">
+      <h2 class="section-title">Наши преимущества</h2>
+      <div class="advantages-grid">
+        @for (advantage of advantages; track advantage.title || advantage.icon || $index) {
+          <div class="advantage-card">
+            <div class="advantage-icon">
+              <mat-icon>{{advantage.icon}}</mat-icon>
+            </div>
+            <h3 class="advantage-title">{{advantage.title}}</h3>
+            <p class="advantage-description">{{advantage.description}}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Quality Section - DESIRE -->
+  <section class="quality-section">
+    <div class="section-container">
+      <div class="quality-content">
+        <div class="quality-text">
+          <h2 class="section-title">Почему наша печать лучше?</h2>
+          <div class="quality-features">
+            <div class="quality-feature">
+              <mat-icon>camera_enhance</mat-icon>
+              <div class="feature-content">
+                <h3>Профессиональное оборудование</h3>
+                <p>Принтеры Epson и Canon профессиональной серии с точной цветопередачей</p>
+              </div>
+            </div>
+            <div class="quality-feature">
+              <mat-icon>palette</mat-icon>
+              <div class="feature-content">
+                <h3>Калиброванные мониторы</h3>
+                <p>Все этапы работы на откалиброванном оборудовании для точности цвета</p>
+              </div>
+            </div>
+            <div class="quality-feature">
+              <mat-icon>workspace_premium</mat-icon>
+              <div class="feature-content">
+                <h3>Премиум материалы</h3>
+                <p>Фотобумага и чернила ведущих мировых производителей</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="quality-image">
+          <img 
+            src="/assets/images/print-quality.jpg" 
+            alt="Качество печати фотографий"
+            loading="lazy"
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section - DESIRE -->
+  <section class="testimonials-section">
+    <div class="section-container">
+      <h2 class="section-title">Отзывы о качестве печати</h2>
+      <app-testimonials variant="card" />
+    </div>
+  </section>
+
+  <!-- FAQ Section - INTEREST -->
+  <section class="faq-section">
+    <div class="section-container">
+      <h2 class="section-title">Частые вопросы</h2>
+      <mat-accordion class="faq-accordion">
+        @for (faq of faqItems; track faq.question || $index) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{faq.question}}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p [innerHTML]="faq.answer"></p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <!-- CTA Section - ACTION -->
+  <section class="cta-section">
+    <div class="section-container">
+      <div class="cta-content">
+        <h2 class="cta-title">Готовы заказать премиум печать?</h2>
+        <p class="cta-subtitle">
+          Пришлите ваши фотографии, и мы распечатаем их в идеальном качестве!
+        </p>
+        <div class="cta-benefits">
+          <div class="cta-benefit">
+            <mat-icon>schedule</mat-icon>
+            <span>Быстрая печать</span>
+          </div>
+          <div class="cta-benefit">
+            <mat-icon>verified</mat-icon>
+            <span>Гарантия качества</span>
+          </div>
+          <div class="cta-benefit">
+            <mat-icon>local_shipping</mat-icon>
+            <span>Доставка по городу</span>
+          </div>
+        </div>
+        <div class="cta-buttons">
+          <button mat-raised-button color="primary" class="primary-cta" (click)="scrollToContacts()">
+            <mat-icon>cloud_upload</mat-icon>
+            Отправить фото на печать
+          </button>
+          <button mat-stroked-button color="primary" class="secondary-cta" (click)="callPhone()">
+            <mat-icon>call</mat-icon>
+            Позвонить и узнать цены
+          </button>
+        </div>
+        <p class="cta-urgency">
+          ⚡ Заказывайте сегодня, завтра ваши фотографии уже будут готовы!
+        </p>
+      </div>
+    </div>
+  </section>
+
+<!-- Modern Contacts Section - переиспользуемый компонент -->  <app-contacts-section [contacts]="contacts"
+    [addresses]="addresses"
+    [isMobile]="isMobile()"
+    [isTablet]="isTablet()"
+    [isDesktop]="isDesktop()" />
+</div>

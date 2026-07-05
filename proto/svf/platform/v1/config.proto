@@ -1,0 +1,63 @@
+syntax = "proto3";
+package svf.platform.v1;
+
+option java_package = "ru.svoefoto.proto.platform.v1";
+option java_multiple_files = true;
+
+// Public mobile app configuration. This endpoint is available before login.
+service ConfigService {
+  rpc GetAppConfig(GetAppConfigRequest) returns (GetAppConfigResponse);
+}
+
+message GetAppConfigRequest {
+  string platform = 1; // "android" or "ios"; defaults to android server-side.
+}
+
+message GetAppConfigResponse {
+  string api_version = 1;
+  string app_version = 2;
+  AndroidConfig android = 3;
+  Maintenance maintenance = 4;
+  Endpoints endpoints = 5;
+  map<string, bool> features = 6;
+  repeated string auth_providers = 7;
+  repeated string certificate_pins = 8;
+  RateLimits rate_limits = 9;
+  UploadLimits upload = 10;
+}
+
+message AndroidConfig {
+  string min_version = 1;
+  string recommended_version = 2;
+  StoreUrls store_urls = 3;
+}
+
+message StoreUrls {
+  string google_play = 1;
+  string rustore = 2;
+  string app_gallery = 3;
+}
+
+message Maintenance {
+  bool enabled = 1;
+  string message = 2;
+  string estimated_end = 3;
+}
+
+message Endpoints {
+  string api = 1;
+  string websocket = 2;
+  string websocket_path = 3;
+  string grpc = 4;
+}
+
+message RateLimits {
+  int32 api_per_15min = 1;
+  int32 auth_per_15min = 2;
+  int32 upload_per_15min = 3;
+}
+
+message UploadLimits {
+  int64 max_file_size_bytes = 1;
+  repeated string allowed_mime_types = 2;
+}

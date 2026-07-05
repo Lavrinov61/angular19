@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>9 мая — праздничный тариф</title>
+<style>
+  @font-face {
+    font-family: 'Oswald Local';
+    src: url('../fonts/oswald-cyrillic.woff2') format('woff2');
+    font-weight: 400 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Inter Local';
+    src: url('../fonts/inter-UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: #eceff3;
+    color: #0a0a0a;
+  }
+
+  body {
+    font-family: 'Inter Local', Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  .sheet {
+    width: 210mm;
+    height: 297mm;
+    background: #ffffff;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+    padding: 20mm 18mm 16mm;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  .sheet::before {
+    content: '';
+    position: absolute;
+    inset: 11mm 11mm auto;
+    height: 1.2mm;
+    background: linear-gradient(90deg, #0a0a0a 0 62%, #f59e0b 62% 100%);
+  }
+
+  .sheet::after {
+    content: '';
+    position: absolute;
+    right: 18mm;
+    bottom: 18mm;
+    width: 36mm;
+    height: 36mm;
+    border: 0.45mm solid rgba(10, 10, 10, 0.08);
+    border-radius: 50%;
+  }
+
+  .top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16mm;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo {
+    width: 37mm;
+    height: auto;
+    display: block;
+  }
+
+  .date {
+    font-family: 'Oswald Local', Impact, sans-serif;
+    font-size: 20mm;
+    line-height: 0.88;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    text-align: right;
+  }
+
+  .date span {
+    display: block;
+    font-family: 'Inter Local', Inter, sans-serif;
+    font-size: 4.2mm;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #6b7280;
+    letter-spacing: 0.5mm;
+    margin-top: 2mm;
+  }
+
+  .content {
+    align-self: center;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 6mm;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 3mm;
+    font-size: 4.4mm;
+    line-height: 1;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.8mm;
+    color: #6b7280;
+    margin-bottom: 8mm;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 18mm;
+    height: 0.8mm;
+    background: #f59e0b;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: 'Oswald Local', Impact, sans-serif;
+    font-size: 30mm;
+    line-height: 0.93;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .tariff {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 7mm;
+    margin: 12mm 0 10mm;
+    padding: 9mm 10mm;
+    border: 0.55mm solid #0a0a0a;
+    border-radius: 2mm;
+  }
+
+  .multiplier {
+    font-family: 'Oswald Local', Impact, sans-serif;
+    font-size: 37mm;
+    line-height: 0.78;
+    color: #f59e0b;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .tariff-text {
+    font-family: 'Oswald Local', Impact, sans-serif;
+    font-size: 12mm;
+    line-height: 1.02;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .exceptions {
+    display: grid;
+    gap: 4.5mm;
+    margin-top: 8mm;
+  }
+
+  .exceptions-title {
+    font-size: 5mm;
+    line-height: 1.25;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3mm;
+  }
+
+  .chip {
+    padding: 3mm 4.2mm;
+    border-radius: 99mm;
+    border: 0.4mm solid #0a0a0a;
+    font-size: 4.6mm;
+    line-height: 1;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+
+  .note {
+    max-width: 132mm;
+    margin-top: 9mm;
+    font-size: 5.1mm;
+    line-height: 1.35;
+    color: #374151;
+  }
+
+  .bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12mm;
+    position: relative;
+    z-index: 1;
+    border-top: 0.35mm solid #e5e7eb;
+    padding-top: 7mm;
+  }
+
+  .thanks {
+    font-size: 4.4mm;
+    line-height: 1.35;
+    color: #6b7280;
+    max-width: 122mm;
+  }
+
+  .brand {
+    font-family: 'Oswald Local', Impact, sans-serif;
+    font-size: 9mm;
+    line-height: 0.95;
+    text-transform: uppercase;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  @media print {
+    html,
+    body {
+      width: 210mm;
+      height: 297mm;
+      background: #ffffff;
+      padding: 0;
+      display: block;
+    }
+
+    .sheet {
+      width: 210mm;
+      height: 297mm;
+      box-shadow: none;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="sheet" aria-label="Объявление о праздничном тарифе 9 мая">
+    <header class="top">
+      <img class="logo" src="../images/svoefoto-logo-black.png" alt="Своё Фото">
+      <div class="date">9 мая<span>работаем сегодня</span></div>
+    </header>
+
+    <section class="content">
+      <div class="eyebrow">праздничный режим</div>
+      <h1>Сегодня<br>работаем</h1>
+
+      <div class="tariff">
+        <div class="multiplier">×2</div>
+        <div class="tariff-text">на все услуги</div>
+      </div>
+
+      <div class="exceptions">
+        <div class="exceptions-title">Цена не меняется на:</div>
+        <div class="chips">
+          <div class="chip">фото на документы</div>
+          <div class="chip">портрет</div>
+        </div>
+      </div>
+
+      <p class="note">
+        Итоговую стоимость подскажем до оформления заказа.
+      </p>
+    </section>
+
+    <footer class="bottom">
+      <div class="thanks">Спасибо за понимание праздничного тарифа и срочной работы в выходной день.</div>
+      <div class="brand">Своё<br>Фото</div>
+    </footer>
+  </main>
+</body>
+</html>

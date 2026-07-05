@@ -1,0 +1,118 @@
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-row">
+      <div class="footer-column">
+        <h3 class="footer-title">Своё Фото</h3>
+        <p>Профессиональная фотостудия</p>
+        <div class="footer-social">
+          <a class="footer-social-link footer-social-link--max"
+             href="https://max.ru/id262603741214_bot"
+             target="_blank"
+             rel="noopener"
+             aria-label="МАКС">
+            <img src="/assets/icons/channel-max.svg" alt="" width="22" height="22">
+          </a>
+          <a class="footer-social-link footer-social-link--vk"
+             href="https://vk.com/im?sel=-68371131"
+             target="_blank"
+             rel="noopener"
+             aria-label="ВКонтакте">
+            <img src="/assets/icons/channel-vk.svg" alt="" width="22" height="22">
+          </a>
+          <a class="footer-social-link footer-social-link--telegram"
+             href="https://t.me/magnus_photo"
+             target="_blank"
+             rel="noopener"
+             aria-label="Telegram">
+            <img src="/assets/icons/channel-telegram.svg" alt="" width="22" height="22">
+          </a>
+          <a class="footer-social-link footer-social-link--whatsapp"
+             href="https://wa.me/+79014178668"
+             target="_blank"
+             rel="noopener"
+             [attr.aria-label]="whatsappAriaLabel()">
+            <img src="/assets/icons/channel-whatsapp.svg" alt="" width="22" height="22">
+          </a>
+          <a class="footer-social-link footer-social-link--instagram"
+             href="https://www.instagram.com/foto.magnus/"
+             target="_blank"
+             rel="noopener"
+             aria-label="Instagram">
+            <img src="/assets/icons/channel-instagram.svg" alt="" width="22" height="22">
+          </a>
+        </div>
+        @if (whatsappNotice()) {
+          <p class="footer-social-warning">{{ whatsappUnavailableText() }}</p>
+        }
+      </div>
+
+      <div class="footer-column">
+        <h4 class="footer-column-title">Навигация</h4>
+        <ul class="footer-links">
+          <li><a routerLink="/">Главная</a></li>
+          <li><a routerLink="/services">Услуги</a></li>
+          <li><a routerLink="/booking">Запись онлайн</a></li>
+          <li><a routerLink="/about">О нас</a></li>
+          <li><a routerLink="/photographers">Фотографы</a></li>
+          <li><a routerLink="/testimonials">Отзывы</a></li>
+          <li><a routerLink="/contacts">Контакты</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h4 class="footer-column-title">Услуги</h4>
+        <ul class="footer-links">
+          <li><a routerLink="/foto-na-document">Фото на документы</a></li>
+          <li><a routerLink="/portretnaya-sjomka">Портретная съёмка</a></li>
+          <li><a routerLink="/pechat-foto">Печать фотографий</a></li>
+          <li><a routerLink="/online-uslugi">Онлайн-услуги</a></li>
+          <li><a routerLink="/personal">Личный аккаунт</a></li>
+          <li><a routerLink="/subscriptions">Подписка</a></li>
+          <li><a routerLink="/user-profile/loyalty">Бонусная программа</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h4 class="footer-column-title">Для бизнеса</h4>
+        <ul class="footer-links">
+          <li><a routerLink="/business">Бизнес-аккаунт</a></li>
+          <li><a routerLink="/tovarnaya-sjomka">Товарная съёмка</a></li>
+          <li><a routerLink="/infografika-kartochek">Инфографика карточек</a></li>
+          <li><a routerLink="/smm-content">SMM-контент</a></li>
+          <li><a routerLink="/super-paket-prodayushiy">Супер-пакет</a></li>
+          <li><a routerLink="/partners">Партнёрская программа</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h4 class="footer-column-title">Контакты</h4>
+        <address class="footer-address">
+          <p>г. Ростов-на-Дону, пер. Соборный, 21</p>
+          <p class="footer-contact-line">
+            <span>Телефон:</span>
+            @if (studioPhoneAvailable) {
+              <a [href]="studioPhoneHref">{{ studioPhone }}</a>
+            } @else {
+              <span class="footer-phone-unavailable">{{ studioPhoneUnavailableLabel }}</span>
+            }
+          </p>
+          @if (!studioPhoneAvailable) {
+            <p class="footer-contact-hint">Пишите в Telegram, МАКС или на email.</p>
+          }
+          <p>Email: <a href="mailto:info&#64;svoefoto.ru">info&#64;svoefoto.ru</a></p>
+        </address>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {{ currentYear }} Своё Фото. Все права защищены.</p>
+
+      <div class="footer-bottom-links">
+        <a routerLink="/rekvizity">Реквизиты</a>
+        <a routerLink="/oferta">Публичная оферта</a>
+        <a routerLink="/privacy">Политика конфиденциальности</a>
+        <a routerLink="/partners">Партнёрская программа</a>
+      </div>
+    </div>
+  </div>
+</footer>

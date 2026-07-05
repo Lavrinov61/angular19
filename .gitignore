@@ -1,0 +1,206 @@
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# MCP config (contains tokens)
+.mcp.json
+.mcp.json.bak
+.mcp.selectel.json
+
+# Codex local runtime/config copy (contains tokens, logs, sessions)
+.codex/
+
+# Local git worktrees for isolated agent work
+.worktrees/
+
+# VPN configs (contain private keys)
+wg-*.conf
+
+# Claude local memory
+.claude/memory/
+
+# Установленные сторонние скиллы (вендорятся отдельно, не часть исходников проекта)
+# NB: .claude/skills/copywriter/ — наша локальная обёртка, НЕ игнорируется (решить отдельно)
+.claude/skills/copy-editing/
+.claude/skills/copywriting/
+.claude/skills/cro/
+.superpowers/
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+server/dist/
+
+# Rust build artifacts
+**/target/
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/
+.history/
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env.local
+.env.production
+.env.development
+
+# Firebase
+.firebase/
+firebase-debug.log
+firestore-debug.log
+
+# Build artifacts
+/temp
+*.log
+
+# Development files
+TESTING_PLAN.md
+readmeai.md
+routing19.md
+location19.md
+stylenews.md
+material-cdk-api/
+temp.css
+check-braces.js
+
+# RAG configuration
+/angular-rag
+
+# Legacy files
+fmagnus.org-old/
+
+# Playwright output
+playwright-output/
+.playwright-mcp/
+
+# Documentation
+docs/
+server/dist/
+
+# Additional server ignores
+server/node_modules/
+server/package-lock.json
+
+# Build and cache directories
+dist/
+.angular/
+
+# Git index file
+.git/index
+server/node_modules/
+
+# Firebase Functions
+/functions/node_modules
+/functions/lib
+/functions/firebase-debug.log
+
+# Uploads (пользовательские файлы — не хранить в git)
+/uploads/
+
+# Медиафайлы и архивы
+*.jpg
+*.jpeg
+*.png
+*.PNG
+*.JPG
+*.JPEG
+*.webp
+*.gif
+*.pdf
+*.zip
+
+# Скриншоты (папка с кириллицей)
+/скриншоты/
+/screenshots/
+
+# Временные инструменты
+/tools/
+
+# Deploy packages (бинарники агентов)
+/deploy-packages/
+
+# Archives
+*.tar.gz
+*.tgz
+*.sha256
+
+# Playwright state
+/.playwright/
+/.playwright-cli/
+
+# Env/DB backups
+backend/.env.bak*
+backend/database/schema.sql.backup.*
+
+# API responses / external data
+/selectel-*.json
+конкуренты/
+
+# Financial records
+/*.csv
+backend/*.csv
+
+# Test/security files
+backend/test-ssrf.ts
+
+# Python cache
+__pycache__/
+
+# Session planning docs (content preserved in .claude/ memory)
+/API_CONTRACT.md
+/AUDIT_PRICING_POINTS.md
+/BUSINESS_CARD_PRINT_UX_DESIGN_*.md
+/ENTERPRISE_MESSENGER_ARCHITECTURE.md
+/IMPLEMENTATION_PLAN_*.md
+/PHOTO_APPROVAL_FLOW.md
+/POS_ENTERPRISE_ARCHITECTURE.md
+/POS_PAYMENT_FISCAL_GAP_ANALYSIS.md
+/POS_UX_SPECIFICATION.md
+/PRINT_API_AUDIT_REPORT.md
+/PRINT_QUEUE_AUDIT_REPORT_*.md
+/PRINT_SERVICE_ARCHITECTURE.md
+/RECOVERY_DELAY_ARCHITECTURE.md
+/SUPPORT_TEAM_FEATURE_DESIGN.md
+backend/DB_AUDIT_*.md
+.claude/*_RESEARCH_*.md
+.claude/*_AUDIT_*.md
+
+# Prototypes
+/order-wizard-prototype.html
+
+# Draft proto files (canonical in proto/svf/)
+/proto/*.proto
+
+# Worker cache
+backend/workers/face_landmarker.task
+
+# Диагностические скрипты телефонии (одноразовые, читают .env/credentials Voximplant)
+backend/voximplant-*.mjs
+backend/check-call-history*.ts
+backend/check-sip-regs.ts

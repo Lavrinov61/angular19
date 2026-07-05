@@ -1,0 +1,229 @@
+<section class="hero-section">
+  <div class="hero-bg"></div>
+
+  <div class="hero-layout container">
+    <div class="hero-copy">
+      <div class="hero-badge" appScrollReveal>
+        <mat-icon>bolt</mat-icon>
+        Готово от 15 минут
+      </div>
+
+      <h1 class="hero-title" appScrollReveal>
+        Печать фотографий<br />
+        <span>в Ростове</span>
+      </h1>
+
+      <p class="hero-subtitle" appScrollReveal>
+        Загрузите снимки онлайн, мы проверим цвет и резкость перед печатью, заберёте аккуратные отпечатки в студии в Ростове. Без перепечаток и сюрпризов.
+      </p>
+
+      <div class="hero-actions" appScrollReveal>
+        <a mat-flat-button class="hero-cta hero-cta--primary" href="#format-section" (click)="scrollToFormats(); $event.preventDefault()">
+          <mat-icon>cloud_upload</mat-icon>
+          Загрузить фото
+        </a>
+        <a mat-flat-button class="hero-cta hero-cta--secondary" href="#format-section" (click)="scrollToFormats(); $event.preventDefault()">
+          Выбрать формат
+        </a>
+      </div>
+
+      <div class="hero-meta" appScrollReveal>
+        <div class="hero-price">
+          <span>от</span>
+          <strong>{{ minPrice() }}</strong>
+          <span>₽ за фото</span>
+        </div>
+        <div class="hero-trust">
+          <span><mat-icon>layers</mat-icon> 5 форматов</span>
+          <span><mat-icon>storefront</mat-icon> Студия в Ростове</span>
+          <span><mat-icon>palette</mat-icon> 2 типа печати</span>
+          <span><mat-icon>verified</mat-icon> Проверка цвета</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual" appScrollReveal>
+      <div class="print-stack-card">
+        <img src="/assets/static/promo/pechat-foto.webp" alt="Стопка напечатанных фотографий" loading="eager" />
+        <div class="print-stack-shade"></div>
+      </div>
+      <div class="floating-card floating-card--price">
+        <span>10×15</span>
+        <strong>{{ prices.premium10x15() }} ₽</strong>
+      </div>
+      <div class="floating-card floating-card--paper">
+        <mat-icon>auto_awesome</mat-icon>
+        Премиум и супер
+      </div>
+      <div class="floating-card floating-card--time">
+        <mat-icon>schedule</mat-icon>
+        15 мин
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust-section">
+  <div class="container">
+    <div class="section-header section-header--center" appScrollReveal>
+      <p class="section-kicker">Фотопечать без лишних шагов</p>
+      <h2 class="section-title">
+        Онлайн-заказ, понятные форматы и результат, который не нужно переделывать
+      </h2>
+    </div>
+
+    <div class="feature-grid" appScrollReveal>
+      <article class="feature-card feature-card--red">
+        <mat-icon>cloud_upload</mat-icon>
+        <h3>Загрузка на странице</h3>
+        <p>Перетащите фото в нужный формат, добавьте количество и сразу оформляйте заказ.</p>
+      </article>
+      <article class="feature-card feature-card--blue">
+        <mat-icon>tune</mat-icon>
+        <h3>Контроль перед печатью</h3>
+        <p>Смотрим цвет, резкость и пропорции, чтобы отпечатки выглядели аккуратно.</p>
+      </article>
+      <article class="feature-card feature-card--yellow">
+        <mat-icon>storefront</mat-icon>
+        <h3>Самовывоз в студии</h3>
+        <p>Выберите самовывоз в Ростове-на-Дону при оформлении заказа.</p>
+      </article>
+    </div>
+
+    <div class="paper-grid" appScrollReveal>
+      <article class="paper-card">
+        <div class="paper-visual paper-visual--classic">
+          <span>Матовая</span>
+          <span>Глянцевая</span>
+        </div>
+        <div class="paper-info">
+          <span class="paper-tag">Тип печати</span>
+          <h3>Премиум</h3>
+          <p>Классическая матовая или глянцевая поверхность для альбомов, архивов и повседневной печати.</p>
+          <div class="paper-price-row">
+            <span>10×15</span>
+            <strong>{{ prices.premium10x15() }} ₽</strong>
+          </div>
+        </div>
+      </article>
+
+      <article class="paper-card paper-card--accent">
+        <div class="paper-visual paper-visual--premium">
+          <span>Сатин</span>
+          <span>Суперглянец</span>
+        </div>
+        <div class="paper-info">
+          <span class="paper-tag">Тип печати</span>
+          <h3>Супер</h3>
+          <p>Более выразительная сатиновая или суперглянцевая поверхность для подарков, портретов и ярких кадров.</p>
+          <div class="paper-price-row">
+            <span>10×15</span>
+            <strong>{{ prices.super10x15() }} ₽</strong>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="formats-section" id="format-section">
+  <div class="container">
+
+    <div class="section-header" appScrollReveal>
+      <p class="section-kicker">Оформление заказа</p>
+      <h2 class="section-title">
+        Выберите формат и загрузите фото
+      </h2>
+      <p class="section-subtitle">
+        Для стандартных форматов загрузите фото в нужную карточку. Для мини-отпечатков, половинок и квадратов используйте отдельный блок нестандартных размеров.
+      </p>
+    </div>
+
+    <app-custom-size-flow
+      [items]="store.itemsByFormat(customFormat.id)"
+      [groups]="store.customSizeGroups()"
+      [priceLabel]="customPriceLabel()"
+      (filesAdded)="onCustomSizeFilesAdded($event)"
+      (viewDetails)="openDetail(customFormat.id)"
+      appScrollReveal
+    />
+
+    <div class="formats-grid">
+      @for (format of formats; track format.id) {
+        <app-format-upload-card
+          [format]="format"
+          [items]="store.itemsByFormat(format.id)"
+          [priceLabel]="priceLabel(format)"
+          (filesAdded)="onFilesAdded(format, $event)"
+          (retryUpload)="store.retryUpload($event)"
+          (printTierSelected)="store.applyPrintTierToFormat(format.id, $event)"
+          (viewDetails)="openDetail(format.id)"
+          appScrollReveal
+        />
+      }
+    </div>
+
+    <div class="formats-note" appScrollReveal>
+      <mat-icon>info</mat-icon>
+      <span>
+        Нужен формат больше 40×50 или печать на холсте?
+        <a class="inline-link" href="/contacts">Свяжитесь со студией</a>, уточним стоимость и сроки.
+      </span>
+    </div>
+
+  </div>
+</section>
+
+<section class="process-section">
+  <div class="container">
+    <div class="section-header section-header--center" appScrollReveal>
+      <p class="section-kicker">Как это работает</p>
+      <h2 class="section-title">От загрузки до готовых отпечатков</h2>
+    </div>
+    <app-process-slider [steps]="processSteps" />
+  </div>
+</section>
+
+<section class="testimonials-section">
+  <div class="container">
+    <div class="section-header section-header--center" appScrollReveal>
+      <p class="section-kicker">Отзывы</p>
+      <h2 class="section-title">Что говорят клиенты</h2>
+    </div>
+    <app-testimonials variant="card" />
+  </div>
+</section>
+
+<section class="faq-section">
+  <div class="container faq-container">
+    <div class="section-header section-header--center" appScrollReveal>
+      <p class="section-kicker">FAQ</p>
+      <h2 class="section-title">Частые вопросы</h2>
+    </div>
+
+    <mat-accordion class="faq-accordion" appScrollReveal>
+      @for (item of faqItems; track item.question) {
+        <mat-expansion-panel class="faq-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ item.question }}</mat-panel-title>
+          </mat-expansion-panel-header>
+          <p>{{ item.answer }}</p>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  </div>
+</section>
+
+<app-contacts-section
+  [contacts]="contactsData"
+  [addresses]="addresses"
+/>
+
+@if (openDetailConfig()) {
+  <app-format-detail-panel
+    [format]="openDetailConfig()!"
+    (closed)="closeDetail()"
+  />
+}
+
+<app-order-summary-bar />

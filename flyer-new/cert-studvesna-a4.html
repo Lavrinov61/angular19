@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Сертификаты — Студвесна 2026 — Своё Фото</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:210mm 297mm;margin:0}
+:root{
+  --bg:#1a1a1a;--bg2:#222;--bg3:#2a2a2a;
+  --am:#d97706;--am2:#f59e0b;--amd:#b45309;--amg:linear-gradient(135deg,#f59e0b,#d97706,#b45309);
+  --gold:#f5d485;--gold2:#e8c36a;
+  --t1:#fff;--t2:#ccc;--t3:#999;
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+body{background:#333;font-family:var(--fb);color:var(--t1);margin:0;padding:30px;display:flex;justify-content:center;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.a4{width:210mm;height:297mm;background:var(--bg);position:relative;overflow:hidden;display:flex;flex-direction:column;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+@media screen{.a4{box-shadow:0 8px 60px rgba(0,0,0,.5)}}
+@media print{body{background:none;padding:0}.a4{box-shadow:none}}
+
+/* --- Cut lines --- */
+.cut{position:absolute;left:0;right:0;border-top:0.3px dashed #555;z-index:20;pointer-events:none}
+.cut-1{top:99mm}
+.cut-2{top:198mm}
+
+/* --- Certificate card --- */
+.cert{width:210mm;height:99mm;position:relative;display:flex;align-items:stretch;overflow:hidden;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+/* Gold border */
+.cert::before{content:'';position:absolute;inset:4mm;border:0.5px solid rgba(245,158,11,.35);border-radius:2px;pointer-events:none;z-index:2}
+
+/* Top accent line */
+.cert::after{content:'';position:absolute;top:0;left:0;right:0;height:1.2mm;background:var(--amg);z-index:3;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+/* Corner ornaments */
+.corner{position:absolute;z-index:3;width:12mm;height:12mm}
+.corner::before,.corner::after{content:'';position:absolute;background:var(--am);print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.corner-tl{top:6mm;left:6mm}.corner-tl::before{top:0;left:0;width:8mm;height:0.3px}.corner-tl::after{top:0;left:0;width:0.3px;height:8mm}
+.corner-tr{top:6mm;right:6mm}.corner-tr::before{top:0;right:0;width:8mm;height:0.3px}.corner-tr::after{top:0;right:0;width:0.3px;height:8mm}
+.corner-bl{bottom:6mm;left:6mm}.corner-bl::before{bottom:0;left:0;width:8mm;height:0.3px}.corner-bl::after{bottom:0;left:0;width:0.3px;height:8mm}
+.corner-br{bottom:6mm;right:6mm}.corner-br::before{bottom:0;right:0;width:8mm;height:0.3px}.corner-br::after{bottom:0;right:0;width:0.3px;height:8mm}
+
+/* Left text block */
+.cert-left{flex:1;padding:10mm 8mm 8mm 10mm;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1}
+
+/* Decorative radial */
+.cert-left::before{content:'';position:absolute;top:50%;left:20%;transform:translate(-50%,-50%);width:120mm;height:120mm;border-radius:50%;background:radial-gradient(circle,rgba(217,119,6,.06) 0%,transparent 65%);pointer-events:none}
+
+.cert-event{font-family:var(--fd);font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.35em;color:var(--am2);margin-bottom:3mm}
+
+.cert-title{font-family:var(--fd);font-weight:800;text-transform:uppercase;line-height:1;letter-spacing:.02em;color:var(--t1);margin-bottom:2.5mm}
+.cert-title.grand{font-size:36px}
+.cert-title.place{font-size:30px}
+
+.cert-title span{background:var(--amg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.cert-desc{font-family:var(--fb);font-size:10.5px;font-weight:400;color:var(--t2);line-height:1.5;margin-bottom:4mm;max-width:90mm}
+
+/* Promo code block */
+.cert-code-wrap{display:flex;align-items:center;gap:3mm}
+
+.cert-code{display:inline-flex;align-items:center;gap:2mm;background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.3);border-radius:3px;padding:2mm 4mm;position:relative;overflow:hidden}
+.cert-code::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1mm;background:var(--amg);print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.cert-code-label{font-family:var(--fd);font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--t3)}
+.cert-code-value{font-family:var(--fd);font-size:16px;font-weight:800;letter-spacing:.1em;color:var(--am2)}
+
+.cert-valid{font-family:var(--fb);font-size:8px;color:var(--t3);letter-spacing:.03em}
+
+/* Right block */
+.cert-right{width:52mm;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8mm 6mm;position:relative;z-index:1}
+
+/* Vertical divider */
+.cert-right::before{content:'';position:absolute;left:0;top:12mm;bottom:12mm;width:0.3px;background:linear-gradient(180deg,transparent,rgba(245,158,11,.3),transparent);print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+.cert-brand{font-family:var(--fd);font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t1);margin-bottom:3mm;text-align:center}
+.cert-brand b{color:var(--am2)}
+
+.cert-qr{width:28mm;height:28mm;background:#fff;border-radius:3px;padding:1.5mm;margin-bottom:3mm;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.cert-qr img{width:100%;height:100%;display:block}
+
+.cert-contacts{text-align:center;font-size:7.5px;color:var(--t3);line-height:1.6;letter-spacing:.02em}
+.cert-contacts b{color:var(--am2);font-weight:600}
+
+.cert-activate{font-family:var(--fb);font-size:7.5px;color:var(--t3);letter-spacing:.03em;margin-top:2mm}
+
+.cert-partners{display:flex;align-items:center;justify-content:center;gap:3mm;margin-bottom:2mm}
+.cert-partners img{height:12mm;border-radius:2px}
+.cert-partners .x{font-family:var(--fd);font-size:12px;font-weight:700;color:var(--t3)}
+</style>
+</head>
+<body>
+
+<div class="a4">
+  <!-- Cut lines -->
+  <div class="cut cut-1"></div>
+  <div class="cut cut-2"></div>
+
+  <!-- Card 1: ГРАН-ПРИ -->
+  <div class="cert">
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+    <div class="cert-left">
+      <div class="cert-event">Российская студенческая весна 2026</div>
+      <div class="cert-title grand"><span>Гран-При</span></div>
+      <div class="cert-desc">Подписка на печать 3 мес бесплатно + AI фотосессия + портретная съёмка 5 кадров для резюме</div>
+      <div class="cert-code-wrap">
+        <div class="cert-code">
+          <div style="display:flex;flex-direction:column;gap:0.5mm;padding-left:1mm">
+            <span class="cert-code-label">Промокод</span>
+            <span class="cert-code-value">SVV-XXXXX</span>
+          </div>
+        </div>
+        <div class="cert-valid">Действителен до 15.06.2026</div>
+      </div>
+      <div class="cert-activate">Активируй на svoefoto.ru/subscriptions</div>
+    </div>
+    <div class="cert-right">
+      <div class="cert-partners">
+        <img src="../svoefoto-whitelogo.png" alt="Своё Фото" style="height:12mm">
+        <span class="x">×</span>
+        <img src="../src/assets/images/dsm-logo.jpg" alt="ДСМ">
+      </div>
+      <div class="cert-qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://svoefoto.ru/subscriptions" alt="QR">
+      </div>
+      <div class="cert-contacts">
+        <b>svoefoto.ru</b> · @magnus_photo<br>
+        +7 (901) 417-86-68
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: 2 МЕСТО -->
+  <div class="cert">
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+    <div class="cert-left">
+      <div class="cert-event">Российская студенческая весна 2026</div>
+      <div class="cert-title place"><span>2 Место</span></div>
+      <div class="cert-desc">Подписка на печать 3 мес бесплатно + AI фотосессия</div>
+      <div class="cert-code-wrap">
+        <div class="cert-code">
+          <div style="display:flex;flex-direction:column;gap:0.5mm;padding-left:1mm">
+            <span class="cert-code-label">Промокод</span>
+            <span class="cert-code-value">SVV-XXXXX</span>
+          </div>
+        </div>
+        <div class="cert-valid">Действителен до 15.06.2026</div>
+      </div>
+      <div class="cert-activate">Активируй на svoefoto.ru/subscriptions</div>
+    </div>
+    <div class="cert-right">
+      <div class="cert-partners">
+        <img src="../svoefoto-whitelogo.png" alt="Своё Фото" style="height:12mm">
+        <span class="x">×</span>
+        <img src="../src/assets/images/dsm-logo.jpg" alt="ДСМ">
+      </div>
+      <div class="cert-qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://svoefoto.ru/subscriptions" alt="QR">
+      </div>
+      <div class="cert-contacts">
+        <b>svoefoto.ru</b> · @magnus_photo<br>
+        +7 (901) 417-86-68
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: УЧАСТНИК -->
+  <div class="cert">
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+    <div class="cert-left">
+      <div class="cert-event">Российская студенческая весна 2026</div>
+      <div class="cert-title place"><span>Участник</span></div>
+      <div class="cert-desc">Подписка на печать 3 мес бесплатно — печать документов или фотопечать на выбор</div>
+      <div class="cert-code-wrap">
+        <div class="cert-code">
+          <div style="display:flex;flex-direction:column;gap:0.5mm;padding-left:1mm">
+            <span class="cert-code-label">Промокод</span>
+            <span class="cert-code-value">SVV-XXXXX</span>
+          </div>
+        </div>
+        <div class="cert-valid">Действителен до 15.06.2026</div>
+      </div>
+      <div class="cert-activate">Активируй на svoefoto.ru/subscriptions</div>
+    </div>
+    <div class="cert-right">
+      <div class="cert-partners">
+        <img src="../svoefoto-whitelogo.png" alt="Своё Фото" style="height:12mm">
+        <span class="x">×</span>
+        <img src="../src/assets/images/dsm-logo.jpg" alt="ДСМ">
+      </div>
+      <div class="cert-qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://svoefoto.ru/subscriptions" alt="QR">
+      </div>
+      <div class="cert-contacts">
+        <b>svoefoto.ru</b> · @magnus_photo<br>
+        +7 (901) 417-86-68
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

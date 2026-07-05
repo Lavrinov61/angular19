@@ -1,0 +1,414 @@
+@if (store.hasItems()) {
+  <div class="summary-bar" [class.expanded]="isExpanded()" [class.uploading]="store.isAnyUploading()">
+
+    <!-- ── Успешная отправка ── -->
+    @if (store.isSuccess()) {
+      <div class="success-state">
+        <div class="success-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="success-text">
+          <h3>Заказ создан</h3>
+          <p>Номер заказа: <strong>{{ store.orderId() }}</strong></p>
+          @if (store.isPaidWithSubscription()) {
+            <p>Заказ оплачен по подписке.</p>
+          } @else {
+            <p>Оплатите онлайн, и мы передадим заказ сотруднику в работу.</p>
+          }
+        </div>
+        <div class="success-actions">
+          @if (!store.isPaidWithSubscription()) {
+            <a mat-flat-button class="online-pay-btn" [routerLink]="paymentLink()">
+              <mat-icon>lock</mat-icon>
+              Оплатить онлайн
+            </a>
+          }
+          @if (canPayWithSubscription()) {
+            <button
+              mat-flat-button
+              class="subscription-pay-btn"
+              [disabled]="store.isPayingWithSubscription()"
+              (click)="payWithSubscription()"
+            >
+              @if (store.isPayingWithSubscription()) {
+                <ng-container>
+                  <mat-progress-spinner mode="indeterminate" diameter="18" />
+                  Оплачиваем...
+                </ng-container>
+              } @else {
+                <ng-container>
+                  <mat-icon>card_membership</mat-icon>
+                  Оплатить по подписке
+                </ng-container>
+              }
+            </button>
+          }
+          <button mat-stroked-button class="new-order-btn" (click)="newOrder()">
+            <mat-icon>add</mat-icon>
+            Новый заказ
+          </button>
+        </div>
+        <div class="cabinet-offer">
+          <div class="cabinet-offer__text">
+            <strong>Статус печати, в личном кабинете</strong>
+            <span>Если кабинет уже есть, войдите. Если нет, станьте клиентом после оформления.</span>
+          </div>
+          <div class="cabinet-offer__actions">
+            <a
+              mat-stroked-button
+              class="account-login-btn"
+              [routerLink]="['/auth/login']"
+              [queryParams]="loginQueryParams()"
+            >
+              <mat-icon>login</mat-icon>
+              Войти
+            </a>
+            <a
+              mat-flat-button
+              class="account-client-btn"
+              [routerLink]="['/start-client']"
+              [queryParams]="becomeClientQueryParams()"
+            >
+              <mat-icon>person_add</mat-icon>
+              Стать клиентом
+            </a>
+          </div>
+        </div>
+        @if (store.subscriptionPaymentError()) {
+          <div class="subscription-payment-error">
+            <mat-icon>error</mat-icon>
+            {{ store.subscriptionPaymentError() }}
+          </div>
+        }
+      </div>
+    } @else {
+
+      <!-- ── Компактная строка ── -->
+      <div class="bar-compact">
+        <div class="bar-info">
+          <mat-icon class="cart-icon">shopping_cart</mat-icon>
+          <div class="bar-counts">
+            <span class="bar-photos">{{ store.totalPhotoCount() }} фото</span>
+            <span class="bar-meta">
+              @if (store.isAnyUploading()) {
+                Загружаем {{ store.uploadedItemsCount() }} из {{ store.totalItems() }} · {{ store.uploadProgressPercent() }}%
+              } @else {
+                <span class="bar-format-list">
+                  @for (fmt of formatsWithItems(); track fmt.id; let last = $last) {
+                    {{ fmt.name }}{{ !last ? ', ' : '' }}
+                  }
+                </span>
+                <span class="bar-meta-separator">·</span>
+                <span>{{ printTierLabel() }}</span>
+              }
+            </span>
+          </div>
+        </div>
+        <div class="bar-right">
+          <span class="bar-price">{{ store.grandTotal() | number:'1.0-0' }} ₽</span>
+          <button
+            mat-flat-button
+            class="order-btn"
+            [attr.aria-expanded]="isExpanded()"
+            (click)="toggle()"
+          >
+            <ng-container>
+              @if (isExpanded()) {
+                <mat-icon>keyboard_arrow_down</mat-icon>
+                Свернуть
+              } @else {
+                <mat-icon>arrow_upward</mat-icon>
+                Оформить
+              }
+            </ng-container>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Развёрнутая форма ── -->
+      @if (isExpanded()) {
+        <div class="bar-form">
+
+          <div class="checkout-strip" aria-label="Состав заказа">
+            <div>
+              <span>Состав</span>
+              <strong>{{ store.totalPhotoCount() }} фото</strong>
+            </div>
+            <div>
+              <span>Печать</span>
+              <strong>{{ store.totalPrice() | number:'1.0-0' }} ₽</strong>
+            </div>
+            @if (store.deliveryPrice() > 0) {
+              <div>
+                <span>Доставка</span>
+                <strong>{{ store.deliveryPrice() | number:'1.0-0' }} ₽</strong>
+              </div>
+              <div>
+                <span>Итого</span>
+                <strong>{{ store.grandTotal() | number:'1.0-0' }} ₽</strong>
+              </div>
+            }
+          </div>
+
+          @if (store.customSizeGroups().length > 0) {
+            <div class="custom-order-section">
+              <div class="custom-order-title-row">
+                <h4 class="form-title">Нестандартные размеры</h4>
+                <span>Минимальный лист + {{ customCropFee }} ₽ за обрезку</span>
+              </div>
+
+              <div class="custom-order-groups">
+                @for (group of store.customSizeGroups(); track group.key) {
+                  <div class="custom-order-group">
+                    <div>
+                      <strong>{{ group.label }}</strong>
+                      <span>{{ group.sizeLabel }} · {{ group.quantity }} фото</span>
+                    </div>
+                    <small>
+                      @if (group.whiteBorder) {
+                        Рамка
+                      }
+                      @if (group.needsCropping) {
+                        {{ group.whiteBorder ? ' · ' : '' }}Обрезка +{{ group.cropFeeTotal }} ₽
+                      }
+                      @if (!group.whiteBorder && !group.needsCropping) {
+                        Без обрезки
+                      }
+                    </small>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Тип печати -->
+          <div class="print-type-section">
+            <div class="print-type-title-row">
+              <h4 class="form-title">Тип печати</h4>
+              <span class="print-type-summary">{{ printTierSummary() }}</span>
+            </div>
+
+            <div class="print-type-options" aria-label="Тип печати">
+              @for (option of printTierChoices; track option.id) {
+                <button
+                  type="button"
+                  class="print-type-option"
+                  [class.selected]="store.selectedPrintTier() === option.id"
+                  [disabled]="!store.hasPrintTierAvailable(option.id)"
+                  [attr.aria-pressed]="store.selectedPrintTier() === option.id"
+                  (click)="setPrintTier(option.id)"
+                >
+                  <span class="print-type-name">{{ option.label }}</span>
+                  <span class="print-type-desc">{{ option.description }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Способ получения: самовывоз / курьер -->
+          <div class="delivery-method-section">
+            <h4 class="form-title">Как получить заказ</h4>
+            <div class="delivery-method-toggle" role="tablist" aria-label="Способ получения">
+              <button
+                type="button"
+                class="delivery-method-option"
+                role="tab"
+                [class.selected]="store.deliveryMethod() === 'pickup'"
+                [attr.aria-selected]="store.deliveryMethod() === 'pickup'"
+                (click)="store.setDeliveryMethod('pickup')"
+              >
+                <mat-icon>storefront</mat-icon>
+                <span class="delivery-method-name">Самовывоз</span>
+                <span class="delivery-method-desc">Бесплатно, в студии</span>
+              </button>
+              @if (!store.courierDisabled()) {
+                <button
+                  type="button"
+                  class="delivery-method-option"
+                  role="tab"
+                  [class.selected]="store.deliveryMethod() === 'courier'"
+                  [attr.aria-selected]="store.deliveryMethod() === 'courier'"
+                  (click)="store.setDeliveryMethod('courier')"
+                >
+                  <mat-icon>local_shipping</mat-icon>
+                  <span class="delivery-method-name">Курьер</span>
+                  <span class="delivery-method-desc">На дом по Ростову</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          @if (store.deliveryMethod() === 'pickup') {
+            <!-- Точка самовывоза -->
+            <div class="pickup-section">
+              <div class="pickup-title-row">
+                <h4 class="form-title">Где забрать заказ</h4>
+                @if (store.isLoadingPickupLocations()) {
+                  <span class="pickup-loading">
+                    <mat-progress-spinner mode="indeterminate" diameter="14" />
+                    Обновляем
+                  </span>
+                }
+              </div>
+
+              <div class="pickup-options">
+                @for (location of store.pickupLocations(); track location.id) {
+                  <button
+                    type="button"
+                    class="pickup-option"
+                    [class.selected]="store.selectedPickupLocationId() === location.id"
+                    [disabled]="location.status !== 'open'"
+                    [attr.aria-pressed]="store.selectedPickupLocationId() === location.id"
+                    (click)="store.selectPickupLocation(location.id)"
+                  >
+                    <span class="pickup-option-icon">
+                      <mat-icon>{{ location.status === 'open' ? 'storefront' : 'event_busy' }}</mat-icon>
+                    </span>
+                    <span class="pickup-option-body">
+                      <span class="pickup-option-head">
+                        <span class="pickup-name">{{ location.name }}</span>
+                        <span class="pickup-status" [class.closed]="location.status !== 'open'">
+                          {{ location.status === 'open' ? 'Доступна' : 'Недоступна' }}
+                        </span>
+                      </span>
+                      <span class="pickup-address">{{ location.address }}</span>
+                      <span class="pickup-hours">{{ location.workHours }}</span>
+                      @if (location.status !== 'open' && location.statusMessage) {
+                        <span class="pickup-message">{{ location.statusMessage }}</span>
+                      }
+                    </span>
+                  </button>
+                }
+              </div>
+
+              @if (store.pickupLocationsError()) {
+                <div class="pickup-error">
+                  <mat-icon>info</mat-icon>
+                  {{ store.pickupLocationsError() }}
+                </div>
+              }
+            </div>
+          } @else {
+            <!-- Курьерская доставка -->
+            <div class="delivery-section">
+              <div class="pickup-title-row">
+                <h4 class="form-title">Адрес доставки</h4>
+                @if (store.isLoadingQuote()) {
+                  <span class="pickup-loading">
+                    <mat-progress-spinner mode="indeterminate" diameter="14" />
+                    Считаем
+                  </span>
+                }
+              </div>
+
+              <app-address-autocomplete
+                (addressSelected)="store.setDeliveryAddress($event)"
+                (addressCleared)="store.clearDeliveryAddress()"
+              />
+
+              @if (store.deliveryQuote(); as quote) {
+                @if (quote.available && quote.meetsMinOrder) {
+                  <div class="delivery-quote delivery-quote--ok">
+                    <div class="delivery-quote-row">
+                      <span class="delivery-quote-zone">
+                        <mat-icon>local_shipping</mat-icon>
+                        {{ quote.zoneName }}
+                      </span>
+                      <strong class="delivery-quote-price">{{ quote.priceRub | number:'1.0-0' }} ₽</strong>
+                    </div>
+                    <span class="delivery-quote-eta">
+                      <mat-icon>schedule</mat-icon>
+                      Ориентировочно {{ quote.etaMinutes }} мин
+                    </span>
+                  </div>
+                } @else if (quote.available && !quote.meetsMinOrder) {
+                  <div class="delivery-quote delivery-quote--warn">
+                    <mat-icon>info</mat-icon>
+                    <span>
+                      Для зоны {{ quote.zone }} минимальный заказ печати -
+                      {{ quote.minOrderRub | number:'1.0-0' }} ₽. Добавьте ещё фото или выберите самовывоз.
+                    </span>
+                  </div>
+                } @else if (!quote.available) {
+                  <div class="delivery-quote delivery-quote--warn">
+                    <mat-icon>info</mat-icon>
+                    <span>{{ deliveryUnavailableMessage(quote) }}</span>
+                  </div>
+                }
+              }
+            </div>
+          }
+
+          <!-- Форма контактов -->
+          <div class="contact-form" [formGroup]="contactForm">
+            <h4 class="form-title">Ваши контакты</h4>
+
+            <div class="field-row field-row--minimal">
+              <mat-form-field appearance="outline" class="field">
+                <mat-label>Имя *</mat-label>
+                <input matInput formControlName="name" placeholder="Иван"
+                  (input)="onNameChange($event)" />
+                @if (nameError) {
+                  <mat-error>{{ nameError }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="field">
+                <mat-label>Телефон *</mat-label>
+                <input matInput formControlName="phone" placeholder="+7 (900) 000-00-00"
+                  type="tel"
+                  (input)="onPhoneChange($event)" />
+                @if (phoneError) {
+                  <mat-error>{{ phoneError }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Предупреждение если ещё загружаются -->
+          @if (store.isAnyUploading()) {
+            <div class="upload-warning">
+              <mat-icon>hourglass_empty</mat-icon>
+              <span>
+                Загружаем фото: {{ store.uploadedItemsCount() }} из {{ store.totalItems() }},
+                {{ store.uploadProgressPercent() }}%
+              </span>
+            </div>
+          }
+
+          @if (store.submitError()) {
+            <div class="submit-error">
+              <mat-icon>error</mat-icon>
+              {{ store.submitError() }}
+            </div>
+          }
+
+          <!-- Кнопки -->
+          <div class="action-row">
+            <button
+              mat-flat-button
+              class="submit-btn"
+              [disabled]="store.isSubmitting() || store.isAnyUploading() || !store.canSubmit()"
+              (click)="submitOrder()"
+            >
+              <ng-container>
+                @if (store.isSubmitting()) {
+                  <mat-progress-spinner mode="indeterminate" diameter="18" />
+                  Отправляем...
+                } @else {
+                  <mat-icon>send</mat-icon>
+                  Создать заказ
+                }
+              </ng-container>
+            </button>
+          </div>
+
+          <p class="form-note">
+            После создания заказа появится онлайн-оплата. Статус печати можно будет открыть через личный кабинет.
+            Нажимая «Создать заказ», вы соглашаетесь на обработку персональных данных
+          </p>
+        </div>
+      }
+    }
+  </div>
+}

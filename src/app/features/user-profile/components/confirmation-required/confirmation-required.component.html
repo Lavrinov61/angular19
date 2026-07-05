@@ -1,0 +1,150 @@
+<div class="confirmation-required-container">
+  <div class="header">
+    <h2>
+      <mat-icon>approval</mat-icon>
+      Требуется подтверждение
+    </h2>
+    <p class="subtitle">Одобрите или запросите изменения ретуши фотографий</p>
+  </div>
+
+  <mat-tab-group class="status-tabs" [selectedIndex]="selectedTabIndex()" (selectedIndexChange)="onTabChange($event)">
+    <mat-tab label="Ожидают подтверждения" [disabled]="pendingCount() === 0">
+      <ng-template matTabLabel>
+        <span matBadge="{{pendingCount()}}" matBadgeSize="small" matBadgeColor="warn" 
+              [matBadgeHidden]="pendingCount() === 0">
+          Ожидают подтверждения
+        </span>
+      </ng-template>
+      <div class="tab-content">
+        @if (loading()) {
+          <div class="loading-state">
+            <mat-icon>hourglass_empty</mat-icon>
+            <p>Загрузка...</p>
+          </div>
+        } @else if (pendingRetouches().length === 0) {
+          <div class="empty-state">
+            <mat-icon>check_circle</mat-icon>
+            <h3>Нет ожидающих подтверждения</h3>
+            <p>Все ретуши фотографий были обработаны</p>
+          </div>
+        } @else {
+          <div class="retouches-grid">
+            @for (retouch of pendingRetouches(); track retouch.id) {
+              <mat-card class="retouch-card pending">
+                <mat-card-header>
+                  <mat-card-title>{{retouch.clientName}}</mat-card-title>
+                  <mat-card-subtitle>
+                    {{retouch.sessionType}} • {{formatDate(retouch.sessionDate)}}
+                  </mat-card-subtitle>
+                </mat-card-header>
+                
+                <div class="preview-gallery">
+                  @for (image of retouch.previewImages.slice(0, 4); track image) {
+                    <img [src]="image" [alt]="'Превью фото'" class="preview-image">
+                  }
+                  @if (retouch.totalImages > 4) {
+                    <div class="more-images">
+                      <mat-icon>more_horiz</mat-icon>
+                      <span>+{{retouch.totalImages - 4}}</span>
+                    </div>
+                  }
+                </div>
+
+                <mat-card-content>
+                  <div class="info-row">
+                    <mat-icon>photo_library</mat-icon>
+                    <span>{{retouch.totalImages}} фотографий</span>
+                  </div>
+                  <div class="info-row">
+                    <mat-icon>schedule</mat-icon>
+                    <span>До {{formatDate(retouch.deadline)}}</span>
+                  </div>
+                  @if (retouch.clientComments && retouch.clientComments.length > 0) {
+                    <div class="client-comments">
+                      <mat-icon>comment</mat-icon>
+                      <div class="comments">
+                        @for (comment of retouch.clientComments; track comment) {
+                          <p>"{{comment}}"</p>
+                        }
+                      </div>
+                    </div>
+                  }
+                </mat-card-content>
+
+                <mat-card-actions>
+                  <button mat-raised-button color="primary" (click)="openDetailView(retouch)">
+                    <mat-icon>visibility</mat-icon>
+                    Просмотреть
+                  </button>
+                  <button mat-raised-button color="accent" (click)="approveRetouch(retouch)">
+                    <mat-icon>check</mat-icon>
+                    Одобрить
+                  </button>
+                  <button mat-stroked-button (click)="requestRevision(retouch)">
+                    <mat-icon>edit</mat-icon>
+                    Изменения
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            }
+          </div>
+        }
+      </div>
+    </mat-tab>
+
+    <mat-tab label="История">
+      <div class="tab-content">
+        @if (processedRetouches().length === 0) {
+          <div class="empty-state">
+            <mat-icon>history</mat-icon>
+            <h3>История пуста</h3>
+            <p>Здесь будет отображаться история обработанных ретушей</p>
+          </div>
+        } @else {
+          <div class="retouches-grid">
+            @for (retouch of processedRetouches(); track retouch.id) {
+              <mat-card class="retouch-card" [class]="retouch.status">
+                <mat-card-header>
+                  <mat-card-title>{{retouch.clientName}}</mat-card-title>
+                  <mat-card-subtitle>
+                    {{retouch.sessionType}} • {{formatDate(retouch.sessionDate)}}
+                  </mat-card-subtitle>
+                  <div class="status-chip">
+                    <mat-chip [color]="getStatusColor(retouch.status)">
+                      <mat-icon>{{getStatusIcon(retouch.status)}}</mat-icon>
+                      {{getStatusLabel(retouch.status)}}
+                    </mat-chip>
+                  </div>
+                </mat-card-header>
+                
+                <div class="preview-gallery">
+                  @for (image of retouch.previewImages.slice(0, 4); track image) {
+                    <img [src]="image" [alt]="'Превью фото'" class="preview-image">
+                  }
+                </div>
+
+                <mat-card-content>
+                  <div class="info-row">
+                    <mat-icon>photo_library</mat-icon>
+                    <span>{{retouch.totalImages}} фотографий</span>
+                  </div>
+                  <div class="info-row">
+                    <mat-icon>event</mat-icon>
+                    <span>Обработано {{formatDate(retouch.createdAt)}}</span>
+                  </div>
+                </mat-card-content>
+
+                <mat-card-actions>
+                  <button mat-stroked-button (click)="openDetailView(retouch)">
+                    <mat-icon>visibility</mat-icon>
+                    Просмотреть
+                  </button>
+                </mat-card-actions>
+              </mat-card>
+            }
+          </div>
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

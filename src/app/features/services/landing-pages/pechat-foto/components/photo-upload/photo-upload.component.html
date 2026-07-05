@@ -1,0 +1,497 @@
+<div class="photo-upload-container">
+  <!-- Success State -->
+  @if (orderSuccess()) {
+    <div class="success-state">
+      <div class="success-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <h3>Заказ успешно отправлен!</h3>
+      @if (successOrderId()) {
+        <p class="order-id">Номер заказа: <strong>{{ successOrderId() }}</strong></p>
+      }
+      <p class="success-message">
+        Мы свяжемся с вами в ближайшее время для подтверждения заказа и уточнения деталей.
+      </p>
+      <button mat-raised-button color="primary" (click)="startNewOrder()">
+        <mat-icon>add</mat-icon>
+        Оформить новый заказ
+      </button>
+    </div>
+  } @else {
+    <!-- Mode Toggle -->
+    <div class="mode-toggle">
+      <mat-button-toggle-group [value]="mode()" (change)="setMode($event.value)" aria-label="Режим заказа">
+        <mat-button-toggle value="simple">
+          <mat-icon>auto_awesome</mat-icon>
+          <span class="toggle-label">Простой режим</span>
+        </mat-button-toggle>
+        <mat-button-toggle value="custom">
+          <mat-icon>tune</mat-icon>
+          <span class="toggle-label">Настроить</span>
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+      
+      <p class="mode-description">
+        @if (mode() === 'simple') {
+          Загрузите фото, мы сами подберём оптимальный размер и бумагу
+        } @else {
+          Выберите размер и тип бумаги для каждого фото
+        }
+      </p>
+    </div>
+
+    <!-- Upload Sources Section -->
+    <div class="upload-sources">
+      <h4 class="sources-title">Откуда загрузить фото?</h4>
+      
+      <div class="sources-grid">
+        <!-- Device/Gallery -->
+        <button class="source-btn primary" (click)="openFileDialog()">
+          <mat-icon>smartphone</mat-icon>
+          <span>С устройства</span>
+        </button>
+        
+        <!-- Yandex Disk -->
+        <button class="source-btn yandex" (click)="openExternalSource('yandex')">
+          <mat-icon>cloud</mat-icon>
+          <span>Яндекс Диск</span>
+        </button>
+        
+        <!-- VK -->
+        <button class="source-btn vk" (click)="openExternalSource('vk')">
+          <mat-icon>camera_alt</mat-icon>
+          <span>ВКонтакте</span>
+        </button>
+        
+        <!-- Odnoklassniki -->
+        <button class="source-btn ok" (click)="openExternalSource('ok')">
+          <mat-icon>photo_library</mat-icon>
+          <span>Одноклассники</span>
+        </button>
+      </div>
+      
+      <!-- Link input for cloud sources -->
+      @if (showLinkInput()) {
+        <div class="link-input-section">
+          <div class="link-input-header">
+            <span class="link-source-name">
+              @switch (selectedSource()) {
+                @case ('yandex') { Яндекс Диск }
+                @case ('vk') { ВКонтакте }
+                @case ('ok') { Одноклассники }
+              }
+            </span>
+            <button mat-icon-button (click)="closeLinkInput()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <mat-form-field appearance="outline" class="link-field">
+            <mat-label>Вставьте ссылку на альбом или папку</mat-label>
+            <input matInput [(ngModel)]="externalLink" placeholder="https://...">
+            <mat-hint>
+              @switch (selectedSource()) {
+                @case ('yandex') { Ссылка на папку или файл с Яндекс Диска }
+                @case ('vk') { Ссылка на альбом ВКонтакте }
+                @case ('ok') { Ссылка на фотоальбом в Одноклассниках }
+              }
+            </mat-hint>
+          </mat-form-field>
+          <button mat-raised-button color="primary" class="add-link-btn" 
+                  [disabled]="!externalLink" (click)="addExternalLink()">
+            <mat-icon>add_link</mat-icon>
+            Добавить
+          </button>
+        </div>
+      }
+      
+      <!-- External links list -->
+      @if (externalLinks().length > 0) {
+        <div class="external-links-list">
+          <h5>Добавленные ссылки:</h5>
+          @for (link of externalLinks(); track link.url) {
+            <div class="external-link-item">
+              <mat-icon>
+                @switch (link.source) {
+                  @case ('yandex') { cloud }
+                  @case ('vk') { camera_alt }
+                  @case ('ok') { photo_library }
+                }
+              </mat-icon>
+              <span class="link-text">{{ link.url | slice:0:40 }}...</span>
+              <button mat-icon-button (click)="removeExternalLink(link.url)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Hidden file input -->
+    <input 
+      #fileInput
+      type="file"
+      accept="image/jpeg,image/png,image/tiff"
+      multiple
+      hidden
+      (change)="onFileSelected($event)">
+
+    <!-- Upload Zone (for drag & drop or adding more) -->
+    @if (hasItems()) {
+      <div
+        class="upload-zone has-items"
+        [class.drag-over]="isDragOver()"
+        appDragDrop
+        (fileDropped)="onFilesDropped($event)"
+        (click)="openFileDialog()"
+        (keydown.enter)="openFileDialog()"
+        tabindex="0">
+        <div class="add-more">
+          <mat-icon>add_photo_alternate</mat-icon>
+          <span>Добавить ещё фото с устройства</span>
+        </div>
+      </div>
+    } @else {
+      <div
+        class="upload-zone"
+        [class.drag-over]="isDragOver()"
+        appDragDrop
+        (fileDropped)="onFilesDropped($event)"
+        (click)="openFileDialog()"
+        (keydown.enter)="openFileDialog()"
+        tabindex="0">
+        <div class="upload-placeholder">
+          <mat-icon class="upload-icon">touch_app</mat-icon>
+          <p class="upload-title">Нажмите или перетащите фото сюда</p>
+          <p class="upload-hint">JPG, PNG, до {{ fileValidation.maxSizeMB }}МБ</p>
+        </div>
+      </div>
+    }
+
+    <!-- Photos Grid -->
+    @if (hasItems() || externalLinks().length > 0) {
+      @if (hasItems()) {
+      <div class="photos-section">
+        <div class="photos-header">
+          <h4>
+            <mat-icon>photo_library</mat-icon>
+            Загружено {{ itemCount() }} {{ itemCount() === 1 ? 'фото' : itemCount() < 5 ? 'фото' : 'фото' }}
+          </h4>
+          
+          @if (mode() === 'custom') {
+            <button mat-stroked-button (click)="toggleBatchSettings()" class="batch-btn">
+              <mat-icon>tune</mat-icon>
+              Изменить для всех
+            </button>
+          }
+        </div>
+
+        <!-- Batch Settings Panel -->
+        @if (showBatchSettings()) {
+          <div class="batch-settings">
+            <h5 class="batch-title">Изменить для всех фото</h5>
+            
+            <div class="batch-controls">
+              <mat-form-field appearance="outline">
+                <mat-label>Размер</mat-label>
+                <mat-select [value]="batchFormat()" (selectionChange)="batchFormat.set($event.value)">
+                  @for (opt of formatOptions; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Тип бумаги</mat-label>
+                <mat-select [value]="batchPaper()" (selectionChange)="batchPaper.set($event.value)">
+                  @for (opt of paperOptions; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="quantity-field">
+                <mat-label>Количество</mat-label>
+                <input matInput type="number" [value]="batchQuantity()" min="1" max="99"
+                  (input)="batchQuantity.set(+$any($event.target).value)">
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Поля</mat-label>
+                <mat-select [value]="batchMargins()" (selectionChange)="batchMargins.set($event.value)">
+                  @for (opt of marginOptions; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Рамка</mat-label>
+                <mat-select [value]="batchBorder()" (selectionChange)="batchBorder.set($event.value)">
+                  @for (opt of borderOptions; track opt.value) {
+                    <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            
+            <div class="batch-actions">
+              <button mat-raised-button color="primary" (click)="applyBatchSettings()">
+                Применить ко всем
+              </button>
+              <button mat-button (click)="showBatchSettings.set(false)">
+                Отмена
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Photos Grid -->
+        <div class="photos-grid">
+          @for (item of items(); track item.id) {
+            <mat-card class="photo-card" [class.uploading]="item.status === 'uploading'" [class.error]="item.status === 'error'">
+              <!-- Photo Preview -->
+              <div class="photo-preview">
+                <img [src]="item.previewUrl" [alt]="item.file.name">
+                
+                <!-- Upload Progress Overlay -->
+                @if (item.status === 'uploading') {
+                  <div class="upload-overlay">
+                    <mat-progress-spinner mode="determinate" [value]="item.uploadProgress" diameter="40"></mat-progress-spinner>
+                    <span class="progress-text">{{ item.uploadProgress }}%</span>
+                  </div>
+                }
+                
+                <!-- Error Overlay -->
+                @if (item.status === 'error') {
+                  <div class="error-overlay" (click)="retryUpload(item.id)" (keydown.enter)="retryUpload(item.id)" tabindex="0">
+                    <mat-icon>error</mat-icon>
+                    <span>Ошибка</span>
+                    <button mat-icon-button>
+                      <mat-icon>refresh</mat-icon>
+                    </button>
+                  </div>
+                }
+                
+                <!-- Remove Button -->
+                <button mat-icon-button class="remove-btn" (click)="removePhoto(item.id); $event.stopPropagation()">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+
+              <!-- Photo Options (Custom Mode Only) -->
+              @if (mode() === 'custom') {
+                <div class="photo-options">
+                  <div class="option-row">
+                    <mat-form-field appearance="outline" class="compact">
+                      <mat-label>Размер</mat-label>
+                      <mat-select [value]="item.format" (selectionChange)="updateFormat(item.id, $event.value)">
+                        @for (opt of formatOptions; track opt.value) {
+                          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="option-row">
+                    <mat-form-field appearance="outline" class="compact">
+                      <mat-label>Бумага</mat-label>
+                      <mat-select [value]="item.paperType" (selectionChange)="updatePaper(item.id, $event.value)">
+                        @for (opt of paperOptions; track opt.value) {
+                          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+
+                  <div class="quantity-row">
+                    <button mat-icon-button (click)="decrementQuantity(item.id, item.quantity)" [disabled]="item.quantity <= 1">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    <span class="quantity-value">{{ item.quantity }}</span>
+                    <button mat-icon-button (click)="incrementQuantity(item.id, item.quantity)" [disabled]="item.quantity >= 99">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+
+                  <div class="item-price">
+                    {{ getPrice(item.format, item.paperType) * item.quantity }}₽
+                  </div>
+                </div>
+              } @else {
+                <!-- Simple Mode: Just quantity -->
+                <div class="photo-options simple">
+                  <div class="quantity-row">
+                    <button mat-icon-button (click)="decrementQuantity(item.id, item.quantity)" [disabled]="item.quantity <= 1">
+                      <mat-icon>remove</mat-icon>
+                    </button>
+                    <span class="quantity-value">{{ item.quantity }}</span>
+                    <button mat-icon-button (click)="incrementQuantity(item.id, item.quantity)" [disabled]="item.quantity >= 99">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              }
+            </mat-card>
+          }
+        </div>
+      </div>
+      }
+
+      <!-- Order Summary -->
+      @if (hasItems()) {
+        <div class="order-summary">
+          <div class="summary-row">
+            <span>Фотографий:</span>
+            <span>{{ totalQuantity() }} шт.</span>
+          </div>
+          @if (mode() === 'custom') {
+            <div class="summary-row total">
+              <span>Итого:</span>
+              <span class="price">{{ totalPrice() }}₽</span>
+            </div>
+          } @else {
+            <div class="summary-row estimate">
+              <span>Примерная стоимость:</span>
+              <span class="price">от {{ totalPrice() }}₽</span>
+            </div>
+            <p class="estimate-note">
+              Точную стоимость рассчитаем после выбора размеров и бумаги
+            </p>
+          }
+        </div>
+      } @else if (externalLinks().length > 0) {
+        <div class="order-summary links-only">
+          <div class="summary-row">
+            <span>Ссылок на фото:</span>
+            <span>{{ externalLinks().length }}</span>
+          </div>
+          <p class="estimate-note">
+            Мы загрузим фото по вашим ссылкам и свяжемся для уточнения деталей
+          </p>
+        </div>
+      }
+
+      <!-- Deadline & Options Section -->
+      <div class="options-section">
+        <h4>
+          <mat-icon>schedule</mat-icon>
+          Срок исполнения
+        </h4>
+        
+        <div class="deadline-options">
+          @for (opt of deadlineOptions; track opt.value) {
+            <button 
+              class="deadline-btn" 
+              [class.active]="deadline() === opt.value"
+              (click)="setDeadline(opt.value)">
+              <span class="deadline-label">{{ opt.label }}</span>
+              <span class="deadline-desc">{{ opt.description }}</span>
+            </button>
+          }
+        </div>
+        
+        <div class="print-options">
+          <h5>Дополнительные опции</h5>
+          <div class="options-list">
+            <mat-checkbox 
+              [checked]="options().autoEnhance" 
+              (change)="toggleAutoEnhance($event.checked)">
+              Авто-улучшение цветов и яркости
+            </mat-checkbox>
+            <mat-checkbox 
+              [checked]="options().removeRedEyes" 
+              (change)="toggleRedEyeRemoval($event.checked)">
+              Убрать эффект красных глаз
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="contact-form">
+        <h4>
+          <mat-icon>person</mat-icon>
+          Контактные данные
+        </h4>
+        
+        <form [formGroup]="contactForm">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Имя</mat-label>
+              <input matInput formControlName="name" placeholder="Как к вам обращаться?">
+              @if (contactForm.get('name')?.hasError('required') && contactForm.get('name')?.touched) {
+                <mat-error>Введите имя</mat-error>
+              }
+              @if (contactForm.get('name')?.hasError('minlength') && contactForm.get('name')?.touched) {
+                <mat-error>Минимум 2 символа</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Телефон</mat-label>
+              <input matInput formControlName="phone" placeholder="+7 (___) ___-__-__" type="tel" inputmode="tel" appPhoneMask>
+              @if (contactForm.get('phone')?.hasError('required') && contactForm.get('phone')?.touched) {
+                <mat-error>Введите телефон</mat-error>
+              }
+              @if (contactForm.get('phone')?.hasError('pattern') && contactForm.get('phone')?.touched) {
+                <mat-error>Неверный формат телефона</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email (необязательно)</mat-label>
+            <input matInput formControlName="email" placeholder="email@example.com" type="email">
+            @if (contactForm.get('email')?.hasError('email') && contactForm.get('email')?.touched) {
+              <mat-error>Неверный формат email</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Комментарий к заказу</mat-label>
+            <textarea matInput formControlName="comments" placeholder="Особые пожелания, вопросы..." rows="3"></textarea>
+          </mat-form-field>
+        </form>
+      </div>
+
+      <!-- Submit Section -->
+      <div class="submit-section">
+        @if (submitError()) {
+          <div class="error-message">
+            <mat-icon>error</mat-icon>
+            {{ submitError() }}
+          </div>
+        }
+
+        @if (isUploading() && hasItems()) {
+          <div class="upload-status">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <span>Загрузка файлов...</span>
+          </div>
+        }
+
+        <button 
+          mat-raised-button 
+          color="primary" 
+          class="submit-btn"
+          [disabled]="!canSubmitOrder()"
+          (click)="submitOrder()">
+          @if (isSubmitting()) {
+            <mat-spinner diameter="20"></mat-spinner>
+            <span>Отправка...</span>
+          } @else {
+            <ng-container>
+              <mat-icon>send</mat-icon>
+              <span>Отправить заказ</span>
+            </ng-container>
+          }
+        </button>
+
+        <p class="submit-hint">
+          После отправки мы свяжемся с вами для подтверждения заказа
+        </p>
+      </div>
+    }
+  }
+</div>

@@ -1,0 +1,13 @@
+pub mod agent;
+pub mod analytics;
+pub mod bridge;
+pub mod consumable;
+pub mod design_template;
+pub mod document_template;
+pub mod icc_profile;
+pub mod job;
+pub mod job_template;
+pub mod print_preset;
+pub mod printer;
+pub mod service_catalog;
+pub mod telemetry;

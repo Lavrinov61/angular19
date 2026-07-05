@@ -1,0 +1,128 @@
+<div class="archive-landing-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-background">
+      <div class="bg-circle-1"></div>
+      <div class="bg-circle-2"></div>
+      <div class="bg-pattern"></div>
+    </div>
+    
+    <div class="hero-content">
+      <div class="archive-icon">
+        <mat-icon class="large-icon">photo_library</mat-icon>
+      </div>
+      
+      <h1 class="display-small">Фотография найдена в архиве</h1>
+      
+      <div class="photo-code-display">
+        <mat-icon>tag</mat-icon>
+        <span class="headline-medium">{{ photoCode }}</span>
+      </div>
+      
+      <p class="body-large archive-message">
+        Ваша фотография с кодом <strong>{{ photoCode }}</strong> находится в нашем архиве. 
+        Мы поможем вам найти и получить копии ваших снимков.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact Options Section -->
+  <section class="contact-section">
+    <div class="section-container">
+      <h2 class="headline-large section-title">Свяжитесь с нами</h2>
+      <p class="body-medium section-subtitle">
+        Выберите удобный способ связи, чтобы обсудить восстановление ваших фотографий
+      </p>
+
+      <div class="contact-cards">
+        <!-- МАКС Card -->
+        <a class="contact-card max-card" href="https://max.ru/id262603741214_bot" target="_blank" rel="noopener" (click)="openMax($event)">
+          <mat-card>
+            <mat-card-content>
+              <div class="contact-icon">
+                <mat-icon class="messenger-logo" svgIcon="channel-max" />
+              </div>
+              <h3 class="title-medium">МАКС</h3>
+              <p class="body-medium">Быстрое общение в МАКС</p>
+              <div class="contact-number">+7 904 508-37-17</div>
+            </mat-card-content>
+            <div class="card-action">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card>
+        </a>
+
+        <!-- Telegram Card -->
+        <a class="contact-card telegram-card" href="https://t.me/FmagnusBot" target="_blank" rel="noopener" (click)="openTelegram($event)">
+          <mat-card>
+            <mat-card-content>
+              <div class="contact-icon">
+                <mat-icon class="messenger-logo" svgIcon="channel-telegram" />
+              </div>
+              <h3 class="title-medium">Telegram</h3>
+              <p class="body-medium">Общение в Telegram</p>
+              <div class="contact-number">&#64;magnus_photo</div>
+            </mat-card-content>
+            <div class="card-action">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card>
+        </a>
+
+        <!-- Phone Card -->
+        <a class="contact-card phone-card" href="tel:+78633226575" (click)="makeCall($event)">
+          <mat-card>
+            <mat-card-content>
+              <div class="contact-icon">
+                <mat-icon>phone</mat-icon>
+              </div>
+              <h3 class="title-medium">Позвонить</h3>
+              <p class="body-medium">Прямой звонок в студию</p>
+              <div class="contact-number">+7 (863) 322-65-75</div>
+            </mat-card-content>
+            <div class="card-action">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+          </mat-card>
+        </a>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Additional Info -->
+      <div class="additional-info">
+        <div class="info-card">
+          <mat-icon>schedule</mat-icon>
+          <div class="info-content">
+            <h4 class="title-small">Время работы</h4>
+            <p class="body-small">Пн-Сб: 10:00-20:00<br>Вс: 10:00-18:00</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <mat-icon>location_on</mat-icon>
+          <div class="info-content">
+            <h4 class="title-small">Адрес студии</h4>
+            <p class="body-small">г. Ростов-на-Дону<br>ул. Красноармейская, 170</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <mat-icon>archive</mat-icon>
+          <div class="info-content">
+            <h4 class="title-small">Архив</h4>
+            <p class="body-small">Храним фотографии<br>более 10 лет</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <a mat-raised-button color="primary" href="/" (click)="goToHome()">
+          <mat-icon>home</mat-icon>
+          На главную
+        </a>
+      </div>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,385 @@
+<div class="online-photo-page">
+
+  <!-- Telegram WebView Banner -->
+  @if (isTelegramWebView()) {
+    <div class="telegram-banner">
+      <span>Для лучшего опыта откройте в браузере</span>
+      <a class="telegram-open-btn" [href]="currentUrl()" target="_blank" rel="noopener">
+        <mat-icon>open_in_browser</mat-icon>
+        Открыть
+      </a>
+    </div>
+  }
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <div class="hero-ambient"></div>
+    <div class="hero-inner">
+      <div class="hero-badge">
+        <mat-icon>verified</mat-icon>
+        <span>Гарантия приёма в МВД и госорганах</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="hero-line">Фото на документы</span>
+        <span class="hero-line hero-accent">из дома за 10 минут</span>
+      </h1>
+
+      <p class="hero-subtitle">{{ heroData.subtitle }}</p>
+
+      <!-- Stats with count-up -->
+      <div class="hero-stats" #statsRef>
+        @for (stat of heroStats(); track stat.label; let i = $index) {
+          <div class="stat-pill">
+            <span class="stat-value">{{ statsAnimated() ? animatedStatValues()[i] : stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- CTA -->
+      <div class="hero-cta">
+        <button mat-flat-button class="cta-primary" (click)="scrollToQuickOrder()">
+          <mat-icon>photo_camera</mat-icon>
+          {{ heroData.ctaText }}
+        </button>
+        <button mat-stroked-button class="cta-secondary" (click)="scrollToProcess()">
+          {{ heroData.ctaSecondaryText }}
+        </button>
+      </div>
+
+      <!-- Mini steps -->
+      <div class="hero-mini-steps">
+        <span class="mini-step"><mat-icon>tune</mat-icon> Выберите</span>
+        <span class="mini-step-arrow">→</span>
+        <span class="mini-step"><mat-icon>cloud_upload</mat-icon> Загрузите фото</span>
+        <span class="mini-step-arrow">→</span>
+        <span class="mini-step"><mat-icon>check_circle</mat-icon> Получите результат</span>
+      </div>
+
+      <p class="hero-guarantee">
+        <mat-icon>shield</mat-icon>
+        Бесплатные правки до полного согласования
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══ CHAT SECTION (desktop inline) ═══ -->
+  @if (inlineChatVisible()) {
+    @defer (on idle) {
+      <section class="chat-section" appScrollReveal>
+        <div class="chat-layout">
+          <!-- Left: Value proposition -->
+          <div class="chat-value">
+            <h2 class="chat-headline">
+              <span>Начните прямо сейчас -</span>
+              <span class="accent">настройте заказ</span>
+            </h2>
+
+            <div class="value-steps">
+              @for (step of chatSteps; track step.n) {
+                <div class="value-step">
+                  <span class="step-num">{{ step.n }}</span>
+                  <div class="step-info">
+                    <strong>{{ step.title }}</strong>
+                    <p>{{ step.desc }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Photo gallery (when photos uploaded) -->
+            @if (hasUploadedPhotos()) {
+              <div class="uploaded-gallery">
+                <app-photo-gallery-panel (onUploadMore)="chatFileInput.click()" />
+                <input type="file" #chatFileInput accept="image/*,.heic,.heif" multiple
+                       style="display:none" (change)="onFileSelected($event)" />
+              </div>
+            }
+          </div>
+
+        </div>
+      </section>
+    } @placeholder {
+      <div class="skel-wrap" style="min-height:500px">
+        <div style="display:flex;gap:24px;flex-wrap:wrap">
+          <div style="flex:1;min-width:280px">
+            <div class="skel-block skel-line" style="width:260px;height:28px;margin-bottom:16px"></div>
+            <div class="skel-block skel-line" style="width:200px;height:20px;margin-bottom:32px"></div>
+            <div class="skel-block" style="height:48px;margin-bottom:12px"></div>
+            <div class="skel-block" style="height:48px;margin-bottom:12px"></div>
+            <div class="skel-block" style="height:48px"></div>
+          </div>
+          <div style="flex:1;min-width:300px">
+            <div class="skel-block" style="height:400px;border-radius:16px"></div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+
+  <!-- ═══ TRUST STRIP ═══ -->
+  <section class="trust-strip">
+    <div class="trust-inner">
+      @for (item of trustItems(); track item.text) {
+        <div class="trust-chip">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.text }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- ═══ DELIVERABLES (static, SSR renders real content) ═══ -->
+  <section class="deliverables" appScrollReveal>
+    <div class="section-container">
+      <h2 class="section-headline">Что вы получаете</h2>
+      <div class="deliverables-row">
+        @for (item of deliverables; track item.title; let i = $index) {
+          <div class="deliverable-card" [class.highlight]="item.highlight" appScrollReveal [delay]="i * 120">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <div>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.description }}</p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ DOCUMENT TYPES (static, SSR renders real content) ═══ -->
+  <section class="documents" appScrollReveal>
+    <div class="section-container">
+      <span class="documents-label">Для каких документов:</span>
+      <div class="documents-cloud">
+        @for (doc of documentSpecs; track doc.name) {
+          <span class="doc-chip">{{ doc.name }}</span>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROCESS (static, ProcessSlider is 73 lines, MatIcon only) ═══ -->
+  <div class="process-wrapper" id="process" appScrollReveal>
+    <app-process-slider
+      [steps]="processStepsData"
+      title="Как это работает"
+      [autoSlide]="true"
+      [slideInterval]="5000" />
+  </div>
+
+  <!-- ═══ GALLERY (static, img tags with native lazy loading) ═══ -->
+  <section class="gallery" appScrollReveal>
+    <div class="section-container">
+      <h2 class="section-headline">Примеры работ</h2>
+      <p class="section-sub">Профессиональная обработка каждого кадра</p>
+    </div>
+
+    <div class="gallery-scroll">
+      @for (item of gallery; track item.src; let i = $index) {
+        <div class="gallery-card" appScrollReveal [delay]="i * 80">
+          <img [src]="item.src" [alt]="item.alt" loading="lazy" width="300" height="400" />
+        </div>
+      }
+    </div>
+
+    <div class="gallery-cta">
+      <button mat-flat-button (click)="scrollToPricingWithNotify()">
+        <mat-icon>photo_camera</mat-icon>
+        Хочу так же, заказать онлайн
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══ MONTAGE (static, pure data + MatIcon) ═══ -->
+  <section class="montage" appScrollReveal>
+    <div class="section-container">
+      <h2 class="section-headline">Возможности профессионального монтажа</h2>
+      <p class="section-sub">Подготовим фото под сложные требования: форма, медали, одежда и точная ручная обработка</p>
+
+      <div class="montage-grid">
+        @for (feature of montageFeatures; track feature.title; let i = $index) {
+          <div class="montage-card" appScrollReveal [delay]="i * 80">
+            <div class="montage-icon">
+              <mat-icon>{{ feature.icon }}</mat-icon>
+            </div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ QUICK ORDER / ORDER CONFIRMATION (SSR renders form, hydrates on viewport) ═══ -->
+  @defer (hydrate on viewport) {
+    <div id="quick-order">
+      @if (orderData(); as order) {
+        <app-order-confirmation
+          [order]="order"
+          [paymentLoading]="paymentLoading()"
+          [paymentSuccess]="paymentSuccess()"
+          [redirectCountdown]="paymentRedirectCountdown()"
+          [submitError]="uploadSubmitError()"
+          (payClicked)="onPayClicked()"
+          (goToChat)="goToChat()"
+        />
+      } @else {
+        <app-quick-order
+          (quickOrderSubmitted)="onQuickOrder($event)" />
+      }
+    </div>
+  }
+
+  <!-- ═══ PRICING (SSR renders configurator, hydrates on interaction) ═══ -->
+  @defer (hydrate on interaction) {
+    <section class="pricing" id="pricing" appScrollReveal>
+      <div class="section-container">
+        <h2 class="section-headline">Полный конфигуратор</h2>
+        <p class="section-sub">Все параметры, цена обновляется автоматически</p>
+
+        <app-pricing-configurator
+          categorySlug="photo-docs"
+          deliveryMethod="electronic"
+          [isNewCustomer]="true"
+          (orderSelected)="onConfiguratorOrder($event)" />
+      </div>
+    </section>
+  }
+
+  <!-- ═══ GUARANTEE (static, pure text + MatIcon) ═══ -->
+  <section class="guarantee" appScrollReveal>
+    <div class="guarantee-inner">
+      <mat-icon class="guarantee-shield">verified_user</mat-icon>
+      <h2>100% гарантия результата</h2>
+      <div class="guarantee-list">
+        <div class="g-point">
+          <mat-icon>check_circle</mat-icon>
+          <span>Если фото не примут, переделаем бесплатно</span>
+        </div>
+        <div class="g-point">
+          <mat-icon>check_circle</mat-icon>
+          <span>{{ yearsOfWorkLabel() }} работы, ни одного отказа</span>
+        </div>
+        <div class="g-point">
+          <mat-icon>check_circle</mat-icon>
+          <span>Бесплатные правки до полного согласования</span>
+        </div>
+      </div>
+      <button mat-flat-button (click)="scrollToPricingWithNotify()">
+        <mat-icon>photo_camera</mat-icon>
+        Заказать онлайн
+      </button>
+    </div>
+  </section>
+
+  <!-- ═══ BENEFITS (static, pure data + MatIcon) ═══ -->
+  <section class="benefits" appScrollReveal>
+    <div class="section-container">
+      <h2 class="section-headline">Почему онлайн лучше</h2>
+      <div class="benefits-grid">
+        @for (b of formatBenefits; track b.title; let i = $index) {
+          <div class="benefit-card" appScrollReveal [delay]="i * 100">
+            <mat-icon>{{ b.icon }}</mat-icon>
+            <h3>{{ b.title }}</h3>
+            <p>{{ b.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ TESTIMONIALS (SSR renders content, JS hydrates on viewport) ═══ -->
+  @defer (hydrate on viewport) {
+    <section class="testimonials" appScrollReveal>
+      <div class="section-container">
+        <h2 class="section-headline">Отзывы клиентов</h2>
+        <app-testimonials variant="card" [showBookingCta]="false" />
+      </div>
+    </section>
+  }
+
+  <!-- ═══ FAQ (SSR renders content for SEO, hydrates on interaction) ═══ -->
+  @defer (hydrate on interaction) {
+    <section class="faq" appScrollReveal>
+      <div class="section-container">
+        <h2 class="section-headline">Частые вопросы</h2>
+        <mat-accordion class="faq-accordion">
+          @for (faq of faqItems; track faq.question) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ faq.question }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <p>{{ faq.answer }}</p>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      </div>
+    </section>
+  }
+
+  <!-- ═══ FINAL CTA (static, pure text + buttons) ═══ -->
+  <section class="final-cta" appScrollReveal>
+    <div class="cta-inner">
+      <h2>{{ contactCta.title }}</h2>
+      <div class="cta-buttons">
+        <button mat-flat-button class="primary-cta" (click)="scrollToPricingWithNotify()">
+          <mat-icon>photo_camera</mat-icon>
+          Заказать онлайн
+        </button>
+        <a mat-stroked-button class="secondary-cta" href="tel:+78633226575">
+          <mat-icon>call</mat-icon>
+          Позвонить
+        </a>
+      </div>
+      <div class="legal-links">
+        <a routerLink="/oferta">Публичная оферта</a>
+        <a routerLink="/privacy">Политика конфиденциальности</a>
+        <a routerLink="/rekvizity">Реквизиты</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONTACTS (SSR renders content, JS hydrates on viewport) ═══ -->
+  @defer (hydrate on viewport) {
+    <app-contacts-section [contacts]="contactsData"
+      [addresses]="studioAddresses"
+      [isMobile]="isMobile()"
+      [isTablet]="isTablet()"
+      [isDesktop]="isDesktop()" />
+  }
+
+  @defer (on idle) {
+    <app-cart />
+  } @placeholder {
+    <div></div>
+  }
+
+  <!-- ═══ STICKY MOBILE CTA ═══ -->
+  @if ((isMobile() || isTablet()) && showStickyCta()) {
+    <div class="sticky-cta">
+      <button mat-flat-button class="sticky-btn" (click)="scrollToPricingWithNotify()">
+        <mat-icon>photo_camera</mat-icon>
+        Заказать онлайн
+      </button>
+    </div>
+  }
+
+  @defer (when uploadOverlayOpen()) {
+    <app-photo-upload-overlay
+      [isOpen]="uploadOverlayOpen()"
+      [submitError]="uploadSubmitError()"
+      [orderConfig]="pendingOrderConfig()"
+      [isMultiDocument]="isMultiDocument()"
+      [phase]="overlayPhase()"
+      [paymentSummary]="orderData()"
+      [paymentLoading]="paymentLoading()"
+      (closed)="onUploadOverlayClosed()"
+      (submitted)="onUploadSubmitted($event)"
+      (payClicked)="onPayClicked()"
+      (goToChat)="onGoToChat()"
+      (payLater)="onPayLater()"
+    />
+  }
+</div>

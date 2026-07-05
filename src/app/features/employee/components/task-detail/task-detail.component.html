@@ -1,0 +1,210 @@
+@if (task(); as t) {
+<div class="task-detail">
+
+  <!-- Header -->
+  <div class="detail-header">
+    <div class="header-left">
+      <span class="task-number">#{{ t.task_number }}</span>
+      <h1>{{ t.title }}</h1>
+    </div>
+    <div class="header-meta">
+      <mat-chip [class]="'priority-' + t.priority">{{ priorityLabel(t.priority) }}</mat-chip>
+      <mat-chip [class]="'status-' + t.status">{{ statusLabel(t.status) }}</mat-chip>
+      <div class="type-badge">
+        <mat-icon class="type-icon">{{ typeIcon(t.task_type) }}</mat-icon>
+        <span>{{ typeLabel(t.task_type) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Client Card (cross-DB context) -->
+  @if (t.client_phone) {
+    <app-client-card [taskId]="t.id" />
+  } @else if (t.client_name) {
+    <mat-card class="section-card" appearance="outlined">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>person</mat-icon>
+        <mat-card-title>{{ t.client_name }}</mat-card-title>
+        @if (t.client_channel) {
+          <mat-card-subtitle>{{ channelLabel(t.client_channel) }}</mat-card-subtitle>
+        }
+      </mat-card-header>
+    </mat-card>
+  }
+
+  <!-- Description -->
+  @if (t.description) {
+    <mat-card class="section-card" appearance="outlined">
+      <mat-card-content>
+        <p class="description-text">{{ t.description }}</p>
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- AI Summary -->
+  @if (aiSummary(); as summary) {
+    <mat-card class="section-card ai-card" appearance="outlined">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>smart_toy</mat-icon>
+        <mat-card-title>AI-сводка</mat-card-title>
+        <mat-icon class="sentiment-icon" [matTooltip]="summary.sentiment">{{ sentimentIcon(summary.sentiment) }}</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <p class="ai-summary-text">{{ summary.summary }}</p>
+        @if (summary.clientIntent && summary.clientIntent !== 'unknown') {
+          <mat-chip class="intent-chip">{{ summary.clientIntent }}</mat-chip>
+        }
+        @if (summary.keyFacts.length) {
+          <div class="key-facts">
+            @for (fact of summary.keyFacts; track fact) {
+              <span class="fact-tag">{{ fact }}</span>
+            }
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  } @else if (t.ai_summary) {
+    <mat-card class="section-card ai-card" appearance="outlined">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>smart_toy</mat-icon>
+        <mat-card-title>AI-сводка</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ t.ai_summary }}</p>
+      </mat-card-content>
+    </mat-card>
+  } @else if (t.chat_session_id) {
+    <button mat-stroked-button (click)="generateSummary()" [disabled]="aiSummaryLoading()" class="ai-summary-btn">
+      @if (aiSummaryLoading()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        <mat-icon>smart_toy</mat-icon>
+      }
+      AI-сводка диалога
+    </button>
+  }
+
+  <!-- AI Assignment Suggestions -->
+  @if (aiAssignments().length) {
+    <mat-card class="section-card ai-card" appearance="outlined">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>group</mat-icon>
+        <mat-card-title>AI рекомендует назначить</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @for (s of aiAssignments(); track s.employeeId) {
+          <div class="assignment-option">
+            <div class="assignment-info">
+              <strong>{{ s.employeeName }}</strong>
+              <span class="assignment-reason">{{ s.reason }}</span>
+            </div>
+            <button mat-flat-button (click)="assignTo(s.employeeId)" class="assign-btn">
+              Назначить
+            </button>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  }
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    @if (t.status === 'open' || t.status === 'handed_off') {
+      <button mat-flat-button (click)="takeTask()">
+        <mat-icon>person_add</mat-icon> Взять
+      </button>
+    }
+    @if (t.status === 'assigned' && t.assigned_to === userId()) {
+      <button mat-flat-button (click)="changeStatus('in_progress')">
+        <mat-icon>play_arrow</mat-icon> В работу
+      </button>
+    }
+    @if (t.status === 'in_progress') {
+      <button mat-stroked-button (click)="changeStatus('waiting')">
+        <mat-icon>hourglass_empty</mat-icon> Ожидание
+      </button>
+      <button mat-flat-button (click)="changeStatus('completed')">
+        <mat-icon>check</mat-icon> Готово
+      </button>
+    }
+    @if (t.status === 'waiting') {
+      <button mat-flat-button (click)="changeStatus('in_progress')">
+        <mat-icon>play_arrow</mat-icon> В работу
+      </button>
+    }
+    @if (t.status !== 'completed' && t.status !== 'cancelled') {
+      <button mat-stroked-button (click)="showHandoff.set(true)">
+        <mat-icon>swap_horiz</mat-icon> Передать
+      </button>
+      @if (!t.assigned_to) {
+        <button mat-stroked-button (click)="loadAssignmentSuggestions()" [disabled]="aiAssignLoading()">
+          @if (aiAssignLoading()) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>smart_toy</mat-icon>
+          }
+          AI-назначение
+        </button>
+      }
+    }
+  </div>
+
+  <!-- Handoff Form -->
+  @if (showHandoff()) {
+    <mat-card class="handoff-form" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>Передача задачи</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Что сделано, что осталось</mat-label>
+          <textarea matInput [(ngModel)]="handoffNote" rows="3" required></textarea>
+        </mat-form-field>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button (click)="showHandoff.set(false)">Отмена</button>
+        <button mat-flat-button (click)="submitHandoff()" [disabled]="!handoffNote">Передать</button>
+      </mat-card-actions>
+    </mat-card>
+  }
+
+  <!-- Linked Tasks -->
+  <app-task-links [taskId]="t.id" />
+
+  <!-- Chat Timeline -->
+  @if (t.client_phone) {
+    <app-chat-timeline [taskId]="t.id" />
+  }
+
+  <mat-divider />
+
+  <!-- Notes Timeline -->
+  <section class="notes-section">
+    <h2>Заметки и история</h2>
+    @for (note of t.notes || []; track note.id) {
+      <div class="note-item" [class]="'note-' + note.note_type">
+        <div class="note-header">
+          <strong>{{ note.author_name }}</strong>
+          <span class="note-time">{{ formatTime(note.created_at) }}</span>
+        </div>
+        <div class="note-content">{{ note.content }}</div>
+      </div>
+    }
+    @if (!(t.notes?.length)) {
+      <p class="no-notes">Нет заметок</p>
+    }
+  </section>
+
+  <!-- Add Note -->
+  <div class="add-note">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Добавить заметку</mat-label>
+      <textarea matInput [(ngModel)]="newNote" rows="2"></textarea>
+    </mat-form-field>
+    <button mat-flat-button (click)="addNote()" [disabled]="!newNote">
+      <mat-icon>send</mat-icon>
+    </button>
+  </div>
+
+</div>
+}

@@ -1,0 +1,99 @@
+<section class="services-section" 
+         [class.compact]="isMobile() || config().compactMode" 
+         [class.medium]="isTablet()" 
+         [class.expanded]="isDesktop()"
+         [class]="gridColumnsClass()">
+  <!-- Background decorative elements -->
+  <div class="services-background">
+    <div class="bg-shape bg-shape-1"></div>
+    <div class="bg-shape bg-shape-2"></div>
+    <div class="bg-shape bg-shape-3"></div>
+  </div>
+
+  <div class="section-container">
+    <!-- Section Header -->
+    @if (config().showHeader) {
+      <div class="section-header">
+        @if (sectionData().badge) {
+          <div class="services-badge">
+            <span>{{ sectionData().badge?.text }}</span>
+          </div>
+        }
+        
+        @if (sectionData().title) {
+          <h2 class="headline-large section-title">
+            {{ sectionData().title }}
+          </h2>
+        }
+        
+        @if (sectionData().subtitle) {
+          <p class="body-large section-subtitle" [innerHTML]="sectionData().subtitle">
+          </p>
+        }
+      </div>
+    }
+
+    <!-- Services Grid -->
+    <div class="services-grid">
+      @for (service of displayServices(); track service.id || service.slug || $index; let i = $index) {
+        <mat-card 
+                class="service-card" 
+                appearance="outlined" 
+                [style.--service-accent-color]="service.colorAccent"
+                [style.--animation-delay]="(i * 0.1) + 's'">
+          <div class="service-card-accent"></div>
+          
+          <!-- Service Image Container -->
+          @if (service.image) {
+            <div class="service-image-container">
+              <img [src]="service.image" 
+                   [alt]="service.title" 
+                   class="service-image" 
+                   loading="lazy">
+              <div class="service-image-overlay"></div>
+            </div>
+          }
+          
+          <mat-card-header>
+            <div class="service-icon-wrapper" mat-card-avatar>
+              <!-- Иконка удалена -->
+            </div>
+            <mat-card-title>{{ service.title }}</mat-card-title>
+          </mat-card-header>
+
+          <mat-card-content>
+            <p>{{ service.description }}</p>
+            @if (service.features) {
+              <ul class="service-features">
+                @for (feature of service.features; track feature || $index) {
+                  <li>{{ feature }}</li>
+                }
+              </ul>
+            }
+          </mat-card-content>
+
+          <mat-card-actions>
+            <a mat-button 
+               [routerLink]="['/', service.slug]" 
+               color="primary" 
+               class="service-cta-button">
+              <span>Подробнее</span>
+            </a>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+
+    <!-- CTA Section -->
+    @if (config().showCta && sectionData().ctaButton) {
+      <div class="services-cta">
+        <a mat-flat-button 
+           color="primary" 
+           [routerLink]="sectionData().ctaButton?.link"
+           class="all-services-button">
+          <span>{{ sectionData().ctaButton?.text }}</span>
+        </a>
+      </div>
+    }
+  </div>
+</section>

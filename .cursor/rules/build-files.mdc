@@ -1,0 +1,75 @@
+---
+alwaysApply: true
+---
+# Правила для Cursor AI
+
+Запускать самому запрещено:
+npm run build
+pm2 restart magnus-photo-ssr
+
+## Запрет сканирования сборочных файлов
+
+**ВАЖНО: НЕ сканировать и НЕ анализировать сборочные файлы и директории:**
+
+- `/dist` - директория со сборочными артефактами Angular
+- `/dist/magnus-photo` - сборочные файлы приложения
+- `/dist/magnus-photo/browser` - браузерные бандлы
+- `/dist/magnus-photo/server` - серверные бандлы
+- `/tmp` - временные файлы
+- `/out-tsc` - вывод TypeScript компиляции
+- `/.angular` - кеш Angular CLI
+- `/backend/dist` - сборочные файлы backend
+- `*.js.map` - source maps
+- `*.d.ts.map` - TypeScript declaration maps
+
+**Правило:** Всегда игнорируйте эти директории и файлы при поиске, анализе кода и чтении файлов. Используйте только исходные файлы из `src/` и `backend/src/`.
+
+## Дополнительные правила
+
+- Не анализировать содержимое `node_modules/`
+- Не читать файлы из `.angular/cache/`
+- Не сканировать сгенерированные файлы из `dist/`
+
+## SSR (Server-Side Rendering) Конфигурация
+
+### Критически важные моменты для SSR
+
+**1. `src/server.ts` - обязательный экспорт `reqHandler`**
+```typescript
+// КРИТИЧЕСКИ ВАЖНО: reqHandler обязателен для работы ng serve с SSR
+export const reqHandler = createNodeRequestHandler(app);
+```
+Без этого экспорта SSR не будет работать в development режиме (`ng serve`). Angular CLI использует `reqHandler` для dev-server и во время сборки.
+
+**2. `app.config.ts` - обязательный `withInterceptorsFromDi()`**
+```typescript
+provideHttpClient(
+  withInterceptorsFromDi()  // ОБЯЗАТЕЛЕН для DI-based interceptors
+)
+```
+`withInterceptorsFromDi()` **обязателен** для DI-based interceptors (классы, реализующие `HttpInterceptor`). Без него DI-based interceptors не будут работать. Functional interceptors (через `withInterceptors()`) работают без этого флага.
+
+**3. `app.config.server.ts` - регистрация DI-based interceptors**
+```typescript
+{ provide: HTTP_INTERCEPTORS, useClass: ServerHttpInterceptor, multi: true }
+```
+DI-based interceptors регистрируются через multi-provider `HTTP_INTERCEPTORS` и работают **только** если в `app.config.ts` добавлен `withInterceptorsFromDi()`. Порядок выполнения interceptors зависит от порядка регистрации провайдеров.
+
+**4. HTTP запросы в SSR**
+- `ServerHttpInterceptor` автоматически преобразует относительные URL (`/api/...`) в абсолютные (`http://localhost:3001/api/...`) во время SSR
+- Без этого преобразования SSR сервер попытается сделать запрос к самому себе (`http://localhost:4000/api/...`), что приведет к ошибкам
+- `HttpClient` автоматически кеширует HTTP запросы между сервером и клиентом (HEAD и GET без Authorization заголовков)
+
+**5. `ng serve` с SSR**
+В Angular 20 с `outputMode: "server"` `ng serve` автоматически использует SSR через `reqHandler` из `src/server.ts`. Не нужно запускать сервер вручную в development режиме.
+
+**6. Platform checks в SSR**
+В SSR коде **нельзя** использовать browser API напрямую:
+- ❌ `localStorage.getItem('token')` - упадет на сервере
+- ✅ `if (isPlatformBrowser(this.platformId)) { localStorage.getItem('token') }` - правильный подход
+
+**7. Структура файлов для SSR**
+- Исходные файлы: `src/` (для разработки)
+- Сборочные файлы: `dist/magnus-photo/` (генерируются автоматически, НЕ редактировать вручную)
+- Использовать только исходные файлы из `src/` и `backend/src/`
+

@@ -1,0 +1,45 @@
+// Portfolio Gallery — editorial dark cinematic layout, mobile-first
+
+.portfolio-gallery {
+  padding: 3rem 1rem;
+  background: var(--ed-surface, #0a0a0a);
+  @media (min-width: 840px) { padding: 5rem 2rem; }
+
+  .gallery-header {
+    text-align: center; margin-bottom: 3rem;
+    .section-title {
+      font-family: var(--ed-font-display, 'Oswald', sans-serif);
+      font-size: 2rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em;
+      margin-bottom: 1rem; color: var(--ed-accent, #f59e0b);
+      @media (min-width: 840px) { font-size: 3rem; }
+    }
+    .section-subtitle { font-size: 1.1rem; color: var(--ed-on-surface-variant, #a0a0a0); max-width: 600px; margin: 0 auto; @media (min-width: 840px) { font-size: 1.2rem; } }
+  }
+
+  .category-filter { display: flex; justify-content: center; margin-bottom: 3rem; }
+
+  .gallery-grid {
+    display: grid; grid-template-columns: 1fr; gap: 1.5rem;
+    @media (min-width: 840px) { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
+  }
+
+  .gallery-item {
+    cursor: pointer; border-radius: 16px; overflow: hidden; position: relative;
+  }
+
+  .portfolio-image { width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+
+  .image-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent 60%);
+    opacity: 0; transition: opacity 0.3s ease;
+    display: flex; align-items: flex-end; padding: 1.5rem; color: white;
+
+    .image-info {
+      .image-title { font-size: 1.25rem; font-weight: 700; margin: 0; }
+      .image-category { font-size: 0.9rem; opacity: 0.8; }
+    }
+  }
+
+  .gallery-item:hover .image-overlay { opacity: 1; }
+}

@@ -1,0 +1,107 @@
+<div class="notifications-container">
+  <div class="notifications-header">
+    <h1>Уведомления</h1>
+      <div class="notifications-actions">
+      <button mat-stroked-button color="primary" routerLink="/user-profile/notification-settings">
+        <mat-icon>settings</mat-icon>
+        Настройки уведомлений
+      </button>
+      
+      <button mat-raised-button color="primary" (click)="markAllAsRead()" 
+              [disabled]="unreadNotifications.length === 0">
+        <mat-icon>done_all</mat-icon>
+        Отметить все как прочитанные
+      </button>
+      
+      <button mat-stroked-button color="warn" (click)="clearAllNotifications()" 
+              [disabled]="notifications().length === 0">
+        <mat-icon>delete_sweep</mat-icon>
+        Очистить все уведомления
+      </button>
+    </div>
+  </div>
+  
+  <mat-card>
+    <mat-tab-group>
+      <mat-tab label="Все">
+        <ng-container *ngTemplateOutlet="notificationsList; context: {notifications: notifications()}" />
+      </mat-tab>
+      
+      <mat-tab label="Непрочитанные" [disabled]="unreadNotifications.length === 0">
+        <ng-container *ngTemplateOutlet="notificationsList; context: {notifications: unreadNotifications}" />
+      </mat-tab>
+      
+      <mat-tab label="Записи" [disabled]="bookingNotifications.length === 0">
+        <ng-container *ngTemplateOutlet="notificationsList; context: {notifications: bookingNotifications}" />
+      </mat-tab>
+      
+      <mat-tab label="Фотографии" [disabled]="photoNotifications.length === 0">
+        <ng-container *ngTemplateOutlet="notificationsList; context: {notifications: photoNotifications}" />
+      </mat-tab>
+      
+      <mat-tab label="Системные" [disabled]="systemNotifications.length === 0">
+        <ng-container *ngTemplateOutlet="notificationsList; context: {notifications: systemNotifications}" />
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card>
+</div>
+
+<!-- Шаблон списка уведомлений -->
+<ng-template #notificationsList let-notifications="notifications">
+  <div class="notifications-list-container">
+    @if (loading()) {
+      <div class="loading-container">
+        <mat-spinner diameter="40" />
+        <p>Загрузка уведомлений...</p>
+      </div>
+    }
+    
+    @if (notifications.length === 0 && !loading()) {
+      <div class="empty-container">
+        <mat-icon>notifications_off</mat-icon>
+        <p>Нет уведомлений</p>
+      </div>
+    }
+    
+    @if (notifications.length > 0 && !loading()) {
+      <div class="notifications-list">
+        @for (notification of notifications; track notification.id || $index) {
+          <div class="notification-item"
+               [class.unread]="!notification.isRead"
+               (click)="markAsRead(notification)"
+               (keydown.enter)="markAsRead(notification)"
+               tabindex="0">
+            
+            <div class="notification-icon">
+              <mat-icon [class]="getNotificationIconClass(notification)">{{ getNotificationIcon(notification) }}</mat-icon>
+            </div>
+            
+            <div class="notification-content">
+              <div class="notification-header">
+                <h3>{{ notification.title }}</h3>
+                <span class="notification-time">{{ formatTime(notification.createdAt) }}</span>
+              </div>
+              
+              <p class="notification-message">{{ notification.message }}</p>
+              
+              @if (notification.data?.url) {
+                <div class="notification-footer">
+                  <a [routerLink]="notification.data.url" class="notification-link">
+                    Подробнее
+                    <mat-icon>arrow_forward</mat-icon>
+                  </a>
+                </div>
+              }
+            </div>
+            
+            <div class="notification-actions">
+              <button mat-icon-button (click)="deleteNotification(notification.id, $event)" color="warn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</ng-template>

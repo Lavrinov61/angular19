@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Очистка кэша</title>
+  <style>
+    body { font-family: system-ui; padding: 40px 20px; text-align: center; background: #f5f5f5; }
+    .status { margin: 20px 0; padding: 16px; border-radius: 12px; background: white; }
+    .ok { color: #22c55e; }
+    .err { color: #ef4444; }
+    .log { font-size: 14px; color: #666; margin: 8px 0; }
+  </style>
+</head>
+<body>
+  <h2>Очистка кэша Своё Фото</h2>
+  <div id="output" class="status">Очищаем...</div>
+  <script>
+    const out = document.getElementById('output');
+    const logs = [];
+    function log(msg) { logs.push(msg); out.innerHTML = logs.map(l => '<div class="log">' + l + '</div>').join(''); }
+
+    (async () => {
+      try {
+        // 1. Unregister all Service Workers
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          for (const reg of regs) {
+            await reg.unregister();
+            log('SW удалён: ' + (reg.scope || 'unknown'));
+          }
+          if (regs.length === 0) log('Service Worker не найден');
+        }
+
+        // 2. Clear all caches
+        if ('caches' in window) {
+          const names = await caches.keys();
+          for (const name of names) {
+            await caches.delete(name);
+            log('Кэш удалён: ' + name);
+          }
+          if (names.length === 0) log('Кэш пуст');
+        }
+
+        log('<br><strong class="ok">Готово! Перенаправляем...</strong>');
+        setTimeout(() => { window.location.href = '/'; }, 1500);
+      } catch (e) {
+        log('<strong class="err">Ошибка: ' + e.message + '</strong>');
+      }
+    })();
+  </script>
+</body>
+</html>

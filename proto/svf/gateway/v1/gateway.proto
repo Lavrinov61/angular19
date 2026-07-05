@@ -1,0 +1,123 @@
+syntax = "proto3";
+package svf.gateway.v1;
+
+import "google/protobuf/timestamp.proto";
+import "infra/v1/infra.proto";
+import "print/v1/print.proto";
+
+option java_package = "ru.svoefoto.proto.gateway.v1";
+option java_multiple_files = true;
+
+// ── Agent Gateway Service — multiplexed bidirectional stream ──
+
+service AgentGatewayService {
+  // Bidirectional stream — all agent<->server communication
+  rpc Connect(stream ConnectRequest) returns (stream ConnectResponse);
+
+  // Agent registration / re-registration
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+
+  // mTLS certificate rotation
+  rpc RotateCertificate(RotateCertificateRequest) returns (RotateCertificateResponse);
+}
+
+// ── Priority ──
+
+enum Priority {
+  PRIORITY_UNSPECIFIED = 0;
+  PRIORITY_LOW = 1;
+  PRIORITY_NORMAL = 2;
+  PRIORITY_HIGH = 3;
+  PRIORITY_CRITICAL = 4;
+}
+
+// ── Agent -> Server envelope ──
+
+message ConnectRequest {
+  string request_id = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  Priority priority = 3;
+
+  oneof payload {
+    svf.infra.v1.AgentHeartbeat heartbeat = 10;
+    svf.print.v1.PrintStatus print_status = 11;
+    svf.print.v1.TelemetryReport print_telemetry = 12;
+    svf.infra.v1.PosTransactionResult pos_result = 13;
+    svf.infra.v1.PosShiftResult pos_shift_result = 14;
+    svf.infra.v1.PosTelemetry pos_telemetry = 15;
+    svf.infra.v1.PosSbpQrResult pos_sbp_qr = 16;
+    svf.infra.v1.SystemMetrics metrics = 17;
+    svf.infra.v1.AgentAlert alert = 18;
+    svf.infra.v1.UpdateStatus update_status = 19;
+    svf.infra.v1.ConfigAck config_ack = 20;
+    svf.infra.v1.MotionEvent motion_event = 21;
+    svf.infra.v1.CameraStatus camera_status = 22;
+    CapabilityReport capability_report = 23;
+  }
+}
+
+// ── Server -> Agent envelope ──
+
+message ConnectResponse {
+  string request_id = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  Priority priority = 3;
+
+  oneof payload {
+    svf.print.v1.PrintCommand print_command = 10;
+    svf.print.v1.SyncIccProfileRequest icc_sync = 11;
+    svf.print.v1.RequestPreviewRequest preview_request = 12;
+    svf.infra.v1.PosPayCommand pos_pay = 13;
+    svf.infra.v1.PosRefundCommand pos_refund = 14;
+    svf.infra.v1.PosFiscalCommand pos_fiscal = 15;
+    svf.infra.v1.PosShiftCommand pos_shift = 16;
+    svf.infra.v1.PosSbpGenerateCommand pos_sbp_generate = 17;
+    svf.infra.v1.PosSbpStatusCommand pos_sbp_status = 18;
+    svf.infra.v1.UpdateCommand update_command = 19;
+    svf.infra.v1.ConfigUpdate config_update = 20;
+    svf.infra.v1.RestartCommand restart = 21;
+  }
+}
+
+// ── Registration ──
+
+message RegisterRequest {
+  string agent_id = 1;
+  svf.infra.v1.AgentType agent_type = 2;
+  string version = 3;
+  string os_info = 4;
+  string os_arch = 5;
+  string hostname = 6;
+  repeated string capabilities = 7; // "print", "fiscal", "sbp", "vision"
+  string studio_id = 8;
+}
+
+message RegisterResponse {
+  bool accepted = 1;
+  string agent_id = 2;         // server-assigned if new
+  int32 heartbeat_interval_ms = 3;
+  int32 config_version = 4;
+  bytes config_toml = 5;
+}
+
+// ── Certificate Rotation ──
+
+message RotateCertificateRequest {
+  string agent_id = 1;
+  bytes csr = 2; // PKCS#10 CSR
+}
+
+message RotateCertificateResponse {
+  bytes certificate = 1;     // signed X.509 cert
+  bytes ca_certificate = 2;  // CA cert for verification
+  google.protobuf.Timestamp expires_at = 3;
+}
+
+// ── Capability Report ──
+
+message CapabilityReport {
+  string agent_id = 1;
+  repeated string capabilities = 2;
+  map<string, string> versions = 3; // "cups" -> "2.4.7", "atol" -> "10.9"
+  map<string, string> hardware = 4; // "printer" -> "Epson L8050", "terminal" -> "INPAS SmartSale"
+}

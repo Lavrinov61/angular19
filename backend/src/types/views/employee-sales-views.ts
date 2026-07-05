@@ -1,0 +1,63 @@
+import type { PaymentLinkListRow } from './payment-link-views.js';
+import type { PosReceiptListRow } from './pos-views.js';
+
+export type EmployeeSalesHistoryReceiptRow = PosReceiptListRow;
+
+export type EmployeeSalesHistoryPaymentLinkRow = PaymentLinkListRow;
+
+export interface EmployeeSalesHistoryPrintOrderRow {
+  id: string;
+  order_id: string;
+  contact_name: string | null;
+  contact_phone: string | null;
+  contact_email: string | null;
+  total_price: string | null;
+  status: string | null;
+  payment_status: string | null;
+  payment_method: string | null;
+  payment_channel: string | null;
+  payment_event_type: string | null;
+  payment_recorded_at: Date | null;
+  payment_recorded_by: string | null;
+  payment_recorded_by_name: string | null;
+  priority: string;
+  items: unknown;
+  comments: string | null;
+  delivery_address: string | null;
+  delivery_cost: string | null;
+  tracking_number: string | null;
+  receipt_url: string | null;
+  payment_card_info: string | null;
+  telegram_username: string | null;
+  promo_code: string | null;
+  promo_discount: string | null;
+  created_at: Date | null;
+  updated_at: Date | null;
+  paid_at: Date | null;
+  completed_at: Date | null;
+  processing_started_at: Date | null;
+  processing_duration_minutes: number | null;
+  assigned_employee_id: string | null;
+  assigned_at: Date | null;
+  assigned_employee_name: string | null;
+  chat_session_id: string | null;
+  reminder_sent_at: Date | null;
+  deadline: Date | null;
+  photo_url: string | null;
+  resolved_user_id: string | null;
+  resolved_phone: string | null;
+  escalation_level: number | null;
+  description: string | null;
+  source: string | null;
+  wishes: string | null;
+  medals_required: boolean | null;
+  medals_description: string | null;
+  uniform_description: string | null;
+  document_template_id: string | null;
+  document_template_name: string | null;
+  photo_size: string | null;
+  order_studio_id: string | null;
+  order_studio_name: string | null;
+  order_studio_address: string | null;
+  order_location_code: string | null;
+}

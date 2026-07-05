@@ -1,0 +1,57 @@
+# Angular compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+server/dist/
+
+# Angular cache
+/.angular
+
+# Node modules
+/node_modules
+/backend/node_modules
+
+# Build artifacts
+*.js.map
+*.d.ts.map
+
+# Firebase
+/.firebase
+firebase-debug.log
+firestore-debug.log
+
+# Compiled TypeScript
+**/*.js
+!src/**/*.js
+!backend/src/**/*.js
+**/*.d.ts
+!src/**/*.d.ts
+!backend/src/**/*.d.ts
+
+# Server build output
+server/dist/
+dist/magnus-photo/
+
+# Local agent/runtime state
+/.codex
+/.claude/worktrees
+/.playwright
+/.playwright-cli
+/.playwright-mcp
+
+# Large local data and generated artifacts
+/logs
+/reports
+/uploads
+/скриншоты
+/конкуренты
+**/target
+
+# Archives and local packages
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+*.rar

@@ -1,0 +1,34 @@
+[agent]
+agent_id = "uuid-here"
+studio_id = "uuid-here"
+agent_type = "monitor"
+version = "0.1.0"
+
+[mqtt]
+host = "svoefoto.ru"
+port = 8883
+username = "monitor_username"
+password = "password_here"
+use_tls = true
+
+[offline]
+db_path = "C:\\ProgramData\\SvoePhoto\\monitor-agent\\offline.db"
+
+[heartbeat]
+interval_secs = 60
+
+[download]
+temp_dir = "C:\\ProgramData\\SvoePhoto\\monitor-agent\\tmp"
+timeout_secs = 120
+max_file_size = 104857600
+
+[monitor]
+exec_timeout_secs = 60
+max_output_bytes = 131072
+whitelisted_paths = ["C:\\"]
+
+# Commands loaded from config at runtime — binary stays clean for AV.
+# Add/remove without recompilation.
+allowed_commands = ["sc", "tasklist", "systeminfo", "ipconfig", "ping", "dir", "hostname"]
+allowed_ps_commands = ["Get-Process", "Get-Service", "Get-Volume"]
+blocked_ps_patterns = ["invoke-expression", "iex ", "format-volume", "clear-disk"]

@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SvoePhoto — Studio Device Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   SVOEFOTO COMMAND CENTER
+   Aesthetic: Industrial monitoring meets photo studio
+   ═══════════════════════════════════════════ */
+
+:root {
+  /* Surface palette — deep blues with warmth */
+  --bg-root: #0c0e14;
+  --bg-surface: #13161e;
+  --bg-card: #181c26;
+  --bg-card-hover: #1d2230;
+  --bg-elevated: #222838;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-active: rgba(255,255,255,0.12);
+
+  /* Text */
+  --text-primary: #e8eaf0;
+  --text-secondary: #8b90a0;
+  --text-muted: #555b6e;
+
+  /* Status — vivid, unambiguous */
+  --status-online: #2dd4a0;
+  --status-online-bg: rgba(45,212,160,0.08);
+  --status-online-glow: rgba(45,212,160,0.3);
+  --status-warning: #f0a040;
+  --status-warning-bg: rgba(240,160,64,0.08);
+  --status-error: #ef4466;
+  --status-error-bg: rgba(239,68,102,0.08);
+  --status-offline: #444b5e;
+  --status-idle: #6c88c4;
+  --status-printing: #5ba8f5;
+  --status-printing-bg: rgba(91,168,245,0.08);
+
+  /* Ink colors (CMYK + LC/LM for 6-color Epson) */
+  --ink-cyan: #00bcd4;
+  --ink-magenta: #e040a0;
+  --ink-yellow: #ffc107;
+  --ink-black: #607080;
+  --ink-light-cyan: #60d8e8;
+  --ink-light-magenta: #f080c0;
+
+  /* Accent — studio cyan (like darkroom safelight, inverted) */
+  --accent: #3ea8d8;
+  --accent-bg: rgba(62,168,216,0.08);
+  --accent-glow: rgba(62,168,216,0.2);
+
+  /* Typography */
+  --font-display: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing */
+  --gap: 16px;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg-root);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Background grid texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page { position: relative; z-index: 1; max-width: 1440px; margin: 0 auto; padding: 24px 32px; }
+
+/* ── Breadcrumb ── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+.breadcrumb a { color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb .sep { opacity: 0.3; }
+
+/* ── Studio Header ── */
+.studio-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.studio-info h1 {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.studio-info .address {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 300;
+}
+
+.studio-stats {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.stat-pill.online {
+  background: var(--status-online-bg);
+  color: var(--status-online);
+  border: 1px solid rgba(45,212,160,0.15);
+}
+
+.stat-pill.offline {
+  background: var(--status-error-bg);
+  color: var(--status-error);
+  border: 1px solid rgba(239,68,102,0.12);
+}
+
+.stat-pill .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.stat-pill.online .dot {
+  animation: pulse-green 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(45,212,160,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(45,212,160,0); }
+}
+
+.last-heartbeat {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 300;
+}
+
+/* ── Grid Layout ── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+}
+
+.dashboard-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  border-color: var(--border-active);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-header h3 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-header h3 .icon {
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.card-body { padding: 20px; }
+
+/* ── Status dot ── */
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.status-dot.online { background: var(--status-online); box-shadow: 0 0 8px var(--status-online-glow); }
+.status-dot.warning { background: var(--status-warning); }
+.status-dot.error { background: var(--status-error); animation: blink-red 1s ease-in-out infinite; }
+.status-dot.offline { background: var(--status-offline); }
+.status-dot.printing { background: var(--status-printing); animation: pulse-blue 1.5s ease-in-out infinite; }
+
+@keyframes blink-red {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes pulse-blue {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(91,168,245,0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(91,168,245,0); }
+}
+
+/* ── PC Card ── */
+.pc-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+  font-weight: 300;
+}
+
+.metric-value {
+  font-size: 24px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: -0.02em;
+}
+
+.metric-value .unit {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  margin-left: 2px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-fill.ok { background: var(--status-online); }
+.progress-fill.warn { background: var(--status-warning); }
+.progress-fill.crit { background: var(--status-error); }
+
+/* Agent badges */
+.agent-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.agent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.agent-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.agent-badge.active { color: var(--status-online); border-color: rgba(45,212,160,0.15); }
+.agent-badge.active .badge-dot { background: var(--status-online); }
+.agent-badge.inactive .badge-dot { background: var(--status-offline); }
+
+.agent-badge .ver {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+/* ── Printer Card ── */
+.printer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.printer-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  transition: border-color 0.2s;
+}
+
+.printer-item:hover { border-color: var(--border-active); }
+
+.printer-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.printer-icon.photo { background: rgba(91,168,245,0.1); color: var(--status-printing); }
+.printer-icon.laser { background: rgba(140,120,200,0.1); color: #a090d0; }
+
+.printer-details { flex: 1; min-width: 0; }
+
+.printer-name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.printer-type-tag {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.printer-type-tag.photo { background: rgba(91,168,245,0.12); color: var(--status-printing); }
+.printer-type-tag.laser { background: rgba(140,120,200,0.12); color: #a090d0; }
+
+.printer-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.printer-status-text { color: var(--text-secondary); }
+.printer-status-text.idle { color: var(--status-online); }
+.printer-status-text.printing { color: var(--status-printing); }
+.printer-status-text.error { color: var(--status-error); }
+
+.queue-badge {
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid rgba(62,168,216,0.15);
+}
+
+/* Ink levels */
+.ink-levels {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.ink-bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ink-bar-label {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.ink-bar-track {
+  width: 100%;
+  height: 24px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+}
+
+.ink-bar-fill {
+  width: 100%;
+  border-radius: 3px;
+  transition: height 0.6s ease;
+}
+
+.ink-bar-value {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* ── POS Card ── */
+.pos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.pos-item {
+  padding: 14px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.pos-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.pos-item-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pos-item-value {
+  font-size: 18px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.pos-item-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-weight: 300;
+}
+
+/* ── Security Card ── */
+.security-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.sec-metric {
+  padding: 14px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.sec-metric-icon {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.sec-metric-value {
+  font-size: 18px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.sec-metric-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}
+
+.sec-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
+
+.btn.primary {
+  background: var(--accent);
+  color: var(--bg-root);
+  border-color: var(--accent);
+}
+
+.btn.primary:hover { opacity: 0.85; }
+
+/* ── Alerts Section ── */
+.alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alert-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  border: 1px solid var(--border-subtle);
+}
+
+.alert-item.critical {
+  background: var(--status-error-bg);
+  border-color: rgba(239,68,102,0.15);
+}
+
+.alert-item.warning {
+  background: var(--status-warning-bg);
+  border-color: rgba(240,160,64,0.12);
+}
+
+.alert-item.info {
+  background: var(--accent-bg);
+  border-color: rgba(62,168,216,0.1);
+}
+
+.alert-time {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 300;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.alert-text { flex: 1; color: var(--text-primary); }
+
+.alert-source {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  padding: 2px 8px;
+  background: var(--bg-elevated);
+  border-radius: 3px;
+}
+
+/* ══════════════════════════════════════
+   PRINT QUEUE SECTION
+   ══════════════════════════════════════ */
+
+.print-queue-section {
+  margin-top: 32px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+
+.queue-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.queue-table th {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+  padding: 10px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.queue-table td {
+  padding: 14px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.queue-table tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+.job-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.job-status.queued { background: rgba(255,255,255,0.06); color: var(--text-secondary); }
+.job-status.downloading { background: rgba(91,168,245,0.1); color: var(--status-printing); }
+.job-status.printing { background: rgba(240,160,64,0.1); color: var(--status-warning); }
+.job-status.completed { background: var(--status-online-bg); color: var(--status-online); }
+.job-status.failed { background: var(--status-error-bg); color: var(--status-error); }
+
+.job-progress {
+  width: 120px;
+  height: 6px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.job-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  background: var(--accent);
+}
+
+.job-progress-fill.complete { background: var(--status-online); }
+.job-progress-fill.error { background: var(--status-error); }
+
+.job-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.job-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.job-filename {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* ══════════════════════════════════════
+   ANIMATIONS
+   ══════════════════════════════════════ */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card { animation: fade-up 0.4s ease backwards; }
+.card:nth-child(1) { animation-delay: 0.05s; }
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.15s; }
+.card:nth-child(4) { animation-delay: 0.2s; }
+.card:nth-child(5) { animation-delay: 0.25s; }
+
+.studio-header { animation: fade-up 0.4s ease; }
+.print-queue-section { animation: fade-up 0.4s ease 0.3s backwards; }
+
+/* Ink shimmer on hover */
+.printer-item:hover .ink-bar-fill {
+  filter: brightness(1.2);
+}
+
+/* Active printing animation */
+@keyframes print-scan {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+  100% { transform: translateY(0); }
+}
+
+.printer-item.is-printing .printer-icon {
+  animation: print-scan 1s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="#">Инфраструктура</a>
+    <span class="sep">/</span>
+    <a href="#">Точки</a>
+    <span class="sep">/</span>
+    <span style="color: var(--text-primary)">2-я Баррикадная 4</span>
+  </div>
+
+  <!-- Studio Header -->
+  <div class="studio-header">
+    <div class="studio-info">
+      <h1>2-я Баррикадная 4</h1>
+      <div class="address">Ростов-на-Дону, ул. 2-я Баррикадная, д. 4 &nbsp;|&nbsp; Своё Фото</div>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+      <div class="studio-stats">
+        <div class="stat-pill online">
+          <span class="dot"></span>
+          4 online
+        </div>
+        <div class="stat-pill offline">
+          <span class="dot"></span>
+          0 offline
+        </div>
+      </div>
+      <div class="last-heartbeat">heartbeat 12s ago</div>
+    </div>
+  </div>
+
+  <!-- Dashboard Grid -->
+  <div class="dashboard-grid">
+
+    <!-- ═══ PC / Monitor ═══ -->
+    <div class="card">
+      <div class="card-header">
+        <h3><span class="icon">&#9654;</span> MagnusPhoto &nbsp;<span style="font-weight:300;opacity:0.5">Windows 11 Pro</span></h3>
+        <span class="status-dot online"></span>
+      </div>
+      <div class="card-body">
+        <div class="pc-stats">
+          <div class="metric">
+            <span class="metric-label">CPU</span>
+            <span class="metric-value">12<span class="unit">%</span></span>
+            <div class="progress-track">
+              <div class="progress-fill ok" style="width:12%"></div>
+            </div>
+          </div>
+          <div class="metric">
+            <span class="metric-label">RAM</span>
+            <span class="metric-value">18.2<span class="unit">/ 32 GB</span></span>
+            <div class="progress-track">
+              <div class="progress-fill ok" style="width:57%"></div>
+            </div>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Disk C:</span>
+            <span class="metric-value">78<span class="unit">/ 120 GB</span></span>
+            <div class="progress-track">
+              <div class="progress-fill warn" style="width:65%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span class="metric-label">Uptime: 14d 3h 22m</span>
+        </div>
+
+        <div class="agent-badges">
+          <div class="agent-badge active"><span class="badge-dot"></span>POS <span class="ver">0.1.0</span></div>
+          <div class="agent-badge active"><span class="badge-dot"></span>Monitor <span class="ver">0.1.0</span></div>
+          <div class="agent-badge active"><span class="badge-dot"></span>Print <span class="ver">0.1.0</span></div>
+          <div class="agent-badge active"><span class="badge-dot"></span>Guard <span class="ver">0.1.0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Printers ═══ -->
+    <div class="card">
+      <div class="card-header">
+        <h3><span class="icon">&#9113;</span> Принтеры</h3>
+        <span style="font-size:12px; color:var(--text-muted); font-family:var(--font-mono)">2 устройства</span>
+      </div>
+      <div class="card-body">
+        <div class="printer-list">
+
+          <!-- Epson -->
+          <div class="printer-item">
+            <div class="printer-icon photo">&#9634;</div>
+            <div class="printer-details">
+              <div class="printer-name">
+                EPSON L8050
+                <span class="printer-type-tag photo">inkjet photo</span>
+              </div>
+              <div class="printer-status-row">
+                <span class="status-dot online"></span>
+                <span class="printer-status-text idle">Готов</span>
+                <span class="queue-badge">0 в очереди</span>
+              </div>
+              <div class="ink-levels">
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:78%;background:var(--ink-cyan)"></div></div>
+                  <span class="ink-bar-label">C</span>
+                </div>
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:65%;background:var(--ink-magenta)"></div></div>
+                  <span class="ink-bar-label">M</span>
+                </div>
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:82%;background:var(--ink-yellow)"></div></div>
+                  <span class="ink-bar-label">Y</span>
+                </div>
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:54%;background:var(--ink-black)"></div></div>
+                  <span class="ink-bar-label">K</span>
+                </div>
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:70%;background:var(--ink-light-cyan)"></div></div>
+                  <span class="ink-bar-label">LC</span>
+                </div>
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:60%;background:var(--ink-light-magenta)"></div></div>
+                  <span class="ink-bar-label">LM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Canon -->
+          <div class="printer-item is-printing">
+            <div class="printer-icon laser">&#9634;</div>
+            <div class="printer-details">
+              <div class="printer-name">
+                Canon MF650C
+                <span class="printer-type-tag laser">laser mfp</span>
+              </div>
+              <div class="printer-status-row">
+                <span class="status-dot printing"></span>
+                <span class="printer-status-text printing">Печатает</span>
+                <span class="queue-badge">3 в очереди</span>
+              </div>
+              <div class="ink-levels">
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:45%;background:var(--ink-cyan)"></div></div>
+                  <span class="ink-bar-label">C</span>
+                </div>
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:32%;background:var(--ink-magenta)"></div></div>
+                  <span class="ink-bar-label">M</span>
+                </div>
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:58%;background:var(--ink-yellow)"></div></div>
+                  <span class="ink-bar-label">Y</span>
+                </div>
+                <div class="ink-bar">
+                  <div class="ink-bar-track"><div class="ink-bar-fill" style="height:90%;background:var(--ink-black)"></div></div>
+                  <span class="ink-bar-label">K</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ POS ═══ -->
+    <div class="card">
+      <div class="card-header">
+        <h3><span class="icon">&#9733;</span> POS-терминал</h3>
+        <span class="status-dot online"></span>
+      </div>
+      <div class="card-body">
+        <div class="pos-grid">
+          <div class="pos-item">
+            <div class="pos-item-header">
+              <span class="pos-item-name">INPAS SmartSale</span>
+              <span class="status-dot online" style="width:8px;height:8px"></span>
+            </div>
+            <div class="pos-item-value" style="color:var(--status-online)">Online</div>
+            <div class="pos-item-sub">Последняя оплата: 14:32</div>
+          </div>
+          <div class="pos-item">
+            <div class="pos-item-header">
+              <span class="pos-item-name">АТОЛ WebServer</span>
+              <span class="status-dot online" style="width:8px;height:8px"></span>
+            </div>
+            <div class="pos-item-value" style="color:var(--status-online)">Online</div>
+            <div class="pos-item-sub">Смена #247 открыта</div>
+          </div>
+          <div class="pos-item">
+            <div class="pos-item-header">
+              <span class="pos-item-name">Сегодня</span>
+            </div>
+            <div class="pos-item-value">12 <span class="unit">продаж</span></div>
+            <div class="pos-item-sub">18 450 &#8381;</div>
+          </div>
+          <div class="pos-item">
+            <div class="pos-item-header">
+              <span class="pos-item-name">Последний чек</span>
+            </div>
+            <div class="pos-item-value">590 <span class="unit">&#8381;</span></div>
+            <div class="pos-item-sub">14:32 &middot; Фото на паспорт</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Security ═══ -->
+    <div class="card">
+      <div class="card-header">
+        <h3><span class="icon">&#9919;</span> Безопасность</h3>
+        <span class="status-dot online"></span>
+      </div>
+      <div class="card-body">
+        <div class="security-grid">
+          <div class="sec-metric">
+            <div class="sec-metric-icon" style="color:var(--status-online)">&#10003;</div>
+            <div class="sec-metric-value" style="color:var(--status-online)">ON</div>
+            <div class="sec-metric-label">Real-time</div>
+          </div>
+          <div class="sec-metric">
+            <div class="sec-metric-icon">&#128197;</div>
+            <div class="sec-metric-value">29.03</div>
+            <div class="sec-metric-label">Definitions</div>
+          </div>
+          <div class="sec-metric">
+            <div class="sec-metric-icon">&#128269;</div>
+            <div class="sec-metric-value">26.03</div>
+            <div class="sec-metric-label">Last scan</div>
+          </div>
+          <div class="sec-metric">
+            <div class="sec-metric-icon" style="color:var(--status-online)">0</div>
+            <div class="sec-metric-value" style="color:var(--status-online)">Clean</div>
+            <div class="sec-metric-label">Threats</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span class="metric-label">CDR: 847 файлов &middot; baseline 28.03</span>
+        </div>
+
+        <div class="sec-actions">
+          <button class="btn">&#9889; Quick Scan</button>
+          <button class="btn">&#8635; Update Definitions</button>
+          <button class="btn">&#128270; Full Scan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Alerts ═══ -->
+    <div class="card full-width">
+      <div class="card-header">
+        <h3><span class="icon">&#9888;</span> Алерты студии</h3>
+        <span style="font-size:12px; color:var(--text-muted); font-family:var(--font-mono)">3 активных</span>
+      </div>
+      <div class="card-body">
+        <div class="alert-list">
+          <div class="alert-item warning">
+            <span class="status-dot warning"></span>
+            <span class="alert-time">14:28</span>
+            <span class="alert-text">Canon MF650C: Тонер Magenta &lt; 35% &mdash; заказать картридж</span>
+            <span class="alert-source">print-agent</span>
+          </div>
+          <div class="alert-item info">
+            <span class="status-dot" style="background:var(--accent)"></span>
+            <span class="alert-time">13:45</span>
+            <span class="alert-text">Disk C: свободно 42 GB (35%) &mdash; рекомендуется очистка temp</span>
+            <span class="alert-source">monitor</span>
+          </div>
+          <div class="alert-item info">
+            <span class="status-dot" style="background:var(--accent)"></span>
+            <span class="alert-time">09:15</span>
+            <span class="alert-text">Guard: CDR baseline обновлён, 847 файлов, 0 изменений</span>
+            <span class="alert-source">guard</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ Print Queue ═══ -->
+  <div class="print-queue-section">
+    <h2 class="section-title">Очередь печати</h2>
+
+    <table class="queue-table">
+      <thead>
+        <tr>
+          <th>Файл</th>
+          <th>Принтер</th>
+          <th>Бумага</th>
+          <th>Копии</th>
+          <th>Статус</th>
+          <th>Прогресс</th>
+          <th>Время</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="job-file">
+              <div class="job-thumb">&#128247;</div>
+              <span class="job-filename">passport_ivanov.jpg</span>
+            </div>
+          </td>
+          <td>EPSON L8050</td>
+          <td><span style="font-family:var(--font-mono);font-size:12px">10x15</span></td>
+          <td><span style="font-family:var(--font-mono)">3</span></td>
+          <td><span class="job-status completed"><span class="status-dot online" style="width:6px;height:6px"></span>Готово</span></td>
+          <td>
+            <div class="job-progress"><div class="job-progress-fill complete" style="width:100%"></div></div>
+          </td>
+          <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">14:32</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="job-file">
+              <div class="job-thumb">&#128196;</div>
+              <span class="job-filename">dogovor_arendy.pdf</span>
+            </div>
+          </td>
+          <td>Canon MF650C</td>
+          <td><span style="font-family:var(--font-mono);font-size:12px">A4</span></td>
+          <td><span style="font-family:var(--font-mono)">2</span></td>
+          <td><span class="job-status printing"><span class="status-dot printing" style="width:6px;height:6px"></span>Печать</span></td>
+          <td>
+            <div class="job-progress"><div class="job-progress-fill" style="width:67%"></div></div>
+          </td>
+          <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">14:35</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="job-file">
+              <div class="job-thumb">&#128247;</div>
+              <span class="job-filename">family_photo_20x30.jpg</span>
+            </div>
+          </td>
+          <td>EPSON L8050</td>
+          <td><span style="font-family:var(--font-mono);font-size:12px">20x30</span></td>
+          <td><span style="font-family:var(--font-mono)">1</span></td>
+          <td><span class="job-status queued">В очереди</span></td>
+          <td>
+            <div class="job-progress"><div class="job-progress-fill" style="width:0%"></div></div>
+          </td>
+          <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">14:36</span></td>
+        </tr>
+        <tr>
+          <td>
+            <div class="job-file">
+              <div class="job-thumb" style="color:var(--status-error)">&#10060;</div>
+              <span class="job-filename">scan_corrupted.tiff</span>
+            </div>
+          </td>
+          <td>Canon MF650C</td>
+          <td><span style="font-family:var(--font-mono);font-size:12px">A4</span></td>
+          <td><span style="font-family:var(--font-mono)">1</span></td>
+          <td><span class="job-status failed"><span class="status-dot error" style="width:6px;height:6px"></span>Ошибка</span></td>
+          <td>
+            <div class="job-progress"><div class="job-progress-fill error" style="width:100%"></div></div>
+          </td>
+          <td><span style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted)">14:30</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+</body>
+</html>

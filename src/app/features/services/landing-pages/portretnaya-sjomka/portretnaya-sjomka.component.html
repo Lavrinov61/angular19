@@ -1,0 +1,363 @@
+<div class="portrait-page">
+
+  <!-- ══════════════════════════════════════════════════════════
+       1. HERO, «Фотосессия бесплатно? Серьёзно?»
+  ══════════════════════════════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero__inner">
+      <div class="hero__text">
+
+        <div class="hero__eyebrow">
+          <span class="hero__eyebrow-dot"></span>
+          Профессиональная съёмка · Ростов-на-Дону
+        </div>
+
+        <h1 class="hero__title">
+          <span class="hero__title-line">Фотосессия</span>
+          <span class="hero__title-line hero__title-line--accent">бесплатно</span>
+        </h1>
+
+        <p class="hero__subtitle">
+          Платите только за кадры, которые нравятся, <strong>900₽ за фото</strong>.
+          Не за сессию, не за всё подряд, только за результат.
+        </p>
+
+        <div class="hero__pills">
+          <span class="hero__pill"><mat-icon>check_circle</mat-icon> Любой фон</span>
+          <span class="hero__pill"><mat-icon>check_circle</mat-icon> Для резюме, бизнеса, соцсетей</span>
+          <span class="hero__pill"><mat-icon>check_circle</mat-icon> Переснимем бесплатно</span>
+        </div>
+
+        <div class="hero__actions">
+          <a class="hero__cta-primary" routerLink="/booking">
+            <mat-icon>event_available</mat-icon>
+            Записаться на съёмку
+          </a>
+          <button class="hero__cta-secondary" (click)="openChat()">
+            <mat-icon>chat</mat-icon>
+            Написать в чат
+          </button>
+        </div>
+
+        <p class="hero__walkin">или просто приходите без записи, пн-вс 9:00-19:30</p>
+      </div>
+
+      <div class="hero__media">
+        <div class="hero__image-wrap">
+          <img
+            src="/assets/static/promo/portrait-hero.webp"
+            alt="Профессиональный портрет, Своё Фото"
+            class="hero__image"
+            loading="eager"
+          />
+          <div class="hero__price-badge">
+            <span class="hero__price-badge-free">Съёмка бесплатно</span>
+            <span class="hero__price-badge-price">900₽ <em>за кадр</em></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero__bg-accent" aria-hidden="true"></div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       2. КОНТРАСТ, «Это не обычная фотосессия»
+  ══════════════════════════════════════════════════════════ -->
+  <section class="contrast-section" appScrollReveal>
+    <div class="section-container">
+      <div class="contrast-grid">
+        <div class="contrast-card contrast-card--bad">
+          <div class="contrast-card__label">У конкурентов</div>
+          <ul class="contrast-list">
+            <li><mat-icon>close</mat-icon> Заплатил 5000₽ сразу</li>
+            <li><mat-icon>close</mat-icon> Получил всё подряд</li>
+            <li><mat-icon>close</mat-icon> Ничего действительно хорошего</li>
+            <li><mat-icon>close</mat-icon> Деньги уже не вернуть</li>
+          </ul>
+        </div>
+
+        <div class="contrast-divider">
+          <span>VS</span>
+        </div>
+
+        <div class="contrast-card contrast-card--good">
+          <div class="contrast-card__label contrast-card__label--good">У нас</div>
+          <ul class="contrast-list contrast-list--good">
+            <li><mat-icon>check_circle</mat-icon> Фотосессия бесплатно</li>
+            <li><mat-icon>check_circle</mat-icon> Сами выбираете лучшие кадры</li>
+            <li><mat-icon>check_circle</mat-icon> Платите только за понравившееся</li>
+            <li><mat-icon>check_circle</mat-icon> Переснимем, если что</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       2.5. ЦЕЛИ, «Выберите вашу задачу»
+  ══════════════════════════════════════════════════════════ -->
+  <section class="goals-section" appScrollReveal>
+    <div class="section-container">
+      <div class="section-header">
+        <p class="section-eyebrow">Под вашу цель</p>
+        <h2 class="section-title">Выберите вашу задачу</h2>
+        <p class="section-subtitle">
+          Один визит, 4 разных образа. Берёте только то, что нравится.
+        </p>
+      </div>
+
+      <div class="goals-grid">
+        @for (goal of goals; track goal.id; let i = $index) {
+          <div class="goal-card" appScrollReveal [delay]="i * 80">
+            <div class="goal-card__visual goal-card__visual--{{ goal.id }}">
+              @if (goal.image) {
+                <img [src]="goal.image" [alt]="goal.title" loading="lazy" />
+              } @else {
+                <div class="goal-card__icon-wrap">
+                  <mat-icon>{{ goal.icon }}</mat-icon>
+                </div>
+              }
+            </div>
+            <div class="goal-card__content">
+              <p class="goal-card__pain">{{ goal.pain }}</p>
+              <h3 class="goal-card__title">{{ goal.title }}</h3>
+              <p class="goal-card__subtitle-label">{{ goal.subtitle }}</p>
+              <p class="goal-card__description">{{ goal.description }}</p>
+              <div class="goal-card__tags">
+                @for (tag of goal.tags; track tag) {
+                  <span class="goal-card__tag">{{ tag }}</span>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       3. ПОРТФОЛИО (скрыто если нет фото)
+  ══════════════════════════════════════════════════════════ -->
+  @if (photoSamples.length > 0) {
+    <section class="portfolio-section" appScrollReveal>
+      <div class="section-container">
+        <div class="section-header">
+          <p class="section-eyebrow">Портфолио</p>
+          <h2 class="section-title">Примеры портретов</h2>
+          <p class="section-subtitle">
+            Разные стили, фоны и образы, один подход: профессиональный результат
+          </p>
+        </div>
+
+        <div class="portfolio-grid">
+          @for (photo of photoSamples; track photo.src; let i = $index) {
+            <div class="portfolio-item" appScrollReveal [delay]="i * 80">
+              <img [src]="photo.src" [alt]="photo.alt" loading="lazy" />
+              <div class="portfolio-overlay">
+                <span class="portfolio-label">{{ photo.label }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- ══════════════════════════════════════════════════════════
+       4. КАК ЭТО РАБОТАЕТ, 4 шага
+  ══════════════════════════════════════════════════════════ -->
+  <section class="process-section" appScrollReveal>
+    <div class="section-container">
+      <div class="section-header">
+        <p class="section-eyebrow">Процесс</p>
+        <h2 class="section-title">Как это работает</h2>
+        <p class="section-subtitle">
+          Тот же подход, что фото на документы: пришёл → сняли → выбрал → заплатил за результат
+        </p>
+      </div>
+
+      <app-process-slider
+        [steps]="processSteps"
+        title=""
+        [autoSlide]="true"
+        [slideInterval]="5000"
+      />
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       5. ЧТО ВЫ ПОЛУЧАЕТЕ, 4 карточки
+  ══════════════════════════════════════════════════════════ -->
+  <section class="benefits-section" appScrollReveal>
+    <div class="section-container">
+      <div class="section-header">
+        <p class="section-eyebrow">Результат</p>
+        <h2 class="section-title">Что вы получаете</h2>
+      </div>
+
+      <div class="benefits-grid">
+        @for (benefit of benefits; track benefit.title; let i = $index) {
+          <div class="benefit-card" appScrollReveal [delay]="i * 100">
+            <div class="benefit-card__icon">
+              <mat-icon>{{ benefit.icon }}</mat-icon>
+            </div>
+            <h3 class="benefit-card__title">{{ benefit.title }}</h3>
+            <p class="benefit-card__description">{{ benefit.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       6. ЦЕНЫ, просто и понятно
+  ══════════════════════════════════════════════════════════ -->
+  <section class="pricing-section" appScrollReveal>
+    <div class="section-container">
+      <div class="section-header">
+        <p class="section-eyebrow">Стоимость</p>
+        <h2 class="section-title">Цены</h2>
+        <p class="section-subtitle">Никаких скрытых платежей</p>
+      </div>
+
+      <div class="pricing-table">
+        <div class="pricing-row pricing-row--hero">
+          <div class="pricing-row__name">
+            <mat-icon>camera_alt</mat-icon>
+            <div>
+              <strong>Фотосессия</strong>
+              <span>Студийный свет, профессиональный фотограф, неограниченные кадры</span>
+            </div>
+          </div>
+          <div class="pricing-row__price pricing-row__price--free">
+            БЕСПЛАТНО
+          </div>
+        </div>
+
+        <div class="pricing-row">
+          <div class="pricing-row__name">
+            <mat-icon>photo</mat-icon>
+            <div>
+              <strong>1 выбранный кадр</strong>
+              <span>Файл высокого разрешения, готов к использованию</span>
+            </div>
+          </div>
+          <div class="pricing-row__price">
+            900 <em>₽</em>
+          </div>
+        </div>
+
+        <div class="pricing-row">
+          <div class="pricing-row__name">
+            <mat-icon>brush</mat-icon>
+            <div>
+              <strong>Ручная ретушь художником</strong>
+              <span>За каждый кадр, убираем усталость, сохраняем естественность</span>
+            </div>
+          </div>
+          <div class="pricing-row__price">
+            600 <em>₽</em>
+          </div>
+        </div>
+
+        <div class="pricing-note">
+          <mat-icon>info_outline</mat-icon>
+          <p>Пришли за фото на резюме → снялись в пиджаке. Потом «давайте ещё casual для Tinder». Итого 3 кадра + ретушь 2-х = 900×3 + 700×2 = <strong>4 100₽</strong></p>
+        </div>
+      </div>
+
+      <div class="pricing-cta">
+        <a class="pricing-cta__btn" routerLink="/booking">
+          <mat-icon>event_available</mat-icon>
+          Записаться, фотосессия бесплатно
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       7. ОТЗЫВЫ
+  ══════════════════════════════════════════════════════════ -->
+  <section class="testimonials-section" appScrollReveal>
+    <div class="section-container">
+      <div class="section-header">
+        <p class="section-eyebrow">Отзывы</p>
+        <h2 class="section-title">Клиенты о съёмке</h2>
+      </div>
+      <app-testimonials variant="card" />
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       8. FAQ, снять сомнения
+  ══════════════════════════════════════════════════════════ -->
+  <section class="faq-section" appScrollReveal>
+    <div class="section-container">
+      <div class="section-header">
+        <p class="section-eyebrow">Вопросы</p>
+        <h2 class="section-title">Частые вопросы</h2>
+      </div>
+
+      <mat-accordion class="faq-accordion">
+        @for (item of faqItems; track item.question) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ item.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{ item.answer }}</p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       9. ФИНАЛЬНЫЙ CTA
+  ══════════════════════════════════════════════════════════ -->
+  <section class="final-cta" appScrollReveal>
+    <div class="section-container">
+      <div class="final-cta__content">
+        <h2 class="final-cta__title">
+          Запишитесь на<br>
+          <span class="final-cta__title-accent">бесплатную фотосессию</span>
+        </h2>
+        <p class="final-cta__subtitle">
+          Платите только за фото, которое нравится, 900₽ за кадр
+        </p>
+        <div class="final-cta__actions">
+          <a class="final-cta__primary" routerLink="/booking">
+            <mat-icon>event_available</mat-icon>
+            Записаться
+          </a>
+          <button class="final-cta__secondary" (click)="onCallPhone()">
+            <mat-icon>phone</mat-icon>
+            Позвонить
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       10. КОНТАКТЫ
+  ══════════════════════════════════════════════════════════ -->
+  <app-contacts-section
+    [contacts]="contactsData"
+    [addresses]="addresses"
+    [isMobile]="isMobile()"
+    [isTablet]="isTablet()"
+    [isDesktop]="isDesktop()"
+  />
+
+  <!-- Sticky CTA (mobile) -->
+  @if (showStickyCta()) {
+    <div class="sticky-cta">
+      <a class="sticky-cta__btn" routerLink="/booking">
+        <mat-icon>event_available</mat-icon>
+        Записаться, бесплатно
+      </a>
+    </div>
+  }
+
+</div>

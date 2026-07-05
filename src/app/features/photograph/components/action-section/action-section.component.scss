@@ -1,0 +1,42 @@
+// Action Section — editorial dark cinematic layout, mobile-first
+
+.action-section {
+  padding: 3rem 1rem;
+  background: var(--ed-surface, #0a0a0a);
+  @media (min-width: 840px) { padding: 5rem 2rem; }
+
+  .action-container { max-width: 1200px; margin: 0 auto; text-align: center; }
+
+  .cta-title {
+    font-family: var(--ed-font-display, 'Oswald', sans-serif);
+    font-size: 2rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em;
+    margin-bottom: 1rem; color: var(--ed-accent, #f59e0b);
+    @media (min-width: 840px) { font-size: 3rem; }
+  }
+  .cta-subtitle { font-size: 1.1rem; color: var(--ed-on-surface-variant, #a0a0a0); max-width: 600px; margin: 0 auto 3rem; @media (min-width: 840px) { font-size: 1.2rem; } }
+
+  .contact-details mat-card {
+    background: var(--ed-surface-container-high, #222); border-radius: 16px; padding: 2rem;
+    border: 1px solid var(--ed-outline-variant, #2a2a2a);
+  }
+
+  .social-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 18px;
+  }
+
+  .social-link--whatsapp {
+    border: 1px solid rgba(239, 49, 36, 0.48);
+  }
+
+  .social-warning {
+    flex: 0 0 100%;
+    color: #ff8a82;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+}

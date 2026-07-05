@@ -1,0 +1,614 @@
+<main class="restoration-page">
+  <section class="restoration-hero">
+    <div class="section-container restoration-hero__layout">
+      <div class="restoration-hero__copy" appScrollReveal>
+        <p class="hero-kicker">
+          <mat-icon aria-hidden="true">auto_fix_high</mat-icon>
+          <span>Фотостудия Своё Фото</span>
+        </p>
+
+        <h1>Реставрация старых фото</h1>
+
+        <p class="hero-lead">
+          Приезжайте к нам с бумажными фотографиями или пришлите скан через
+          любой мессенджер. Оценим, восстановим лица и детали, подготовим файл
+          для печати или семейного архива.
+        </p>
+
+        <div class="hero-actions" aria-label="Основные действия">
+          <button mat-flat-button class="primary-action" type="button" (click)="startQuickUpload()" [disabled]="isUploading()">
+            <mat-icon aria-hidden="true">upload_file</mat-icon>
+            Прислать фото
+          </button>
+
+          <a mat-flat-button class="secondary-action" href="#contacts" (click)="scrollToSection($event, 'contacts')">
+            Приехать в студию
+          </a>
+        </div>
+
+        <div class="handoff-options" aria-label="Как передать старые фото">
+          @for (option of handoffOptions; track option.title) {
+            <article class="handoff-option">
+              <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+              <div>
+                <strong>{{ option.title }}</strong>
+                <span>{{ option.description }}</span>
+              </div>
+            </article>
+          }
+        </div>
+
+        <input
+          #restorationFileInput
+          class="visually-hidden"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/tiff,image/heic,image/heif,.jpg,.jpeg,.png,.webp,.tif,.tiff,.heic,.heif"
+          multiple
+          (change)="onFilesPicked($event)"
+        />
+      </div>
+
+      <div class="restoration-hero__art" aria-label="Примеры реставрации фото" appScrollReveal>
+        <figure class="archive-card archive-card--main">
+          <img
+            src="/assets/static/promo/restavratsiya-foto.webp"
+            alt="Архивная фотография для реставрации"
+            width="520"
+            height="520"
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
+
+        <figure class="archive-card archive-card--result">
+          <img
+            src="/assets/images/military-retush-1.webp"
+            alt="Восстановленный портрет после ретуши"
+            width="320"
+            height="400"
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
+
+        <div class="floating-label floating-label--damage" aria-hidden="true">
+          <mat-icon>healing</mat-icon>
+          <span>царапины и разрывы</span>
+        </div>
+
+        <div class="floating-label floating-label--print" aria-hidden="true">
+          <mat-icon>print</mat-icon>
+          <span>файл под печать</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-container hero-benefits" aria-label="Ключевые условия">
+      @for (stat of heroStats(); track stat.label) {
+        <article class="hero-benefit">
+          <strong>{{ stat.value }}</strong>
+          <span>{{ stat.label }}</span>
+        </article>
+      }
+    </div>
+  </section>
+
+  <div class="restoration-sheet">
+    <nav class="restoration-tabs section-container" aria-label="Разделы страницы">
+      @for (tab of pageTabs; track tab.id) {
+        <a
+          [attr.href]="'#' + tab.id"
+          class="restoration-tab"
+          [class.restoration-tab--active]="activeSection() === tab.id"
+          [attr.aria-current]="activeSection() === tab.id ? 'true' : null"
+          (click)="scrollToSection($event, tab.id)"
+        >
+          {{ tab.label }}
+        </a>
+      }
+    </nav>
+
+    <section class="promo-panel section-container" id="complexity" appScrollReveal>
+      <div class="promo-panel__copy">
+        <p class="section-kicker">Оценка по исходнику</p>
+        <h2>От 900 ₽ за простую реставрацию</h2>
+        <p>
+          Принесите оригинал в студию или отправьте скан, фото с телефона,
+          снимок из альбома через мессенджер. Мы определим сложность, срок и
+          подскажем, какой результат реально получить.
+        </p>
+
+        <div
+          class="workload-chip"
+          [class.workload-chip--alert]="workloadTone() !== 'normal'"
+        >
+          <mat-icon aria-hidden="true">query_stats</mat-icon>
+          <div>
+            <strong>{{ workloadLeadTime() }}</strong>
+            <span>{{ workloadMessage() }}</span>
+          </div>
+        </div>
+
+        <div class="promo-actions">
+          <button mat-flat-button class="primary-action" type="button" (click)="startQuickUpload()" [disabled]="isUploading()">
+            <mat-icon aria-hidden="true">cloud_upload</mat-icon>
+            Прислать фото
+          </button>
+          <button mat-flat-button class="neutral-action" type="button" (click)="scrollToComplexity()">
+            Сравнить уровни
+          </button>
+        </div>
+      </div>
+
+      <div class="promo-panel__visual" aria-hidden="true">
+        <div class="restore-token restore-token--large">
+          <mat-icon>photo_library</mat-icon>
+          <span>исходник</span>
+        </div>
+        <div class="restore-token restore-token--red">
+          <mat-icon>auto_fix_high</mat-icon>
+          <strong>реставрация</strong>
+        </div>
+        <div class="restore-token restore-token--small">
+          <mat-icon>done</mat-icon>
+          <span>готово</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="order-shell section-container" id="restoration-order" appScrollReveal>
+      <div class="order-card order-card--form" id="restoration-quick-upload" aria-live="polite">
+        <h2>Принесите или пришлите фото, мы оценим</h2>
+
+        <div class="load-note">
+          <mat-icon aria-hidden="true">speed</mat-icon>
+          <span>Текущая очередь: <strong>{{ workloadLeadTime() }}</strong>, {{ workloadSummary() }}</span>
+        </div>
+
+        <div class="output-target-panel" aria-label="Желаемый размер результата">
+          <div class="output-target-panel__header">
+            <mat-icon aria-hidden="true">aspect_ratio</mat-icon>
+            <div>
+              <strong>Какой результат нужен</strong>
+              <span>Исходный размер определим по файлу, здесь выберите только итог.</span>
+            </div>
+          </div>
+
+          <div class="output-target-grid">
+            @for (option of outputTargetOptions; track option.id) {
+              <button
+                type="button"
+                class="output-target-option"
+                [class.output-target-option--active]="selectedOutputTargetId() === option.id"
+                [attr.aria-pressed]="selectedOutputTargetId() === option.id"
+                (click)="selectOutputTarget(option.id)"
+              >
+                <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                <strong>{{ option.title }}</strong>
+                <span>{{ option.description }}</span>
+              </button>
+            }
+          </div>
+
+          @if (selectedOutputTargetId() === 'custom') {
+            <div class="custom-output-size">
+              <label>
+                <span>Ширина, см</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="0.1"
+                  inputmode="decimal"
+                  [value]="customOutputWidthCm()"
+                  (input)="onCustomOutputSizeInput('width', $event)"
+                />
+              </label>
+              <label>
+                <span>Высота, см</span>
+                <input
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="0.1"
+                  inputmode="decimal"
+                  [value]="customOutputHeightCm()"
+                  (input)="onCustomOutputSizeInput('height', $event)"
+                />
+              </label>
+            </div>
+          }
+
+          @if (outputTargetError(); as error) {
+            <div class="output-target-error">
+              <mat-icon aria-hidden="true">error_outline</mat-icon>
+              <span>{{ error }}</span>
+            </div>
+          }
+        </div>
+
+        <div
+          class="quick-upload-drop"
+          appDragDrop
+          role="button"
+          tabindex="0"
+          [attr.aria-disabled]="isUploading()"
+          [class.drag-over]="isDragOver()"
+          [class.has-files]="uploadRows().length > 0"
+          [class.is-disabled]="isUploading()"
+          (fileDropped)="onFilesDropped($event)"
+          (dragover)="onUploadDragOver()"
+          (dragleave)="onUploadDragLeave()"
+          (click)="startQuickUpload()"
+          (keydown)="onUploadKeydown($event)"
+        >
+          @if (uploadRows().length === 0) {
+            <div class="drop-placeholder">
+              <mat-icon class="drop-icon" aria-hidden="true">cloud_upload</mat-icon>
+              <p class="drop-text-main">Перетащите старое фото</p>
+              <p class="drop-text-sub">или нажмите для выбора файла</p>
+              <small>Можно также прислать через мессенджер или принести оригинал в студию</small>
+            </div>
+          } @else {
+            <div class="add-more-panel">
+              <mat-icon aria-hidden="true">add_photo_alternate</mat-icon>
+              <div class="add-more-copy">
+                <p class="add-more-title">Выбрать другие фото</p>
+                <p class="add-more-hint">Нажмите или перетащите файлы сюда</p>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (uploadRows().length > 0) {
+          <div
+            class="upload-monitor"
+            [class.has-errors]="uploadErrorCount() > 0"
+            [class.is-complete]="!isAnalyzingUpload() && !hasActiveUploadRows() && uploadErrorCount() === 0"
+            [class.is-analyzing]="isAnalyzingUpload()"
+            aria-live="polite"
+          >
+            <div class="upload-monitor-header">
+              <div class="upload-monitor-title">
+                <mat-icon aria-hidden="true">{{ uploadStatusIcon() }}</mat-icon>
+                <div class="upload-monitor-copy">
+                  <span class="upload-monitor-main">{{ uploadStatusTitle() }}</span>
+                  <span class="upload-monitor-hint">{{ uploadStatusHint() }}</span>
+                </div>
+              </div>
+              <span class="upload-monitor-percent">{{ uploadProgressLabel() }}</span>
+            </div>
+
+            <mat-progress-bar
+              [mode]="isAnalyzingUpload() ? 'indeterminate' : 'determinate'"
+              [value]="uploadProgressPercent()"
+              class="upload-progress"
+            />
+
+            <div class="upload-queue" role="list" aria-label="Статус загрузки фотографий">
+              @for (file of uploadRows(); track file.id) {
+                <div
+                  class="upload-row"
+                  [class.pending]="file.status === 'queued'"
+                  [class.uploading]="file.status === 'uploading'"
+                  [class.uploaded]="file.status === 'done'"
+                  [class.error]="file.status === 'error'"
+                  role="listitem"
+                >
+                  <mat-icon class="upload-row-icon" aria-hidden="true">{{ uploadRowStatusIcon(file) }}</mat-icon>
+                  <div class="upload-row-copy">
+                    <span class="upload-row-name" [title]="file.name">{{ file.name }}</span>
+                    <span class="upload-row-status">{{ uploadRowStatusLabel(file) }} · {{ file.sizeLabel }}</span>
+                  </div>
+                  <span class="upload-row-percent">{{ uploadRowPercent(file) }}%</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (uploadError(); as error) {
+          <div class="upload-error">
+            <mat-icon aria-hidden="true">error_outline</mat-icon>
+            <span>{{ error }}</span>
+          </div>
+        }
+
+        @if (estimate(); as quote) {
+          <div class="quick-estimate">
+            <div class="quick-estimate__body">
+              <span class="quick-estimate__label">
+                {{ quote.humanReviewRequired ? 'AI-анализ: нужна проверка' : 'AI-анализ' }}
+              </span>
+              <strong>{{ quote.title }}</strong>
+              <p>{{ estimateReason() }}</p>
+
+              <div class="quick-estimate__meta">
+                @if (quote.outputTarget) {
+                  <span>
+                    <mat-icon aria-hidden="true">aspect_ratio</mat-icon>
+                    {{ quote.outputTarget.label }}
+                  </span>
+                }
+                @if (quote.confidence !== undefined && quote.confidence > 0) {
+                  <span>
+                    <mat-icon aria-hidden="true">psychology</mat-icon>
+                    уверенность {{ confidencePercent(quote.confidence) }}%
+                  </span>
+                }
+                @if (outputScaleSummary(); as scale) {
+                  <span>
+                    <mat-icon aria-hidden="true">straighten</mat-icon>
+                    {{ scale }}
+                  </span>
+                }
+              </div>
+
+              @if (analysisChips().length > 0) {
+                <div class="quick-estimate__chips" aria-label="Критерии оценки">
+                  @for (chip of analysisChips(); track chip) {
+                    <span>{{ chip }}</span>
+                  }
+                </div>
+              }
+            </div>
+            <div class="quick-estimate__price">
+              <strong>{{ quote.priceLabel }}</strong>
+              <span>{{ quote.leadTime }}</span>
+            </div>
+            @if (canPayEstimate()) {
+              <button mat-flat-button class="primary-action quick-estimate__pay" type="button" (click)="goToPayment()">
+                <mat-icon aria-hidden="true">payments</mat-icon>
+                Оплатить и запустить
+              </button>
+            } @else {
+              <div class="quick-estimate__review">
+                <mat-icon aria-hidden="true">support_agent</mat-icon>
+                <span>{{ estimateActionHint() }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        <div class="security-note">
+          <mat-icon aria-hidden="true">shield</mat-icon>
+          <span>Оригиналы и сканы используем только для оценки и выполнения заказа</span>
+        </div>
+      </div>
+
+      <aside class="order-card order-card--addons">
+        <h3>Что ещё можем после реставрации</h3>
+
+        <div class="addon-list">
+          @for (format of mayFormats; track format.title) {
+            <article class="addon-row">
+              <mat-icon aria-hidden="true">{{ format.icon }}</mat-icon>
+              <div>
+                <strong>{{ format.title }}</strong>
+                <span>{{ format.description }}</span>
+              </div>
+            </article>
+          }
+        </div>
+
+        @if (canPayEstimate()) {
+          <button mat-flat-button class="primary-action order-submit" type="button" (click)="goToPayment()">
+            Продолжить
+          </button>
+        } @else if (estimate()) {
+          <button mat-flat-button class="secondary-action order-submit" type="button" (click)="scrollToContacts()">
+            Контакты студии
+          </button>
+        } @else {
+          <button mat-flat-button class="primary-action order-submit" type="button" (click)="startQuickUpload()" [disabled]="isUploading()">
+            Продолжить
+          </button>
+        }
+
+        <p class="order-disclaimer">
+          Перед оплатой покажем предварительную стоимость. Если исходник требует
+          отдельного согласования, свяжемся до начала работы.
+        </p>
+      </aside>
+    </section>
+
+    <section class="award-strip section-container" appScrollReveal>
+      <mat-icon aria-hidden="true">emoji_events</mat-icon>
+      <div>
+        <strong>Семейные архивы, памятные портреты и фото для печати</strong>
+        <span>Оцениваем исходник честно и не обещаем невозможное по разрушенным деталям.</span>
+      </div>
+    </section>
+
+    <section class="capabilities-section section-band" appScrollReveal>
+      <div class="section-container">
+        <div class="section-heading">
+          <p class="section-kicker">Что берём в работу</p>
+          <h2>Восстанавливаем не фильтром, а ручной ретушью</h2>
+          <p>
+            Сначала смотрим, какие детали сохранились, потом называем понятную
+            вилку по цене, срокам и результату.
+          </p>
+        </div>
+
+        <div class="capability-grid">
+          @for (item of capabilities; track item.title) {
+            <article class="capability-card">
+              <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.description }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="tier-section section-band" id="complexity-tiers" appScrollReveal>
+      <div class="section-container">
+        <div class="section-heading section-heading--split">
+          <div>
+            <p class="section-kicker">Сложность и цена</p>
+            <h2>Показываем вилку до начала работы</h2>
+          </div>
+          <p>
+            Стоимость зависит от повреждений, размера файла, ручной дорисовки
+            и того, нужен ли макет для печати.
+          </p>
+        </div>
+
+        <div class="tier-grid">
+          @for (tier of complexityTiers; track tier.title) {
+            <article class="tier-card">
+              <div>
+                <h3>{{ tier.title }}</h3>
+                <strong>{{ tier.price }}</strong>
+              </div>
+              <p>{{ tier.description }}</p>
+              <ul>
+                @for (point of tier.points; track point) {
+                  <li>
+                    <mat-icon aria-hidden="true">check</mat-icon>
+                    <span>{{ point }}</span>
+                  </li>
+                }
+              </ul>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="process-section section-band" id="process" appScrollReveal>
+      <div class="section-container">
+        <div class="section-heading section-heading--center">
+          <p class="section-kicker">Этапы</p>
+          <h2>Понятный процесс: в студии или онлайн</h2>
+        </div>
+
+        <div class="process-list">
+          @for (step of processSteps; track step.number) {
+            <article class="process-step">
+              <span>{{ step.number }}</span>
+              <mat-icon aria-hidden="true">{{ step.icon }}</mat-icon>
+              <h3>{{ step.title }}</h3>
+              <p>{{ step.description }}</p>
+            </article>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="result-section section-band" id="result" appScrollReveal>
+      <div class="section-container result-layout">
+        <div class="result-visual">
+          <figure class="result-photo result-photo--main">
+            <img
+              src="/assets/static/promo/restavratsiya-foto.webp"
+              alt="Отреставрированный архивный снимок"
+              width="520"
+              height="640"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+          <figure class="result-photo result-photo--side">
+            <img
+              src="/assets/images/military-retush-3.webp"
+              alt="Готовый восстановленный портрет"
+              width="360"
+              height="460"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        </div>
+
+        <div class="result-copy">
+          <p class="section-kicker">Финальный файл</p>
+          <h2>Готовим результат под реальное использование</h2>
+          <p>
+            Отдаём не просто “улучшенную картинку”, а файл с понятной задачей:
+            архив, печать, открытка, публикация или памятный макет.
+          </p>
+
+          <ul class="result-list">
+            <li>
+              <mat-icon aria-hidden="true">download_done</mat-icon>
+              <span>восстановленный электронный файл</span>
+            </li>
+            <li>
+              <mat-icon aria-hidden="true">crop</mat-icon>
+              <span>версия в нужном размере и пропорциях</span>
+            </li>
+            <li>
+              <mat-icon aria-hidden="true">local_printshop</mat-icon>
+              <span>подготовка под печать в студии или типографии</span>
+            </li>
+            <li>
+              <mat-icon aria-hidden="true">approval</mat-icon>
+              <span>предпросмотр и правки перед финальной выдачей</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials-section section-band" appScrollReveal>
+      <div class="section-container">
+        <div class="section-heading section-heading--center">
+          <p class="section-kicker">Отзывы</p>
+          <h2>Нам доверяют семейные архивы и срочные памятные задачи</h2>
+        </div>
+        <app-testimonials variant="card" [showBookingCta]="false" />
+      </div>
+    </section>
+
+    <section class="faq-section section-band" id="faq" appScrollReveal>
+      <div class="section-container faq-layout">
+        <div class="section-heading">
+          <p class="section-kicker">Вопросы</p>
+          <h2>Главное перед отправкой фото</h2>
+        </div>
+
+        <mat-accordion class="faq-accordion" multi>
+          @for (item of faqItems; track item.question) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ item.question }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <p>{{ item.answer }}</p>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      </div>
+    </section>
+
+    <section class="final-cta section-container" appScrollReveal>
+      <div>
+        <p class="section-kicker">Оценка по фото</p>
+        <h2>Принесите старое фото или пришлите его нам</h2>
+      </div>
+
+      <div class="final-cta__actions">
+        <button mat-flat-button class="primary-action" type="button" (click)="startQuickUpload()" [disabled]="isUploading()">
+          <mat-icon aria-hidden="true">upload_file</mat-icon>
+          Прислать фото
+        </button>
+
+        <button mat-flat-button class="secondary-action secondary-action--dark" type="button" (click)="scrollToContacts()">
+          Контакты студии
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <section id="contacts" class="contacts-shell">
+    <app-contacts-section
+      [contacts]="contactsData"
+      [addresses]="addresses"
+      [isMobile]="isMobile()"
+      [isTablet]="isTablet()"
+      [isDesktop]="isDesktop()"
+    />
+  </section>
+</main>

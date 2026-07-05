@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Персональные сертификаты — Студвесна 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:210mm 297mm;margin:0}
+:root{
+  --bg:#1a1a1a;--bg2:#222;--bg3:#2a2a2a;
+  --am:#d97706;--am2:#f59e0b;--amd:#b45309;--amg:linear-gradient(135deg,#f59e0b,#d97706,#b45309);
+  --gold:#f5d485;--gold2:#e8c36a;
+  --t1:#fff;--t2:#ccc;--t3:#999;
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+body{background:#333;font-family:var(--fb);color:var(--t1);margin:0;padding:30px;display:flex;flex-direction:column;align-items:center;gap:40px;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.a4{width:210mm;height:297mm;background:var(--bg);position:relative;overflow:hidden;display:flex;flex-direction:column;print-color-adjust:exact;-webkit-print-color-adjust:exact;page-break-after:always}
+.a4:last-child{page-break-after:auto}
+@media screen{.a4{box-shadow:0 8px 60px rgba(0,0,0,.5)}}
+@media print{body{background:none;padding:0;gap:0}.a4{box-shadow:none}.controls{display:none!important}}
+
+.cut{position:absolute;left:0;right:0;border-top:0.3px dashed #555;z-index:20;pointer-events:none}
+.cut-1{top:99mm}
+.cut-2{top:198mm}
+
+.cert{width:210mm;height:99mm;position:relative;display:flex;align-items:stretch;overflow:hidden;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.cert::before{content:'';position:absolute;inset:4mm;border:0.5px solid rgba(245,158,11,.35);border-radius:2px;pointer-events:none;z-index:2}
+.cert::after{content:'';position:absolute;top:0;left:0;right:0;height:1.2mm;background:var(--amg);z-index:3;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+.corner{position:absolute;z-index:3;width:12mm;height:12mm}
+.corner::before,.corner::after{content:'';position:absolute;background:var(--am);print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.corner-tl{top:6mm;left:6mm}.corner-tl::before{top:0;left:0;width:8mm;height:0.3px}.corner-tl::after{top:0;left:0;width:0.3px;height:8mm}
+.corner-tr{top:6mm;right:6mm}.corner-tr::before{top:0;right:0;width:8mm;height:0.3px}.corner-tr::after{top:0;right:0;width:0.3px;height:8mm}
+.corner-bl{bottom:6mm;left:6mm}.corner-bl::before{bottom:0;left:0;width:8mm;height:0.3px}.corner-bl::after{bottom:0;left:0;width:0.3px;height:8mm}
+.corner-br{bottom:6mm;right:6mm}.corner-br::before{bottom:0;right:0;width:8mm;height:0.3px}.corner-br::after{bottom:0;right:0;width:0.3px;height:8mm}
+
+.cert-left{flex:1;padding:10mm 8mm 8mm 10mm;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:1}
+.cert-left::before{content:'';position:absolute;top:50%;left:20%;transform:translate(-50%,-50%);width:120mm;height:120mm;border-radius:50%;background:radial-gradient(circle,rgba(217,119,6,.06) 0%,transparent 65%);pointer-events:none}
+
+.cert-event{font-family:var(--fd);font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.35em;color:var(--am2);margin-bottom:3mm}
+.cert-title{font-family:var(--fd);font-weight:800;text-transform:uppercase;line-height:1;letter-spacing:.02em;color:var(--t1);margin-bottom:2.5mm}
+.cert-title.grand{font-size:36px}
+.cert-title.place{font-size:30px}
+.cert-title span{background:var(--amg);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.cert-desc{font-family:var(--fb);font-size:10.5px;font-weight:400;color:var(--t2);line-height:1.5;margin-bottom:4mm;max-width:90mm}
+
+.cert-code-wrap{display:flex;align-items:center;gap:3mm}
+.cert-code{display:inline-flex;align-items:center;gap:2mm;background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.3);border-radius:3px;padding:2mm 4mm;position:relative;overflow:hidden}
+.cert-code::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1mm;background:var(--amg);print-color-adjust:exact;-webkit-print-color-adjust:exact}
+.cert-code-label{font-family:var(--fd);font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--t3)}
+.cert-code-value{font-family:var(--fd);font-size:16px;font-weight:800;letter-spacing:.1em;color:var(--am2)}
+
+.cert-valid{font-family:var(--fb);font-size:8px;color:var(--t3);letter-spacing:.03em}
+.cert-activate{font-family:var(--fb);font-size:7.5px;color:var(--t3);letter-spacing:.03em;margin-top:2mm}
+
+.cert-right{width:52mm;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8mm 6mm;position:relative;z-index:1}
+.cert-right::before{content:'';position:absolute;left:0;top:12mm;bottom:12mm;width:0.3px;background:linear-gradient(180deg,transparent,rgba(245,158,11,.3),transparent);print-color-adjust:exact;-webkit-print-color-adjust:exact}
+
+.cert-brand{font-family:var(--fd);font-size:16px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--t1);margin-bottom:3mm;text-align:center}
+.cert-brand b{color:var(--am2)}
+.cert-qr{width:28mm;height:28mm;background:#fff;border-radius:3px;padding:1.5mm;margin-bottom:3mm;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.4)}
+.cert-qr img{width:100%;height:100%;display:block}
+.cert-contacts{text-align:center;font-size:7.5px;color:var(--t3);line-height:1.6;letter-spacing:.02em}
+.cert-contacts b{color:var(--am2);font-weight:600}
+
+.cert-partners{display:flex;align-items:center;justify-content:center;gap:3mm;margin-bottom:2mm}
+.cert-partners img{height:12mm;border-radius:2px}
+.cert-partners .x{font-family:var(--fd);font-size:12px;font-weight:700;color:var(--t3)}
+
+.controls{background:#222;padding:20px 30px;border-radius:12px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;position:sticky;top:10px;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.controls label{font-size:14px;color:#ccc}
+.controls input{background:#333;border:1px solid #555;color:#fff;padding:6px 12px;border-radius:6px;font-size:14px}
+.controls button{background:var(--am);color:#fff;border:none;padding:8px 20px;border-radius:6px;font-weight:700;cursor:pointer;font-size:14px}
+.controls button:hover{background:var(--amd)}
+.controls .info{font-size:12px;color:#999;width:100%}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <label>Гран-При:</label>
+  <input type="number" id="countGrand" value="5" min="0" max="30" style="width:60px">
+  <label>2 место:</label>
+  <input type="number" id="countPlace2" value="5" min="0" max="30" style="width:60px">
+  <label>Участник:</label>
+  <input type="number" id="countParticipant" value="40" min="0" max="70" style="width:60px">
+  <button onclick="generate()">Сгенерировать</button>
+  <button onclick="window.print()">Печать (Ctrl+P)</button>
+  <div class="info" id="info">Укажи количество и нажми "Сгенерировать"</div>
+</div>
+
+<div id="pages"></div>
+
+<script>
+const CODES = [
+  "SVV-6382M","SVV-NM1M1","SVV-KKM25","SVV-04PMN","SVV-9QLM1","SVV-77QQ6","SVV-5M9L6",
+  "SVV-5K96Q","SVV-78P48","SVV-8KK7L","SVV-NMMNK","SVV-MK209","SVV-8K248","SVV-7PM35",
+  "SVV-N1941","SVV-05Q35","SVV-K4N1L","SVV-L5NQL","SVV-0442P","SVV-3N8PK","SVV-76247",
+  "SVV-558QP","SVV-KM09K","SVV-6P3L3","SVV-0ML98","SVV-27787","SVV-4K32L","SVV-Q88K3",
+  "SVV-P9146","SVV-94823","SVV-QK897","SVV-P343L","SVV-6004M","SVV-Q3N60","SVV-84QQ3",
+  "SVV-KNQLQ","SVV-N7NNP","SVV-M0NP1","SVV-PKQ6L","SVV-LL252","SVV-NQ123","SVV-1QM5Q",
+  "SVV-KKN26","SVV-7P802","SVV-L63K1","SVV-739NL","SVV-15P17","SVV-N4P2M","SVV-P5L94",
+  "SVV-PL3Q3","SVV-68L38","SVV-L3951","SVV-L4M20","SVV-7QK58","SVV-011KQ","SVV-95QQ0",
+  "SVV-106N9","SVV-N40NL","SVV-1948L","SVV-M7NP4","SVV-74278","SVV-43N0N","SVV-33NQ3",
+  "SVV-P8Q96","SVV-L76PQ","SVV-KM1Q2","SVV-7M7M3","SVV-407P0","SVV-238K9","SVV-220Q3"
+];
+
+const TYPES = {
+  grand: { titleClass: 'grand', title: 'Гран-При', desc: 'Подписка на печать 3\u00a0мес бесплатно + AI\u00a0фотосессия + портретная съёмка 5\u00a0кадров для резюме' },
+  place2: { titleClass: 'place', title: '2 Место', desc: 'Подписка на печать 3\u00a0мес бесплатно + AI\u00a0фотосессия' },
+  participant: { titleClass: 'place', title: 'Участник', desc: 'Подписка на печать 3\u00a0мес бесплатно — печать документов или фотопечать на выбор' }
+};
+
+function createCert(type, code) {
+  const t = TYPES[type];
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent('https://svoefoto.ru/subscriptions?promo=' + code);
+
+  const cert = document.createElement('div');
+  cert.className = 'cert';
+
+  const corners = ['tl','tr','bl','br'].map(c => { const d = document.createElement('div'); d.className = 'corner corner-' + c; return d; });
+  corners.forEach(c => cert.appendChild(c));
+
+  const left = document.createElement('div');
+  left.className = 'cert-left';
+
+  const event = document.createElement('div');
+  event.className = 'cert-event';
+  event.textContent = 'Российская студенческая весна 2026';
+
+  const title = document.createElement('div');
+  title.className = 'cert-title ' + t.titleClass;
+  const titleSpan = document.createElement('span');
+  titleSpan.textContent = t.title;
+  title.appendChild(titleSpan);
+
+  const desc = document.createElement('div');
+  desc.className = 'cert-desc';
+  desc.textContent = t.desc;
+
+  const codeWrap = document.createElement('div');
+  codeWrap.className = 'cert-code-wrap';
+
+  const codeBox = document.createElement('div');
+  codeBox.className = 'cert-code';
+  const codeInner = document.createElement('div');
+  codeInner.style.cssText = 'display:flex;flex-direction:column;gap:0.5mm;padding-left:1mm';
+  const codeLabel = document.createElement('span');
+  codeLabel.className = 'cert-code-label';
+  codeLabel.textContent = 'Промокод';
+  const codeValue = document.createElement('span');
+  codeValue.className = 'cert-code-value';
+  codeValue.textContent = code;
+  codeInner.appendChild(codeLabel);
+  codeInner.appendChild(codeValue);
+  codeBox.appendChild(codeInner);
+
+  const valid = document.createElement('div');
+  valid.className = 'cert-valid';
+  valid.textContent = 'Действителен до 15.06.2026';
+
+  codeWrap.appendChild(codeBox);
+  codeWrap.appendChild(valid);
+
+  const activate = document.createElement('div');
+  activate.className = 'cert-activate';
+  activate.textContent = 'Активируй на svoefoto.ru/subscriptions';
+
+  left.appendChild(event);
+  left.appendChild(title);
+  left.appendChild(desc);
+  left.appendChild(codeWrap);
+  left.appendChild(activate);
+
+  const right = document.createElement('div');
+  right.className = 'cert-right';
+
+  const partners = document.createElement('div');
+  partners.className = 'cert-partners';
+
+  const brand = document.createElement('img');
+  brand.src = '../svoefoto-whitelogo.png';
+  brand.alt = 'Своё Фото';
+  brand.style.height = '12mm';
+
+  const xSign = document.createElement('span');
+  xSign.className = 'x';
+  xSign.textContent = '\u00d7';
+
+  const dsmLogo = document.createElement('img');
+  dsmLogo.src = '../src/assets/images/dsm-logo.jpg';
+  dsmLogo.alt = 'ДСМ';
+
+  partners.appendChild(brand);
+  partners.appendChild(xSign);
+  partners.appendChild(dsmLogo);
+
+  const qrWrap = document.createElement('div');
+  qrWrap.className = 'cert-qr';
+  const qrImg = document.createElement('img');
+  qrImg.src = qrUrl;
+  qrImg.alt = 'QR';
+  qrWrap.appendChild(qrImg);
+
+  const contacts = document.createElement('div');
+  contacts.className = 'cert-contacts';
+  const contactsB = document.createElement('b');
+  contactsB.textContent = 'svoefoto.ru';
+  contacts.appendChild(contactsB);
+  contacts.appendChild(document.createTextNode(' \u00b7 @magnus_photo'));
+  contacts.appendChild(document.createElement('br'));
+  contacts.appendChild(document.createTextNode('+7 (901) 417-86-68'));
+
+  right.appendChild(partners);
+  right.appendChild(qrWrap);
+  right.appendChild(contacts);
+
+  cert.appendChild(left);
+  cert.appendChild(right);
+  return cert;
+}
+
+function generate() {
+  const nGrand = parseInt(document.getElementById('countGrand').value) || 0;
+  const nPlace2 = parseInt(document.getElementById('countPlace2').value) || 0;
+  const nPart = parseInt(document.getElementById('countParticipant').value) || 0;
+  const total = nGrand + nPlace2 + nPart;
+
+  if (total > CODES.length) {
+    document.getElementById('info').textContent = 'Нужно ' + total + ' кодов, доступно ' + CODES.length;
+    return;
+  }
+
+  const pages = document.getElementById('pages');
+  pages.replaceChildren();
+
+  let idx = 0;
+  const certs = [];
+  for (let i = 0; i < nGrand; i++) certs.push(createCert('grand', CODES[idx++]));
+  for (let i = 0; i < nPlace2; i++) certs.push(createCert('place2', CODES[idx++]));
+  for (let i = 0; i < nPart; i++) certs.push(createCert('participant', CODES[idx++]));
+
+  for (let i = 0; i < certs.length; i += 3) {
+    const a4 = document.createElement('div');
+    a4.className = 'a4';
+    const cut1 = document.createElement('div');
+    cut1.className = 'cut cut-1';
+    const cut2 = document.createElement('div');
+    cut2.className = 'cut cut-2';
+    a4.appendChild(cut1);
+    a4.appendChild(cut2);
+    a4.appendChild(certs[i]);
+    if (certs[i+1]) a4.appendChild(certs[i+1]);
+    if (certs[i+2]) a4.appendChild(certs[i+2]);
+    pages.appendChild(a4);
+  }
+
+  var numPages = Math.ceil(certs.length / 3);
+  document.getElementById('info').textContent = nGrand + ' Гран-При + ' + nPlace2 + ' 2-место + ' + nPart + ' Участник = ' + total + ' сертификатов на ' + numPages + ' листах';
+}
+</script>
+
+</body>
+</html>

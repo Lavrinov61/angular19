@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Своё Фото — Промо для карт</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════════
+     СВОЁ ФОТО — PROMO TEMPLATES FOR MAPS
+     Design System: Editorial Bold
+     ═══════════════════════════════════════════ */
+
+  :root {
+    /* Brand tokens (from editorial-tokens.scss) */
+    --ed-accent: #f59e0b;
+    --ed-accent-hover: #fbbf24;
+    --ed-accent-dim: #d97706;
+    --ed-on-accent: #0a0a0a;
+    --ed-surface: #0a0a0a;
+    --ed-surface-dim: #111111;
+    --ed-surface-container: #1a1a1a;
+    --ed-surface-container-high: #222222;
+    --ed-on-surface: #f5f5f5;
+    --ed-on-surface-variant: #a0a0a0;
+    --ed-on-surface-muted: #666666;
+    --ed-outline: #3a3a3a;
+
+    --ed-font-display: 'Oswald', sans-serif;
+    --ed-font-body: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #1a1a1a;
+    font-family: var(--ed-font-body);
+    color: var(--ed-on-surface);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 60px;
+  }
+
+  /* ─── Page header ─── */
+  .page-header {
+    text-align: center;
+    max-width: 700px;
+  }
+  .page-header h1 {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--ed-on-surface);
+    margin-bottom: 8px;
+  }
+  .page-header p {
+    color: var(--ed-on-surface-variant);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  .page-header .badge {
+    display: inline-block;
+    background: var(--ed-accent);
+    color: var(--ed-on-accent);
+    font-family: var(--ed-font-display);
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 16px;
+  }
+
+  /* ─── Template section ─── */
+  .template-section {
+    width: 100%;
+    max-width: 900px;
+  }
+  .template-label {
+    font-family: var(--ed-font-display);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ed-accent);
+    margin-bottom: 12px;
+  }
+  .template-meta {
+    font-size: 0.8rem;
+    color: var(--ed-on-surface-muted);
+    margin-bottom: 16px;
+  }
+
+  /* ─── Shared promo card base ─── */
+  .promo-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    /* Each card has its own aspect ratio */
+  }
+
+  /* ═══════════════════════════════════════════
+     TEMPLATE 1 — HERO АКЦИЯ (1200x900, 4:3)
+     Основной промо-баннер для акций и скидок
+     ═══════════════════════════════════════════ */
+  .promo-hero {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--ed-surface);
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+  }
+  .promo-hero .hero-bg {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Diagonal amber slice */
+  .promo-hero .hero-bg::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 55%;
+    height: 140%;
+    background: var(--ed-accent);
+    transform: skewX(-8deg);
+    z-index: 1;
+  }
+  /* Noise texture overlay */
+  .promo-hero .hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .promo-hero .hero-content {
+    grid-area: 1 / 1;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 7% 8%;
+    position: relative;
+  }
+
+  .promo-hero .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .promo-hero .brand-mark {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(0.9rem, 2.2vw, 1.1rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-on-surface);
+  }
+  .promo-hero .brand-mark span {
+    color: var(--ed-accent);
+  }
+  .promo-hero .discount-badge {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 0.9;
+    color: var(--ed-on-accent);
+    text-align: right;
+  }
+  .promo-hero .discount-badge small {
+    display: block;
+    font-size: 0.35em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  .promo-hero .hero-headline {
+    max-width: 55%;
+  }
+  .promo-hero .hero-headline h2 {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 5vw, 3.2rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--ed-on-surface);
+    margin-bottom: 12px;
+  }
+  .promo-hero .hero-headline h2 em {
+    font-style: normal;
+    color: var(--ed-accent);
+  }
+  .promo-hero .hero-headline p {
+    font-family: var(--ed-font-body);
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    color: var(--ed-on-surface-variant);
+    line-height: 1.5;
+    max-width: 320px;
+  }
+
+  .promo-hero .bottom-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .promo-hero .cta-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ed-accent);
+    color: var(--ed-on-accent);
+    font-family: var(--ed-font-body);
+    font-weight: 700;
+    font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+    padding: 10px 24px;
+    border-radius: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .promo-hero .cta-pill .arrow {
+    font-size: 1.1em;
+    transition: transform 0.2s;
+  }
+  .promo-hero .contact-info {
+    text-align: right;
+    font-size: clamp(0.65rem, 1.2vw, 0.78rem);
+    color: var(--ed-on-surface-muted);
+    line-height: 1.6;
+  }
+  .promo-hero .contact-info strong {
+    color: var(--ed-on-surface);
+    font-weight: 600;
+  }
+
+  /* ═══════════════════════════════════════════
+     TEMPLATE 2 — КВАДРАТНАЯ КАРТОЧКА (720x720)
+     Компактный пост — услуга / новинка
+     ═══════════════════════════════════════════ */
+  .promo-square {
+    width: 100%;
+    max-width: 720px;
+    aspect-ratio: 1 / 1;
+    background: var(--ed-surface);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top accent bar */
+  .promo-square::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--ed-accent) 0%, var(--ed-accent-dim) 60%, transparent 100%);
+  }
+
+  /* Corner geometric accent */
+  .promo-square::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 40%;
+    height: 40%;
+    background: linear-gradient(135deg, transparent 50%, color-mix(in srgb, var(--ed-accent) 6%, transparent) 50%);
+    pointer-events: none;
+  }
+
+  .promo-square .sq-header {
+    padding: 8% 8% 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+  }
+  .promo-square .sq-brand {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-on-surface-variant);
+  }
+  .promo-square .sq-tag {
+    font-family: var(--ed-font-body);
+    font-weight: 600;
+    font-size: clamp(0.6rem, 1.2vw, 0.7rem);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ed-accent);
+    border: 1px solid color-mix(in srgb, var(--ed-accent) 30%, transparent);
+    padding: 4px 12px;
+    border-radius: 2px;
+  }
+
+  .promo-square .sq-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 8%;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Giant watermark number */
+  .promo-square .sq-body .watermark {
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(8rem, 22vw, 14rem);
+    color: color-mix(in srgb, var(--ed-accent) 5%, transparent);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .promo-square .sq-body h2 {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 5.5vw, 3.5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--ed-on-surface);
+    margin-bottom: 12px;
+    max-width: 75%;
+  }
+  .promo-square .sq-body h2 .accent {
+    color: var(--ed-accent);
+  }
+  .promo-square .sq-body .desc {
+    font-size: clamp(0.75rem, 1.6vw, 0.9rem);
+    color: var(--ed-on-surface-variant);
+    line-height: 1.5;
+    max-width: 60%;
+  }
+
+  .promo-square .sq-footer {
+    padding: 0 8% 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1;
+  }
+  .promo-square .sq-price {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(1.2rem, 3.5vw, 2rem);
+    color: var(--ed-accent);
+    line-height: 1;
+  }
+  .promo-square .sq-price small {
+    display: block;
+    font-family: var(--ed-font-body);
+    font-weight: 500;
+    font-size: 0.4em;
+    color: var(--ed-on-surface-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+  }
+  .promo-square .sq-address {
+    text-align: right;
+    font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+    color: var(--ed-on-surface-muted);
+    line-height: 1.6;
+  }
+
+  /* ═══════════════════════════════════════════
+     TEMPLATE 3 — СОБЫТИЕ / АНОНС (1200x900, 4:3)
+     Минималистичный, текстовый, журнальный
+     ═══════════════════════════════════════════ */
+  .promo-event {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--ed-surface-dim);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    position: relative;
+  }
+
+  /* Side accent stripe */
+  .promo-event::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: var(--ed-accent);
+  }
+
+  /* Dotted corner motif */
+  .promo-event::after {
+    content: '+ + + +\A+ + + +\A+ + + +';
+    white-space: pre;
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    font-family: var(--ed-font-body);
+    font-size: clamp(0.5rem, 1vw, 0.65rem);
+    color: color-mix(in srgb, var(--ed-accent) 20%, transparent);
+    letter-spacing: 0.5em;
+    line-height: 2;
+    pointer-events: none;
+  }
+
+  .promo-event .ev-header {
+    padding: 7% 8% 0 calc(8% + 6px);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .promo-event .ev-brand {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-on-surface-variant);
+  }
+  .promo-event .ev-date {
+    font-family: var(--ed-font-display);
+    font-weight: 700;
+    font-size: clamp(0.65rem, 1.4vw, 0.8rem);
+    color: var(--ed-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .promo-event .ev-body {
+    padding: 0 8% 0 calc(8% + 6px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .promo-event .ev-body .overline {
+    font-family: var(--ed-font-body);
+    font-weight: 600;
+    font-size: clamp(0.6rem, 1.2vw, 0.72rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-accent);
+    margin-bottom: 16px;
+  }
+  .promo-event .ev-body h2 {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 5.5vw, 3.8rem);
+    line-height: 0.92;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    color: var(--ed-on-surface);
+    margin-bottom: 16px;
+    max-width: 80%;
+  }
+  .promo-event .ev-body .details {
+    display: flex;
+    gap: clamp(16px, 3vw, 32px);
+    flex-wrap: wrap;
+  }
+  .promo-event .ev-body .detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .promo-event .ev-body .detail-item .label {
+    font-size: clamp(0.55rem, 1vw, 0.65rem);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ed-on-surface-muted);
+  }
+  .promo-event .ev-body .detail-item .value {
+    font-family: var(--ed-font-body);
+    font-weight: 600;
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    color: var(--ed-on-surface);
+  }
+
+  .promo-event .ev-footer {
+    padding: 0 8% 7% calc(8% + 6px);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .promo-event .ev-footer .ev-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--ed-font-body);
+    font-weight: 700;
+    font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+    color: var(--ed-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    border-bottom: 2px solid var(--ed-accent);
+    padding-bottom: 4px;
+  }
+  .promo-event .ev-footer .ev-contact {
+    text-align: right;
+    font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+    color: var(--ed-on-surface-muted);
+    line-height: 1.6;
+  }
+
+  /* ═══════════════════════════════════════════
+     TEMPLATE 4 — УСЛУГА-ФОКУС (1200x900, 4:3)
+     Горизонтальная split-layout карточка
+     ═══════════════════════════════════════════ */
+  .promo-split {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--ed-surface);
+    display: grid;
+    grid-template-columns: 48% 1fr;
+    position: relative;
+  }
+
+  .promo-split .split-left {
+    background: var(--ed-accent);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Diagonal texture lines */
+  .promo-split .split-left::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 20px,
+      rgba(0,0,0,0.04) 20px,
+      rgba(0,0,0,0.04) 21px
+    );
+    pointer-events: none;
+  }
+
+  .promo-split .split-left .sl-brand {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(0.7rem, 1.6vw, 0.85rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-on-accent);
+    opacity: 0.6;
+    position: relative;
+  }
+
+  .promo-split .split-left .sl-headline {
+    position: relative;
+  }
+  .promo-split .split-left .sl-headline h2 {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 4.5vw, 3rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--ed-on-accent);
+  }
+
+  .promo-split .split-left .sl-price-block {
+    position: relative;
+  }
+  .promo-split .split-left .sl-price-block .from {
+    font-family: var(--ed-font-body);
+    font-weight: 500;
+    font-size: clamp(0.6rem, 1.2vw, 0.72rem);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ed-on-accent);
+    opacity: 0.6;
+  }
+  .promo-split .split-left .sl-price-block .price {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    color: var(--ed-on-accent);
+    line-height: 1;
+  }
+  .promo-split .split-left .sl-price-block .currency {
+    font-size: 0.5em;
+    vertical-align: super;
+    opacity: 0.7;
+  }
+
+  .promo-split .split-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8%;
+    position: relative;
+  }
+
+  /* Corner accent dot */
+  .promo-split .split-right::after {
+    content: '';
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--ed-accent);
+  }
+
+  .promo-split .sr-features {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 2.5vw, 20px);
+    margin-top: 16px;
+  }
+  .promo-split .sr-feature {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .promo-split .sr-feature .feat-marker {
+    width: 3px;
+    height: 100%;
+    min-height: 24px;
+    background: color-mix(in srgb, var(--ed-accent) 30%, transparent);
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .promo-split .sr-feature .feat-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .promo-split .sr-feature .feat-title {
+    font-family: var(--ed-font-body);
+    font-weight: 700;
+    font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+    color: var(--ed-on-surface);
+  }
+  .promo-split .sr-feature .feat-desc {
+    font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+    color: var(--ed-on-surface-muted);
+    line-height: 1.4;
+  }
+
+  .promo-split .sr-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .promo-split .sr-footer .sr-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ed-surface-container);
+    border: 1px solid var(--ed-outline);
+    color: var(--ed-on-surface);
+    font-family: var(--ed-font-body);
+    font-weight: 600;
+    font-size: clamp(0.65rem, 1.2vw, 0.78rem);
+    padding: 8px 20px;
+    border-radius: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .promo-split .sr-footer .sr-site {
+    font-size: clamp(0.6rem, 1.1vw, 0.7rem);
+    color: var(--ed-on-surface-muted);
+  }
+
+  /* ═══════════════════════════════════════════
+     TEMPLATE 5 — МИНИ-АКЦИЯ КВАДРАТ (720x720)
+     Минимал — крупная скидка, одна фраза
+     ═══════════════════════════════════════════ */
+  .promo-mini {
+    width: 100%;
+    max-width: 720px;
+    aspect-ratio: 1 / 1;
+    background: var(--ed-surface);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Full-bleed radial accent glow */
+  .promo-mini::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--ed-accent) 8%, transparent) 0%,
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+
+  /* Corner frame lines */
+  .promo-mini .frame-tl,
+  .promo-mini .frame-br {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    pointer-events: none;
+  }
+  .promo-mini .frame-tl {
+    top: 7%;
+    left: 7%;
+    border-top: 2px solid var(--ed-accent);
+    border-left: 2px solid var(--ed-accent);
+  }
+  .promo-mini .frame-br {
+    bottom: 7%;
+    right: 7%;
+    border-bottom: 2px solid var(--ed-accent);
+    border-right: 2px solid var(--ed-accent);
+  }
+
+  .promo-mini .mini-brand {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(0.7rem, 1.8vw, 0.85rem);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ed-on-surface-muted);
+    margin-bottom: clamp(24px, 5vw, 40px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .promo-mini .mini-percent {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(6rem, 18vw, 12rem);
+    line-height: 0.85;
+    color: var(--ed-accent);
+    position: relative;
+    z-index: 1;
+  }
+  .promo-mini .mini-percent .sign {
+    font-size: 0.5em;
+    vertical-align: super;
+    opacity: 0.7;
+  }
+
+  .promo-mini .mini-label {
+    font-family: var(--ed-font-display);
+    font-weight: 700;
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: var(--ed-on-surface);
+    margin-top: clamp(8px, 2vw, 16px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .promo-mini .mini-sub {
+    font-family: var(--ed-font-body);
+    font-weight: 500;
+    font-size: clamp(0.65rem, 1.4vw, 0.82rem);
+    color: var(--ed-on-surface-variant);
+    margin-top: clamp(12px, 2vw, 20px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .promo-mini .mini-footer {
+    position: absolute;
+    bottom: 7%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: clamp(0.6rem, 1.1vw, 0.72rem);
+    color: var(--ed-on-surface-muted);
+    letter-spacing: 0.04em;
+    z-index: 1;
+  }
+
+  /* ═══════════════════════════════════════════
+     TEMPLATE 6 — ОТЗЫВ / СОЦИАЛЬНОЕ ДОКАЗАТЕЛЬСТВО
+     (720x720, квадрат)
+     ═══════════════════════════════════════════ */
+  .promo-review {
+    width: 100%;
+    max-width: 720px;
+    aspect-ratio: 1 / 1;
+    background: var(--ed-surface);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle top gradient */
+  .promo-review::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--ed-accent) 4%, transparent) 0%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  .promo-review .rv-header {
+    padding: 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 1;
+  }
+  .promo-review .rv-brand {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(0.7rem, 1.6vw, 0.85rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-on-surface-variant);
+  }
+  .promo-review .rv-stars {
+    display: flex;
+    gap: 4px;
+  }
+  .promo-review .rv-star {
+    width: clamp(14px, 2.5vw, 20px);
+    height: clamp(14px, 2.5vw, 20px);
+    color: var(--ed-accent);
+  }
+
+  .promo-review .rv-body {
+    padding: 0 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+  /* Giant opening quote */
+  .promo-review .rv-body .quote-mark {
+    font-family: Georgia, serif;
+    font-size: clamp(4rem, 10vw, 7rem);
+    color: color-mix(in srgb, var(--ed-accent) 15%, transparent);
+    line-height: 0.5;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+  .promo-review .rv-body blockquote {
+    font-family: var(--ed-font-body);
+    font-weight: 500;
+    font-size: clamp(0.9rem, 2.2vw, 1.25rem);
+    color: var(--ed-on-surface);
+    line-height: 1.55;
+    max-width: 85%;
+  }
+  .promo-review .rv-body .rv-author {
+    margin-top: clamp(16px, 3vw, 24px);
+    font-family: var(--ed-font-body);
+    font-weight: 600;
+    font-size: clamp(0.7rem, 1.3vw, 0.82rem);
+    color: var(--ed-accent);
+  }
+  .promo-review .rv-body .rv-source {
+    font-size: clamp(0.6rem, 1.1vw, 0.7rem);
+    color: var(--ed-on-surface-muted);
+    margin-top: 4px;
+  }
+
+  .promo-review .rv-footer {
+    padding: 0 8% 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1;
+  }
+  .promo-review .rv-footer .rv-rating-text {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    color: var(--ed-accent);
+    line-height: 1;
+  }
+  .promo-review .rv-footer .rv-rating-text small {
+    display: block;
+    font-family: var(--ed-font-body);
+    font-weight: 500;
+    font-size: 0.35em;
+    color: var(--ed-on-surface-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 4px;
+  }
+  .promo-review .rv-footer .rv-site {
+    font-size: clamp(0.6rem, 1.1vw, 0.7rem);
+    color: var(--ed-on-surface-muted);
+  }
+
+  /* ═══════════════════════════════════════════
+     TEMPLATE 7 — STORY: УСЛУГА (1080x1920, 9:16)
+     Вертикальный формат для Историй Яндекс Карт
+     ═══════════════════════════════════════════ */
+  .promo-story {
+    width: 100%;
+    max-width: 540px; /* half-size preview */
+    aspect-ratio: 9 / 16;
+    background: var(--ed-surface);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Side amber stripe */
+  .promo-story::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: var(--ed-accent);
+    z-index: 2;
+  }
+
+  /* Noise texture */
+  .promo-story::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .promo-story .st-header {
+    padding: 8% 8% 0 calc(8% + 6px);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 3;
+  }
+  .promo-story .st-brand {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-on-surface-variant);
+  }
+  .promo-story .st-tag {
+    font-family: var(--ed-font-body);
+    font-weight: 600;
+    font-size: clamp(0.55rem, 1.2vw, 0.7rem);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ed-accent);
+    border: 1px solid color-mix(in srgb, var(--ed-accent) 30%, transparent);
+    padding: 4px 12px;
+    border-radius: 2px;
+  }
+
+  /* Photo area — upper half */
+  .promo-story .st-image {
+    flex: 0 0 45%;
+    margin: 6% 8% 0 calc(8% + 6px);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    z-index: 3;
+    background: var(--ed-surface-container);
+  }
+  .promo-story .st-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+  /* Gradient overlay on image bottom */
+  .promo-story .st-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(180deg, transparent 0%, rgba(10,10,10,0.6) 100%);
+    pointer-events: none;
+  }
+
+  /* Text content — lower half */
+  .promo-story .st-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6% 8% 0 calc(8% + 6px);
+    position: relative;
+    z-index: 3;
+  }
+  .promo-story .st-body .overline {
+    font-family: var(--ed-font-body);
+    font-weight: 600;
+    font-size: clamp(0.55rem, 1.2vw, 0.68rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-accent);
+    margin-bottom: 12px;
+  }
+  .promo-story .st-body h2 {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--ed-on-surface);
+    margin-bottom: 16px;
+  }
+  .promo-story .st-body h2 .accent {
+    color: var(--ed-accent);
+  }
+  .promo-story .st-body .desc {
+    font-size: clamp(0.7rem, 1.5vw, 0.88rem);
+    color: var(--ed-on-surface-variant);
+    line-height: 1.55;
+    max-width: 85%;
+  }
+
+  .promo-story .st-footer {
+    padding: 0 8% 8% calc(8% + 6px);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 3;
+  }
+  .promo-story .st-price {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    color: var(--ed-accent);
+    line-height: 1;
+  }
+  .promo-story .st-price small {
+    display: block;
+    font-family: var(--ed-font-body);
+    font-weight: 500;
+    font-size: 0.38em;
+    color: var(--ed-on-surface-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 4px;
+  }
+  .promo-story .st-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ed-accent);
+    color: var(--ed-on-accent);
+    font-family: var(--ed-font-body);
+    font-weight: 700;
+    font-size: clamp(0.65rem, 1.3vw, 0.8rem);
+    padding: 10px 24px;
+    border-radius: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  /* Corner accent dots */
+  .promo-story .st-dot-tr {
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ed-accent);
+    z-index: 3;
+  }
+
+  /* ═══════════════════════════════════════════
+     TEMPLATE 8 — STORY: АКЦИЯ / СКИДКА (1080x1920, 9:16)
+     Вертикальный, максимальный акцент на скидке
+     ═══════════════════════════════════════════ */
+  .promo-story-discount {
+    width: 100%;
+    max-width: 540px;
+    aspect-ratio: 9 / 16;
+    background: var(--ed-surface);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Full-bleed radial accent glow */
+  .promo-story-discount::before {
+    content: '';
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: 150%;
+    height: 80%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+      ellipse at center,
+      color-mix(in srgb, var(--ed-accent) 10%, transparent) 0%,
+      transparent 55%
+    );
+    pointer-events: none;
+  }
+
+  /* Side stripes */
+  .promo-story-discount::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    background: var(--ed-accent);
+  }
+
+  /* Corner frame lines */
+  .promo-story-discount .frame-tl,
+  .promo-story-discount .frame-br {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .promo-story-discount .frame-tl {
+    top: 6%;
+    left: 6%;
+    border-top: 2px solid var(--ed-accent);
+    border-left: 2px solid var(--ed-accent);
+  }
+  .promo-story-discount .frame-br {
+    bottom: 6%;
+    right: 6%;
+    border-bottom: 2px solid var(--ed-accent);
+    border-right: 2px solid var(--ed-accent);
+  }
+
+  .promo-story-discount .sd-brand {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--ed-on-surface-muted);
+    position: relative;
+    z-index: 1;
+    margin-bottom: clamp(40px, 8vw, 72px);
+  }
+
+  .promo-story-discount .sd-overline {
+    font-family: var(--ed-font-body);
+    font-weight: 600;
+    font-size: clamp(0.6rem, 1.2vw, 0.72rem);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ed-accent);
+    position: relative;
+    z-index: 1;
+    margin-bottom: 16px;
+  }
+
+  .promo-story-discount .sd-percent {
+    font-family: var(--ed-font-display);
+    font-weight: 800;
+    font-size: clamp(7rem, 20vw, 13rem);
+    line-height: 0.85;
+    color: var(--ed-accent);
+    position: relative;
+    z-index: 1;
+  }
+  .promo-story-discount .sd-percent .sign {
+    font-size: 0.45em;
+    vertical-align: super;
+    opacity: 0.7;
+  }
+
+  .promo-story-discount .sd-label {
+    font-family: var(--ed-font-display);
+    font-weight: 700;
+    font-size: clamp(1.1rem, 3vw, 1.8rem);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    color: var(--ed-on-surface);
+    margin-top: clamp(12px, 3vw, 24px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .promo-story-discount .sd-desc {
+    font-family: var(--ed-font-body);
+    font-weight: 500;
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+    color: var(--ed-on-surface-variant);
+    line-height: 1.5;
+    margin-top: clamp(16px, 3vw, 28px);
+    max-width: 75%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .promo-story-discount .sd-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ed-accent);
+    color: var(--ed-on-accent);
+    font-family: var(--ed-font-body);
+    font-weight: 700;
+    font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+    padding: 12px 28px;
+    border-radius: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: clamp(24px, 5vw, 48px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .promo-story-discount .sd-footer {
+    position: absolute;
+    bottom: 6%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: clamp(0.6rem, 1.1vw, 0.72rem);
+    color: var(--ed-on-surface-muted);
+    letter-spacing: 0.04em;
+    z-index: 1;
+  }
+
+  /* ═══════════════════════════════════════════
+     UTILITY — guide text
+     ═══════════════════════════════════════════ */
+  .guide {
+    max-width: 700px;
+    background: var(--ed-surface-container);
+    border: 1px solid var(--ed-outline);
+    border-radius: 8px;
+    padding: 24px 32px;
+    margin-top: -20px;
+  }
+  .guide h3 {
+    font-family: var(--ed-font-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ed-accent);
+    margin-bottom: 8px;
+  }
+  .guide p, .guide li {
+    font-size: 0.82rem;
+    color: var(--ed-on-surface-variant);
+    line-height: 1.6;
+  }
+  .guide ul {
+    list-style: none;
+    padding: 0;
+  }
+  .guide ul li::before {
+    content: '→ ';
+    color: var(--ed-accent);
+    font-weight: 600;
+  }
+  .guide code {
+    background: var(--ed-surface-container-high);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.78rem;
+    color: var(--ed-accent);
+  }
+</style>
+</head>
+<body>
+
+  <!-- ═══ PAGE HEADER ═══ -->
+  <header class="page-header">
+    <div class="badge">Шаблоны</div>
+    <h1>Промо-материалы для карт</h1>
+    <p>Яндекс Бизнес &amp; Google Business Profile<br>
+    В стиле Editorial Bold — айдентика сайта svoefoto.ru</p>
+  </header>
+
+
+  <!-- ═══ TEMPLATE 1: HERO АКЦИЯ (4:3) ═══ -->
+  <section class="template-section">
+    <div class="template-label">Шаблон 1 — Акция / Спецпредложение</div>
+    <div class="template-meta">1200 &times; 900 px &nbsp;|&nbsp; 4:3 &nbsp;|&nbsp; Яндекс Бизнес + Google Business</div>
+    <div class="promo-card promo-hero">
+      <div class="hero-bg"></div>
+      <div class="hero-content">
+        <div class="top-bar">
+          <div class="brand-mark">Своё <span>Фото</span></div>
+          <div class="discount-badge">
+            &minus;30%
+            <small>Весь март</small>
+          </div>
+        </div>
+        <div class="hero-headline">
+          <h2>Семейная<br>съёмка в <em>студии</em></h2>
+          <p>Профессиональная фотосессия с ручной художественной обработкой каждого кадра</p>
+        </div>
+        <div class="bottom-bar">
+          <div class="cta-pill">
+            Записаться <span class="arrow">&rarr;</span>
+          </div>
+          <div class="contact-info">
+            <strong>+7 (901) 417-86-68</strong><br>
+            svoefoto.ru
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ TEMPLATE 2: КВАДРАТ УСЛУГА (1:1) ═══ -->
+  <section class="template-section">
+    <div class="template-label">Шаблон 2 — Услуга / Новинка</div>
+    <div class="template-meta">720 &times; 720 px &nbsp;|&nbsp; 1:1 &nbsp;|&nbsp; Посты в карточке</div>
+    <div class="promo-card promo-square">
+      <div class="sq-header">
+        <div class="sq-brand">Своё Фото</div>
+        <div class="sq-tag">Новая услуга</div>
+      </div>
+      <div class="sq-body">
+        <div class="watermark">&para;</div>
+        <h2>Фото на<br><span class="accent">документы</span></h2>
+        <div class="desc">Мгновенная печать. 6 форматов.<br>Ретушь включена в стоимость.</div>
+      </div>
+      <div class="sq-footer">
+        <div class="sq-price">
+          350 &#8381;
+          <small>Готово за 5 минут</small>
+        </div>
+        <div class="sq-address">
+          Соборный 21<br>
+          2-ая Баррикадная 4
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ TEMPLATE 3: СОБЫТИЕ / АНОНС (4:3) ═══ -->
+  <section class="template-section">
+    <div class="template-label">Шаблон 3 — Событие / Анонс</div>
+    <div class="template-meta">1200 &times; 900 px &nbsp;|&nbsp; 4:3 &nbsp;|&nbsp; Новости и анонсы</div>
+    <div class="promo-card promo-event">
+      <div class="ev-header">
+        <div class="ev-brand">Своё Фото</div>
+        <div class="ev-date">8 Марта 2026</div>
+      </div>
+      <div class="ev-body">
+        <div class="overline">Специальное предложение</div>
+        <h2>Подарочный<br>сертификат<br>на фотосессию</h2>
+        <div class="details">
+          <div class="detail-item">
+            <span class="label">Номинал</span>
+            <span class="value">от 2 000 &#8381;</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Срок действия</span>
+            <span class="value">6 месяцев</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Оформление</span>
+            <span class="value">Фирменный конверт</span>
+          </div>
+        </div>
+      </div>
+      <div class="ev-footer">
+        <div class="ev-cta">
+          Заказать сейчас <span>&rarr;</span>
+        </div>
+        <div class="ev-contact">
+          +7 (901) 417-86-68<br>
+          svoefoto.ru
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ TEMPLATE 4: УСЛУГА SPLIT (4:3) ═══ -->
+  <section class="template-section">
+    <div class="template-label">Шаблон 4 — Услуга с деталями</div>
+    <div class="template-meta">1200 &times; 900 px &nbsp;|&nbsp; 4:3 &nbsp;|&nbsp; Подробная карточка услуги</div>
+    <div class="promo-card promo-split">
+      <div class="split-left">
+        <div class="sl-brand">Своё Фото</div>
+        <div class="sl-headline">
+          <h2>Печать<br>фото<br>с телефона</h2>
+        </div>
+        <div class="sl-price-block">
+          <div class="from">от</div>
+          <div class="price">15<span class="currency"> &#8381;</span></div>
+        </div>
+      </div>
+      <div class="split-right">
+        <div class="sr-features">
+          <div class="sr-feature">
+            <div class="feat-marker"></div>
+            <div class="feat-text">
+              <div class="feat-title">Мгновенная печать</div>
+              <div class="feat-desc">10&times;15, 15&times;21, 21&times;30 и другие форматы</div>
+            </div>
+          </div>
+          <div class="sr-feature">
+            <div class="feat-marker"></div>
+            <div class="feat-text">
+              <div class="feat-title">Отправка по Wi-Fi</div>
+              <div class="feat-desc">Загрузите фото прямо с телефона</div>
+            </div>
+          </div>
+          <div class="sr-feature">
+            <div class="feat-marker"></div>
+            <div class="feat-text">
+              <div class="feat-title">Премиум бумага</div>
+              <div class="feat-desc">Глянец, матовая, шёлк на выбор</div>
+            </div>
+          </div>
+          <div class="sr-feature">
+            <div class="feat-marker"></div>
+            <div class="feat-text">
+              <div class="feat-title">Без очереди</div>
+              <div class="feat-desc">Готово за 3&ndash;5 минут</div>
+            </div>
+          </div>
+        </div>
+        <div class="sr-footer">
+          <div class="sr-cta">Подробнее &rarr;</div>
+          <div class="sr-site">svoefoto.ru</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ TEMPLATE 5: МИНИ-СКИДКА (1:1) ═══ -->
+  <section class="template-section">
+    <div class="template-label">Шаблон 5 — Скидка / Flash-акция</div>
+    <div class="template-meta">720 &times; 720 px &nbsp;|&nbsp; 1:1 &nbsp;|&nbsp; Максимальный акцент на скидке</div>
+    <div class="promo-card promo-mini">
+      <div class="frame-tl"></div>
+      <div class="frame-br"></div>
+      <div class="mini-brand">Своё Фото</div>
+      <div class="mini-percent">&minus;20<span class="sign">%</span></div>
+      <div class="mini-label">На все услуги</div>
+      <div class="mini-sub">Только до 15 марта &nbsp;&bull;&nbsp; Обе студии</div>
+      <div class="mini-footer">svoefoto.ru &nbsp;&bull;&nbsp; +7 (901) 417-86-68</div>
+    </div>
+  </section>
+
+
+  <!-- ═══ TEMPLATE 6: ОТЗЫВ (1:1) ═══ -->
+  <section class="template-section">
+    <div class="template-label">Шаблон 6 — Отзыв / Рейтинг</div>
+    <div class="template-meta">720 &times; 720 px &nbsp;|&nbsp; 1:1 &nbsp;|&nbsp; Социальное доказательство</div>
+    <div class="promo-card promo-review">
+      <div class="rv-header">
+        <div class="rv-brand">Своё Фото</div>
+        <div class="rv-stars">
+          <svg class="rv-star" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.5L10 13.8l-5 2.7 1.2-5.5L2 7.2l5.6-.6z"/></svg>
+          <svg class="rv-star" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.5L10 13.8l-5 2.7 1.2-5.5L2 7.2l5.6-.6z"/></svg>
+          <svg class="rv-star" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.5L10 13.8l-5 2.7 1.2-5.5L2 7.2l5.6-.6z"/></svg>
+          <svg class="rv-star" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.5L10 13.8l-5 2.7 1.2-5.5L2 7.2l5.6-.6z"/></svg>
+          <svg class="rv-star" viewBox="0 0 20 20" fill="currentColor"><path d="M10 1.3l2.4 5.3 5.6.6-4.2 3.8 1.2 5.5L10 13.8l-5 2.7 1.2-5.5L2 7.2l5.6-.6z"/></svg>
+        </div>
+      </div>
+      <div class="rv-body">
+        <div class="quote-mark">&ldquo;</div>
+        <blockquote>
+          Очень довольна фотосессией! Атмосфера в студии потрясающая, фотограф нашёл подход к ребёнку за минуту. Обработка — просто волшебство.
+        </blockquote>
+        <div class="rv-author">Анна К.</div>
+        <div class="rv-source">Яндекс Карты</div>
+      </div>
+      <div class="rv-footer">
+        <div class="rv-rating-text">
+          4.9
+          <small>Средний рейтинг</small>
+        </div>
+        <div class="rv-site">svoefoto.ru</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ TEMPLATE 7: STORY УСЛУГА (9:16) ═══ -->
+  <section class="template-section">
+    <div class="template-label">Шаблон 7 — Story: Услуга</div>
+    <div class="template-meta">1080 &times; 1920 px &nbsp;|&nbsp; 9:16 &nbsp;|&nbsp; Истории Яндекс Карт</div>
+    <div class="promo-card promo-story">
+      <div class="st-dot-tr"></div>
+      <div class="st-header">
+        <div class="st-brand">Своё Фото</div>
+        <div class="st-tag">Услуга</div>
+      </div>
+      <div class="st-image">
+        <img src="../src/assets/static/home/passport-photo.webp" alt="Фото на документы">
+      </div>
+      <div class="st-body">
+        <div class="overline">Готово за 15 минут</div>
+        <h2>Фото на<br><span class="accent">документы</span></h2>
+        <div class="desc">6 форматов. Профессиональная ретушь включена. Мгновенная печать и электронная версия.</div>
+      </div>
+      <div class="st-footer">
+        <div class="st-price">
+          от 490 &#8381;
+          <small>svoefoto.ru</small>
+        </div>
+        <div class="st-cta">
+          Записаться <span>&rarr;</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══ TEMPLATE 8: STORY АКЦИЯ (9:16) ═══ -->
+  <section class="template-section">
+    <div class="template-label">Шаблон 8 — Story: Акция / Скидка</div>
+    <div class="template-meta">1080 &times; 1920 px &nbsp;|&nbsp; 9:16 &nbsp;|&nbsp; Истории Яндекс Карт</div>
+    <div class="promo-card promo-story-discount">
+      <div class="frame-tl"></div>
+      <div class="frame-br"></div>
+      <div class="sd-brand">Своё Фото</div>
+      <div class="sd-overline">Специальное предложение</div>
+      <div class="sd-percent">&minus;20<span class="sign">%</span></div>
+      <div class="sd-label">На фото онлайн</div>
+      <div class="sd-desc">Отправьте селфи &mdash; получите фото на документы с ретушью художника. По всей России.</div>
+      <div class="sd-cta">
+        Заказать &rarr;
+      </div>
+      <div class="sd-footer">svoefoto.ru &nbsp;&bull;&nbsp; Соборный 21 &nbsp;&bull;&nbsp; 2-ая Баррикадная 4</div>
+    </div>
+  </section>
+
+
+  <!-- ═══ GUIDE ═══ -->
+  <div class="guide">
+    <h3>Как использовать</h3>
+    <ul>
+      <li>Откройте этот файл в Chrome, выделите нужный шаблон</li>
+      <li>Скриншот: <code>Ctrl+Shift+S</code> (Firefox) или DevTools → Capture node screenshot</li>
+      <li>Замените текст, цены, даты прямо в HTML</li>
+      <li>Для фото-фона: добавьте <code>background-image</code> на блок <code>.hero-bg</code> или <code>.split-left</code></li>
+      <li>Размеры: 4:3 = 1200&times;900, 1:1 = 720&times;720, 9:16 = 1080&times;1920</li>
+      <li>Stories (9:16): замените <code>src</code> в <code>&lt;img&gt;</code> на нужное фото из <code>assets/static/promo/</code></li>
+    </ul>
+  </div>
+
+</body>
+</html>

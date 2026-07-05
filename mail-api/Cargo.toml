@@ -1,0 +1,35 @@
+[package]
+name = "mail-api"
+version = "0.1.0"
+edition = "2021"
+description = "Mail API — SMTP receiver/sender + HTTP API for Своё Фото"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+axum = "0.8"
+sqlx = { version = "0.8", features = ["runtime-tokio", "tls-rustls", "postgres", "chrono", "uuid"] }
+lettre = { version = "0.11", default-features = false, features = ["tokio1", "tokio1-rustls-tls", "dkim", "smtp-transport", "builder"] }
+mail-parser = "0.9"
+tokio-rustls = "0.26"
+rustls = { version = "0.23", features = ["ring"] }
+rustls-pemfile = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+uuid = { version = "1", features = ["v4"] }
+chrono = { version = "0.4", features = ["serde"] }
+dotenvy = "0.15"
+encoding_rs = "0.8"
+base64 = "0.22"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+thiserror = "2"
+trust-dns-resolver = "0.23"
+rsa = { version = "0.9", features = ["pem"] }
+rand = "0.8"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

@@ -1,0 +1,102 @@
+@if (open()) {
+  <aside
+    id="site-mobile-menu"
+    class="site-mobile-menu"
+    aria-label="Навигация по сайту"
+  >
+    <div class="site-mobile-menu__top">
+      <a routerLink="/" class="site-mobile-menu__brand" (click)="close()">
+        <img src="/assets/static/logo-white.webp" width="140" height="44" alt="Своё Фото">
+      </a>
+
+      <button
+        type="button"
+        class="site-mobile-menu__close"
+        aria-label="Закрыть меню"
+        (click)="close()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    @if (isLoggedIn()) {
+      <a
+        routerLink="/user-profile"
+        class="site-mobile-menu__cabinet"
+        (click)="close()"
+      >
+        <mat-icon>account_circle</mat-icon>
+        <span>Мой кабинет</span>
+      </a>
+    } @else {
+      <div class="site-mobile-menu__auth-actions">
+        <a
+          routerLink="/start-client"
+          class="site-mobile-menu__client"
+          (click)="close()"
+        >
+          Стать клиентом
+        </a>
+        <a
+          routerLink="/auth/login"
+          [queryParams]="loginQueryParams()"
+          class="site-mobile-menu__login"
+          (click)="close()"
+        >
+          Войти
+        </a>
+      </div>
+    }
+
+    <div class="site-mobile-menu__tabs" role="tablist" aria-label="Разделы сайта">
+      @for (audience of siteAudienceMenu; track audience.id) {
+        <button
+          type="button"
+          role="tab"
+          [attr.aria-selected]="activeAudienceId() === audience.id"
+          [class.is-active]="activeAudienceId() === audience.id"
+          (click)="selectAudience(audience.id)"
+        >
+          {{ audience.label }}
+        </button>
+      }
+    </div>
+
+    <section class="site-mobile-menu__sheet" aria-live="polite">
+      <h2>{{ activeAudience().title }}</h2>
+
+      <mat-accordion class="site-menu-accordion" multi>
+        @for (section of activeAudience().sections; track section.title) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ section.title }}</mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <div class="site-menu-links">
+              @for (link of section.links; track link.href) {
+                <a [routerLink]="link.href" (click)="close()">
+                  <mat-icon>{{ link.icon }}</mat-icon>
+                  <span>
+                    <strong>{{ link.label }}</strong>
+                    @if (link.description) {
+                      <small>{{ link.description }}</small>
+                    }
+                  </span>
+                </a>
+              }
+            </div>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </section>
+
+    <nav class="site-mobile-menu__quick" aria-label="Быстрые ссылки">
+      @for (link of activeAudience().quickLinks; track link.href) {
+        <a [routerLink]="link.href" (click)="close()">
+          <mat-icon>{{ link.icon }}</mat-icon>
+          <span>{{ link.label }}</span>
+        </a>
+      }
+    </nav>
+  </aside>
+}

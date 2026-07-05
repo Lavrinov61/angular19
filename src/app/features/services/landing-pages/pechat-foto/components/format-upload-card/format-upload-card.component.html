@@ -1,0 +1,155 @@
+<div class="format-card" [class.has-items]="hasItems" [class.drag-over]="isDragOver()">
+
+  <!-- Скрытый input для файлов -->
+  <input
+    #fileInput
+    type="file"
+    accept="image/jpeg,image/png,image/tiff,image/webp"
+    multiple
+    class="file-input-hidden"
+    (change)="onFileInputChange($event)"
+  />
+
+  <!-- Шапка карточки: размер + цена -->
+  <div class="card-header">
+    <div class="format-info">
+      <span class="format-name">{{ format().name }}</span>
+      <span class="format-size">{{ format().displaySize }}</span>
+    </div>
+    <div class="price-badge">
+      @if (priceLabel()) {
+        <span class="price-from">от</span>
+        <span class="price-value">{{ priceLabel() }}</span>
+      }
+    </div>
+  </div>
+
+  <!-- Визуальное представление размера формата -->
+  <div class="size-visual-wrapper">
+    <div class="size-rect"
+      [style.width.%]="format().sizeScale * 100"
+      [style.padding-bottom]="'calc(' + format().sizeScale + ' * 100% * 1.333)'">
+      <div class="size-rect-inner">
+        <mat-icon class="size-icon">image</mat-icon>
+        <span class="size-label">{{ format().displaySize }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Зона загрузки -->
+  <div
+    class="drop-zone"
+    appDragDrop
+    (fileDropped)="onFilesDropped($event)"
+    [class.drag-over]="isDragOver()"
+    (click)="triggerFilePicker()"
+    (keydown.enter)="triggerFilePicker()"
+    tabindex="0"
+  >
+    @if (!hasItems) {
+      <!-- Пустое состояние -->
+      <div class="drop-placeholder">
+        <mat-icon class="drop-icon">cloud_upload</mat-icon>
+        <p class="drop-text-main">Перетащите фото</p>
+        <p class="drop-text-sub">или нажмите для выбора</p>
+      </div>
+    } @else {
+      <div class="add-more-panel">
+        <mat-icon>add_photo_alternate</mat-icon>
+        <div class="add-more-copy">
+          <p class="add-more-title">Добавить ещё фото</p>
+          <p class="add-more-hint">Нажмите или перетащите файлы сюда</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (hasItems) {
+    <div
+      class="upload-monitor"
+      [class.has-errors]="errorCount > 0"
+      [class.is-complete]="!hasActiveUploads && errorCount === 0"
+      aria-live="polite"
+    >
+      <div class="upload-monitor-header">
+        <div class="upload-monitor-title">
+          <mat-icon>{{ uploadStatusIcon }}</mat-icon>
+          <div class="upload-monitor-copy">
+            <span class="upload-monitor-main">{{ uploadStatusTitle }}</span>
+            <span class="upload-monitor-hint">{{ uploadStatusHint }}</span>
+          </div>
+        </div>
+        <span class="upload-monitor-percent">{{ uploadProgressPercent }}%</span>
+      </div>
+
+      <mat-progress-bar mode="determinate" [value]="uploadProgressPercent" class="upload-progress" />
+
+      <div class="upload-queue" role="list" aria-label="Статус загрузки фотографий">
+        @for (item of visibleUploadItems; track item.id) {
+          <div
+            class="upload-row"
+            [class.pending]="item.status === 'pending'"
+            [class.uploading]="item.status === 'uploading'"
+            [class.uploaded]="item.status === 'uploaded'"
+            [class.error]="item.status === 'error'"
+            role="listitem"
+          >
+            <mat-icon class="upload-row-icon">{{ itemStatusIcon(item) }}</mat-icon>
+            <div class="upload-row-copy">
+              <span class="upload-row-name" [title]="item.file.name">{{ item.file.name }}</span>
+              <span class="upload-row-status">{{ itemStatusLabel(item) }}</span>
+            </div>
+            <span class="upload-row-percent">{{ itemUploadPercent(item) }}%</span>
+            @if (item.status === 'error') {
+              <button class="upload-retry" type="button" (click)="onRetryUpload($event, item.id)">
+                <mat-icon>refresh</mat-icon>
+              </button>
+            }
+          </div>
+        }
+
+        @if (hiddenUploadItemsCount > 0) {
+          <div class="upload-row-more">
+            ещё {{ hiddenUploadItemsCount }} фото в заказе
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Нижняя панель: описание + ссылка на просмотр -->
+  <div class="card-footer">
+    <p class="format-desc">{{ format().description }}</p>
+
+    @if (format().marginsRequired) {
+      <span class="margins-badge">
+        <mat-icon>border_all</mat-icon>
+        Только с полями
+      </span>
+    }
+
+    @if (hasPaperChoice) {
+      <div class="card-paper-actions" aria-label="Применить тип печати ко всем фото">
+        @for (tier of printTierOptions; track tier) {
+          <button
+            type="button"
+            class="card-paper-btn"
+            [class.active]="isPrintTierAppliedToAll(tier)"
+            (click)="onApplyPrintTier($event, tier)"
+          >
+            <span>{{ printTierLabel(tier) }}</span>
+            <small>{{ printTierCount(tier) }}</small>
+          </button>
+        }
+      </div>
+    }
+
+    @if (hasItems) {
+      <button class="view-link" (click)="onViewDetails($event)">
+        <mat-icon>photo_library</mat-icon>
+        Просмотреть и изменить ({{ totalQty }} шт.)
+      </button>
+    }
+  </div>
+
+</div>

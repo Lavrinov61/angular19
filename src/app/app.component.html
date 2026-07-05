@@ -1,0 +1,20 @@
+<div class="app-container">
+  <!-- Header removed as per instruction -->
+  <!-- <app-header></app-header> -->
+    <div class="app-content">
+    <!-- Desktop left navigation rail -->
+    <app-navigation-rail class="nav-rail"></app-navigation-rail>
+      <main class="main-content safe-area-bottom" [class.rail-expanded]="isNavigationRailExpanded()">
+      <router-outlet></router-outlet>
+    </main>  </div>
+  <!-- Mobile bottom navigation - hidden for now -->
+  <!-- <app-bottom-nav class="bottom-nav"></app-bottom-nav> -->
+    <!-- API Health Check Component -->
+  <div class="api-health-wrapper">
+    <app-api-health-check></app-api-health-check>
+  </div>
+  
+  <!-- Footer commented out to focus on Hero and About sections -->
+  <!-- <app-footer></app-footer> -->
+</div>
+

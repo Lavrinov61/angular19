@@ -1,0 +1,208 @@
+<div class="military-page">
+  @if (isTelegramWebView()) {
+    <div class="telegram-banner">
+      <span>Для лучшего опыта откройте страницу в браузере</span>
+      <a class="telegram-open-btn" [href]="currentUrl()" target="_blank" rel="noopener">
+        <mat-icon>open_in_browser</mat-icon>
+        Открыть
+      </a>
+    </div>
+  }
+
+  <section class="hero screen" id="quick-order" aria-labelledby="military-hero-title">
+    <div class="hero-copy">
+      <div class="hero-label">
+        <mat-icon>verified</mat-icon>
+        <span>Онлайн, официально, с согласованием</span>
+      </div>
+
+      <h1 id="military-hero-title">{{ heroData.title }}</h1>
+      <p class="hero-subtitle">{{ heroData.subtitle }}</p>
+
+      <div class="hero-actions" aria-label="Дополнительные действия">
+        <button mat-stroked-button type="button" (click)="scrollToExamples()">
+          <mat-icon>photo_library</mat-icon>
+          Примеры
+        </button>
+        <button mat-button type="button" (click)="scrollToFlow()">
+          <mat-icon>fact_check</mat-icon>
+          Что дальше
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-workspace">
+      <app-military-quick-order
+        [requiresPhoneAuth]="!isAuthenticated()"
+        [guestMessengerLinks]="guestMessengerLinks()"
+        (phoneAuthRequested)="openPhoneAuthForMilitaryRetouch()"
+        (messengerRequested)="trackGuestMessengerClick($event)"
+        (quickOrderSubmitted)="onMilitaryQuickOrder($event)"
+      />
+
+      @if (requestSent()) {
+        <div class="sent-state" role="status">
+          <mat-icon>check_circle</mat-icon>
+          <div>
+            <strong>Заявка ушла в чат</strong>
+            <span>Оператор уточнит детали, стоимость и оплату перед началом работы.</span>
+          </div>
+        </div>
+      }
+
+      <div class="result-preview" aria-label="Пример военной ретуши">
+        <img [src]="heroData.image" alt="Пример портрета после подстановки военной формы" width="360" height="480" fetchpriority="high" />
+        <span>пример результата</span>
+      </div>
+
+      <div class="trust-row" aria-label="Условия заказа">
+        @for (item of trustMarkers; track item.text) {
+          <span class="trust-chip">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            {{ item.text }}
+          </span>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="examples screen" id="examples" aria-labelledby="examples-title">
+    <div class="section-heading">
+      <span class="screen-kicker">Экран 2</span>
+      <h2 id="examples-title">Примеры и подсказки</h2>
+      <p>Не нужно заранее знать точные названия формы, знаков или медалей. Напишите как понимаете, а оператор уточнит детали в чате.</p>
+    </div>
+
+    <div class="gallery-rail" aria-label="Примеры военной ретуши">
+      @for (item of gallery; track item.src) {
+        <article class="gallery-card">
+          <img [src]="item.src" [alt]="item.alt" loading="lazy" width="240" height="320" />
+          <span>{{ item.label }}</span>
+        </article>
+      }
+    </div>
+
+    <div class="prompt-panel">
+      <h3>Что можно написать в заявке</h3>
+      <div class="prompt-list">
+        @for (prompt of unknownNamePrompts; track prompt) {
+          <span>{{ prompt }}</span>
+        }
+      </div>
+      <button mat-flat-button type="button" (click)="scrollToQuickOrder()">
+        <mat-icon>cloud_upload</mat-icon>
+        Отправить свое фото
+      </button>
+    </div>
+  </section>
+
+  <section class="flow screen" id="flow" aria-labelledby="flow-title">
+    <div class="section-heading">
+      <span class="screen-kicker">Экран 3</span>
+      <h2 id="flow-title">Что будет после отправки</h2>
+      <p>Перед оплатой мы фиксируем понятное резюме заказа, чтобы форма, звание, знаки, медали, размер и срок были согласованы до работы.</p>
+    </div>
+
+    <div class="flow-list">
+      @for (item of clarificationItems; track item.title; let index = $index) {
+        <article class="flow-item">
+          <span class="flow-number">{{ index + 1 }}</span>
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <div>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+          </div>
+        </article>
+      }
+    </div>
+
+    <div class="summary-box">
+      <h3>Так выглядит резюме перед оплатой</h3>
+      <dl>
+        @for (row of summaryExample; track row.label) {
+          <div>
+            <dt>{{ row.label }}</dt>
+            <dd>{{ row.value }}</dd>
+          </div>
+        }
+      </dl>
+      <p>После подтверждения оператор пришлет ссылку на оплату. Цена не обещается заранее, пока не понятен объем работы.</p>
+    </div>
+
+    <div class="payment-row" aria-label="Способы оплаты">
+      @for (item of paymentPoints; track item.title) {
+        <span>
+          <mat-icon>{{ item.icon }}</mat-icon>
+          {{ item.title }}
+        </span>
+      }
+    </div>
+
+    <div class="approval-list">
+      @for (step of approvalSteps; track step.title) {
+        <article>
+          <mat-icon>{{ step.icon }}</mat-icon>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </article>
+      }
+    </div>
+
+    <details class="print-details">
+      <summary>Если нужен файл, документ или печать</summary>
+      <div>
+        @for (scenario of printScenarios; track scenario.title) {
+          <p><strong>{{ scenario.title }}.</strong> {{ scenario.description }}</p>
+        }
+      </div>
+    </details>
+  </section>
+
+  <section class="benefit-strip" aria-label="Почему можно доверять процессу">
+    @for (benefit of benefits; track benefit.title) {
+      <article>
+        <mat-icon>{{ benefit.icon }}</mat-icon>
+        <h3>{{ benefit.title }}</h3>
+        <p>{{ benefit.description }}</p>
+      </article>
+    }
+  </section>
+
+  <section class="faq" aria-labelledby="faq-title">
+    <div class="section-heading">
+      <h2 id="faq-title">Короткие ответы</h2>
+      <p>Все ответы ведут к одному действию: пришлите фото и задачу, детали уточним в чате.</p>
+    </div>
+
+    <mat-accordion>
+      @for (item of faqItems; track item.question) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ item.question }}</mat-panel-title>
+          </mat-expansion-panel-header>
+          <p>{{ item.answer }}</p>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  </section>
+
+  <section class="final-cta" aria-label="Отправка заявки">
+    <h2>{{ contactCta.title }}</h2>
+    <p>{{ contactCta.subtitle }}</p>
+    <button mat-flat-button type="button" (click)="scrollToQuickOrder()" [attr.aria-label]="orderCtaAriaLabel()">
+      <mat-icon>{{ orderCtaIcon() }}</mat-icon>
+      {{ orderCtaLabel() }}
+    </button>
+  </section>
+
+  @defer (on idle) {
+    <app-cart />
+  }
+
+  @if (showStickyCta()) {
+    <button type="button" class="sticky-cta" (click)="scrollToQuickOrder()" [attr.aria-label]="orderCtaAriaLabel()">
+      <mat-icon>{{ orderCtaIcon() }}</mat-icon>
+      {{ orderCtaLabel() }}
+    </button>
+  }
+</div>

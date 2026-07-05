@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VK Пост — Своё Фото x Студвесна 2026 — 1080x1080</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#222;
+  --am:#f59e0b;--am2:#fbbf24;--amd:#d97706;--am-dark:#b45309;
+  --t1:#ffffff;--t2:#e5e5e5;--t3:#a3a3a3;
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+body{
+  background:#333;font-family:var(--fb);color:var(--t1);margin:0;
+  padding:40px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;
+}
+.post{
+  width:1080px;height:1080px;background:var(--bg);position:relative;overflow:hidden;
+  print-color-adjust:exact;-webkit-print-color-adjust:exact;flex-shrink:0;
+}
+
+/* ---- Background effects ---- */
+.post::before{
+  content:'';position:absolute;top:-200px;right:-200px;width:600px;height:600px;
+  border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.12) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+.post::after{
+  content:'';position:absolute;bottom:-150px;left:-150px;width:500px;height:500px;
+  border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.08) 0%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+/* ---- Grid noise texture ---- */
+.noise{
+  position:absolute;inset:0;z-index:0;pointer-events:none;opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M30 0v60M0 30h60' stroke='%23fff' stroke-width='.5'/%3E%3C/svg%3E");
+  background-size:60px 60px;
+}
+
+/* ---- Layout ---- */
+.inner{position:relative;z-index:1;display:flex;flex-direction:column;height:100%;padding:56px 64px 48px}
+
+/* ---- Top bar ---- */
+.top-bar{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;
+}
+.top-tag{
+  font-family:var(--fd);font-size:16px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.25em;color:var(--am);
+  padding:8px 20px;border:2px solid var(--am);border-radius:6px;
+}
+.top-brand{
+  font-family:var(--fd);font-size:18px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--t3);
+}
+
+/* ---- Hero ---- */
+.hero{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.hero-pre{
+  font-family:var(--fd);font-size:26px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.18em;color:var(--t3);margin-bottom:12px;
+}
+.hero-title{
+  font-family:var(--fd);font-weight:800;font-size:96px;text-transform:uppercase;
+  line-height:.95;letter-spacing:-.02em;color:var(--t1);
+}
+.hero-title span{
+  display:block;color:var(--am);
+  background:linear-gradient(135deg,var(--am2),var(--amd));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-family:var(--fd);font-size:32px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--t2);margin-top:8px;
+}
+
+/* ---- Benefits strip ---- */
+.benefits{
+  display:flex;gap:16px;margin-top:40px;margin-bottom:44px;
+}
+.benefit{
+  background:var(--bg2);border:1px solid rgba(245,158,11,.2);border-radius:12px;
+  padding:18px 24px;flex:1;
+}
+.benefit-val{
+  font-family:var(--fd);font-size:28px;font-weight:800;color:var(--am);
+  text-transform:uppercase;letter-spacing:.02em;line-height:1.1;
+}
+.benefit-label{
+  font-family:var(--fb);font-size:16px;font-weight:500;color:var(--t3);margin-top:4px;line-height:1.3;
+}
+
+/* ---- Promo code block ---- */
+.promo{
+  background:var(--am);border-radius:16px;padding:32px 40px;
+  display:flex;align-items:center;justify-content:space-between;gap:32px;
+  print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+.promo-left{display:flex;flex-direction:column}
+.promo-label{
+  font-family:var(--fd);font-size:15px;font-weight:600;text-transform:uppercase;
+  letter-spacing:.2em;color:rgba(0,0,0,.5);
+}
+.promo-code{
+  font-family:var(--fd);font-size:64px;font-weight:800;letter-spacing:.1em;
+  color:#000;line-height:1;margin-top:2px;
+}
+.promo-right{text-align:right;flex-shrink:0}
+.promo-cta{
+  font-family:var(--fd);font-size:22px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.06em;color:#000;line-height:1.2;
+}
+.promo-site{
+  font-family:var(--fb);font-size:20px;font-weight:700;color:rgba(0,0,0,.7);margin-top:4px;
+}
+
+/* ---- Bottom bar ---- */
+.bottom{
+  display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;padding-top:36px;
+}
+.bottom-collab{
+  font-family:var(--fd);font-size:20px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.15em;color:var(--t3);line-height:1.3;
+}
+.bottom-collab b{color:var(--am);font-weight:800}
+.bottom-addr{
+  font-family:var(--fb);font-size:16px;font-weight:500;color:var(--t3);
+  text-align:right;line-height:1.5;
+}
+
+/* ---- Decorative corner accents ---- */
+.corner{position:absolute;width:80px;height:80px;z-index:1;pointer-events:none}
+.corner svg{width:100%;height:100%}
+.corner--tl{top:24px;left:24px}
+.corner--br{bottom:24px;right:24px;transform:rotate(180deg)}
+
+/* ---- Amber line accents ---- */
+.accent-line{
+  position:absolute;z-index:0;pointer-events:none;
+  background:linear-gradient(90deg,var(--am),transparent);
+  print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+.accent-line--top{top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--am),var(--am2),transparent)}
+.accent-line--bot{bottom:0;right:0;left:0;height:4px;background:linear-gradient(270deg,var(--am),var(--amd),transparent)}
+</style>
+</head>
+<body>
+
+<div class="post">
+  <div class="noise"></div>
+  <div class="accent-line accent-line--top"></div>
+  <div class="accent-line accent-line--bot"></div>
+
+  <!-- Corner accents -->
+  <div class="corner corner--tl">
+    <svg viewBox="0 0 80 80" fill="none"><path d="M0 0v80" stroke="#f59e0b" stroke-width="1.5" opacity=".3"/><path d="M0 0h80" stroke="#f59e0b" stroke-width="1.5" opacity=".3"/></svg>
+  </div>
+  <div class="corner corner--br">
+    <svg viewBox="0 0 80 80" fill="none"><path d="M0 0v80" stroke="#f59e0b" stroke-width="1.5" opacity=".3"/><path d="M0 0h80" stroke="#f59e0b" stroke-width="1.5" opacity=".3"/></svg>
+  </div>
+
+  <div class="inner">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+      <div class="top-tag">Для студентов</div>
+      <div class="top-brand">svoefoto.ru</div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-pre">Подключи подписку</div>
+      <div class="hero-title">
+        1 месяц
+        <span>бесплатной печати</span>
+      </div>
+      <div class="hero-sub">документов или фото на выбор</div>
+    </div>
+
+    <!-- Benefits -->
+    <div class="benefits">
+      <div class="benefit">
+        <div class="benefit-val">50 стр А4/мес</div>
+        <div class="benefit-label">документы, рефераты, курсовые</div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-val">15 фото 10x15/мес</div>
+        <div class="benefit-label">или печать фотографий</div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-val">+5% скидка</div>
+        <div class="benefit-label">на все услуги студии</div>
+      </div>
+    </div>
+
+    <!-- Promo code -->
+    <div class="promo">
+      <div class="promo-left">
+        <div class="promo-label">Промокод</div>
+        <div class="promo-code">STUDVESNA26</div>
+      </div>
+      <div class="promo-right">
+        <div class="promo-cta">Активируй на</div>
+        <div class="promo-site">svoefoto.ru/promo/studvesna</div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="bottom">
+      <div class="bottom-collab" style="display:flex;align-items:center;justify-content:center;gap:16px"><img src="../svoefoto-whitelogo.png" alt="Своё Фото" style="height:36px"> <span>&times;</span> <span>Студвесна 2026</span></div>
+      <div class="bottom-addr">Соборный 21 &middot; 2-ая Баррикадная 4</div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

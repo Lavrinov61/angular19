@@ -1,0 +1,148 @@
+<div class="dash">
+
+  <div class="dash-header">
+    <h1>Атрибуция рекламы</h1>
+  </div>
+
+  <div class="period-chips">
+    @for (p of periods; track p.days) {
+      <button mat-stroked-button
+              [class.selected]="selectedDays() === p.days"
+              (click)="loadStats(p.days)">{{ p.label }}</button>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Загрузка...</div>
+  }
+
+  @if (stats()) {
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <mat-card class="kpi">
+        <div class="kpi-value">{{ stats()!.overview.attribution_rate }}%</div>
+        <div class="kpi-label">Атрибуция</div>
+        <div class="kpi-sub">{{ stats()!.overview.attributed }} / {{ stats()!.overview.total_purchases }}</div>
+      </mat-card>
+      <mat-card class="kpi">
+        <div class="kpi-value">{{ formatMoney(stats()!.overview.total_revenue) }}</div>
+        <div class="kpi-label">Выручка</div>
+        <div class="kpi-sub">{{ formatMoney(stats()!.overview.attributed_revenue) }} атриб.</div>
+      </mat-card>
+      <mat-card class="kpi">
+        <div class="kpi-value">{{ formatMoney(stats()!.overview.total_ad_spend) }}</div>
+        <div class="kpi-label">Расходы</div>
+        <div class="kpi-sub">на рекламу</div>
+      </mat-card>
+      <mat-card class="kpi"
+                [class.positive]="stats()!.overview.romi !== null && stats()!.overview.romi! > 0"
+                [class.negative]="stats()!.overview.romi !== null && stats()!.overview.romi! < 0">
+        <div class="kpi-value">{{ stats()!.overview.romi !== null ? stats()!.overview.romi + '%' : '---' }}</div>
+        <div class="kpi-label">ROMI</div>
+        <div class="kpi-sub">окупаемость</div>
+      </mat-card>
+    </div>
+
+    <!-- By Source -->
+    @if (stats()!.by_source.length) {
+      <mat-card appearance="outlined" class="section-card">
+        <mat-card-header><mat-card-title>По источнику данных</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead><tr><th>Источник</th><th>Продаж</th><th>Выручка</th><th>Атриб.</th><th>%</th></tr></thead>
+              <tbody>
+                @for (s of stats()!.by_source; track s.source) {
+                  <tr>
+                    <td>{{ sourceLabel(s.source) }}</td>
+                    <td>{{ s.purchases }}</td>
+                    <td>{{ formatMoney(s.revenue) }}</td>
+                    <td>{{ s.attributed }}</td>
+                    <td>{{ s.purchases ? calcPercent(s.attributed, s.purchases) : 0 }}%</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- By Platform -->
+    @if (stats()!.by_platform.length) {
+      <mat-card appearance="outlined" class="section-card">
+        <mat-card-header><mat-card-title>По рекламной платформе</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead><tr><th>Платформа</th><th>Продаж</th><th>Выручка</th><th>Расход</th><th>ROMI</th></tr></thead>
+              <tbody>
+                @for (p of stats()!.by_platform; track p.platform) {
+                  <tr>
+                    <td>{{ platformLabel(p.platform) }}</td>
+                    <td>{{ p.purchases }}</td>
+                    <td>{{ formatMoney(p.revenue) }}</td>
+                    <td>{{ formatMoney(p.cost) }}</td>
+                    <td [class.positive]="p.romi !== null && p.romi > 0"
+                        [class.negative]="p.romi !== null && p.romi < 0">
+                      {{ p.romi !== null ? p.romi + '%' : '---' }}
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Top Campaigns -->
+    @if (stats()!.by_campaign.length) {
+      <mat-card appearance="outlined" class="section-card">
+        <mat-card-header><mat-card-title>Топ кампании</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead><tr><th>Кампания</th><th>Платформа</th><th>Продаж</th><th>Выручка</th></tr></thead>
+              <tbody>
+                @for (c of stats()!.by_campaign; track c.campaign_id) {
+                  <tr>
+                    <td class="campaign-name">{{ c.campaign_id }}</td>
+                    <td>{{ platformLabel(c.platform) }}</td>
+                    <td>{{ c.purchases }}</td>
+                    <td>{{ formatMoney(c.revenue) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+
+    <!-- Daily Chart -->
+    @if (stats()!.daily.length) {
+      <mat-card appearance="outlined" class="section-card">
+        <mat-card-header><mat-card-title>Продажи по дням</mat-card-title></mat-card-header>
+        <mat-card-content>
+          <div class="chart">
+            @for (d of stats()!.daily; track d.date) {
+              <div class="chart-day">
+                <div class="chart-bars">
+                  <div class="bar total" [style.height.px]="barHeight(d.total)"></div>
+                  <div class="bar attributed" [style.height.px]="barHeight(d.attributed)"></div>
+                </div>
+                <div class="chart-label">{{ formatDate(d.date) }}</div>
+              </div>
+            }
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="dot total"></span> Все продажи</span>
+            <span class="legend-item"><span class="dot attributed"></span> Атрибутированные</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+</div>

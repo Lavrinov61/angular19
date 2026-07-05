@@ -1,0 +1,220 @@
+<link rel="canonical" href="https://svoefoto.ru/pechat-foto" />
+
+<div class="pechat-foto-page">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content">
+        <!-- Badge -->
+        <span class="hero-badge">
+          <mat-icon>print</mat-icon>
+          Профессиональная фотопечать
+        </span>
+
+        <!-- Title -->
+        <h1 class="hero-title">Печать фотографий<br>от {{ minPrice() }}₽</h1>
+
+        <!-- Subtitle -->
+        <p class="hero-subtitle">
+          Печатаем на фотобумаге премиум-класса с точной цветопередачей.
+          <mark>Готово за 15 минут, приходите без записи</mark>
+        </p>
+
+        <!-- Trust items -->
+        <div class="hero-trust">
+          <div class="trust-item">
+            <mat-icon>directions_walk</mat-icon>
+            <span>Без записи</span>
+          </div>
+          <div class="trust-item">
+            <mat-icon>schedule</mat-icon>
+            <span>Готово за 15 мин</span>
+          </div>
+          <div class="trust-item">
+            <mat-icon>smartphone</mat-icon>
+            <span>Печать с телефона</span>
+          </div>
+        </div>
+
+        <!-- CTA buttons -->
+        <div class="hero-cta">
+          <button mat-flat-button
+                  class="cta-primary"
+                  (click)="openStudioChat()">
+            <mat-icon>chat</mat-icon>
+            Отправить фото в чат
+          </button>
+          <button mat-stroked-button
+                  class="cta-secondary"
+                  (click)="scrollToContacts()">
+            <mat-icon>store</mat-icon>
+            Приехать в студию
+          </button>
+        </div>
+
+        <!-- Address cards -->
+        <div class="hero-addresses">
+          @for (addr of addresses; track addr.id) {
+            <mat-card appearance="outlined" class="address-card">
+              <mat-card-content>
+                <div class="address-header">
+                  <mat-icon>location_on</mat-icon>
+                  <div class="address-info">
+                    <span class="address-name">{{ addr.name }}</span>
+                    <span class="address-text">{{ addr.address }}</span>
+                  </div>
+                </div>
+                <div class="address-footer">
+                  <span class="walk-in-badge">
+                    <mat-icon>directions_walk</mat-icon>
+                    Без записи 9:00-19:30
+                  </span>
+                  @if (addr.mapLinks) {
+                    <a mat-icon-button
+                       [href]="addr.mapLinks['2gis'] || addr.mapLinks.yandex || ''"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="Построить маршрут">
+                      <mat-icon>near_me</mat-icon>
+                    </a>
+                  }
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+
+        <!-- Social proof -->
+        <div class="hero-proof">
+          <div class="proof-stars">
+            @for (i of [1,2,3,4,5]; track i) {
+              <mat-icon class="star-filled">star</mat-icon>
+            }
+          </div>
+          <span class="proof-text">5.0 на Яндекс Картах</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Price Table Section -->
+  <section class="prices-section">
+    <div class="section-container">
+      <h2 class="section-title">Цены на печать</h2>
+      <p class="section-subtitle">Две линейки бумаги, выбирайте под ваши задачи</p>
+
+      <div class="price-table-wrapper">
+        <table class="price-table">
+          <thead>
+            <tr>
+              <th>Формат</th>
+              <th>
+                <div class="column-header">
+                  <span class="header-name">Премиум</span>
+                  <span class="header-note">премиум-класса, отличное качество</span>
+                </div>
+              </th>
+              <th>
+                <div class="column-header">
+                  <span class="header-name">Супер</span>
+                  <span class="header-note">Усиленная бумага, максимум стойкости</span>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of priceTable(); track row.format) {
+              <tr>
+                <td class="format-cell">{{ row.format }}</td>
+                <td class="price-cell">{{ row.premium }}₽</td>
+                <td class="price-cell">{{ row.super }}₽</td>
+              </tr>
+            }
+            <tr class="extra-row">
+              <td class="format-cell">30×40</td>
+              <td class="price-cell" colspan="2">от 450₽</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="price-note">
+        <mat-icon>info</mat-icon>
+        Глянцевая и матовая бумага на выбор. Постеры и нестандартные размеры, уточняйте в студии
+      </p>
+    </div>
+  </section>
+
+  <!-- Process Section -->
+  <app-process-slider [steps]="processSteps"
+    [title]="'Как заказать печать'"
+    [autoSlide]="true"
+    [slideInterval]="5000" />
+
+  <!-- Advantages Section -->
+  <app-advantages-section [advantages]="advantages"
+    [title]="'Почему печатают у нас'"
+    [subtitle]="'Это не ксерокопия в подвале, это профессиональная фотопечать'" />
+
+  <!-- Testimonials -->
+  <app-testimonials variant="card" />
+
+  <!-- FAQ Section -->
+  <section class="faq-section">
+    <div class="section-container">
+      <h2 class="section-title">Частые вопросы о печати фото</h2>
+      <mat-accordion class="faq-accordion">
+        @for (faq of faqItems(); track faq.question) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ faq.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p [innerHTML]="faq.answer"></p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="section-container">
+      <div class="cta-content">
+        <h2 class="cta-title">Хотите напечатать фотографии?</h2>
+        <p class="cta-subtitle">
+          Отправьте фото в чат или приходите в студию, напечатаем за 15 минут
+        </p>
+        <div class="cta-benefits">
+          <div class="cta-benefit">
+            <mat-icon>high_quality</mat-icon>
+            <span>Бумага премиум-класса</span>
+          </div>
+          <div class="cta-benefit">
+            <mat-icon>palette</mat-icon>
+            <span>Точные цвета</span>
+          </div>
+          <div class="cta-benefit">
+            <mat-icon>schedule</mat-icon>
+            <span>15 минут</span>
+          </div>
+        </div>
+        <div class="cta-buttons">
+          <button mat-raised-button class="primary-cta" (click)="openStudioChat()">
+            Отправить фото в чат
+          </button>
+          <button mat-stroked-button class="secondary-cta" (click)="scrollToContacts()">
+            Контакты студии
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contacts Section -->
+  <app-contacts-section [contacts]="contacts"
+    [addresses]="addresses"
+    [isMobile]="isMobile()"
+    [isTablet]="isTablet()"
+    [isDesktop]="isDesktop()" />
+</div>

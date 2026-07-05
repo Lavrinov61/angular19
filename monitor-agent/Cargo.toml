@@ -1,0 +1,60 @@
+[package]
+name = "svf-monitor-agent"
+version = "0.1.0"
+edition = "2024"
+description = "SvoePhoto Monitor Agent — remote management of Windows PCs in photo studios via MQTT"
+
+[dependencies]
+# Shared agent core (MQTT, config, offline, heartbeat, updater)
+svf-agent-core = { path = "../svf-agent-core" }
+
+# Async runtime
+tokio = { version = "1", features = ["full", "signal", "process"] }
+
+# MQTT client
+rumqttc = "0.24"
+
+# Protobuf
+prost = "0.13"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# Types
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# HTTP client (for auto-updater download)
+reqwest = { version = "0.12", features = ["rustls-tls"], default-features = false }
+
+# System information
+sysinfo = "0.33"
+
+# Base64 encoding for file transfer
+base64 = "0.22"
+
+# Windows Service support
+[target.'cfg(windows)'.dependencies]
+windows-service = "0.7"
+windows = { version = "0.58", features = [
+    "Win32_System_Services",
+    "Win32_Security",
+] }
+
+[build-dependencies]
+prost-build = "0.13"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

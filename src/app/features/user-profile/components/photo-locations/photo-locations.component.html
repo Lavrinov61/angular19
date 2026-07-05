@@ -1,0 +1,119 @@
+<section class="studios-page">
+  <header class="studios-hero">
+    <div class="studios-hero__copy">
+      <span class="studios-hero__eyebrow">Личный кабинет</span>
+      <h1>Наши студии в Ростове-на-Дону</h1>
+      <p>
+        Студии «Своё фото» для документов, печати А4, получения готовых заказов
+        и консультаций по фотосессиям.
+      </p>
+    </div>
+
+    <div class="studios-hero__summary" aria-label="Краткая информация о студиях">
+      @for (item of summary(); track item.label) {
+        <div class="studios-hero__summary-item">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </div>
+      }
+    </div>
+  </header>
+
+  @if (isLoading()) {
+    <div class="studios-state" role="status">
+      <mat-icon>sync</mat-icon>
+      <span>Загружаем студии из базы</span>
+    </div>
+  } @else if (loadError()) {
+    <div class="studios-state studios-state--error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ loadError() }}</span>
+    </div>
+  } @else if (studios().length === 0) {
+    <div class="studios-state">
+      <mat-icon>storefront</mat-icon>
+      <span>Студии пока не опубликованы</span>
+    </div>
+  } @else {
+    <div class="studios-grid" aria-label="Студии Своё фото">
+      @for (studio of studios(); track studio.id) {
+      <article class="studio-card">
+        <div
+          class="studio-card__visual"
+          [class.studio-card__visual--soborny]="studio.visual === 'soborny'"
+          [class.studio-card__visual--barrikadnaya]="studio.visual === 'barrikadnaya'"
+          aria-hidden="true">
+          <div class="studio-card__mark">СФ</div>
+          <div class="studio-card__camera"></div>
+          <div class="studio-card__paper"></div>
+        </div>
+
+        <div class="studio-card__content">
+          <div class="studio-card__top">
+            <span
+              class="studio-card__status"
+              [class.studio-card__status--limited]="studio.statusTone === 'warning'">
+              {{ studio.statusLabel }}
+            </span>
+          </div>
+
+          <h2>{{ studio.name }}</h2>
+          <p class="studio-card__address">
+            <mat-icon>location_on</mat-icon>
+            {{ studio.address }}
+          </p>
+          @if (studio.description) {
+            <p class="studio-card__description">{{ studio.description }}</p>
+          }
+
+          <div class="studio-card__meta">
+            <span>
+              <mat-icon>schedule</mat-icon>
+              {{ studio.schedule }}
+            </span>
+          </div>
+
+          @if (studio.services.length > 0) {
+            <div class="studio-card__tags" aria-label="Услуги студии">
+              @for (service of studio.services; track service) {
+                <span>{{ service }}</span>
+              }
+            </div>
+          }
+
+          <div class="studio-card__actions">
+            <button mat-flat-button type="button" (click)="bookStudio(studio)">
+              <mat-icon>event_available</mat-icon>
+              Записаться
+            </button>
+            <button mat-stroked-button type="button" [disabled]="!studio.hasAddress" (click)="copyAddress(studio)">
+              <mat-icon>content_copy</mat-icon>
+              Скопировать адрес
+            </button>
+            <button mat-icon-button type="button" [disabled]="!studio.hasAddress" (click)="openMap(studio)" [attr.aria-label]="'Открыть карту: ' + studio.address">
+              <mat-icon>map</mat-icon>
+            </button>
+          </div>
+        </div>
+      </article>
+      }
+    </div>
+  }
+
+  <section class="studios-services" aria-label="Что можно сделать в студии">
+    <div class="studios-section-head">
+      <h2>Что можно сделать на месте</h2>
+      <p>Базовые услуги доступны в наших студиях.</p>
+    </div>
+
+    <div class="service-grid">
+      @for (service of serviceHighlights; track service.title) {
+        <article class="service-card">
+          <mat-icon>{{ service.icon }}</mat-icon>
+          <h3>{{ service.title }}</h3>
+          <p>{{ service.text }}</p>
+        </article>
+      }
+    </div>
+  </section>
+</section>

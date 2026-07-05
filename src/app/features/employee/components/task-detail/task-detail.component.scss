@@ -1,0 +1,251 @@
+.task-detail {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// Header
+.detail-header {
+  margin-bottom: 20px;
+
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .task-number {
+    font-size: 14px;
+    font-family: monospace;
+    color: var(--mat-sys-on-surface-variant);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+.type-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.type-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+// Section cards
+.section-card {
+  margin-bottom: 12px;
+}
+
+.description-text {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ai-card {
+  background: var(--mat-sys-tertiary-container);
+
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+// Actions
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+// Handoff
+.handoff-form {
+  margin: 12px 0;
+  border-left: 4px solid var(--crm-status-warning);
+}
+
+.full-width {
+  width: 100%;
+}
+
+// Notes
+.notes-section {
+  margin-top: 16px;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+}
+
+.note-item {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.note-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.note-time {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.note-content {
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+.note-status_change,
+.note-system {
+  color: var(--mat-sys-on-surface-variant);
+  font-style: italic;
+}
+
+.note-handoff {
+  border-left: 3px solid var(--crm-status-warning);
+  padding-left: 8px;
+}
+
+.note-ai_summary {
+  border-left: 3px solid var(--crm-accent);
+  padding-left: 8px;
+}
+
+.no-notes {
+  color: var(--mat-sys-on-surface-variant);
+  font-style: italic;
+}
+
+// Add note
+.add-note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  margin-top: 12px;
+
+  mat-form-field {
+    flex: 1;
+  }
+}
+
+// Priority chips
+:host .priority-urgent {
+  background: var(--crm-status-error);
+  color: white;
+}
+
+:host .priority-high {
+  background: var(--crm-status-warning);
+  color: white;
+}
+
+:host .priority-normal {
+  background: var(--crm-status-info-container);
+}
+
+:host .priority-low {
+  background: var(--crm-surface-raised);
+}
+
+// Status chips
+:host .status-open { background: var(--crm-status-info-container); }
+:host .status-assigned { background: var(--crm-status-warning-container); }
+:host .status-in_progress { background: var(--crm-status-success-container); }
+:host .status-waiting { background: var(--crm-status-error-container); }
+:host .status-handed_off { background: var(--crm-accent-container); }
+:host .status-completed { background: var(--crm-status-success-container); }
+:host .status-cancelled { background: var(--crm-surface-raised); color: var(--crm-text-muted); }
+
+// AI Features
+.ai-summary-btn {
+  margin: 8px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ai-summary-text {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.sentiment-icon {
+  margin-left: auto;
+  font-size: 20px;
+}
+
+.intent-chip {
+  margin-top: 8px;
+  background: var(--mat-sys-secondary-container) !important;
+  font-size: 12px;
+}
+
+.key-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.fact-tag {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: var(--mat-sys-surface-container-high);
+  color: var(--mat-sys-on-surface);
+}
+
+.assignment-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.assignment-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.assignment-reason {
+  font-size: 12px;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.assign-btn {
+  flex-shrink: 0;
+}

@@ -1,0 +1,129 @@
+<div class="notifications-page">
+  <div class="notifications-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon>notifications</mat-icon>
+        Уведомления
+        @if (unreadCount() > 0) {
+          <span class="unread-badge">{{ unreadCount() }}</span>
+        }
+      </h1>
+      
+      <div class="header-actions">
+        @if (unreadCount() > 0) {
+          <button 
+            mat-flat-button
+            color="primary"
+            (click)="markAllAsRead()"
+            class="mark-all-read-btn">
+            <mat-icon>done_all</mat-icon>
+            Отметить все как прочитанные
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="notifications-content">
+    <!-- Фильтры -->
+    <div class="filters-section">
+      <h2>Фильтры</h2>
+      <mat-chip-listbox class="filter-chips" [(ngModel)]="selectedFilter">
+        @for (filter of filterOptions; track filter.value || filter.label || $index) {
+          <mat-chip-option 
+            [value]="filter.value"
+            [selected]="selectedFilter === filter.value"
+            (click)="setFilter(filter.value)">
+            <mat-icon>{{ filter.icon }}</mat-icon>
+            {{ filter.label }}
+            @if (getFilteredCount(filter.value) > 0) {
+              <span class="filter-count">
+                ({{ getFilteredCount(filter.value) }})
+              </span>
+            }
+          </mat-chip-option>
+        }
+      </mat-chip-listbox>
+    </div>
+
+    <!-- Список уведомлений -->
+    <div class="notifications-list">
+      @if (filteredNotifications().length > 0) {
+        @for (notification of filteredNotifications(); track trackByNotificationId($index, notification)) {
+          <mat-card 
+            class="notification-card"
+            [class.unread]="!notification.isRead"
+            (click)="handleNotificationClick(notification)">
+            <mat-card-content>
+              <div class="notification-content">
+                <div class="notification-icon">
+                  <mat-icon [class]="getNotificationIconClass(notification.type)">
+                    {{ getNotificationIcon(notification.type) }}
+                  </mat-icon>
+                </div>
+                
+                <div class="notification-body">
+                  <div class="notification-header">
+                    <h3 class="notification-title">{{ notification.title }}</h3>
+                    <div class="notification-meta">
+                      <span class="notification-time">{{ formatDate(notification.createdAt) }}</span>
+                      <span class="notification-time-detail">{{ formatTime(notification.createdAt) }}</span>
+                    </div>
+                  </div>
+                  
+                  <p class="notification-message">{{ notification.message }}</p>
+                  
+                  <div class="notification-actions" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" tabindex="0">
+                    @if (!notification.isRead) {
+                      <button 
+                        mat-icon-button
+                        (click)="markAsRead(notification)"
+                        [attr.aria-label]="'Отметить как прочитанное'"
+                        class="action-btn mark-read">
+                        <mat-icon>check</mat-icon>
+                      </button>
+                    }
+                    
+                    <button 
+                      mat-icon-button
+                      [matMenuTriggerFor]="notificationMenu"
+                      [attr.aria-label]="'Дополнительные действия'"
+                      class="action-btn">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #notificationMenu="matMenu">
+                      @if (!notification.isRead) {
+                        <button mat-menu-item (click)="markAsRead(notification)">
+                          <mat-icon>check</mat-icon>
+                          <span>Отметить как прочитанное</span>
+                        </button>
+                      }
+                      <button mat-menu-item (click)="deleteNotification(notification)">
+                        <mat-icon>delete</mat-icon>
+                        <span>Удалить</span>
+                      </button>
+                    </mat-menu>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+      } @else {
+        <div class="no-notifications">
+          <mat-icon class="no-notifications-icon">notifications_none</mat-icon>
+          <h3>{{ selectedFilter === 'unread' ? 'Нет непрочитанных уведомлений' : 'Уведомления не найдены' }}</h3>
+          <p>{{ selectedFilter === 'unread' ? 'Все уведомления прочитаны' : 'Попробуйте изменить фильтр' }}</p>
+          @if (selectedFilter !== 'all') {
+            <button 
+              mat-flat-button
+              color="primary"
+              (click)="setFilter('all')">
+              Показать все уведомления
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

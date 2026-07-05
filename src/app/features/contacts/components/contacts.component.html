@@ -1,0 +1,270 @@
+<div class="contacts-page" [class.ready]="pageReady()">
+  @let status = contactAvailabilityStatus();
+
+  <header class="hero">
+    <div class="hero-copy">
+      <div class="hero-badge"
+           [class.hero-badge--online]="status.online"
+           [class.hero-badge--offline]="!status.online"
+           [attr.aria-label]="status.ariaLabel">
+        <span class="status-dot" [class.status-dot--pulse]="status.online"></span>
+        {{ status.label }}
+      </div>
+
+      <h1 class="hero-title">Контакты <span>Своё Фото</span></h1>
+      <p class="hero-subtitle">
+        Напишите в удобный мессенджер, позвоните или приезжайте в студию.
+        Подскажем по документам, печати и записи на съёмку.
+      </p>
+
+      <div class="hero-actions" aria-label="Быстрые действия">
+        <a mat-flat-button class="hero-action hero-action--primary" href="#contact-methods" (click)="scrollToChannels($event)">
+          <mat-icon>chat</mat-icon>
+          Выбрать канал
+        </a>
+        <a mat-stroked-button class="hero-action hero-action--secondary" [href]="studioPhoneHref">
+          <mat-icon>call</mat-icon>
+          {{ studioPhone }}
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+      <img src="/assets/static/promo/portrait-hero.webp" alt="" width="520" height="420" loading="eager">
+      <div class="hero-visual-card hero-visual-card--top">
+        <mat-icon>photo_camera</mat-icon>
+        <span>Фото и печать</span>
+      </div>
+      <div class="hero-visual-card hero-visual-card--bottom">
+        <mat-icon>near_me</mat-icon>
+        <span>Студия в Ростове-на-Дону</span>
+      </div>
+    </div>
+  </header>
+
+  <section id="contact-methods" class="connect-zone" aria-labelledby="contact-methods-title">
+    <div class="section-heading">
+      <h2 id="contact-methods-title">Выберите канал</h2>
+    </div>
+
+    <div class="contact-grid">
+      <div class="channels-grid">
+        @for (ch of channels(); track ch.id; let i = $index) {
+          <a class="channel-card"
+             [class.channel-card--warning]="ch.warning"
+             [attr.aria-label]="ch.warning ? ch.label + ': ' + ch.warning : null"
+             [href]="ch.href"
+             target="_blank"
+             rel="noopener"
+             [style.--ch-color]="ch.color"
+             [style.--ch-delay]="i * 70 + 'ms'">
+            <div class="channel-icon">
+              @if (ch.iconType === 'mat') {
+                <mat-icon>{{ ch.matIcon }}</mat-icon>
+              } @else {
+                <svg [attr.viewBox]="ch.svgViewBox" fill="currentColor" aria-hidden="true">
+                  <path [attr.d]="ch.svgPath"/>
+                </svg>
+              }
+            </div>
+            <div class="channel-text">
+              <span class="channel-label">{{ ch.label }}</span>
+              @if (ch.warning) {
+                <span class="channel-warning">
+                  <mat-icon aria-hidden="true">warning</mat-icon>
+                  {{ ch.warning }}
+                </span>
+              } @else {
+                <span class="channel-hint">Ответим в рабочее время</span>
+              }
+            </div>
+            <mat-icon class="channel-arrow">arrow_forward</mat-icon>
+          </a>
+        }
+      </div>
+
+      <aside class="direct-aside" aria-labelledby="direct-title">
+        <div class="direct-panel">
+          <div class="direct-panel__head">
+            <span class="section-eyebrow">Прямая связь</span>
+            <h3 id="direct-title">Телефон и почта</h3>
+          </div>
+
+          <a class="direct-card" [href]="studioPhoneHref">
+            <div class="direct-icon direct-icon--phone">
+              <mat-icon>call</mat-icon>
+            </div>
+            <div class="direct-info">
+              <span class="direct-label">Телефон</span>
+              <span class="direct-value">{{ studioPhone }}</span>
+              <span class="direct-hint">Пн, Вс, 09:00-19:30</span>
+            </div>
+            <mat-icon class="direct-arrow">arrow_forward</mat-icon>
+          </a>
+
+          <a class="direct-card" [href]="'mailto:' + email">
+            <div class="direct-icon direct-icon--email">
+              <mat-icon>email</mat-icon>
+            </div>
+            <div class="direct-info">
+              <span class="direct-label">Email</span>
+              <span class="direct-value">{{ email }}</span>
+              <span class="direct-hint">Ответим в течение часа</span>
+            </div>
+            <mat-icon class="direct-arrow">arrow_forward</mat-icon>
+          </a>
+
+          <div class="info-card">
+            <div class="info-row">
+              <mat-icon>schedule</mat-icon>
+              <div>
+                <span class="info-primary">09:00-19:30 каждый день</span>
+                <span class="info-secondary">Без выходных и перерывов</span>
+              </div>
+            </div>
+            <div class="info-row">
+              <mat-icon>verified</mat-icon>
+              <div>
+                <span class="info-primary">Гарантия результата</span>
+                <span class="info-secondary">Бесплатные пересъёмки при необходимости</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="studios-section" aria-labelledby="studios-title">
+    <div class="section-heading">
+      <span class="section-eyebrow">Адреса</span>
+      <h2 id="studios-title">Приходите в ближайшую студию</h2>
+      <p>Выберите адрес, чтобы открыть карту и построить маршрут.</p>
+    </div>
+
+    <div class="studios-layout">
+      <div class="studios-grid">
+        @for (addr of addresses; track addr.id; let i = $index) {
+          <div class="studio-card"
+               [class.active]="selectedAddressIndex() === i"
+               role="button"
+               [attr.aria-pressed]="selectedAddressIndex() === i"
+               tabindex="0"
+               (click)="selectAddress(i)"
+               (keydown.enter)="selectAddress(i)"
+               (keydown.space)="$event.preventDefault(); selectAddress(i)">
+            <div class="studio-header">
+              <div class="studio-icon-wrap">
+                <mat-icon>storefront</mat-icon>
+              </div>
+              <div class="studio-title">
+                <h3>{{ addr.name }}</h3>
+                @if (addr.landmark) {
+                  <span class="studio-landmark">{{ addr.landmark }}</span>
+                }
+              </div>
+            </div>
+
+            <div class="studio-details">
+              <div class="studio-detail">
+                <mat-icon>location_on</mat-icon>
+                <span>{{ addr.address }}</span>
+              </div>
+              <div class="studio-detail">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ addr.workHours }}</span>
+              </div>
+            </div>
+
+            <div class="studio-status-row">
+              <div class="studio-badge">
+                <mat-icon>directions_walk</mat-icon>
+                Без записи ежедневно
+              </div>
+
+              @if (studioAlertService.getClosureForStudio(addr.id); as closure) {
+                <div class="studio-closure-notice">
+                  <span>&#9888; {{ closure.reason }}</span>
+                </div>
+              }
+            </div>
+
+            @if (addr.mapLinks) {
+              <div class="studio-nav">
+                @if (addr.mapLinks.yandex) {
+                  <a class="studio-map-link"
+                     [href]="addr.mapLinks.yandex"
+                     target="_blank"
+                     rel="noopener"
+                     aria-label="Открыть маршрут в Яндекс Картах">
+                    <img src="/assets/static/services/yandex-maps-logo.svg"
+                         alt=""
+                         width="20"
+                         height="20"
+                         class="studio-map-logo">
+                    <span>Яндекс</span>
+                  </a>
+                }
+                @if (addr.mapLinks['2gis']) {
+                  <a class="studio-map-link"
+                     [href]="addr.mapLinks['2gis']"
+                     target="_blank"
+                     rel="noopener"
+                     aria-label="Открыть маршрут в 2ГИС">
+                    <img src="/assets/static/services/2gis-logo.webp"
+                         alt=""
+                         width="20"
+                         height="20"
+                         class="studio-map-logo">
+                    <span>2ГИС</span>
+                  </a>
+                }
+                @if (addr.mapLinks.google) {
+                  <a class="studio-map-link"
+                     [href]="addr.mapLinks.google"
+                     target="_blank"
+                     rel="noopener"
+                     aria-label="Открыть маршрут в Google Maps">
+                    <img src="/assets/static/services/google-maps-sign-logo.svg"
+                         alt=""
+                         width="20"
+                         height="20"
+                         class="studio-map-logo">
+                    <span>Google</span>
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="map-wrapper">
+        <div class="map-frame">
+          @if (pageReady()) {
+            <iframe [src]="yandexMapUrl() | safeResourceUrl"
+                    width="100%"
+                    height="100%"
+                    frameborder="0"
+                    title="Карта расположения студии"
+                    loading="lazy"></iframe>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bottom-cta">
+    <div class="cta-content">
+      <div class="cta-text">
+        <span class="section-eyebrow">Запись</span>
+        <h3>Подготовим визит заранее</h3>
+        <p>Выберите удобное время, а мы встретим вас в студии.</p>
+      </div>
+      <a mat-flat-button routerLink="/booking" href="/booking" class="cta-btn">
+        <mat-icon>calendar_month</mat-icon>
+        Записаться онлайн
+      </a>
+    </div>
+  </section>
+</div>

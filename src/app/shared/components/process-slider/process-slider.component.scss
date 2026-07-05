@@ -1,0 +1,203 @@
+// Process Section — Editorial Bold Dark Theme
+
+.process-section {
+  padding: 1.5rem 0;
+  background: var(--ed-surface-dim, #111111);
+
+  @media (min-width: 600px) { padding: 2.5rem 1.5rem; }
+  @media (min-width: 1024px) { padding: 3rem 2rem; }
+}
+
+.process-container {
+  max-width: var(--ed-content-width, 1200px);
+  margin: 0 auto;
+}
+
+.process-title {
+  text-align: center;
+  font-family: var(--ed-font-display, 'Oswald', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--ed-on-surface, #f5f5f5);
+  margin: 0 0 1.5rem;
+  padding-inline: 1rem;
+
+  @media (min-width: 600px) {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+    padding-inline: 0;
+  }
+}
+
+// ---- Grid layout ----
+
+.process-grid {
+  // Mobile: horizontal scroll
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 1rem;
+  padding: 0 1rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar { display: none; }
+
+  // Fix right padding lost in overflow containers
+  &::after {
+    content: '';
+    flex-shrink: 0;
+    width: 1rem;
+
+    @media (min-width: 600px) { display: none; }
+  }
+
+  @media (min-width: 600px) {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    overflow: visible;
+    scroll-snap-type: none;
+    padding: 0;
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+// ---- Step card ----
+
+.process-step {
+  background: var(--ed-surface-container, #1a1a1a);
+  border-radius: 16px;
+  padding: 1.25rem;
+  border: 1px solid var(--ed-outline-variant, #2a2a2a);
+  cursor: pointer;
+  transition: border-color 300ms, background 200ms;
+
+  @media (max-width: 599px) {
+    flex-shrink: 0;
+    width: 72vw;
+    scroll-snap-align: start;
+  }
+
+  &:hover {
+    border-color: var(--ed-accent, #f59e0b);
+  }
+
+  &.active {
+    border-color: var(--ed-accent, #f59e0b);
+    background: var(--ed-surface-container-high, #222222);
+  }
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.step-number {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--ed-accent, #f59e0b);
+  color: var(--ed-on-accent, #0a0a0a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 700;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.step-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--ed-outline-variant, #2a2a2a);
+  border-radius: 1px;
+  display: none;
+
+  @media (min-width: 1024px) { display: block; }
+}
+
+.step-title {
+  margin: 0 0 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ed-on-surface, #f5f5f5);
+  line-height: 1.3;
+}
+
+.step-description {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ed-on-surface-variant, #a0a0a0);
+  line-height: 1.4;
+}
+
+.step-details {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.15rem 0;
+    font-size: 0.8rem;
+    color: var(--ed-on-surface-variant, #a0a0a0);
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      color: var(--ed-accent, #f59e0b);
+      flex-shrink: 0;
+    }
+  }
+}
+
+// ---- Mobile indicators ----
+
+.process-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+
+  @media (min-width: 600px) { display: none; }
+}
+
+.process-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ed-outline-variant, #2a2a2a);
+  border: none;
+  padding: 18px;
+  margin: -18px;
+  background-clip: content-box;
+  cursor: pointer;
+  transition: background 200ms;
+
+  &.active {
+    background: var(--ed-accent, #f59e0b);
+    background-clip: content-box;
+    width: 24px;
+    border-radius: 4px;
+  }
+}

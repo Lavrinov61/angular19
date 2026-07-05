@@ -1,0 +1,99 @@
+syntax = "proto3";
+package svf.media.v1;
+
+import "common/v1/common.proto";
+
+option java_package = "ru.svoefoto.proto.media.v1";
+option java_multiple_files = true;
+
+// ── Media Service — unary media helpers ──
+
+service MediaService {
+  // Unary — get optimized thumbnail URL
+  rpc GetThumbnail(GetThumbnailRequest) returns (GetThumbnailResponse);
+
+  // Unary — get signed upload URL (for large files / direct S3 upload)
+  rpc GetSignedUploadUrl(GetSignedUploadUrlRequest) returns (GetSignedUploadUrlResponse);
+
+  // Unary — get short-lived signed read URL for an existing media object.
+  rpc GetSignedReadUrl(GetSignedReadUrlRequest) returns (GetSignedReadUrlResponse);
+
+  // Unary — batch resolve media objects to signed read URLs.
+  rpc BatchGetSignedReadUrls(BatchGetSignedReadUrlsRequest) returns (BatchGetSignedReadUrlsResponse);
+}
+
+// ── Messages ──
+
+message UploadPhotoRequest {
+  oneof data {
+    UploadMetadata metadata = 1; // first message
+    bytes chunk = 2;             // subsequent messages (64KB chunks)
+  }
+}
+
+message UploadMetadata {
+  string file_name = 1;
+  string content_type = 2;    // "image/jpeg"
+  int64 size_bytes = 3;
+  string purpose = 4;         // "chat", "order", "profile", "document"
+  string related_id = 5;      // order_id or session_id
+  bool compress = 6;          // server-side compression (2048px/85% JPEG)
+}
+
+message UploadPhotoResponse {
+  string url = 1;
+  string thumbnail_url = 2;
+  svf.common.v1.MediaAttachment attachment = 3;
+}
+
+message GetThumbnailRequest {
+  string url = 1;
+  int32 width = 2;   // desired width
+  int32 height = 3;  // desired height
+  string format = 4; // "webp", "jpeg"
+}
+
+message GetThumbnailResponse {
+  string thumbnail_url = 1;
+}
+
+message GetSignedUploadUrlRequest {
+  string file_name = 1;
+  string content_type = 2;
+  int64 size_bytes = 3;
+  string purpose = 4;
+}
+
+message GetSignedUploadUrlResponse {
+  string upload_url = 1;        // pre-signed S3 PUT URL
+  string result_url = 2;        // URL after upload completes
+  int32 expires_in_seconds = 3;
+}
+
+message GetSignedReadUrlRequest {
+  string key = 1;
+  string url = 2;
+}
+
+message GetSignedReadUrlResponse {
+  string key = 1;
+  string original_url = 2;
+  string signed_url = 3;
+  int32 expires_in_seconds = 4;
+}
+
+message BatchGetSignedReadUrlsRequest {
+  repeated string keys = 1;
+  repeated string urls = 2;
+}
+
+message SignedReadUrl {
+  string key = 1;
+  string original_url = 2;
+  string signed_url = 3;
+}
+
+message BatchGetSignedReadUrlsResponse {
+  repeated SignedReadUrl items = 1;
+  int32 expires_in_seconds = 2;
+}

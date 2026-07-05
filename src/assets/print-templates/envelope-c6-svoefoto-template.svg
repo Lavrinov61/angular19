@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="114mm" height="162mm" viewBox="0 0 114 162">
+  <rect width="114" height="162" fill="#ffffff"/>
+  <g fill="none" stroke="#111111" stroke-width="0.25" opacity="0.32">
+    <rect x="6" y="6" width="102" height="150" rx="1"/>
+  </g>
+  <g fill="#111111" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" text-anchor="middle">
+    <text x="57" y="32" font-size="9.5" font-weight="700">СВОЁ ФОТО</text>
+    <text x="57" y="42" font-size="3.8">фотостудия и печать</text>
+    <text x="57" y="80" font-size="7" font-weight="700">Фото на документы</text>
+    <text x="57" y="90" font-size="4.3">комплект внутри</text>
+  </g>
+  <g fill="#111111" font-family="DejaVu Sans, Arial, Helvetica, sans-serif" text-anchor="middle">
+    <text x="57" y="132" font-size="4.1">svoefoto.ru</text>
+    <text x="57" y="140" font-size="4.1">+7 (863) 322-65-75</text>
+    <text x="57" y="148" font-size="3.4">Соборный 21 · 2-я Баррикадная 4</text>
+  </g>
+  <g stroke="#f59e0b" stroke-width="1.2" stroke-linecap="round">
+    <path d="M37 52 H77"/>
+    <path d="M43 101 H71"/>
+  </g>
+</svg>

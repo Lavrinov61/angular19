@@ -1,0 +1,280 @@
+<div class="services-page">
+  <section class="services-hero">
+    <div class="services-shell hero-grid">
+      <a class="hero-card hero-card--primary" routerLink="/start-client">
+        <span class="hero-card__copy">
+          <span class="hero-kicker">Своё Фото</span>
+          <h1>Начните с задачи, а не с каталога</h1>
+          <span class="hero-lead">
+            Оформите профиль или коротко опишите, что нужно. Мы подберём услугу, формат,
+            срок и следующий шаг без просмотра всей витрины.
+          </span>
+          <span class="hero-action">Стать клиентом</span>
+        </span>
+        <span class="hero-art" aria-hidden="true">
+          @for (visual of heroVisuals; track visual.icon) {
+            <span [class]="'hero-art__tile hero-art__tile--' + visual.tone">
+              <mat-icon>{{ visual.icon }}</mat-icon>
+            </span>
+          }
+        </span>
+      </a>
+
+      @for (tile of heroTiles; track tile.route) {
+        <a [class]="'hero-card hero-card--tile hero-card--' + tile.tone" [routerLink]="tile.route">
+          <span class="tile-copy">
+            <strong>{{ tile.title }}</strong>
+            <small>{{ tile.description }}</small>
+          </span>
+          <span class="tile-icon" aria-hidden="true">
+            <mat-icon>{{ tile.icon }}</mat-icon>
+          </span>
+        </a>
+      }
+    </div>
+  </section>
+
+  <main class="services-stage">
+    <div class="services-shell">
+      <section class="start-section" aria-labelledby="start-services-title">
+        <div class="section-head">
+          <div>
+            <span class="section-kicker">следующий шаг</span>
+            <h2 id="start-services-title">Выберите сценарий</h2>
+          </div>
+          <div class="segmented" role="tablist" aria-label="Сценарии клиентов">
+            @for (tab of audienceTabs; track tab.id) {
+              <button
+                type="button"
+                role="tab"
+                [attr.aria-selected]="activeAudienceId() === tab.id"
+                [class.active]="activeAudienceId() === tab.id"
+                (click)="selectAudience(tab.id)"
+              >
+                {{ tab.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <div class="scenario-grid">
+          @for (offer of activeScenarioOffers(); track offer.title) {
+            <a [class]="'scenario-card scenario-card--' + offer.tone" [routerLink]="offer.route">
+              <span class="scenario-card__top">
+                <span class="scenario-card__badge">{{ offer.badge }}</span>
+                <span class="scenario-card__icon" aria-hidden="true">
+                  <mat-icon>{{ offer.icon }}</mat-icon>
+                </span>
+              </span>
+              <strong>{{ offer.title }}</strong>
+              <span class="scenario-card__metric">{{ offer.metric }}</span>
+              <p>{{ offer.description }}</p>
+            </a>
+          }
+        </div>
+      </section>
+
+      <section class="featured-section" aria-labelledby="featured-services-title">
+        <div class="section-head section-head--simple">
+          <div>
+            <span class="section-kicker">популярные входы</span>
+            <h2 id="featured-services-title">Что можно оформить сразу</h2>
+          </div>
+          <a class="section-link" href="#services-search">Найти точную услугу</a>
+        </div>
+
+        <div class="featured-grid">
+          @for (service of featuredServices(); track service.route) {
+            <a [class]="'featured-card featured-card--' + service.tone" [routerLink]="service.route">
+              <span class="featured-card__text">
+                <span class="featured-card__badge">{{ service.badge }}</span>
+                <strong>{{ service.title }}</strong>
+                <small>{{ service.description }}</small>
+                <span class="featured-card__result">
+                  {{ service.result }}
+                  @if (service.price) {
+                    <span>от {{ service.price | number }} ₽</span>
+                  }
+                </span>
+              </span>
+              <span class="featured-card__visual" aria-hidden="true">
+                <span class="featured-card__icon">
+                  <mat-icon>{{ service.icon }}</mat-icon>
+                </span>
+              </span>
+            </a>
+          }
+        </div>
+      </section>
+
+      <section class="process-section" aria-labelledby="process-title">
+        <div class="section-head section-head--simple">
+          <div>
+            <span class="section-kicker">как в банке</span>
+            <h2 id="process-title">Не каталог, а понятный путь</h2>
+          </div>
+        </div>
+
+        <div class="process-grid">
+          @for (step of processSteps; track step.title; let i = $index) {
+            <div class="process-card">
+              <span class="process-card__number">{{ i + 1 }}</span>
+              <span class="process-card__icon" aria-hidden="true">
+                <mat-icon>{{ step.icon }}</mat-icon>
+              </span>
+              <strong>{{ step.title }}</strong>
+              <p>{{ step.description }}</p>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section class="task-cta" aria-labelledby="task-cta-title">
+        <div class="task-cta__copy">
+          <span class="section-kicker">заявка вместо догадок</span>
+          <h2 id="task-cta-title">Расскажите, что нужно сделать</h2>
+          <p>
+            Если задача нестандартная, не заставляем выбирать услугу вручную. Опишите файл,
+            документ или тираж, а мы направим в правильный заказ.
+          </p>
+          <div class="task-cta__actions">
+            <a mat-flat-button color="primary" routerLink="/start-client">Оформить профиль</a>
+            <button mat-stroked-button type="button" (click)="openChat()">
+              <mat-icon>chat</mat-icon>
+              Рассказать задачу
+            </button>
+          </div>
+        </div>
+        <div class="task-cta__visual" aria-hidden="true">
+          <span class="task-cta__panel">
+            <mat-icon>photo_camera</mat-icon>
+          </span>
+          <span class="task-cta__panel">
+            <mat-icon>print</mat-icon>
+          </span>
+          <span class="task-cta__panel">
+            <mat-icon>auto_fix_high</mat-icon>
+          </span>
+        </div>
+      </section>
+
+      <section class="search-section" id="services-search" aria-labelledby="services-search-title">
+        <div class="section-head section-head--simple">
+          <div>
+            <span class="section-kicker">если знаете название</span>
+            <h2 id="services-search-title">Быстрый поиск услуги</h2>
+          </div>
+        </div>
+
+        <label class="search-box">
+          <mat-icon aria-hidden="true">search</mat-icon>
+          <input
+            type="search"
+            placeholder="Например: фото на паспорт, ретушь, ксерокопия"
+            [value]="searchQuery()"
+            (input)="onSearchInput($event)"
+          >
+          @if (searchQuery()) {
+            <button type="button" mat-icon-button (click)="clearSearch()" aria-label="Очистить поиск">
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </label>
+
+        @if (isSearching()) {
+          @if (filteredResults(); as results) {
+            <div class="search-results">
+              <div class="search-results__top">
+                <span>Найдено: {{ results.length }}</span>
+                <button type="button" mat-button (click)="clearSearch()">Очистить</button>
+              </div>
+
+              @if (results.length > 0) {
+                <div class="compact-grid">
+                  @for (service of results; track service.id) {
+                    <a class="compact-service" [routerLink]="['/', service.slug]">
+                      <span class="compact-service__icon" aria-hidden="true">
+                        <mat-icon>{{ service.icon || 'photo_camera' }}</mat-icon>
+                      </span>
+                      <span>
+                        <strong>{{ service.title }}</strong>
+                        <small>{{ service.description }}</small>
+                      </span>
+                      <mat-icon aria-hidden="true">chevron_right</mat-icon>
+                    </a>
+                  }
+                </div>
+              } @else {
+                <div class="empty-state">
+                  <mat-icon>search_off</mat-icon>
+                  <strong>Ничего не найдено</strong>
+                  <span>Напишите нам, и мы подберём вариант вручную.</span>
+                  <button mat-flat-button color="primary" type="button" (click)="openChat()">Написать в чат</button>
+                </div>
+              }
+            </div>
+          }
+        }
+      </section>
+
+      <section class="catalog-section" aria-labelledby="catalog-title">
+        <div class="section-head section-head--simple">
+          <div>
+            <span class="section-kicker">каталог ниже</span>
+            <h2 id="catalog-title">Все направления по задачам</h2>
+          </div>
+        </div>
+
+        <div class="catalog-list">
+          @for (section of sections(); track section.id) {
+            <article class="catalog-group">
+              <div class="catalog-group__head">
+                <span aria-hidden="true">
+                  <mat-icon>{{ section.icon }}</mat-icon>
+                </span>
+                <div>
+                  <h3>{{ section.title }}</h3>
+                  <p>{{ section.subtitle }}</p>
+                </div>
+              </div>
+
+              <div class="catalog-services">
+                @for (service of section.services; track service.id) {
+                  <a class="catalog-service" [routerLink]="['/', service.slug]">
+                    <span>
+                      <strong>{{ service.title }}</strong>
+                      @if (service.price) {
+                        <small>от {{ service.price | number }} ₽</small>
+                      }
+                    </span>
+                    <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+                  </a>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+
+      <section class="faq-section" aria-labelledby="faq-title">
+        <div class="section-head section-head--simple">
+          <div>
+            <span class="section-kicker">вопросы</span>
+            <h2 id="faq-title">Что ещё важно знать</h2>
+          </div>
+        </div>
+
+        <mat-accordion class="faq-accordion">
+          @for (item of faqItems; track item.question) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>{{ item.question }}</mat-panel-title>
+              </mat-expansion-panel-header>
+              <p class="faq-answer">{{ item.answer }}</p>
+            </mat-expansion-panel>
+          }
+        </mat-accordion>
+      </section>
+    </div>
+  </main>
+</div>

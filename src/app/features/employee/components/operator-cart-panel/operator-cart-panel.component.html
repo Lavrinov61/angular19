@@ -1,0 +1,200 @@
+<div class="cart-panel">
+  <!-- Header -->
+  <div class="cart-header" (click)="toggleExpanded()" (keydown.enter)="toggleExpanded()" tabindex="0">
+    <span class="cart-label">КОРЗИНА</span>
+    @if (!isEmpty()) {
+      <span class="cart-badge">{{ itemCount() }}</span>
+      <span class="cart-total">{{ total() }} &#8381;</span>
+    }
+    <span class="spacer"></span>
+    <mat-icon class="toggle-icon" [class.expanded]="isExpanded()">
+      expand_more
+    </mat-icon>
+  </div>
+
+  @if (isExpanded()) {
+    <div class="cart-body">
+
+      @if (loading()) {
+        <div class="cart-loading">
+          <mat-spinner diameter="20" />
+        </div>
+      } @else if (isEmpty()) {
+        <div class="cart-empty">Пусто</div>
+      } @else {
+        <!-- Items -->
+        <div class="cart-items">
+          @for (item of items(); track item.serviceId) {
+            <div class="cart-item">
+              <div class="item-info">
+                <span class="item-name">{{ item.name }}</span>
+                @if (item.description) {
+                  <span class="item-description">{{ item.description }}</span>
+                }
+                <span class="item-price">
+                  {{ item.price }} &#8381;
+                  @if (item.nextPrice != null && item.nextPrice !== item.price) {
+                    <span class="next-price">/ {{ item.nextPrice }} &#8381;</span>
+                  }
+                </span>
+              </div>
+              <div class="item-controls">
+                <button class="qty-btn"
+                        (click)="updateQuantity(item.serviceId, -1)"
+                        [disabled]="item.quantity <= 1 || isPrintQueueItem(item)">−</button>
+                <span class="item-qty">{{ item.quantity }}</span>
+                <button class="qty-btn"
+                        (click)="updateQuantity(item.serviceId, 1)"
+                        [disabled]="isPrintQueueItem(item)">+</button>
+                <button class="remove-btn"
+                        (click)="removeItem(item.serviceId)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Total -->
+        <div class="cart-total-row">
+          <span>Итого</span>
+          @if (waterfallLoading()) {
+            <mat-spinner diameter="14" />
+          } @else {
+            <span class="total-amount">{{ total() }} &#8381;</span>
+          }
+        </div>
+        @if (savings() > 0) {
+          <div class="cart-savings-row">
+            <span>Скидка</span>
+            <span class="savings-amount">&minus;{{ savings() }} &#8381;</span>
+          </div>
+        }
+      }
+
+      <!-- Add item form -->
+      <div class="add-item-form">
+        <input class="add-input add-name"
+               [(ngModel)]="newItemName"
+               placeholder="Услуга" />
+        <input class="add-input add-price"
+               type="number"
+               [(ngModel)]="newItemPrice"
+               placeholder="₽" />
+        <input class="add-input add-qty"
+               type="number"
+               min="1"
+               step="1"
+               [(ngModel)]="newItemQuantity"
+               placeholder="шт" />
+        <button class="add-btn"
+                (click)="addItem()"
+                [disabled]="!newItemName.trim() || !newItemPrice || newItemPrice <= 0 || !newItemQuantity || newItemQuantity < 1"
+                matTooltip="Добавить">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      <!-- Payment -->
+      @if (!isEmpty()) {
+        <div class="cart-payment">
+          @if (posResult(); as result) {
+            <div class="payment-result">
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ result.title }} ({{ result.total }} &#8381;)</span>
+            </div>
+          } @else {
+            @let result = paymentResult();
+            @if (result) {
+            <div class="payment-result">
+              <mat-icon>{{ onlinePaymentPaid() ? 'check_circle' : 'schedule' }}</mat-icon>
+              <span>{{ onlinePaymentPaid() ? 'Оплачено онлайн' : 'Ссылка отправлена' }} ({{ result.amount }} &#8381;)</span>
+            </div>
+            } @else if (posMode()) {
+            @if (posLoading()) {
+              <div class="pos-loading">
+                <mat-spinner diameter="18" />
+                <span>Проверка смены...</span>
+              </div>
+            } @else if (shiftOpenMode()) {
+              <div class="shift-inline">
+                <span class="shift-label">Откройте смену</span>
+                <select class="shift-select" [(ngModel)]="selectedStudioId">
+                  @for (s of studioService.studios(); track s.id) {
+                    <option [value]="s.id">{{ s.name }}</option>
+                  }
+                </select>
+                <input class="add-input" type="number" [(ngModel)]="cashAtOpen" min="0" placeholder="Наличные, ₽" required />
+                <button class="pill-btn pill-btn--amber"
+                        [disabled]="!selectedStudioId || cashAtOpen === null || cashAtOpen < 0 || shiftOpening()" (click)="openShiftInline()">
+                  @if (shiftOpening()) {
+                    <mat-spinner diameter="14" />
+                  } @else {
+                    <mat-icon>login</mat-icon>
+                  }
+                  Открыть
+                </button>
+                <button class="pill-btn" (click)="cancelPosMode()">
+                  <mat-icon>arrow_back</mat-icon> Назад
+                </button>
+              </div>
+            } @else {
+              <div class="pos-methods">
+                <span class="pos-label">Оплата:</span>
+                <div class="pos-buttons">
+                  <button class="pill-btn" [disabled]="posProcessing()" (click)="processPayment('cash')">
+                    <mat-icon>payments</mat-icon> Нал
+                  </button>
+                  <button class="pill-btn" [disabled]="posProcessing()" (click)="processPayment('card')">
+                    <mat-icon>credit_card</mat-icon> Карта
+                  </button>
+                  <button class="pill-btn" [disabled]="posProcessing()" (click)="processPayment('sbp')">
+                    <mat-icon>qr_code_2</mat-icon> СБП
+                  </button>
+                </div>
+                @if (posProcessing()) {
+                  <div class="pos-processing">
+                    <mat-spinner diameter="16" />
+                    <span>Чек...</span>
+                  </div>
+                }
+                <button class="pill-btn" (click)="cancelPosMode()">
+                  <mat-icon>arrow_back</mat-icon> Назад
+                </button>
+              </div>
+            }
+          } @else {
+            <div class="payment-buttons">
+              <button class="pill-btn pill-btn--amber" (click)="openCheckout()" [disabled]="waterfallLoading()">
+                @if (waterfallLoading()) { <mat-spinner diameter="14" /> } @else { <mat-icon>shopping_cart_checkout</mat-icon> }
+                Выставить оплату
+              </button>
+            </div>
+          }
+          }
+        </div>
+
+        @if (printQueueCount() > 0) {
+          <div class="print-queue">
+            <div class="print-queue-head">
+              <mat-icon>print</mat-icon>
+              <span>Печать после оплаты</span>
+              <strong>{{ printQueueCount() }}</strong>
+            </div>
+            <button class="pill-btn pill-btn--print"
+                    [disabled]="!printQueueCanSend()"
+                    [matTooltip]="printQueueDisabledReason()"
+                    (click)="sendQueuedPrintJobs()">
+              @if (sendingQueuedPrint()) {
+                <mat-spinner diameter="14" />
+              } @else {
+                <mat-icon>send</mat-icon>
+              }
+              Отправить всё на печать
+            </button>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

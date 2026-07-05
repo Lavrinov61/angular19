@@ -1,0 +1,408 @@
+<section class="doc-widget" [attr.data-intent]="intent()">
+  <input
+    #fileInput
+    class="doc-widget__file-input"
+    type="file"
+    [attr.accept]="acceptedFileTypes"
+    multiple
+    (change)="onFileInputChange($event)"
+  />
+
+  @if (store.orderId(); as orderId) {
+    <article class="doc-widget-success" tabindex="-1">
+      <div class="doc-widget-success__icon">
+        <mat-icon aria-hidden="true">check_circle</mat-icon>
+      </div>
+      <p class="doc-widget-kicker">Заказ создан</p>
+      <h2>Заказ создан</h2>
+      <p>
+        Номер заказа: <strong>{{ orderId }}</strong>.
+        {{ submitMessage() || 'Оплатите заказ онлайн. После оплаты он уйдёт сотруднику в работу.' }}
+      </p>
+
+      <div class="doc-widget-success__actions">
+        <a class="doc-widget-btn doc-widget-btn--primary" [routerLink]="paymentLink()">
+          <mat-icon aria-hidden="true">lock</mat-icon>
+          Оплатить онлайн
+        </a>
+        <button class="doc-widget-btn doc-widget-btn--light" type="button" (click)="newOrder()">
+          <mat-icon aria-hidden="true">add</mat-icon>
+          Новый заказ
+        </button>
+      </div>
+
+      <div class="doc-widget-cabinet">
+        <strong>Личный кабинет можно подключить после оформления</strong>
+        <span>Вход нужен для истории и статуса заказа, а не для самой загрузки файла.</span>
+        <div>
+          <a class="doc-widget-btn doc-widget-btn--dark" routerLink="/auth/login" [queryParams]="loginQueryParams">
+            <mat-icon aria-hidden="true">login</mat-icon>
+            Войти
+          </a>
+          <a class="doc-widget-btn doc-widget-btn--primary" routerLink="/start-client" [queryParams]="loginQueryParams">
+            <mat-icon aria-hidden="true">person_add</mat-icon>
+            Стать клиентом
+          </a>
+        </div>
+      </div>
+    </article>
+  } @else {
+    <div class="doc-widget__header">
+      <p class="doc-widget-kicker">{{ widgetCopy().kicker }}</p>
+      <h2>{{ widgetCopy().title }}</h2>
+      <p>{{ widgetCopy().lead }}</p>
+    </div>
+
+    <div class="doc-widget__layout">
+      <div class="doc-widget__main">
+        <section class="doc-widget-card doc-widget-upload">
+          <div
+            class="doc-widget-dropzone"
+            role="button"
+            tabindex="0"
+            [class.doc-widget-dropzone--active]="isDragging()"
+            [class.doc-widget-dropzone--filled]="store.hasItems()"
+            [attr.aria-disabled]="store.isAnyUploading()"
+            (click)="openFileDialog()"
+            (keydown)="onDropzoneKeydown($event)"
+            (drop)="onDrop($event)"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+          >
+            <span class="doc-widget-dropzone__icon">
+              <mat-icon aria-hidden="true">upload_file</mat-icon>
+            </span>
+            <div>
+              <strong>
+                @if (store.hasItems()) {
+                  Добавить ещё файлы
+                } @else {
+                  {{ widgetCopy().primary }}
+                }
+              </strong>
+              <span>PDF, Word, Excel, PowerPoint, JPG, PNG до 100 МБ</span>
+            </div>
+          </div>
+
+          @if (store.hasItems()) {
+            <div class="doc-widget-files" aria-label="Загруженные файлы">
+              @for (item of store.items(); track item.id) {
+                <article class="doc-widget-file" [class.doc-widget-file--error]="item.status === 'error'">
+                  <span class="doc-widget-file__icon">
+                    <mat-icon aria-hidden="true">{{ fileIcon(item) }}</mat-icon>
+                  </span>
+
+                  <div class="doc-widget-file__name">
+                    <strong [title]="item.fileName">{{ item.fileName }}</strong>
+                    <span>{{ item.sizeLabel }} · {{ statusLabel(item) }}</span>
+                    @if (item.status === 'uploading' || item.status === 'pending') {
+                      <div class="doc-widget-progress" aria-label="Прогресс загрузки">
+                        <span [style.width.%]="item.uploadProgress"></span>
+                      </div>
+                    }
+                  </div>
+
+                  <label class="doc-widget-count">
+                    <span>Страниц</span>
+                    <input
+                      type="number"
+                      inputmode="numeric"
+                      min="1"
+                      max="2000"
+                      [value]="item.pageCount"
+                      (input)="updatePageCount(item.id, $event)"
+                    />
+                  </label>
+
+                  <div class="doc-widget-file__actions">
+                    @if (item.status === 'error') {
+                      <button class="doc-widget-small-btn" type="button" (click)="retryUpload(item.id)">
+                        Повторить
+                      </button>
+                    }
+                    <button class="doc-widget-icon-btn" type="button" aria-label="Удалить файл" (click)="removeItem(item.id)">
+                      <mat-icon aria-hidden="true">close</mat-icon>
+                    </button>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </section>
+
+        <section class="doc-widget-card doc-widget-settings">
+          <div class="doc-widget-card__title">
+            <mat-icon aria-hidden="true">tune</mat-icon>
+            <h3>Параметры</h3>
+          </div>
+
+          <div class="doc-widget-setting">
+            <h4>Формат</h4>
+            <div class="doc-widget-options">
+              @for (option of paperOptions(); track option.id) {
+                <button
+                  type="button"
+                  class="doc-widget-option"
+                  [class.doc-widget-option--selected]="store.settings().paperSize === option.id"
+                  [attr.aria-pressed]="store.settings().paperSize === option.id"
+                  (click)="setPaperSize(option.id)"
+                >
+                  <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                  <strong>{{ option.label }}</strong>
+                  <span>{{ option.description }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="doc-widget-setting">
+            <h4>Цветность</h4>
+            <div class="doc-widget-options">
+              @for (option of colorOptions; track option.id) {
+                <button
+                  type="button"
+                  class="doc-widget-option"
+                  [class.doc-widget-option--selected]="store.settings().colorMode === option.id"
+                  [attr.aria-pressed]="store.settings().colorMode === option.id"
+                  (click)="setColorMode(option.id)"
+                >
+                  <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                  <strong>{{ option.label }}</strong>
+                  <span>{{ option.description }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="doc-widget-setting">
+            <h4>Стороны</h4>
+            <div class="doc-widget-options">
+              @for (option of sideOptions; track option.id) {
+                <button
+                  type="button"
+                  class="doc-widget-option"
+                  [class.doc-widget-option--selected]="store.settings().sides === option.id"
+                  [attr.aria-pressed]="store.settings().sides === option.id"
+                  (click)="setSides(option.id)"
+                >
+                  <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                  <strong>{{ option.label }}</strong>
+                  <span>{{ option.description }}</span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="doc-widget-setting">
+            <h4>Скрепление</h4>
+            @if (intent() === 'binding') {
+              <div class="doc-widget-locked">
+                <mat-icon aria-hidden="true">article</mat-icon>
+                <div>
+                  <strong>Пластиковая пружина А4</strong>
+                  <span>На этой странице оформляем именно переплёт на пластиковую пружину.</span>
+                </div>
+              </div>
+            } @else {
+              <div class="doc-widget-options">
+                @for (option of finishingOptions; track option.id) {
+                  <button
+                    type="button"
+                    class="doc-widget-option"
+                    [class.doc-widget-option--selected]="store.settings().finishing === option.id"
+                    [attr.aria-pressed]="store.settings().finishing === option.id"
+                    (click)="setFinishing(option.id)"
+                  >
+                    <mat-icon aria-hidden="true">{{ option.icon }}</mat-icon>
+                    <strong>{{ option.label }}</strong>
+                    <span>{{ option.description }}</span>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+
+          <label class="doc-widget-copies">
+            <span>Экземпляров</span>
+            <input
+              type="number"
+              inputmode="numeric"
+              min="1"
+              max="999"
+              [value]="store.settings().copies"
+              (input)="updateCopies($event)"
+            />
+          </label>
+        </section>
+      </div>
+
+      <aside class="doc-widget-summary">
+        <div class="doc-widget-summary__head">
+          <p class="doc-widget-kicker">Оформление</p>
+          <h3>{{ widgetCopy().summaryTitle }}</h3>
+        </div>
+
+        <div class="doc-widget-totals" aria-label="Расчёт заказа">
+          <div>
+            <span>Файлов</span>
+            <strong>{{ store.totalFiles() }}</strong>
+          </div>
+          <div>
+            <span>Страниц</span>
+            <strong>{{ store.totalPages() }}</strong>
+          </div>
+          <div>
+            <span>Обычная цена</span>
+            <strong>{{ store.estimatedTotalPrice() | number:'1.0-0' }} ₽</strong>
+          </div>
+        </div>
+
+        @if (canShowEducationEstimate()) {
+          <div class="doc-widget-education-price">
+            <mat-icon aria-hidden="true">school</mat-icon>
+            <div>
+              <span>{{ intent() === 'binding' ? 'Учебная печать' : 'С учебным доступом' }}</span>
+              @if (intent() === 'binding' && !store.hasItems()) {
+                <strong>от 3 ₽/стр.</strong>
+              } @else {
+                <strong>{{ educationEstimate() | number:'1.0-0' }} ₽</strong>
+              }
+              <p>
+                @if (intent() === 'binding') {
+                  А4 ч/б от 3 ₽ за страницу, переплёт на пружину, 10 ₽.
+                } @else {
+                  Применяется для подтверждённого образовательного профиля.
+                }
+              </p>
+            </div>
+          </div>
+        }
+
+        <p class="doc-widget-note">
+          Итог проверит сотрудник: количество страниц, заливку, порядок листов и готовность файла к печати.
+        </p>
+
+        <section class="doc-widget-checkout-block">
+          <div class="doc-widget-checkout-title">
+            <h4>Где забрать</h4>
+            @if (store.isLoadingPickupLocations()) {
+              <span>
+                <mat-progress-spinner mode="indeterminate" diameter="14" />
+                обновляем
+              </span>
+            }
+          </div>
+
+          <div class="doc-widget-pickups">
+            @for (location of store.pickupLocations(); track location.id) {
+              <button
+                type="button"
+                class="doc-widget-pickup"
+                [class.doc-widget-pickup--selected]="store.selectedPickupLocationId() === location.id"
+                [disabled]="location.status !== 'open'"
+                [attr.aria-pressed]="store.selectedPickupLocationId() === location.id"
+                (click)="selectPickupLocation(location.id)"
+              >
+                <mat-icon aria-hidden="true">{{ location.status === 'open' ? 'storefront' : 'event_busy' }}</mat-icon>
+                <span>
+                  <strong>{{ location.name }}</strong>
+                  <small>{{ location.address }}</small>
+                  <small>{{ location.workHours }}</small>
+                </span>
+              </button>
+            }
+          </div>
+
+          @if (store.pickupLocationsError()) {
+            <p class="doc-widget-alert">
+              <mat-icon aria-hidden="true">info</mat-icon>
+              {{ store.pickupLocationsError() }}
+            </p>
+          }
+        </section>
+
+        <section class="doc-widget-checkout-block">
+          <h4>Контакты</h4>
+          <label class="doc-widget-field">
+            <span>Имя *</span>
+            <input
+              type="text"
+              autocomplete="name"
+              placeholder="Иван"
+              [value]="store.contact().name"
+              (input)="updateName($event)"
+            />
+          </label>
+          <label class="doc-widget-field">
+            <span>Телефон *</span>
+            <input
+              type="tel"
+              autocomplete="tel"
+              placeholder="+7 (900) 000-00-00"
+              [value]="store.contact().phone"
+              (input)="updatePhone($event)"
+            />
+          </label>
+          <label class="doc-widget-field">
+            <span>Email</span>
+            <input
+              type="email"
+              autocomplete="email"
+              placeholder="mail@example.ru"
+              [value]="store.contact().email || ''"
+              (input)="updateEmail($event)"
+            />
+          </label>
+          <label class="doc-widget-field">
+            <span>Комментарий</span>
+            <textarea
+              rows="3"
+              placeholder="Например: нужно к 16:00"
+              [value]="store.contact().comments || ''"
+              (input)="updateComments($event)"
+            ></textarea>
+          </label>
+        </section>
+
+        @if (store.isAnyUploading()) {
+          <p class="doc-widget-alert">
+            <mat-icon aria-hidden="true">hourglass_empty</mat-icon>
+            Загружаем файлы: {{ store.uploadedItemsCount() }} из {{ store.totalFiles() }},
+            {{ store.uploadProgressPercent() }}%
+          </p>
+        }
+
+        @if (store.submitError() || submitMessage()) {
+          <p class="doc-widget-alert doc-widget-alert--error">
+            <mat-icon aria-hidden="true">error</mat-icon>
+            {{ store.submitError() || submitMessage() }}
+          </p>
+        }
+
+        <button
+          class="doc-widget-btn doc-widget-btn--primary doc-widget-submit"
+          type="button"
+          [disabled]="store.isSubmitting() || store.isAnyUploading() || !store.canSubmit()"
+          (click)="submitOrder()"
+        >
+          @if (store.isSubmitting()) {
+            <mat-progress-spinner mode="indeterminate" diameter="18" />
+            <span>Создаём заказ...</span>
+          } @else {
+            <mat-icon aria-hidden="true">send</mat-icon>
+            <span>{{ widgetCopy().submit }}</span>
+          }
+        </button>
+
+        <a class="doc-widget-phone" [href]="studioPhoneHref">
+          <mat-icon aria-hidden="true">call</mat-icon>
+          {{ studioPhone }}
+        </a>
+
+        <p class="doc-widget-privacy">
+          Нажимая кнопку, вы соглашаетесь на обработку персональных данных.
+        </p>
+      </aside>
+    </div>
+  }
+</section>

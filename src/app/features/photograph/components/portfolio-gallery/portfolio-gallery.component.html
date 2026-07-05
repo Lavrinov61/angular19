@@ -1,0 +1,112 @@
+<section class="portfolio-gallery">
+  <div class="gallery-header">
+    <h2 class="section-title">Мои работы</h2>
+    @if (photographerName()) {
+      <p class="section-subtitle">
+        Портфолио фотографа {{photographerName()}}
+      </p>
+    }
+  </div>
+
+  <!-- Фильтр категорий -->
+  @if (categories.length > 1) {
+    <div class="category-filter">
+      <mat-chip-listbox>
+        @for (category of categories; track category.id || $index) {
+          <mat-chip-option 
+            [value]="category.id"
+            [selected]="selectedCategory === category.id"
+            (click)="filterByCategory(category.id)">
+            {{category.name}} ({{category.count}})
+          </mat-chip-option>
+        }
+      </mat-chip-listbox>
+    </div>
+  }
+
+  <!-- Загрузка -->
+  @if (isLoading) {
+    <div class="loading-state">
+      <mat-icon>photo_library</mat-icon>
+      <p>Загружаем портфолио...</p>
+    </div>
+  }
+
+  <!-- Галерея изображений -->
+  @if (!isLoading && hasImages) {
+    <div class="gallery-grid">
+      @for (image of filteredImages; track image.id || image.imageUrl || $index; let i = $index) {
+        <div
+          class="gallery-item"
+          (click)="openImageModal(image, i)"
+          (keydown.enter)="openImageModal(image, i)"
+          tabindex="0">
+          
+          <div class="image-container">
+            <img 
+              [src]="image.imageUrl" 
+              [alt]="image.title || 'Фотография из портфолио'" 
+              loading="lazy"
+              class="portfolio-image">
+            
+            <!-- Overlay с информацией -->
+            <div class="image-overlay">
+              <div class="image-info">
+                @if (image.title) {
+                  <h4 class="image-title">{{image.title}}</h4>
+                }
+                @if (image.category) {
+                  <p class="image-category">{{image.category}}</p>
+                }
+                @if (image.description) {
+                  <p class="image-description">{{image.description}}</p>
+                }
+              </div>
+              
+              <div class="image-actions">
+                <button mat-icon-button class="view-button">
+                  <mat-icon>fullscreen</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Состояние "Нет изображений" -->
+  @if (!isLoading && !hasImages) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">photo_library</mat-icon>
+      <h3>{{noImagesMessage}}</h3>
+      <p>Скоро здесь появятся новые работы!</p>
+    </div>
+  }
+
+  <!-- Состояние "Нет результатов фильтрации" -->
+  @if (!isLoading && hasImages && filteredImages.length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">filter_list</mat-icon>
+      <h3>{{noImagesMessage}}</h3>
+      <p>Попробуйте выбрать другую категорию</p>
+      <button mat-button color="primary" (click)="filterByCategory('all')">
+        <mat-icon>clear_all</mat-icon>
+        Показать все работы
+      </button>
+    </div>
+  }
+</section>
+
+  <!-- Состояние "Нет результатов фильтрации" -->
+  @if (!isLoading && hasImages && filteredImages.length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">filter_list</mat-icon>
+      <h3>{{noImagesMessage}}</h3>
+      <p>Попробуйте выбрать другую категорию</p>
+      <button mat-button color="primary" (click)="filterByCategory('all')">
+        <mat-icon>clear_all</mat-icon>
+        Показать все работы
+      </button>
+    </div>
+  }

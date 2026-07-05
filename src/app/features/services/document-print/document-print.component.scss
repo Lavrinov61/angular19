@@ -1,0 +1,58 @@
+@use '../../../shared/styles/service-page' as sp;
+
+.document-print-page {
+  @include sp.all;
+
+  // Document-print-specific: formats section
+  .formats-section {
+    padding: 32px 16px;
+    background: var(--ed-surface, #0a0a0a);
+    @media (min-width: 840px) { padding: 48px 32px; }
+
+    .formats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .format-chip {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 12px;
+      background: var(--ed-surface-container, #1a1a1a);
+      border-radius: var(--ed-border-radius-sm, 8px);
+
+      mat-icon { color: var(--ed-accent, #f59e0b); }
+      span { font-size: 0.875rem; font-weight: 600; color: var(--ed-on-surface, #f5f5f5); }
+    }
+  }
+
+  // Document-print-specific: service card prices layout
+  .services-section .service-card {
+    .service-prices {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+
+      .price-item {
+        flex: 1;
+        text-align: center;
+
+        .price-label {
+          display: block;
+          font-size: 0.75rem;
+          color: var(--ed-on-surface-variant, #a0a0a0);
+          margin-bottom: 2px;
+        }
+
+        .price { font-weight: 700; color: var(--ed-accent, #f59e0b); }
+      }
+    }
+  }
+}

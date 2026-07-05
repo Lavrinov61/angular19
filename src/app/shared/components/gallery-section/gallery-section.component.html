@@ -1,0 +1,100 @@
+<!-- Gallery Section, Editorial Bold -->
+<section class="gallery-section" [class.compact]="isMobile() || config().compactMode" [class.medium]="isTablet()" [class.expanded]="isDesktop()">
+  <div class="section-container">
+    <!-- Header -->
+    <div class="section-header" appScrollReveal>
+      <span class="gallery-label">Наши работы</span>
+      <p class="section-subtitle">Профессиональные фотографии, созданные с любовью к деталям</p>
+    </div>
+
+    <!-- Stats -->
+    @if (config().showStats && galleryData().stats) {
+      <div class="gallery-stats" appScrollReveal>
+        @for (stat of galleryData().stats; track stat.label || stat.icon || $index; let i = $index) {
+          <div class="stat-item">
+            <div class="stat-icon">
+              <mat-icon>{{ stat.icon }}</mat-icon>
+            </div>
+            <div class="stat-content">
+              <span class="stat-number">{{ stat.value }}</span>
+              <span class="stat-label">{{ stat.label }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Masonry Grid -->
+    <div class="masonry-grid">
+      @for (photo of galleryPhotos(); track photo.id || photo.url || $index; let i = $index) {
+        <div
+          class="gallery-item"
+          [class.tall]="i % 5 === 0 || i % 7 === 0"
+          [class.wide]="i % 3 === 0"
+          appScrollReveal
+          [style.--reveal-delay]="(i * 100) + 'ms'"
+          (click)="openGalleryModal(photo, i)"
+          (keydown.enter)="openGalleryModal(photo, i)"
+          tabindex="0">
+
+          <img [src]="photo.url"
+               [alt]="photo.title"
+               class="gallery-image"
+               loading="lazy"
+               [style.object-position]="getImagePosition(i)">
+
+          <!-- Hover overlay -->
+          <div class="image-overlay">
+            <span class="image-category">{{ photo.category | titlecase }}</span>
+            <span class="view-label">
+              <mat-icon>visibility</mat-icon>
+              Посмотреть
+            </span>
+          </div>
+
+          <!-- Bottom info gradient -->
+          <div class="image-info">
+            <span class="image-title">{{ photo.title }}</span>
+            <span class="image-meta">{{ photo.category | titlecase }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- CTA -->
+    @if (config().showCta) {
+      <div class="gallery-cta" appScrollReveal>
+        <h3 class="cta-title">Увидеть больше наших работ?</h3>
+        <p class="cta-subtitle">Откройте полную галерею с более чем 9000 фотографиями</p>
+
+        <div class="cta-buttons">
+          <a mat-flat-button routerLink="/gallery" class="primary-cta">
+            <mat-icon>collections</mat-icon>
+            Полная галерея
+            <mat-icon>arrow_forward</mat-icon>
+          </a>
+
+          <button mat-stroked-button class="secondary-cta" (click)="scrollToContacts()">
+            <mat-icon>photo_camera</mat-icon>
+            Заказать фотосессию
+          </button>
+        </div>
+
+        <div class="gallery-trust">
+          <div class="trust-item">
+            <mat-icon>verified</mat-icon>
+            <span>20000+ довольных клиентов</span>
+          </div>
+          <div class="trust-item">
+            <mat-icon>trending_up</mat-icon>
+            <span>{{ yearsOfExperience }} лет опыта</span>
+          </div>
+          <div class="trust-item">
+            <mat-icon>workspace_premium</mat-icon>
+            <span>Профессиональное оборудование</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</section>

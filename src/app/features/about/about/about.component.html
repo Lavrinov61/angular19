@@ -1,0 +1,111 @@
+<!-- About Page, Editorial Bold -->
+<div class="about-page">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content" appScrollReveal>
+      <h1 class="hero-title">Своё Фото</h1>
+      <p class="hero-subtitle">Фотостудия в центре Ростова с 1999 года</p>
+      <div class="scroll-hint">
+        <mat-icon>expand_more</mat-icon>
+      </div>
+    </div>
+  </section>
+
+  <!-- Philosophy -->
+  <section class="philosophy" appScrollReveal>
+    <div class="container">
+      <p class="philosophy-statement">
+        Каждый кадр, это<br>
+        <span class="accent">работа мастера</span>
+      </p>
+      <p class="philosophy-body">
+        В эпоху автоматических фильтров и AI-обработки мы делаем ставку на то, что отличает нас от всех:
+        <strong>ручную художественную ретушь</strong> каждого снимка. Ни один алгоритм не заменит внимание
+        профессионала к деталям, свету, коже, эмоциям.
+      </p>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="team">
+    <div class="container">
+      <h2 class="section-title" appScrollReveal>Команда</h2>
+      <div class="team-grid">
+        @for (member of team(); track member.slug) {
+          <a class="team-card" [routerLink]="['/photographers', member.slug]" appScrollReveal>
+            @if (member.portraitCard) {
+              <img class="team-photo" [src]="member.portraitCard" [alt]="member.name" loading="lazy">
+            } @else {
+              <div class="team-photo-placeholder">
+                <span class="team-initials">{{ member.name.charAt(0) }}</span>
+              </div>
+            }
+            <h3 class="team-name">{{ member.name }}</h3>
+            <p class="team-role">{{ member.role }}</p>
+            <p class="team-tagline">{{ member.tagline }}</p>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Studios -->
+  <section class="studios">
+    <div class="container">
+      <h2 class="section-title" appScrollReveal>Наши студии</h2>
+      <div class="studios-grid">
+        @for (studio of studios; track studio.name) {
+          <div class="studio-card" appScrollReveal>
+            <div class="studio-photo-placeholder">
+              <mat-icon>business</mat-icon>
+            </div>
+            <div class="studio-info">
+              <h3 class="studio-name">{{ studio.name }}</h3>
+              <p class="studio-address">
+                <mat-icon>location_on</mat-icon>
+                {{ studio.address }}
+              </p>
+              <p class="studio-hours">
+                <mat-icon>schedule</mat-icon>
+                {{ studio.hours }}
+              </p>
+              <a [href]="studio.mapUrl" target="_blank" rel="noopener" class="studio-route">
+                <mat-icon>directions</mat-icon>
+                Построить маршрут
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-section" appScrollReveal>
+    <div class="container">
+      <div class="stats-grid">
+        @for (stat of stats; track stat.label) {
+          <div class="stat-block">
+            <span class="stat-value">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" appScrollReveal>
+    <div class="container">
+      <h2 class="cta-title">Запишитесь прямо сейчас</h2>
+      <p class="cta-subtitle">Выберите удобную студию и время для фотосессии</p>
+      <a mat-flat-button routerLink="/booking" href="/booking" class="cta-button">
+        Записаться
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+    </div>
+  </section>
+
+</div>

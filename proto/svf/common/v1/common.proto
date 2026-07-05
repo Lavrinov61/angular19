@@ -1,0 +1,41 @@
+syntax = "proto3";
+package svf.common.v1;
+
+option java_package = "ru.svoefoto.proto.common.v1";
+option java_multiple_files = true;
+
+// ── Shared types across all SvoeFoto gRPC services ──
+
+message Pagination {
+  int32 page = 1;
+  int32 limit = 2;
+  int32 total = 3;
+}
+
+message PaginationRequest {
+  int32 page = 1;
+  int32 limit = 2;
+}
+
+// Standard error detail (returned inside gRPC status)
+message ErrorDetail {
+  string code = 1;       // machine-readable: "AUTH_TOKEN_EXPIRED", "VALIDATION_ERROR"
+  string message = 2;    // human-readable (Russian)
+  map<string, string> fields = 3; // field-level validation errors
+}
+
+// Money representation (kopecks)
+message Money {
+  int64 amount_kopecks = 1;  // amount in kopecks (350 RUB = 35000)
+  string currency = 2;       // "RUB"
+}
+
+// Media attachment
+message MediaAttachment {
+  string url = 1;
+  string content_type = 2;   // "image/jpeg"
+  int32 width = 3;
+  int32 height = 4;
+  int64 size_bytes = 5;
+  string thumbnail_url = 6;
+}

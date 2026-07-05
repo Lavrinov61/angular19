@@ -1,0 +1,42 @@
+// Shift Dialog — layout only, mobile-first + Material tokens
+
+.shift-dialog {
+  width: 100%;
+  max-width: 90vw;
+
+  @media (min-width: 600px) { width: 500px; }
+
+  .dialog-content {
+    padding: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .full-width { width: 100%; }
+
+    .time-fields {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+
+      @media (min-width: 600px) { grid-template-columns: 1fr 1fr; }
+    }
+
+    .additional-settings {
+      margin-top: 16px;
+
+      h3 { margin: 0 0 12px; font-weight: 500; color: var(--mat-sys-on-surface); }
+
+      .setting-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+
+        .setting-description { color: var(--mat-sys-on-surface-variant); flex: 1; }
+      }
+    }
+  }
+
+  .dialog-actions { padding: 16px 0 0; gap: 8px; }
+}

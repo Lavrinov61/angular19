@@ -1,0 +1,195 @@
+<div class="cash-page">
+  <header class="cash-header">
+    <div>
+      <h1>Контроль кассы</h1>
+      <p>Недостачи по сменам и наличка, не привязанная к смене · {{ periodLabel() }} · {{ selectedStudioLabel() }}</p>
+    </div>
+
+    <div class="header-actions">
+      <mat-button-toggle-group
+        [value]="period()"
+        (change)="onPeriodChange($event.value)"
+        hideSingleSelectionIndicator>
+        <mat-button-toggle value="today">Сегодня</mat-button-toggle>
+        <mat-button-toggle value="yesterday">Вчера</mat-button-toggle>
+        <mat-button-toggle value="7d">7 дней</mat-button-toggle>
+        <mat-button-toggle value="30d">30 дней</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      <button mat-icon-button type="button" matTooltip="Обновить" (click)="reload()" [disabled]="loading()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="cash-error">
+      <mat-icon>error</mat-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  @if (studioOptions().length > 0) {
+    <section class="studio-filter" aria-label="Фильтр по точке">
+      <span class="studio-filter-label">
+        <mat-icon>location_on</mat-icon>
+        Точка продаж
+      </span>
+      <mat-button-toggle-group
+        [value]="selectedStudioId()"
+        (change)="onStudioChange($event.value)"
+        hideSingleSelectionIndicator>
+        <mat-button-toggle value="all">Все точки</mat-button-toggle>
+        @for (studio of studioOptions(); track studio.id) {
+          <mat-button-toggle [value]="studio.id">{{ studio.label }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </section>
+  }
+
+  @if (loading()) {
+    <div class="cash-loading">
+      <mat-spinner diameter="32"></mat-spinner>
+      <span>Загрузка…</span>
+    </div>
+  } @else {
+    <!-- Сводка -->
+    <section class="summary-grid" aria-label="Итог по кассе">
+      <div class="summary-tile" [class.tile-alert]="totals().totalDiff < 0">
+        <span class="tile-label">Итог расхождений</span>
+        <strong [class]="diffClass(totals().totalDiff)">{{ totals().totalDiff | number:'1.0-2' }} ₽</strong>
+        <span class="tile-note">{{ totals().reconciledShifts }} сверенных смен</span>
+      </div>
+      <div class="summary-tile">
+        <span class="tile-label">Недостача</span>
+        <strong class="diff-negative">{{ totals().shortageTotal | number:'1.0-2' }} ₽</strong>
+        <span class="tile-note">{{ totals().shortageShifts }} смен в минусе</span>
+      </div>
+      <div class="summary-tile">
+        <span class="tile-label">Излишек</span>
+        <strong class="diff-positive">{{ totals().surplusTotal | number:'1.0-2' }} ₽</strong>
+        <span class="tile-note">пересчёт больше ожидаемого</span>
+      </div>
+      <div class="summary-tile">
+        <span class="tile-label">Не сверено</span>
+        <strong>{{ totals().unreconciledShifts }}</strong>
+        <span class="tile-note">открытых / без пересчёта смен</span>
+      </div>
+    </section>
+
+    <!-- Алерт: непривязанная наличка -->
+    @if (orphanCash().count > 0) {
+      <section class="orphan-alert" aria-label="Непривязанная наличка">
+        <div class="orphan-head">
+          <mat-icon>warning</mat-icon>
+          <div>
+            <strong>Наличка мимо смены: {{ orphanCash().sum | number:'1.0-2' }} ₽</strong>
+            <span>{{ orphanCash().count }} наличных чеков пробиты без привязки к смене (нет пересчёта — деньги вне контроля)</span>
+          </div>
+        </div>
+        @if (orphanCash().by_employee.length > 0) {
+          <div class="orphan-breakdown">
+            @for (emp of orphanCash().by_employee; track emp.employee_id) {
+              <span class="orphan-chip">
+                {{ emp.employee_name }}: <b>{{ emp.sum | number:'1.0-2' }} ₽</b> ({{ emp.count }})
+              </span>
+            }
+          </div>
+        }
+      </section>
+    }
+
+    <!-- Итог по кассирам -->
+    @if (byCashier().length > 0) {
+      <section class="cash-block" aria-label="Итог по кассирам">
+        <h2>Итог по кассирам</h2>
+        <div class="table-wrap">
+          <table class="cash-table">
+            <thead>
+              <tr>
+                <th>Кассир</th>
+                <th class="num">Смен</th>
+                <th class="num">Сверено</th>
+                <th class="num">Недостача</th>
+                <th class="num">Излишек</th>
+                <th class="num">Итог</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (c of byCashier(); track c.employee_id) {
+                <tr>
+                  <td>{{ c.employee_name }}</td>
+                  <td class="num">{{ c.shifts }}</td>
+                  <td class="num">{{ c.reconciled }}</td>
+                  <td class="num diff-negative">{{ c.shortage | number:'1.0-2' }}</td>
+                  <td class="num diff-positive">{{ c.surplus | number:'1.0-2' }}</td>
+                  <td class="num" [class]="diffClass(c.totalDiff)"><b>{{ c.totalDiff | number:'1.0-2' }} ₽</b></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+
+    <!-- Недостачи по сменам -->
+    <section class="cash-block" aria-label="Смены">
+      <h2>Смены</h2>
+      @if (shifts().length === 0) {
+        <p class="cash-empty">За выбранный период смен нет.</p>
+      } @else {
+        <div class="table-wrap">
+          <table class="cash-table">
+            <thead>
+              <tr>
+                <th class="num">№</th>
+                <th>Кассир</th>
+                @if (showStudioColumn()) { <th>Точка</th> }
+                <th>Открыта</th>
+                <th>Закрыта</th>
+                <th class="num">Остаток</th>
+                <th class="num">Выручка&nbsp;нал</th>
+                <th class="num">Изъято</th>
+                <th class="num">Ожидалось</th>
+                <th class="num">Насчитали</th>
+                <th class="num">Расхождение</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (s of shifts(); track s.id) {
+                <tr [class.row-shortage]="s.diff !== null && s.diff < 0">
+                  <td class="num">{{ s.shift_number }}</td>
+                  <td>{{ s.employee_name }}</td>
+                  @if (showStudioColumn()) { <td>{{ s.studio_name }}</td> }
+                  <td>{{ s.opened_at | date:'dd.MM HH:mm' }}</td>
+                  <td>
+                    @if (s.status === 'open') {
+                      <span class="badge badge-open">открыта</span>
+                    } @else if (s.closed_at) {
+                      {{ s.closed_at | date:'dd.MM HH:mm' }}
+                    } @else {
+                      <span class="badge badge-warn">без пересчёта</span>
+                    }
+                  </td>
+                  <td class="num">{{ s.cash_at_open | number:'1.0-2' }}</td>
+                  <td class="num">{{ s.cash_sales | number:'1.0-2' }}</td>
+                  <td class="num">{{ s.withdrawals | number:'1.0-2' }}</td>
+                  <td class="num">{{ s.expected_cash === null ? '—' : (s.expected_cash | number:'1.0-2') }}</td>
+                  <td class="num">{{ s.cash_at_close === null ? '—' : (s.cash_at_close | number:'1.0-2') }}</td>
+                  <td class="num" [class]="diffClass(s.diff)">
+                    @if (s.diff === null) { — } @else { <b>{{ s.diff | number:'1.0-2' }}</b> }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="cash-hint">
+          <mat-icon>info</mat-icon>
+          Расхождение = «Насчитали» − «Ожидалось». Ожидалось = остаток на открытии + наличная выручка − изъятия.
+          «—» означает, что смена не закрыта или не пересчитана — проконтролировать нельзя.
+        </p>
+      }
+    </section>
+  }
+</div>

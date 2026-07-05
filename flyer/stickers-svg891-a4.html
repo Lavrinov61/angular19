@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Наклейки SVG097 — А4 для печати</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:A4;margin:0}
+:root{
+  --sw:52.5mm;  /* 210mm / 4 = край-в-край, наклейка 50mm + 2.5mm поле для реза */
+  --sh:14.14mm; /* 297mm / 21 = край-в-край */
+  --fd:'Oswald',sans-serif;
+}
+
+body{
+  font-family:var(--fd);
+  background:#f0f0f0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:10px;
+}
+@media print{
+  body{background:none;padding:0}
+  .screen-only{display:none!important}
+}
+
+.info{
+  max-width:210mm;
+  margin-bottom:12px;
+  padding:12px 16px;
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+  font-family:sans-serif;
+  font-size:13px;
+  color:#333;
+  line-height:1.5;
+}
+.info b{color:#d97706}
+
+.sheet{
+  width:210mm;
+  height:297mm;
+  background:#fff;
+  padding:0;
+  display:flex;
+  flex-wrap:wrap;
+  align-content:flex-start;
+  print-color-adjust:exact;
+  -webkit-print-color-adjust:exact;
+}
+
+.sticker{
+  width:var(--sw);
+  height:var(--sh);
+  border:0.3px solid #ccc;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:2mm;
+  padding:0 3mm;
+  position:relative;
+  overflow:hidden;
+  background:#fff;
+}
+
+.sticker::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;bottom:0;
+  border:0.3px solid #ddd;
+  pointer-events:none;
+}
+
+.accent{
+  position:absolute;
+  left:0;top:0;bottom:0;
+  width:1.5mm;
+  background:linear-gradient(180deg,#f59e0b,#d97706);
+}
+
+.code{
+  font-weight:800;
+  font-size:16px;
+  letter-spacing:.08em;
+  color:#000;
+  text-transform:uppercase;
+  line-height:1;
+  white-space:nowrap;
+}
+
+.divider{
+  width:1px;
+  height:8mm;
+  background:#d97706;
+  flex-shrink:0;
+  opacity:.5;
+}
+
+.date-block{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  line-height:1.15;
+  white-space:nowrap;
+}
+.date-label{
+  font-size:7px;
+  font-weight:600;
+  color:#999;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+}
+.date-value{
+  font-size:10px;
+  font-weight:700;
+  color:#d97706;
+  letter-spacing:.02em;
+}
+</style>
+</head>
+<body>
+
+<div class="info screen-only">
+  <b>Наклейки SVG097</b> — A4 лист для печати на самоклеющейся бумаге.<br>
+  Размер наклейки: 50 &times; 14 мм (точно под слот на флайерах v8).<br>
+  <b>84 наклейки</b> на листе (4 колонки &times; 21 ряд).<br>
+  Печатайте Ctrl+P &rarr; масштаб 100% &rarr; без полей.
+</div>
+
+<div class="sheet" id="sheet">
+
+  <!-- 72 наклейки (4 x 18) — генерируются скриптом через безопасные DOM-методы -->
+
+</div>
+
+<script>
+(function() {
+  var TOTAL = 4 * 21;
+  var sheet = document.getElementById('sheet');
+
+  for (var i = 0; i < TOTAL; i++) {
+    var sticker = document.createElement('div');
+    sticker.className = 'sticker';
+
+    var accent = document.createElement('div');
+    accent.className = 'accent';
+
+    var code = document.createElement('div');
+    code.className = 'code';
+    code.textContent = 'SVG097';
+
+    var divider = document.createElement('div');
+    divider.className = 'divider';
+
+    var dateBlock = document.createElement('div');
+    dateBlock.className = 'date-block';
+
+    var dateLabel = document.createElement('span');
+    dateLabel.className = 'date-label';
+    dateLabel.textContent = 'действует';
+
+    var dateValue = document.createElement('span');
+    dateValue.className = 'date-value';
+    dateValue.textContent = 'с 30 апреля';
+
+    dateBlock.appendChild(dateLabel);
+    dateBlock.appendChild(dateValue);
+
+    sticker.appendChild(accent);
+    sticker.appendChild(code);
+    sticker.appendChild(divider);
+    sticker.appendChild(dateBlock);
+
+    sheet.appendChild(sticker);
+  }
+})();
+</script>
+
+</body>
+</html>

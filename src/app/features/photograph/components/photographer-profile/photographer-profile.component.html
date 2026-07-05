@@ -1,0 +1,45 @@
+<div class="photographer-profile-container">
+  <!-- Загрузка -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner diameter="48" />
+      <p>Загружаем профиль фотографа...</p>
+    </div>
+  }
+  
+  <!-- Ошибка -->
+  @if (error) {
+    <div class="error-message">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{error}}</p>
+      <button mat-raised-button color="primary" routerLink="/photographers">Вернуться к списку фотографов</button>
+    </div>
+  }
+  
+  <!-- Профиль фотографа -->
+  @if (photographer && !isLoading && !error) {    <!-- AIDA: Attention - Привлечение внимания -->
+    <app-attention-section [photographer]="photographer" />
+    
+    <!-- Quick Actions -->
+    <app-quick-actions [photographer]="photographer" />
+
+    <!-- Галерея работ фотографа -->
+    <app-portfolio-gallery [portfolioImages]="photographer.portfolioImages"
+      [photographerName]="photographer.name" />
+    
+    <!-- AIDA: Desire - Возбуждение желания -->
+    <app-desire-section [photographer]="photographer" />
+    
+    <!-- AIDA: Action - Призыв к действию -->
+    <app-action-section [photographer]="photographer" />
+    
+    <!-- Кнопка возврата -->
+    <div class="back-button-container">
+      <a mat-button color="primary" routerLink="/photographers">
+        <mat-icon>arrow_back</mat-icon>
+        Вернуться к списку фотографов
+      </a>
+    </div>
+  }
+</div>
+

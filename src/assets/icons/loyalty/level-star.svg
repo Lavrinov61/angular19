@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- 5-point star (outer r=19, inner r=8, center 24,24) -->
+  <path d="M24 5L28.1 18.3L41.1 18.4L30.7 26.2L34.6 38.6L24 31L13.4 38.6L17.3 26.2L6.9 18.4L19.9 18.3Z"
+        stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="#f59e0b" fill-opacity="0.2"/>
+  <!-- Glow dot at center -->
+  <circle cx="24" cy="24" r="2.5" fill="#f59e0b" fill-opacity="0.5"/>
+</svg>

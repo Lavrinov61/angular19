@@ -1,0 +1,19 @@
+version: v2
+managed:
+  enabled: true
+  override:
+    - file_option: java_package
+      prefix: ru.svoefoto.proto
+    - file_option: java_multiple_files
+      value: true
+plugins:
+  - remote: buf.build/community/neoeinstein-prost:v0.4.0
+    out: gen/rust/src
+    opt:
+      - compile_well_known_types=false
+      - extern_path=.google.protobuf=::prost_types
+  - remote: buf.build/community/neoeinstein-tonic:v0.4.1
+    out: gen/rust/src
+    opt:
+      - compile_well_known_types=false
+      - extern_path=.google.protobuf=::prost_types

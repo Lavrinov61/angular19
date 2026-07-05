@@ -1,0 +1,45 @@
+# SVF Print Agent — конфигурация
+# Скопировать в:
+#   Linux:   /etc/svf-agent/config.toml
+#   Windows: %ProgramData%\SvoePhoto\config.toml
+
+[agent]
+agent_id = "00000000-0000-0000-0000-000000000000"  # UUID из БД (agents.id)
+studio_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  # UUID студии
+agent_type = "print"
+version = "0.1.0"
+
+[mqtt]
+host = "svoefoto.ru"
+port = 8883
+username = "svf_print_xxxxxx"   # Генерируется при регистрации агента
+password = "xxxxxxxx"            # Генерируется при регистрации агента
+use_tls = true
+
+[offline]
+db_path = "/var/lib/svf-agent/print-offline.db"
+# Windows: db_path = "C:\\ProgramData\\SvoePhoto\\print-offline.db"
+
+[heartbeat]
+interval_secs = 60
+
+[download]
+temp_dir = "/tmp/svf-agent"
+# Windows: temp_dir = "C:\\ProgramData\\SvoePhoto\\temp"
+timeout_secs = 120
+max_file_size = 104857600  # 100 MB
+
+[printing]
+target_dpi = 300
+# default_printer = ""  # Если пусто, используется printer_id из PrintCommand
+
+[icc]
+cache_dir = "/var/lib/svf-agent/icc"
+# Windows: cache_dir = "C:\\ProgramData\\SvoePhoto\\icc"
+
+[telemetry]
+poll_interval_secs = 30
+# IP-адрес принтера для SNMP-запросов уровня чернил/тонера (RFC 3805).
+# Если не указан, используется OS-level API (CUPS markers / пусто на Windows).
+# printer_ip = "192.168.1.100"
+# snmp_community = "public"

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Outer frame -->
+  <rect x="5" y="7" width="38" height="34" rx="2" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.08"/>
+  <!-- Inner frame / mat -->
+  <rect x="11" y="13" width="26" height="22" rx="1" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.12"/>
+  <!-- Photo content: mountains silhouette -->
+  <path d="M11 31L19 20L25 27L29 22L37 31Z" stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="#f59e0b" fill-opacity="0.25"/>
+  <!-- Sun -->
+  <circle cx="32" cy="18" r="3" stroke="#f59e0b" stroke-width="1.5" fill="#f59e0b" fill-opacity="0.3"/>
+  <!-- Corner details -->
+  <rect x="5" y="7" width="5" height="5" rx="0" fill="#f59e0b" fill-opacity="0.2"/>
+  <rect x="38" y="7" width="5" height="5" rx="0" fill="#f59e0b" fill-opacity="0.2"/>
+  <rect x="5" y="36" width="5" height="5" rx="0" fill="#f59e0b" fill-opacity="0.2"/>
+  <rect x="38" y="36" width="5" height="5" rx="0" fill="#f59e0b" fill-opacity="0.2"/>
+</svg>

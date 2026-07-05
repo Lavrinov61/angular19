@@ -1,0 +1,1247 @@
+@if (chatService.activeSession(); as session) {
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-row-1">
+      <span class="client-name">
+        <span class="presence-dot" [class.online]="visitorOnline()"></span>
+        {{ session.visitor_name || 'Посетитель' }}
+        <span class="presence-label">{{ visitorPresenceLabel() }}</span>
+      </span>
+      @if (displayPhone(); as phone) {
+        <span class="phone-display" matTooltip="Телефон клиента">
+          <mat-icon>phone</mat-icon> {{ phone | phoneMask }}
+        </span>
+      } @else {
+        @if (phoneEditMode()) {
+          <input class="phone-input" placeholder="+7..."
+                 [value]="phoneInputValue()"
+                 (input)="phoneInputValue.set($any($event.target).value)"
+                 (blur)="savePhone()"
+                 (keydown.enter)="savePhone()"
+                 (keydown.escape)="phoneEditMode.set(false)" />
+        } @else {
+          <button class="phone-add-btn" (click)="phoneEditMode.set(true)" matTooltip="Добавить телефон">
+            <mat-icon>phone</mat-icon> <span class="phone-add-label">+ телефон</span>
+          </button>
+        }
+      }
+      <div class="header-actions">
+        @if (aiAgentMode() === 'bot') {
+          <span class="ai-agent-badge" matTooltip="AI-агент ведёт диалог">
+            <mat-icon>smart_toy</mat-icon> AI ведёт
+          </span>
+          <button class="action-pill action-pill--amber" [disabled]="aiAgentModeBusy()" (click)="setAiAgentMode('off')" matTooltip="Взять диалог у бота">
+            <mat-icon>person_add</mat-icon> Взять
+          </button>
+        } @else if (aiAgentMode() === 'operator') {
+          <button class="action-pill action-pill--ai-return" [disabled]="aiAgentModeBusy()" (click)="setAiAgentMode('bot')" matTooltip="Вернуть диалог боту">
+            <mat-icon>smart_toy</mat-icon> Вернуть боту
+          </button>
+        }
+        @if (!session.assigned_operator_id && aiAgentMode() !== 'bot') {
+          <button class="action-pill action-pill--amber" (click)="takeChat()">
+            <mat-icon>person_add</mat-icon> Взять
+          </button>
+        }
+        <button class="action-pill" (click)="resolveSession()" matTooltip="Решено">
+          <mat-icon>check_circle</mat-icon>
+        </button>
+        <button class="action-pill" (click)="closeSession()" matTooltip="Закрыть">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button class="action-pill action-pill--create-order" (click)="requestCreateOrderFromChat()" matTooltip="Создать заказ из чата">
+          <mat-icon>add_shopping_cart</mat-icon>
+          <span class="action-pill-text">Создать заказ</span>
+        </button>
+        <button class="action-pill action-pill--green" (click)="onPaymentClick()" matTooltip="Оплата / Создать заказ">
+          <mat-icon>payments</mat-icon>
+          @if (showPaymentBadge()) { <span class="new-badge">NEW</span> }
+        </button>
+        <button class="action-pill action-pill--print" (click)="goToPrintCenter()" matTooltip="Перейти в единый сервис печати">
+          <mat-icon>print</mat-icon>
+          <span class="action-pill-text">Перейти в печать</span>
+        </button>
+        <button class="action-pill action-pill--orders"
+                (click)="loadClientOrders()"
+                [matMenuTriggerFor]="ordersMenu"
+                matTooltip="Показать заказы чата">
+          <mat-icon>receipt_long</mat-icon>
+          <span class="action-pill-text">Заказы</span>
+        </button>
+        @if (linkedUnpaidOrder(); as unpaidOrder) {
+          <button class="action-pill action-pill--teal" (click)="showMarkPaidConfirm(unpaidOrder)"
+                  matTooltip="Отметить оплату заказа {{ unpaidOrder.order_id }}">
+            <mat-icon>price_check</mat-icon>
+          </button>
+        }
+        @if (linkedApprovalId()) {
+          <button class="action-pill action-pill--amber" (click)="navigateToItem.emit({ type: 'approval', id: linkedApprovalId()! })" matTooltip="Открыть ретушь">
+            <mat-icon>photo_camera</mat-icon>
+          </button>
+        }
+        <button class="action-pill" (click)="toggleSearch()" matTooltip="Поиск (Ctrl+F)">
+          <mat-icon>search</mat-icon>
+        </button>
+        <button class="action-pill" (click)="chatService.toggleSoundMute()"
+                [matTooltip]="chatService.soundMuted() ? 'Включить звук' : 'Выключить звук'">
+          <mat-icon>{{ chatService.soundMuted() ? 'volume_off' : 'volume_up' }}</mat-icon>
+        </button>
+        <button class="action-pill" [matMenuTriggerFor]="overflowMenu" matTooltip="Ещё">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+
+        <mat-menu #overflowMenu="matMenu">
+          @if (canMakePrivate() && !session.is_private) {
+            <button mat-menu-item (click)="claimPrivate()">
+              <mat-icon>lock</mat-icon> Забрать в личную работу
+            </button>
+          }
+          @if (session.is_private && canReleasePrivate()) {
+            <button mat-menu-item (click)="releasePrivate()">
+              <mat-icon>lock_open</mat-icon> Снять приватность
+            </button>
+          }
+          <button mat-menu-item (click)="openTransferDialog()">
+            <mat-icon>swap_horiz</mat-icon> Передать
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="tagMenu">
+            <mat-icon>label</mat-icon> Теги
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="exportMenu">
+            <mat-icon>download</mat-icon> Экспорт
+          </button>
+          <button mat-menu-item [matMenuTriggerFor]="followupMenu">
+            <mat-icon [class.followup-active]="activeFollowup()">schedule</mat-icon> Follow-up
+            @if (activeFollowup()) {
+              <span class="menu-badge">{{ followupTimeLeft() }}</span>
+            }
+          </button>
+          <button mat-menu-item (click)="loadClientOrders()" [matMenuTriggerFor]="ordersMenu">
+            <mat-icon>receipt_long</mat-icon> Заказы чата
+          </button>
+          <button mat-menu-item (click)="openSubscriptionOffer()">
+            <mat-icon>card_membership</mat-icon> Предложить подписку
+          </button>
+          @if (isBrandChannel(session.channel)) {
+            <button mat-menu-item (click)="openRegisterStudentDialog()">
+              <mat-icon>school</mat-icon> Зарегистрировать студента
+            </button>
+          }
+          <button mat-menu-item (click)="openSubscriptionGift()">
+            <mat-icon>redeem</mat-icon> Подарить 1 месяц
+          </button>
+          <mat-divider />
+          <button mat-menu-item (click)="goToPrintCenter()">
+            <mat-icon>print</mat-icon> Перейти в печать
+          </button>
+          <button mat-menu-item (click)="toggleApprovalWidget()">
+            <mat-icon>photo_camera</mat-icon> Согласование фото
+          </button>
+          <button mat-menu-item (click)="openFinalPhotoUpload()">
+            <mat-icon>add_a_photo</mat-icon> Выдать фото клиенту
+          </button>
+        </mat-menu>
+
+        <!-- Sub-menus -->
+        <mat-menu #tagMenu="matMenu">
+          @for (tag of tagsService.tags(); track tag.id) {
+            <button mat-menu-item (click)="addTag(tag.id)">
+              <mat-icon [style.color]="tag.color">{{ tag.icon || 'label' }}</mat-icon>
+              {{ tag.name }}
+            </button>
+          }
+        </mat-menu>
+
+        <mat-menu #exportMenu="matMenu">
+          <button mat-menu-item (click)="exportChat('csv')">
+            <mat-icon>table_chart</mat-icon> CSV
+          </button>
+          <button mat-menu-item (click)="exportChat('txt')">
+            <mat-icon>description</mat-icon> Текст
+          </button>
+          <mat-divider />
+          <button mat-menu-item (click)="downloadPhotos()">
+            <mat-icon>folder_zip</mat-icon> Фото (ZIP)
+          </button>
+          <button mat-menu-item (click)="downloadPhotos('sent')">
+            <mat-icon>upload</mat-icon> Фото клиента (ZIP)
+          </button>
+          <button mat-menu-item (click)="downloadPhotos('received')">
+            <mat-icon>download</mat-icon> Фото оператора (ZIP)
+          </button>
+        </mat-menu>
+
+        <mat-menu #followupMenu="matMenu">
+          @if (activeFollowup()) {
+            <button mat-menu-item (click)="cancelActiveFollowup()">
+              <mat-icon>cancel</mat-icon> Отменить ({{ followupTimeLeft() }})
+            </button>
+          }
+          <button mat-menu-item (click)="scheduleFollowup(30)">
+            <mat-icon>timer</mat-icon> Через 30 мин
+          </button>
+          <button mat-menu-item (click)="scheduleFollowup(60)">
+            <mat-icon>timer</mat-icon> Через 1 час
+          </button>
+          <button mat-menu-item (click)="scheduleFollowup(120)">
+            <mat-icon>timer</mat-icon> Через 2 часа
+          </button>
+          <button mat-menu-item (click)="scheduleFollowupTomorrow()">
+            <mat-icon>event</mat-icon> Завтра 10:00
+          </button>
+        </mat-menu>
+
+        <mat-menu #ordersMenu="matMenu" class="orders-link-menu">
+          @if (clientOrdersLoading() && !clientOrders().length) {
+            <button mat-menu-item disabled><mat-icon>hourglass_empty</mat-icon> Поиск заказов...</button>
+          } @else if (!clientOrders().length) {
+            <button mat-menu-item disabled><mat-icon>search_off</mat-icon> Заказов не найдено</button>
+          } @else {
+            <div class="orders-menu-header" mat-menu-item disabled>Заказы чата</div>
+            @if (clientOrdersLoading()) {
+              <button mat-menu-item disabled><mat-icon>hourglass_empty</mat-icon> Обновляем список...</button>
+            }
+            @for (order of clientOrders(); track order.order_id) {
+              <button mat-menu-item (click)="openClientOrder(order.order_id)"
+                      [class.order-linked]="order.chat_session_id === sessionId()">
+                <mat-icon>{{ order.chat_session_id === sessionId() ? 'check_circle' : 'receipt' }}</mat-icon>
+                {{ order.order_id }}
+                @if (order.total_price !== null) { — {{ order.total_price }}₽ }
+                @if (order.status) { — {{ orderStatusLabel(order.status) }} }
+                @if (order.chat_session_id === sessionId()) { ✓ привязан }
+              </button>
+            }
+          }
+        </mat-menu>
+      </div>
+    </div>
+
+    <div class="header-row-2">
+      <span [class]="'meta-pill ch-' + session.channel">
+        @if (isBrandChannel(session.channel)) {
+          <mat-icon [svgIcon]="channelSvgIcon(session.channel)"></mat-icon>
+        } @else {
+          <mat-icon>{{ channelIcon(session.channel) }}</mat-icon>
+        }
+        {{ channelLabel(session.channel) }}
+      </span>
+      @if (session.selected_service) {
+        <span class="meta-pill meta-pill--accent">
+          <mat-icon>photo_camera</mat-icon> {{ session.selected_service }}
+        </span>
+      }
+      @if (session.assigned_operator_id) {
+        <span class="meta-pill">
+          <mat-icon>person</mat-icon> {{ assigneeName() }}
+        </span>
+      } @else {
+        <span class="meta-pill meta-pill--error">Не назначен</span>
+      }
+      @if (session.is_private) {
+        <span class="meta-pill meta-pill--private" matTooltip="Приватная работа — виден только владельцу и администраторам">
+          <mat-icon>lock</mat-icon> Приватный
+        </span>
+      }
+      @if (slaDisplay()) {
+        <span class="meta-pill" [class]="'meta-pill--sla-' + slaDisplay()!.status"
+              matTooltip="Время ожидания первого ответа оператора">
+          <mat-icon>{{ slaDisplay()!.status === 'responded' ? 'check' : 'timer' }}</mat-icon> {{ slaDisplay()!.label }}
+        </span>
+      }
+      @if (session.csat_score) {
+        <span class="meta-pill" [class]="'meta-pill--' + csatColor(session.csat_score)">
+          <mat-icon>star</mat-icon> {{ session.csat_score }}/5
+          @if (session.csat_comment) {
+            · {{ session.csat_comment | slice:0:50 }}
+          }
+        </span>
+      }
+    </div>
+
+    @if (chatViewer()) {
+      <div class="viewing-indicator">
+        <mat-icon>visibility</mat-icon>
+        {{ chatViewer()!.operatorName }} просматривает
+      </div>
+    }
+
+    @if (tagsService.sessionTags().length) {
+      <div class="header-row-3">
+        @for (tag of tagsService.sessionTags(); track tag.id) {
+          <span class="tag-chip" [style.color]="tag.color" [style.border-color]="tag.color"
+                (click)="removeTag(tag.id)" (keydown.enter)="removeTag(tag.id)" tabindex="0">
+            {{ tag.name }} <mat-icon class="tag-remove">close</mat-icon>
+          </span>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Quick mark-paid inline confirmation -->
+  @if (markPaidConfirmOrder(); as confirmOrder) {
+    <div class="mark-paid-confirm-banner">
+      <mat-icon class="banner-icon">price_check</mat-icon>
+      <span class="banner-text">Отметить оплату заказа <strong>{{ confirmOrder.order_id }}</strong> ({{ confirmOrder.total_price }}₽)?</span>
+      <div class="banner-actions">
+        <button class="action-pill action-pill--green" (click)="quickMarkPaid('cash')" [disabled]="markPaidSending()">
+          <mat-icon>money</mat-icon> Наличные
+        </button>
+        <button class="action-pill action-pill--teal" (click)="quickMarkPaid('transfer')" [disabled]="markPaidSending()">
+          <mat-icon>account_balance</mat-icon> Перевод
+        </button>
+        <button class="action-pill" (click)="cancelMarkPaidConfirm()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Client linking banner -->
+  @if (suggestedClients().length && !session.user_id) {
+    <div class="client-link-banner client-link-banner--suggestion">
+      <mat-icon class="banner-icon">person_search</mat-icon>
+      <div class="banner-content">
+        <span class="banner-title">Возможный клиент: <strong>{{ suggestedClients()[0].name }}</strong></span>
+        @if (suggestedClients()[0].phone) {
+          <span class="banner-detail">{{ suggestedClients()[0].phone }}</span>
+        }
+        @if (suggestedClients()[0].bookings_count) {
+          <span class="banner-detail">· {{ suggestedClients()[0].bookings_count }} заказов</span>
+        }
+      </div>
+      <div class="banner-actions">
+        <button class="action-pill action-pill--green" (click)="confirmLinkClient(suggestedClients()[0].id)" matTooltip="Подтвердить">
+          <mat-icon>check</mat-icon>
+        </button>
+        <button class="action-pill" (click)="dismissSuggestions()" matTooltip="Не тот клиент">
+          <mat-icon>close</mat-icon>
+        </button>
+        <button class="action-pill" (click)="openClientSearch()" matTooltip="Найти другого">
+          <mat-icon>search</mat-icon>
+        </button>
+      </div>
+    </div>
+  } @else if (!session.user_id) {
+    @if (clientSearchOpen()) {
+      <div class="client-link-banner client-link-banner--search">
+        <mat-icon class="banner-icon">search</mat-icon>
+        <input type="text" class="client-search-input" placeholder="Поиск по имени или телефону..."
+               [value]="clientSearchQuery()"
+               (input)="onClientSearchInput($any($event.target).value)"
+               (keydown.escape)="closeClientSearch()" />
+        <button class="action-pill" (click)="closeClientSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      @if (clientSearchResults().length) {
+        <div class="client-search-results">
+          @for (user of clientSearchResults(); track user.id) {
+            <button class="client-result-item" (click)="confirmLinkClient(user.id)">
+              <mat-icon>person</mat-icon>
+              <span class="result-name">{{ user.name }}</span>
+              @if (user.phone) { <span class="result-phone">{{ user.phone }}</span> }
+              <span class="result-orders">{{ user.bookings_count }} заказов</span>
+            </button>
+          }
+        </div>
+      }
+    } @else {
+      <div class="client-link-banner client-link-banner--unlinked">
+        <mat-icon class="banner-icon">person_off</mat-icon>
+        <span>Клиент не привязан</span>
+        <button class="action-pill" (click)="openClientSearch()">
+          <mat-icon>link</mat-icon> Привязать
+        </button>
+      </div>
+    }
+  } @else if (session.user_id && !session.booking_id) {
+    <div class="client-link-banner client-link-banner--partial">
+      <mat-icon class="banner-icon">person</mat-icon>
+      <span>{{ session.client_name || 'Клиент привязан' }}
+        @if (session.client_purchases_count) {
+          · {{ session.client_purchases_count }} покупок
+        }
+      </span>
+      <button class="action-pill" (click)="openBookingSearch()" matTooltip="Связать этот чат с записью клиента">
+        <mat-icon>event</mat-icon> Связать запись
+      </button>
+    </div>
+    @if (bookingSearchOpen()) {
+      <div class="client-search-results">
+        @if (suggestedBookings().length) {
+          @for (booking of suggestedBookings(); track booking.id) {
+            <button class="client-result-item" (click)="confirmLinkBooking(booking.id)">
+              <mat-icon>event</mat-icon>
+              <span class="result-name">{{ booking.service_name || 'Запись' }}</span>
+              <span class="result-phone">{{ booking.start_time | slice:0:10 }}</span>
+              <span class="result-orders">{{ bookingStatusLabel(booking.status) }}</span>
+            </button>
+          }
+        } @else {
+          <div class="client-result-item" style="opacity: 0.6; cursor: default">
+            <mat-icon>search_off</mat-icon> Активных записей не найдено
+          </div>
+        }
+      </div>
+    }
+  } @else if (session.user_id && session.booking_id) {
+    <div class="client-link-banner client-link-banner--linked">
+      <mat-icon class="banner-icon">verified</mat-icon>
+      <span>{{ session.client_name }}
+        @if (session.booking_service) { · {{ session.booking_service }} }
+        @if (session.booking_date) { · {{ session.booking_date | slice:0:10 }} }
+      </span>
+    </div>
+  }
+
+  <!-- Channel degradation banner -->
+  @if (channelDegraded(); as degraded) {
+    <div class="channel-degraded-banner">
+      <mat-icon>warning_amber</mat-icon>
+      <span>Канал {{ channelLabel(degraded.channel) }} временно недоступен.
+            Сообщения будут доставлены при восстановлении.</span>
+    </div>
+  }
+
+  <!-- Search bar (Ctrl+F) -->
+  @if (isSearchOpen()) {
+    <div class="search-bar">
+      <mat-icon class="search-bar-icon">search</mat-icon>
+      <input type="text" class="search-input" placeholder="Поиск в чате..."
+             [value]="searchQuery()"
+             (input)="onSearchInput($any($event.target).value)"
+             (keydown.escape)="toggleSearch()"
+             (keydown.enter)="navigateSearch('down')"
+             (keydown.shift.enter)="navigateSearch('up')">
+      @if (searchResults().length > 0) {
+        <span class="search-count">{{ searchIndex() + 1 }}/{{ searchResults().length }}</span>
+        <button class="search-nav-btn" (click)="navigateSearch('up')"><mat-icon>keyboard_arrow_up</mat-icon></button>
+        <button class="search-nav-btn" (click)="navigateSearch('down')"><mat-icon>keyboard_arrow_down</mat-icon></button>
+      }
+      @if (searchLoading()) {
+        <mat-icon class="loading-spinner">sync</mat-icon>
+      }
+      <button class="search-nav-btn" (click)="toggleSearch()"><mat-icon>close</mat-icon></button>
+    </div>
+  }
+
+  <!-- Messages -->
+  <div class="messages" #messagesContainer (scroll)="onMessagesScroll($event)">
+    @if (chatService.messagesLoading()) {
+      <div class="loading-msg">
+        <mat-icon class="loading-spinner">sync</mat-icon>
+        <span>Загрузка сообщений...</span>
+      </div>
+    } @else if (chatService.messages().length === 0 && previousMessagesMeta().length === 0 && chatService.activityItems().length === 0) {
+      <div class="empty-chat-state">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <span class="empty-chat-title">Нет сообщений</span>
+        <span class="empty-chat-subtitle">Клиент начал новую сессию. Напишите первым!</span>
+      </div>
+    } @else {
+      <!-- Sentinel for infinite scroll -->
+      @if (chatService.hasOlder()) {
+        <div class="scroll-sentinel" #scrollSentinel [style.height.px]="1" [style.opacity]="0"></div>
+        @if (chatService.loadingOlder()) {
+          <div class="loading-msg loading-older">
+            <mat-icon class="loading-spinner">sync</mat-icon>
+            <span>Загрузка...</span>
+          </div>
+        }
+      }
+
+      <!-- ── Previous conversations history ── -->
+      @if (previousMessagesMeta().length) {
+        <div class="history-divider history-divider--start">
+          <span>Предыдущие беседы</span>
+        </div>
+        @for (meta of previousMessagesMeta(); track meta.msg.id) {
+          @let msg = meta.msg;
+          @if (meta.showDate) {
+            <div class="date-divider"><span>{{ dateLabel(msg.created_at) }}</span></div>
+          }
+          <div class="msg-row previous-session" [class]="msg.sender_type" [class.grouped]="meta.grouped"
+               [attr.data-message-id]="msg.id">
+            <div class="bubble">
+              @if (!meta.grouped) {
+                <div class="bubble-sender">{{ senderLabel(msg) }}</div>
+              }
+              @if (canPreviewImage(msg)) {
+                <img class="bubble-img" [src]="msg.attachment_url" loading="lazy" alt="Фото" (error)="onChatImageLoadError($event)" />
+              } @else {
+                <div class="bubble-text">{{ msg.content }}</div>
+              }
+              <div class="bubble-footer">
+                <span class="bubble-time">{{ timeLabel(msg.created_at) }}</span>
+                @if (msg.sender_type === 'operator') {
+                  @if (msg.read_at) {
+                    <mat-icon class="msg-status status-read">done_all</mat-icon>
+                  } @else if (msg.delivered_at) {
+                    <mat-icon class="msg-status status-delivered">done_all</mat-icon>
+                  } @else {
+                    <mat-icon class="msg-status status-sent">done</mat-icon>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+        }
+        @if (chatService.messages().length) {
+          <div class="history-divider history-divider--end">
+            <span>Текущая беседа</span>
+          </div>
+        }
+      }
+
+      @for (item of unifiedFeedMeta(); track feedTrackId(item)) {
+        @if (isActivity(item)) {
+          <!-- ── Activity plate (read-side timeline event) ── -->
+          <div class="activity-row" [attr.data-activity-type]="item.activity_type">
+            <div class="activity-plate">
+              <mat-icon class="activity-icon">{{ activityIcon(item) }}</mat-icon>
+              <div class="activity-body">
+                <div class="activity-title">{{ item.title }}</div>
+                @if (item.detail) {
+                  <div class="activity-detail">{{ item.detail }}</div>
+                }
+              </div>
+              @if (item.amount !== null) {
+                <div class="activity-amount">{{ item.amount | number:'1.0-2' }} ₽</div>
+              }
+              <span class="activity-time">{{ timeLabel(item.created_at) }}</span>
+            </div>
+          </div>
+        } @else {
+        @let meta = asMeta(item);
+        @if (!meta.skipRender) {
+          @let msg = meta.msg;
+          @if (meta.showDate) {
+            <div class="date-divider"><span>{{ dateLabel(msg.created_at) }}</span></div>
+          }
+
+          <!-- Media Grid: grouped images -->
+          @if (meta.mediaGroupStart && meta.mediaGroupItems) {
+            <div class="msg-row" [class]="meta.msg.sender_type" [class.grouped]="meta.grouped"
+                 [attr.data-message-id]="msg.id"
+                 (contextmenu)="onMsgContextMenu($event, msg)">
+              <div class="bubble media-grid-bubble">
+                @if (!meta.grouped) {
+                  <div class="bubble-sender">{{ senderLabel(msg) }}</div>
+                }
+                <div class="media-grid">
+                  <div class="media-grid-header">
+                    <mat-icon>photo_library</mat-icon>
+                    <span>{{ meta.mediaGroupItems.length }} фото</span>
+                    <button class="mg-select-all" (click)="printGroupAll(meta.mediaGroupItems)">
+                      <mat-icon>print</mat-icon> Перейти в печать
+                    </button>
+                    <button class="mg-select-all" (click)="downloadGroupZip(meta.mediaGroupItems)">
+                      <mat-icon>folder_zip</mat-icon> Скачать все (ZIP)
+                    </button>
+                  </div>
+                  @let gridExpanded = expandedMediaGroups().has(msg.id);
+                  @let gridItems = gridExpanded ? meta.mediaGroupItems : meta.mediaGroupItems.slice(0, MEDIA_GRID_COLLAPSED_COUNT);
+                  <div class="media-grid-body"
+                       (mousedown)="onGridMouseDown($event, meta.mediaGroupItems)">
+                    @for (imgMsg of gridItems; track imgMsg.id) {
+                      <div class="media-grid-item"
+                           [class.selected]="chatSelection.isSelected(imgMsg.id)"
+                           [attr.data-msg-id]="imgMsg.id"
+                           [style.transform]="getRotation(imgMsg.id) ? 'rotate(' + getRotation(imgMsg.id) + 'deg)' : null"
+                           (click)="onMediaGridClick($event, imgMsg, meta.mediaGroupItems)"
+                           (keydown.enter)="onMediaGridClick($event, imgMsg, meta.mediaGroupItems)"
+                           tabindex="0"
+                      >
+                        <img [src]="imgMsg.attachment_url" loading="lazy" alt="Медиа" (error)="onChatImageLoadError($event)" />
+                        <button class="grid-download-btn"
+                                type="button"
+                                (click)="downloadFile(imgMsg); $event.stopPropagation()"
+                                (keydown.enter)="$event.stopPropagation()"
+                                matTooltip="Скачать"
+                                aria-label="Скачать фото">
+                          <mat-icon>download</mat-icon>
+                        </button>
+                        @if (chatSelection.selectionMode()) {
+                          <div class="grid-checkbox">
+                            <mat-icon>{{ chatSelection.isSelected(imgMsg.id) ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                  @if (meta.mediaGroupItems.length > MEDIA_GRID_COLLAPSED_COUNT) {
+                    <button class="mg-expand-toggle" (click)="toggleMediaGridExpanded(msg.id)">
+                      <mat-icon>{{ gridExpanded ? 'expand_less' : 'expand_more' }}</mat-icon>
+                      {{ gridExpanded ? 'Свернуть' : 'Показать все ' + meta.mediaGroupItems.length + ' фото' }}
+                    </button>
+                  }
+                </div>
+                <div class="bubble-footer">
+                  <span class="bubble-time">{{ timeLabel(msg.created_at) }} — {{ timeLabel(meta.mediaGroupItems[meta.mediaGroupItems.length - 1].created_at) }}</span>
+                  @if (msg.sender_type === 'operator') {
+                    @if (msg.read_at) {
+                      <mat-icon class="msg-status status-read" matTooltip="Прочитано">done_all</mat-icon>
+                    } @else if (msg.delivered_at) {
+                      <mat-icon class="msg-status status-delivered" matTooltip="Доставлено">done_all</mat-icon>
+                    } @else if (msg.id.startsWith('temp-')) {
+                      <mat-icon class="msg-status status-pending" matTooltip="Отправка...">schedule</mat-icon>
+                    } @else {
+                      <mat-icon class="msg-status status-sent" matTooltip="Отправлено">done</mat-icon>
+                    }
+                  }
+                </div>
+              </div>
+            </div>
+          } @else {
+            <!-- Normal message bubble -->
+            <div class="msg-row"
+                 [class]="msg.sender_type"
+                 [class.grouped]="meta.grouped"
+                 [class.last-in-group]="meta.lastInGroup"
+                 [attr.data-message-id]="msg.id"
+                 (contextmenu)="onMsgContextMenu($event, msg)">
+
+              <!-- Hover actions (unified toolbar) -->
+              @if (msg.sender_type !== 'system' && msg.sender_type !== 'internal_note') {
+                <div class="msg-hover-actions" [class.left]="msg.sender_type === 'visitor'">
+                  <button class="hover-action-btn" (click)="setReplyTo(msg)" matTooltip="Ответить">
+                    <mat-icon>reply</mat-icon>
+                  </button>
+                  <button class="hover-action-btn" (click)="startForward(msg)" matTooltip="Переслать">
+                    <mat-icon>shortcut</mat-icon>
+                  </button>
+                  <button class="hover-action-btn" (click)="copyMessageText(msg)" matTooltip="Копировать">
+                    <mat-icon>content_copy</mat-icon>
+                  </button>
+                  <button class="hover-action-btn" [class.pinned]="msg.pinned_at" (click)="chatService.togglePin(msg.id)"
+                          [matTooltip]="msg.pinned_at ? 'Открепить' : 'Закрепить'">
+                    <mat-icon>push_pin</mat-icon>
+                  </button>
+                  @if (isPrintable(msg)) {
+                    <span class="action-divider"></span>
+                    <button class="hover-action-btn" (click)="quickPrintMsg(msg)" matTooltip="Быстрая печать (10×15)">
+                      <mat-icon>bolt</mat-icon>
+                    </button>
+                    <button class="hover-action-btn" (click)="printSingle(msg)" matTooltip="Перейти в печать">
+                      <mat-icon>print</mat-icon>
+                    </button>
+                    <button class="hover-action-btn" (click)="downloadFile(msg)" matTooltip="Скачать">
+                      <mat-icon>download</mat-icon>
+                    </button>
+                  }
+                  @if (canDeleteOutgoingMessage(msg)) {
+                    <span class="action-divider"></span>
+                    @if (canEditOutgoingMessage(msg)) {
+                      <button class="hover-action-btn" (click)="startEditMessage(msg)" matTooltip="Редактировать">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    }
+                    <button class="hover-action-btn danger" (click)="confirmDeleteMessage(msg)" matTooltip="Удалить">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  }
+                  @if (isApprovalLinkedMessage(msg)) {
+                    <span class="action-divider"></span>
+                    <button class="hover-action-btn danger" (click)="confirmDeleteApproval(msg)" [matTooltip]="approvalDeleteLabel(msg)">
+                      <mat-icon>delete_sweep</mat-icon>
+                    </button>
+                  }
+                </div>
+              }
+
+              @if (msg.sender_type === 'bot' && !meta.grouped) {
+                <div class="bot-avatar"><mat-icon>smart_toy</mat-icon></div>
+              }
+
+              <div class="bubble" [class.pinned]="msg.pinned_at">
+                @if (msg.pinned_at) {
+                  <div class="pin-badge">
+                    <mat-icon>push_pin</mat-icon>
+                  </div>
+                }
+                @if (!meta.grouped) {
+                  <div class="bubble-sender">{{ senderLabel(msg) }}</div>
+                }
+                @if (msg.is_forwarded) {
+                  <div class="forwarded-badge">
+                    <mat-icon>reply</mat-icon>
+                    Переслано{{ msg.forwarded_from_name ? ' от ' + msg.forwarded_from_name : '' }}
+                  </div>
+                }
+                @if (msg.reply_to_content) {
+                  <div class="reply-quote reply-quote--clickable"
+                       (click)="scrollToMessage(msg.reply_to_message_id!)"
+                       (keydown.enter)="scrollToMessage(msg.reply_to_message_id!)"
+                       tabindex="0">
+                    @if (msg.reply_to_sender_name) {
+                      <span class="reply-quote-sender">{{ msg.reply_to_sender_name }}</span>
+                    }
+                    <span class="reply-quote-text">{{ msg.reply_to_content | slice:0:120 }}</span>
+                  </div>
+                }
+                <div class="bubble-body">
+                  @if (canPreviewImage(msg)) {
+                    <div class="bubble-img-wrapper">
+                      <img [src]="msg.attachment_url" alt="Фото" class="bubble-img"
+                           [style.transform]="getRotation(msg.id) ? 'rotate(' + getRotation(msg.id) + 'deg)' : null"
+                           (click)="openLightbox(msg)"
+                           (keydown.enter)="openLightbox(msg)"
+                           (error)="onChatImageLoadError($event)"
+                           tabindex="0"
+                           />
+                      <div class="bubble-img-actions" role="toolbar" aria-label="Действия с фото">
+                        <button class="bubble-img-action" type="button" (click)="printDocumentSet(msg)"
+                                matTooltip="Комплект на документы" aria-label="Комплект на документы">
+                          <mat-icon>portrait</mat-icon>
+                        </button>
+                        <button class="bubble-img-action" type="button" (click)="printDocumentSetEnvelope()"
+                                matTooltip="Конверт C6" aria-label="Конверт C6 для комплекта">
+                          <mat-icon>mail</mat-icon>
+                        </button>
+                        <button class="bubble-img-action" type="button" (click)="validateFaceForMessage(msg)"
+                                matTooltip="Проверить лицо (ГОСТ)" aria-label="Проверить лицо по ГОСТ">
+                          <mat-icon>center_focus_strong</mat-icon>
+                        </button>
+                        <button class="bubble-img-action" type="button" (click)="quickPrintMsg(msg)"
+                                matTooltip="Быстрая печать (10×15)" aria-label="Быстрая печать 10×15">
+                          <mat-icon>flash_on</mat-icon>
+                        </button>
+                        <button class="bubble-img-action" type="button" (click)="printSingle(msg)"
+                                matTooltip="Перейти в печать" aria-label="Перейти в печать">
+                          <mat-icon>print</mat-icon>
+                        </button>
+                        <button class="bubble-img-action" type="button" (click)="downloadFile(msg)"
+                                matTooltip="Скачать" aria-label="Скачать фото">
+                          <mat-icon>download</mat-icon>
+                        </button>
+                      </div>
+                      @if (getFaceValidation(msg.id); as fv) {
+                        <div class="face-validation-badge" [class.valid]="fv.is_valid_passport" [class.invalid]="!fv.is_valid_passport"
+                             [matTooltip]="fv.face_detected ? fv.face_height_mm + 'мм (норма 30-34мм), ' + fv.verdict : 'Лицо не найдено'">
+                          @if (fv.face_detected) {
+                            {{ fv.is_valid_passport ? '\u2713' : '\u2717' }} {{ fv.face_height_mm }}мм
+                          } @else {
+                            \u2717 нет лица
+                          }
+                        </div>
+                      }
+                    </div>
+                    @if (isRealCaption(msg.content)) {
+                      <span class="bubble-caption">{{ msg.content | maskPhonesInText }}</span>
+                    }
+                  } @else if (msg.message_type === 'video' && msg.attachment_url) {
+                    <app-media-video-player [src]="msg.attachment_url" />
+                    @if (isRealCaption(msg.content)) {
+                      <span class="bubble-caption">{{ msg.content | maskPhonesInText }}</span>
+                    }
+                  } @else if (msg.message_type === 'audio' && msg.attachment_url) {
+                    <app-media-audio-player [src]="msg.attachment_url" [compact]="msg.message_type === 'audio'" />
+                    @if (isRealCaption(msg.content)) {
+                      <span class="bubble-caption">{{ msg.content | maskPhonesInText }}</span>
+                    }
+                  } @else if ((msg.message_type === 'file' || msg.message_type === 'image') && msg.attachment_url) {
+                    @if (isImageFile(msg.attachment_url, msg.original_mime_type)) {
+                      <img [src]="msg.attachment_url" alt="Фото" class="bubble-img file-image-preview"
+                           (click)="openLightbox(msg)"
+                           (keydown.enter)="openLightbox(msg)"
+                           (error)="onChatImageLoadError($event)"
+                           tabindex="0" loading="lazy" />
+                    }
+                    <div class="file-attachment" (click)="downloadFile(msg)" role="button" tabindex="0"
+                         (keydown.enter)="downloadFile(msg)">
+                      <mat-icon class="file-type-icon" [class]="fileCategory(msg.attachment_url, msg.original_mime_type)">
+                        {{ fileIcon(msg.attachment_url, msg.original_mime_type) }}
+                      </mat-icon>
+                      <div class="file-info">
+                        <span class="file-name">{{ fileName(msg) }}</span>
+                        <span class="file-meta">{{ fileLabel(msg.attachment_url, msg.original_mime_type) }}{{ formatFileSize(msg) ? ' · ' + formatFileSize(msg) : '' }}</span>
+                      </div>
+                      <mat-icon class="file-dl-icon">download</mat-icon>
+                    </div>
+                    @if (isRealCaption(msg.content)) {
+                      <span class="bubble-caption">{{ msg.content | maskPhonesInText }}</span>
+                    }
+                  } @else if (msg.message_type === 'file' && !msg.attachment_url) {
+                    <div class="file-attachment file-attachment--pending" aria-busy="true">
+                      <mat-icon class="file-type-icon pending">hourglass_empty</mat-icon>
+                      <div class="file-info">
+                        <span class="file-name">{{ fileName(msg) }}</span>
+                        <span class="file-meta">Обработка файла...</span>
+                      </div>
+                      <mat-icon class="file-dl-icon loading-spinner">sync</mat-icon>
+                    </div>
+                  } @else if ((msg.message_type === 'image' || msg.message_type === 'video' || msg.message_type === 'audio') && !msg.attachment_url) {
+                    <div class="file-attachment file-attachment--pending" aria-busy="true">
+                      <mat-icon class="file-type-icon pending">
+                        {{ msg.message_type === 'image' ? 'image' : (msg.message_type === 'video' ? 'videocam' : 'audiotrack') }}
+                      </mat-icon>
+                      <div class="file-info">
+                        <span class="file-name">{{ fileName(msg) }}</span>
+                        <span class="file-meta">Обработка медиа...</span>
+                      </div>
+                      <mat-icon class="file-dl-icon loading-spinner">sync</mat-icon>
+                    </div>
+                  }
+                  @if ($any(msg).metadata?.interactive?.type === 'approval_gallery') {
+                    <div class="approval-gallery-msg">
+                      <div class="approval-gallery-header">
+                        <mat-icon>photo_camera</mat-icon> Согласование фото
+                      </div>
+                      <div class="approval-gallery-thumbs">
+                        @for (photo of $any(msg).metadata.interactive.photos; track photo.id) {
+                          <div class="approval-gallery-thumb" [class.approved]="photo.status === 'approved'">
+                            <img [src]="photo.variants?.[0]?.thumbnailUrl || photo.thumbnailUrl || photo.retouchedUrl" alt="Фото для согласования" (error)="onChatImageLoadError($event)" />
+                            @if (photo.variants?.length) {
+                              <span class="variant-badge">{{ photo.variants.length }} вар.</span>
+                            }
+                          </div>
+                        }
+                      </div>
+                      <button class="approval-gallery-link" (click)="navigateToItem.emit({ type: 'approval', id: $any(msg).metadata.interactive.sessionId })">
+                        Открыть ретушь
+                        <mat-icon>open_in_new</mat-icon>
+                      </button>
+                      @if (approvalSessionStatus(msg); as status) {
+                        <div class="approval-gallery-status">{{ status }}</div>
+                      }
+                    </div>
+                  }
+                  @if (paymentCardView(msg); as payment) {
+                    <div class="payment-card"
+                         [class.payment-paid]="payment.status === 'paid'"
+                         [class.payment-failed]="payment.status === 'failed'"
+                         [class.payment-cancelled]="payment.status === 'cancelled'"
+                         [class.payment-method-cash]="payment.methodTone === 'cash'"
+                         [class.payment-method-transfer]="payment.methodTone === 'transfer'"
+                         [class.payment-method-card]="payment.methodTone === 'card'"
+                         [class.payment-method-sbp]="payment.methodTone === 'sbp'"
+                         [class.payment-method-subscription]="payment.methodTone === 'subscription'"
+                         [class.payment-method-online]="payment.methodTone === 'online'"
+                         [class.payment-method-other]="payment.methodTone === 'other'">
+                      <div class="payment-card-header">
+                        <mat-icon>{{ payment.icon }}</mat-icon>
+                        @if (payment.amount !== null) {
+                          <span class="payment-card-amount">{{ payment.amount | number:'1.0-0' }}&#8381;</span>
+                        } @else {
+                          <span class="payment-card-amount">Оплата</span>
+                        }
+                        <span class="payment-card-status">{{ payment.statusLabel }}</span>
+                      </div>
+                      @if (payment.methodLabel) {
+                        <div class="payment-card-method">
+                          @if (payment.methodIcon) {
+                            <mat-icon>{{ payment.methodIcon }}</mat-icon>
+                          }
+                          <span>{{ payment.methodLabel }}</span>
+                        </div>
+                      }
+                      @if (payment.detail) {
+                        <div class="payment-card-detail">{{ payment.detail }}</div>
+                      }
+                      @if (payment.items.length) {
+                        <div class="payment-card-items">
+                          @for (item of payment.items; track $index) {
+                            <div class="payment-card-item">
+                              <span>{{ item.name }}</span>
+                              <span>{{ item.price }}&#8381;</span>
+                            </div>
+                          }
+                        </div>
+                      }
+                      @if (payment.canUseActions) {
+                        <div class="payment-card-actions">
+                          <button class="payment-card-btn payment-card-btn--teal"
+                                  (click)="paymentCardMarkPaid(msg)"
+                                  [disabled]="paymentCardBusy()">
+                            <mat-icon>price_check</mat-icon> Оплачено
+                          </button>
+                          <button class="payment-card-btn payment-card-btn--amber"
+                                  (click)="paymentCardRemind(msg)"
+                                  [disabled]="paymentCardBusy()">
+                            <mat-icon>notifications</mat-icon> Напомнить
+                          </button>
+                          <button class="payment-card-btn payment-card-btn--red"
+                                  (click)="paymentCardCancelInvoice(msg)"
+                                  [disabled]="paymentCardBusy()">
+                            <mat-icon>cancel</mat-icon> Отменить счёт
+                          </button>
+                        </div>
+                      } @else if (payment.status === 'paid') {
+                        <div class="payment-card-result payment-card-result--paid">
+                          <mat-icon>done_all</mat-icon>
+                          <span>Оплата принята</span>
+                        </div>
+                      } @else if (payment.status === 'cancelled') {
+                        <div class="payment-card-result payment-card-result--cancelled">
+                          <mat-icon>block</mat-icon>
+                          <span>Счёт отменён</span>
+                        </div>
+                      }
+                    </div>
+                  } @else if (msg.content && !(msg.attachment_url && (msg.message_type === 'image' || msg.message_type === 'video' || msg.message_type === 'audio' || msg.message_type === 'file')) && $any(msg).metadata?.interactive?.type !== 'approval_gallery' && !isPaymentMessage(msg)) {
+                    @if (msg.attachment_url && isImageFile(msg.attachment_url, msg.original_mime_type)) {
+                      <img [src]="msg.attachment_url" alt="Фото" class="bubble-img"
+                           (click)="openLightbox(msg)" (keydown.enter)="openLightbox(msg)"
+                           (error)="onChatImageLoadError($event)"
+                           tabindex="0" loading="lazy" />
+                    }
+                    <span>{{ msg.content | maskPhonesInText }}</span>
+                    @if (msg.attachment_url) {
+                      <button class="inline-file-link" (click)="downloadFile(msg)">
+                        <mat-icon>download</mat-icon> Скачать файл
+                      </button>
+                      @if (isImageFile(msg.attachment_url, msg.original_mime_type)) {
+                        <button class="inline-file-link" (click)="quickPrintMsg(msg)">
+                          <mat-icon>bolt</mat-icon> Быстрая печать
+                        </button>
+                        <button class="inline-file-link" (click)="printSingle(msg)">
+                          <mat-icon>print</mat-icon> Перейти в печать
+                        </button>
+                        <button class="inline-file-link" (click)="printDocumentSet(msg)">
+                          <mat-icon>badge</mat-icon> Комплект на документы
+                        </button>
+                        <button class="inline-file-link" (click)="validateFaceForMessage(msg)">
+                          <mat-icon>face</mat-icon> Проверить лицо
+                        </button>
+                        @if (getFaceValidation(msg.id); as fv) {
+                          <span class="face-validation-badge inline" [class.valid]="fv.is_valid_passport" [class.invalid]="!fv.is_valid_passport"
+                                [matTooltip]="fv.face_detected ? fv.face_height_mm + 'мм (норма 30-34мм), ' + fv.verdict : 'Лицо не найдено'">
+                            @if (fv.face_detected) {
+                              {{ fv.is_valid_passport ? '✓' : '✗' }} {{ fv.face_height_mm }}мм
+                            } @else {
+                              ✗ нет лица
+                            }
+                          </span>
+                        }
+                      }
+                    }
+                  }
+                </div>
+                <div class="bubble-footer">
+                  <span class="bubble-time">{{ timeLabel(msg.created_at) }}</span>
+                  @if ($any(msg).metadata?.edited) {
+                    <span class="edited-label">ред.</span>
+                  }
+                  @if (msg.sender_type === 'operator') {
+                    @if (msg.read_at) {
+                      <mat-icon class="msg-status status-read" matTooltip="Прочитано">done_all</mat-icon>
+                    } @else if (msg.delivered_at) {
+                      <mat-icon class="msg-status status-delivered" matTooltip="Доставлено">done_all</mat-icon>
+                    } @else if (msg.id.startsWith('temp-')) {
+                      <mat-icon class="msg-status status-pending" matTooltip="Отправка...">schedule</mat-icon>
+                    } @else {
+                      <mat-icon class="msg-status status-sent" matTooltip="Отправлено">done</mat-icon>
+                    }
+                  }
+                </div>
+                <!-- Reactions display -->
+                @if (reactionKeys(msg.metadata?.reactions).length > 0) {
+                  <div class="reactions-row">
+                    @for (emoji of reactionKeys(msg.metadata?.reactions); track emoji) {
+                      <button class="reaction-chip"
+                              [class.my-reaction]="hasOwnReaction(msg.metadata?.reactions?.[emoji])"
+                              (click)="chatService.toggleReaction(msg.id, emoji)"
+                              [matTooltip]="(msg.metadata?.reactions?.[emoji]?.length || 0) + ' ' + emoji">
+                        {{ emoji }} {{ msg.metadata?.reactions?.[emoji]?.length }}
+                      </button>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        }
+        }
+      }
+      @if (chatService.visitorIsTyping()) {
+        <div class="msg-row visitor">
+          <div class="typing-bubble">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+          </div>
+        </div>
+      }
+      @if (operatorTyping()) {
+        <div class="operator-typing-indicator">
+          <span class="typing-dots">
+            <span></span><span></span><span></span>
+          </span>
+          Коллега печатает...
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Rubber-band overlay -->
+  @if (rbRect()) {
+    <div class="rubber-band-rect"
+         [style.left.px]="rbRect()!.x"
+         [style.top.px]="rbRect()!.y"
+         [style.width.px]="rbRect()!.w"
+         [style.height.px]="rbRect()!.h">
+    </div>
+  }
+
+  <!-- Scroll-to-bottom FAB -->
+  @if (showScrollToBottom()) {
+    <button class="scroll-to-bottom-fab" (click)="scrollToBottom()">
+      <mat-icon>keyboard_double_arrow_down</mat-icon>
+      @if (newMessagesSinceScroll() > 0) {
+        <span class="new-msgs-badge">{{ newMessagesSinceScroll() }}</span>
+      }
+    </button>
+  }
+
+  <!-- Drop overlay -->
+  @if (isDragOver()) {
+    <div class="drop-overlay">
+      <mat-icon>cloud_upload</mat-icon>
+      <span>Отпустите файл</span>
+    </div>
+  }
+
+  <!-- AI suggestion panel -->
+  @if (aiSuggestion()) {
+    <div class="ai-suggestion">
+      <div class="ai-suggestion-header">
+        <span class="ai-badge">AI</span>
+        <span class="ai-label">Подсказка</span>
+        <button class="ai-dismiss" (click)="aiSuggestion.set(null)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="ai-suggestion-text">{{ aiSuggestion() }}</div>
+      <div class="ai-suggestion-actions">
+        <button class="action-pill action-pill--amber" (click)="acceptSuggestion()">
+          <mat-icon>check</mat-icon> Вставить
+        </button>
+        <button class="action-pill" (click)="aiSuggestion.set(null)">
+          <mat-icon>close</mat-icon> Отклонить
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- Upload progress -->
+  @if (uploading()) {
+    <div class="upload-progress">
+      <mat-progress-bar mode="determinate" [value]="uploadProgress()"></mat-progress-bar>
+      <span class="upload-progress-text">Загрузка файла... {{ uploadProgress() }}%</span>
+    </div>
+  }
+
+  <!-- AI suggested replies pills -->
+  @if (aiSuggestions().length) {
+    <div class="ai-pills">
+      @for (s of aiSuggestions(); track s.text) {
+        <button class="ai-pill" (click)="useSuggestion(s.text)" [matTooltip]="s.text">
+          {{ s.text }}
+        </button>
+      }
+      <button class="ai-pill ai-pill--refresh" (click)="loadAiSuggestions()"
+              [disabled]="aiSuggestionsLoading()" matTooltip="Обновить подсказки">
+        <mat-icon>{{ aiSuggestionsLoading() ? 'hourglass_empty' : 'refresh' }}</mat-icon>
+      </button>
+    </div>
+  }
+
+  <!-- Ручной триггер: попросить бота сформировать и отправить ответ клиенту -->
+  <div class="ai-reply-bar">
+    <button class="ai-reply-btn" (click)="aiReplyToClient()" [disabled]="aiReplyBusy()"
+            matTooltip="Бот сформирует и отправит ответ клиенту в этот диалог">
+      <mat-icon>{{ aiReplyBusy() ? 'hourglass_empty' : 'smart_toy' }}</mat-icon>
+      Ответить клиенту
+    </button>
+  </div>
+
+  <!-- Approval Widget (inline in chat) -->
+  @if (showApprovalWidget()) {
+    <app-chat-approval-widget
+      [chatSessionId]="sessionId()"
+      [visitorName]="chatService.activeSession()?.visitor_name || ''"
+      [visitorPhone]="chatService.activeSession()?.visitor_phone || ''"
+      (closed)="showApprovalWidget.set(false)" />
+  }
+
+  <!-- Reply -->
+  <div class="reply-area" [class.note-mode]="isNoteMode()">
+    @if (isNoteMode()) {
+      <div class="note-indicator">📝 ЗАМЕТКА ДЛЯ КОЛЛЕГ</div>
+    }
+    @if (editingMessage(); as editMsg) {
+      <div class="reply-preview editing">
+        <div class="reply-preview-bar" style="background: #f59e0b"></div>
+        <div class="reply-preview-content">
+          <span class="reply-preview-sender"><mat-icon style="font-size:14px;height:14px;width:14px;vertical-align:middle">edit</mat-icon> Редактирование</span>
+          <span class="reply-preview-text">{{ editMsg.content.substring(0, 120) }}</span>
+        </div>
+        <button mat-icon-button (click)="cancelEdit()" class="reply-preview-close">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    }
+    @if (!editingMessage() && replyingTo(); as reply) {
+      <div class="reply-preview">
+        <div class="reply-preview-bar"></div>
+        <div class="reply-preview-content">
+          <span class="reply-preview-sender">{{ reply.sender_name || (reply.sender_type === 'visitor' ? 'Клиент' : 'Оператор') }}</span>
+          <span class="reply-preview-text">{{ reply.content.substring(0, 120) }}</span>
+        </div>
+        <button mat-icon-button (click)="clearReplyTo()" class="reply-preview-close">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+    }
+    <div class="reply-input-wrapper" [class.focused]="replyFocused()">
+      <div class="reply-left-actions">
+        @if (!isNoteMode()) {
+          <button class="reply-action-btn" matTooltip="AI-подсказка"
+                  (click)="requestAiSuggestion()" [disabled]="aiLoading()">
+            <mat-icon>{{ aiLoading() ? 'hourglass_empty' : 'auto_awesome' }}</mat-icon>
+          </button>
+          <button class="reply-action-btn" [matMenuTriggerFor]="qrMenu" matTooltip="Быстрые ответы">
+            <mat-icon>bolt</mat-icon>
+          </button>
+          <mat-menu #qrMenu="matMenu" class="quick-reply-menu">
+            @for (group of quickReplies.groups(); track group.category; let first = $first) {
+              @if (!first) { <mat-divider /> }
+              <div class="qr-category-label">{{ group.label }}</div>
+              @for (reply of group.replies; track reply.id) {
+                <button mat-menu-item (click)="insertQuickReply(reply.content)">
+                  {{ reply.title }}
+                </button>
+              }
+            }
+          </mat-menu>
+        }
+        <button class="reply-action-btn" (click)="toggleNoteMode()"
+                [matTooltip]="isNoteMode() ? 'Режим ответа' : 'Заметка для коллег'">
+          <mat-icon>{{ isNoteMode() ? 'chat' : 'sticky_note_2' }}</mat-icon>
+        </button>
+        <button class="reply-action-btn reply-action-btn--photo" matTooltip="Выдать фото клиенту"
+                (click)="openFinalPhotoUpload()">
+          <mat-icon>add_a_photo</mat-icon>
+        </button>
+        <button class="reply-action-btn emoji-hint-btn" matTooltip="Emoji: Win+. или Cmd+Ctrl+Space">
+          <mat-icon>emoji_emotions</mat-icon>
+        </button>
+      </div>
+
+      <div class="reply-divider"></div>
+
+      <textarea
+        [placeholder]="isNoteMode() ? 'Внутренняя заметка...' : 'Введите ответ...'"
+        [(ngModel)]="replyText"
+        (keydown)="onKeydown($event)"
+        (input)="onReplyInput()"
+        (focus)="replyFocused.set(true)"
+        (blur)="replyFocused.set(false)"
+        rows="2"
+        cdkTextareaAutosize cdkAutosizeMinRows="2" cdkAutosizeMaxRows="6"
+        class="reply-textarea">
+      </textarea>
+
+      <div class="reply-right-actions">
+        @if (!isNoteMode()) {
+          <button class="reply-action-btn" matTooltip="Прикрепить файл" (click)="fileInput.click()">
+            <mat-icon>attach_file</mat-icon>
+          </button>
+          <input #fileInput type="file" hidden (change)="onFileSelected($event)"
+                 accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.zip,.mp4,.mov,.mp3,.ogg">
+        }
+        @if (!isNoteMode()) {
+          <button class="reply-action-btn" matTooltip="Отложить отправку"
+                  [disabled]="!replyText.trim()" (click)="openScheduleDialog()">
+            <mat-icon>schedule_send</mat-icon>
+          </button>
+        }
+        <button class="send-btn" [class.active]="replyText.trim()"
+                [class.note]="isNoteMode()"
+                [disabled]="!replyText.trim()" (click)="sendReply()"
+                [matTooltip]="isNoteMode() ? 'Сохранить заметку' : 'Отправить'">
+          <mat-icon>{{ isNoteMode() ? 'note_add' : 'send' }}</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message context menu (universal — all message types) -->
+  <div style="visibility:hidden;position:fixed"
+       [style.left]="msgContextMenuPosition().x"
+       [style.top]="msgContextMenuPosition().y"
+       [matMenuTriggerFor]="msgContextMenu"
+       #msgContextMenuTrigger="matMenuTrigger">
+  </div>
+
+  <mat-menu #msgContextMenu="matMenu" class="msg-context-menu">
+    <button mat-menu-item (click)="setReplyTo(msgContextMenuTarget()!)">
+      <mat-icon>reply</mat-icon> Ответить
+    </button>
+    <button mat-menu-item (click)="startForward(msgContextMenuTarget()!)">
+      <mat-icon>shortcut</mat-icon> Переслать
+    </button>
+    @if (msgContextMenuTarget()?.content) {
+      <button mat-menu-item (click)="copyMessageText(msgContextMenuTarget()!)">
+        <mat-icon>content_copy</mat-icon> Копировать текст
+      </button>
+    }
+    <button mat-menu-item (click)="chatService.togglePin(msgContextMenuTarget()!.id)">
+      <mat-icon>push_pin</mat-icon> {{ msgContextMenuTarget()?.pinned_at ? 'Открепить' : 'Закрепить' }}
+    </button>
+    @if (canDeleteOutgoingMessage(msgContextMenuTarget())) {
+      <mat-divider></mat-divider>
+      @if (canEditOutgoingMessage(msgContextMenuTarget())) {
+        <button mat-menu-item (click)="startEditMessage(msgContextMenuTarget()!)">
+          <mat-icon>edit</mat-icon> Редактировать
+        </button>
+      }
+      <button mat-menu-item class="danger-item" (click)="confirmDeleteMessage(msgContextMenuTarget()!)">
+        <mat-icon color="warn">delete</mat-icon> Удалить
+      </button>
+    }
+    @if (isApprovalLinkedMessage(msgContextMenuTarget())) {
+      <mat-divider></mat-divider>
+      <button mat-menu-item class="danger-item" (click)="confirmDeleteApproval(msgContextMenuTarget()!)">
+        <mat-icon color="warn">delete_sweep</mat-icon> {{ approvalDeleteLabel(msgContextMenuTarget()) }}
+      </button>
+    }
+  </mat-menu>
+
+  <!-- Lightbox overlay -->
+  @if (lightboxOpen() && lightboxImages().length) {
+    <div class="lightbox-overlay" (click)="closeLightbox()" (keydown.enter)="closeLightbox()" tabindex="0">
+      <div class="lightbox-content" (click)="$event.stopPropagation()" (keydown.enter)="$event.stopPropagation()" tabindex="0">
+        <img [src]="lightboxImages()[lightboxIndex()].url" class="lightbox-img" alt="Просмотр фото" (error)="onChatImageLoadError($event)" />
+        <div class="lightbox-controls">
+          <button class="lightbox-btn" (click)="lightboxPrev()" [disabled]="lightboxIndex() === 0">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <span class="lightbox-counter">{{ lightboxIndex() + 1 }} / {{ lightboxImages().length }}</span>
+          <button class="lightbox-btn" (click)="lightboxNext()" [disabled]="lightboxIndex() === lightboxImages().length - 1">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        <div class="lightbox-actions">
+          <button class="lightbox-btn" (click)="lightboxDownload()">
+            <mat-icon>download</mat-icon>
+          </button>
+          <button class="lightbox-btn" (click)="closeLightbox()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+} @else {
+  <div class="no-session">
+    @if (chatService.sessionNotFound()) {
+      <mat-icon>error_outline</mat-icon>
+      <p>Чат не найден</p>
+      <p class="hint">Сессия была удалена или не существует</p>
+    } @else {
+      <mat-icon>forum</mat-icon>
+      <p>Загрузка чата...</p>
+    }
+  </div>
+}

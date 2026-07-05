@@ -1,0 +1,367 @@
+<section class="desire-section" #desireSection>
+  <!-- Floating conversion elements -->
+  <div class="floating-elements">
+    @if (showFloatingReviews) {
+      <div class="floating-reviews">
+        @for (review of randomReviews; track review.id || review.authorName || $index; let i = $index) {
+          <div class="review-popup" 
+               [style.animation-delay.s]="i * 0.5">
+            <div class="review-avatar">
+              <img [src]="review.avatar || '/assets/images/default-avatar.svg'" [alt]="review.authorName">
+            </div>
+            <div class="review-content">
+              <div class="review-stars">
+                @for (star of getStarArray(review.rating); track star || $index) {
+                  <mat-icon>star</mat-icon>
+                }
+              </div>
+              <p class="review-text">"{{review.text}}"</p>
+              <span class="review-author">- {{review.authorName}}</span>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="section-container">
+    <!-- Testimonials Showcase with advanced effects -->
+    <div class="testimonials-showcase" intersectionObserver #testimonialsElement>
+      <div class="testimonials-header">
+        <h2 class="testimonials-title">
+          @for (part of titleParts; track part || $index; let i = $index) {
+            <span class="title-part" 
+                  [style.animation-delay.ms]="i * 150">
+              {{part}}
+            </span>
+          }
+        </h2>
+        <div class="testimonials-subtitle">Реальные отзывы довольных клиентов</div>
+        
+        <!-- Trust indicators -->
+        <div class="trust-indicators">
+          <div class="trust-item">
+            <mat-icon class="trust-icon">verified_user</mat-icon>
+            <span class="trust-text">Проверенные отзывы</span>
+          </div>
+          <div class="trust-item">
+            <mat-icon class="trust-icon">star_rate</mat-icon>
+            <span class="trust-text">{{photographer().rating}}/5 рейтинг</span>
+          </div>
+          <div class="trust-item">
+            <mat-icon class="trust-icon">people</mat-icon>
+            <span class="trust-text">{{photographer().reviewsCount}}+ клиентов</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Advanced testimonials carousel -->
+      <div class="testimonials-carousel">
+        <div class="testimonials-track" 
+             [style.transform]="'translateX(' + testimonialOffset + 'px)'"
+             #testimonialsTrack>
+          @for (testimonial of photographer().clientTestimonials; track testimonial.id || testimonial.authorName || $index; let i = $index) {
+            <div class="testimonial-card"
+                 [class.active]="i === activeTestimonialIndex"
+                 [style.animation-delay.ms]="i * 200">
+              <div class="testimonial-header">
+                <div class="client-avatar">
+                  <img [src]="testimonial.avatar || testimonial.clientImage || '/assets/images/default-avatar.svg'" 
+                       [alt]="testimonial.authorName || testimonial.clientName"
+                       loading="lazy">
+                  @if (testimonial.verified) {
+                    <div class="verified-badge">
+                      <mat-icon>verified</mat-icon>
+                    </div>
+                  }
+                </div>
+                <div class="client-info">
+                  <h4 class="client-name">{{testimonial.authorName || testimonial.clientName}}</h4>
+                  @if (testimonial.serviceType) {
+                    <div class="client-service">{{testimonial.serviceType}}</div>
+                  }
+                  <div class="testimonial-date">{{testimonial.date | date:'MMM yyyy':'ru'}}</div>
+                </div>
+                
+                <div class="testimonial-rating">
+                  <div class="stars-container">
+                    @for (star of getStarArray(testimonial.rating); track star || $index) {
+                      <mat-icon class="star-icon">star</mat-icon>
+                    }
+                  </div>
+                  <span class="rating-number">{{testimonial.rating}}/5</span>
+                </div>
+              </div>
+              
+              <div class="testimonial-content">
+                <blockquote class="testimonial-text">
+                  "{{testimonial.text}}"
+                </blockquote>
+                
+                <!-- Photo attachment if available -->
+                @if (testimonial.photos && testimonial.photos.length > 0) {
+                  <div class="testimonial-photos">
+                    <div class="photo-grid">
+                      @for (photo of testimonial.photos.slice(0, 3); track photo.thumbnail || photo.url || $index) {
+                        <img
+                          [src]="photo.thumbnail || photo.url"
+                          [alt]="photo.description || 'Фото от клиента'"
+                          class="testimonial-photo"
+                          (click)="openPhotoModal(photo)"
+                          (keydown.enter)="openPhotoModal(photo)"
+                          tabindex="0">
+                      }
+                      @if (testimonial.photos.length > 3) {
+                        <div class="more-photos">
+                          +{{testimonial.photos.length - 3}}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              
+              <!-- Reaction buttons -->
+              <div class="testimonial-reactions">
+                <button mat-button class="reaction-btn" 
+                        [class.active]="testimonial.liked"
+                        (click)="toggleTestimonialLike(i)">
+                  <mat-icon>thumb_up</mat-icon>
+                  <span>Полезно ({{testimonial.likes || 0}})</span>
+                </button>
+                <button mat-button class="reaction-btn">
+                  <mat-icon>share</mat-icon>
+                  <span>Поделиться</span>
+                </button>
+              </div>
+              </div>
+            </div>
+          }
+        </div>
+        
+        <!-- Carousel navigation -->
+        <div class="carousel-controls">
+          <button mat-fab color="primary" class="carousel-btn prev" 
+                  [disabled]="activeTestimonialIndex === 0"
+                  (click)="previousTestimonial()">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          <button mat-fab color="primary" class="carousel-btn next"
+                  [disabled]="activeTestimonialIndex === photographer().clientTestimonials.length - 1"
+                  (click)="nextTestimonial()">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+        
+        <!-- Dots indicator -->
+        <div class="carousel-dots">
+          @for (testimonial of photographer().clientTestimonials; track testimonial.id || testimonial.authorName || $index; let i = $index) {
+            <button 
+              class="dot"
+              [class.active]="i === activeTestimonialIndex"
+              (click)="goToTestimonial(i)">
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <mat-divider class="section-divider" />
+    
+    <!-- Services Section with conversion optimization -->
+    <div class="services-container" intersectionObserver #servicesElement>
+      <div class="services-header">
+        <h2 class="services-title">Инвестиции в ваши воспоминания</h2>
+        <p class="services-subtitle">
+          Выберите пакет, который подходит именно вам. 
+          <span class="highlight">Каждая фотосессия, это история вашей жизни</span>
+        </p>
+        
+        <!-- Price range with attractive presentation -->
+        <div class="price-range-showcase">
+          <div class="price-range-card">
+            <mat-icon class="price-icon">diamond</mat-icon>
+            <div class="price-content">
+              <span class="price-label">Инвестиции от</span>
+              <span class="price-value">{{photographer().priceRange}}</span>
+              <span class="price-note">за незабываемые моменты</span>
+            </div>
+          </div>
+          
+          <!-- Value propositions -->
+          <div class="value-props">
+            @for (prop of valuePropositions; track prop.text || prop.icon || $index) {
+              <div class="value-prop">
+                <mat-icon>{{prop.icon}}</mat-icon>
+                <span>{{prop.text}}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      
+      <!-- Advanced services grid with psychological triggers -->
+      <div class="services-grid">
+        @for (service of photographer().servicesOffered; track service.id || service.name || $index; let i = $index) {
+          <div class="service-card"
+               [class.featured]="service.featured"
+               [class.popular]="service.popular || service.isPopular"
+               [style.animation-delay.ms]="i * 200"
+               (mouseenter)="onServiceHover(i)"
+               (mouseleave)="onServiceLeave(i)">
+            
+            <!-- Popular/Featured badges -->
+            <div class="service-badges">
+              @if (service.featured) {
+                <div class="badge featured">
+                  <mat-icon>star</mat-icon>
+                  <span>Рекомендуем</span>
+                </div>
+              }
+              @if (service.popular || service.isPopular) {
+                <div class="badge popular">
+                  <mat-icon>local_fire_department</mat-icon>
+                  <span>Хит продаж</span>
+                </div>
+              }
+              @if (service.limitedOffer) {
+                <div class="badge limited">
+                  <mat-icon>schedule</mat-icon>
+                  <span>Ограниченное предложение</span>
+                </div>
+              }
+            </div>
+
+          <div class="service-header">
+            <div class="service-icon">
+              <mat-icon>{{getServiceIcon(service.category)}}</mat-icon>
+            </div>
+            <h3 class="service-name">{{service.name}}</h3>
+            <p class="service-duration">
+              <mat-icon>schedule</mat-icon>
+              {{service.duration}} минут
+            </p>
+          </div>
+          
+            <div class="service-pricing">
+              <div class="price-display">
+                @if (service.oldPrice) {
+                  <span class="old-price">{{service.oldPrice}} ₽</span>
+                }
+                <span class="current-price">{{service.price}} ₽</span>
+                @if (service.discount) {
+                  <span class="discount">-{{service.discount}}%</span>
+                }
+              </div>
+              @if (service.photosIncluded) {
+                <div class="price-per-photo">
+                  ≈ {{(service.price / service.photosIncluded) | number:'1.0-0'}} ₽ за фото
+                </div>
+              }
+            </div>
+            
+            <div class="service-content">
+              <p class="service-description">{{service.description}}</p>
+              
+              <!-- What's included with visual icons -->
+              <div class="service-includes">
+                <h4 class="includes-title">
+                  <mat-icon>checklist</mat-icon>
+                  Что входит в стоимость:
+                </h4>
+                <ul class="includes-list">
+                  @for (item of service.includes; track item || $index) {
+                    <li class="include-item">
+                      <mat-icon class="check-icon">check_circle</mat-icon>
+                      <span>{{item}}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+              
+              <!-- Social proof for this service -->
+              @if (service.bookingsCount) {
+                <div class="service-social-proof">
+                  <div class="booking-stats">
+                    <mat-icon>people</mat-icon>
+                    <span>Уже забронировано {{service.bookingsCount}} раз в этом месяце</span>
+                  </div>
+                </div>
+              }
+              
+              <!-- Urgency/scarcity elements -->
+              @if (service.slotsLeft) {
+                <div class="service-urgency">
+                  <mat-icon class="urgency-icon">schedule</mat-icon>
+                  <span class="urgency-text">Осталось только {{service.slotsLeft}} свободных слотов</span>
+                </div>
+              }
+            </div>
+            
+            <!-- Enhanced action buttons -->
+            <div class="service-actions">
+              <button mat-raised-button 
+                      color="primary" 
+                      class="book-btn"
+                      [class.pulsing]="service.featured"
+                      [routerLink]="getBookingLink(service)">
+                <mat-icon>event_available</mat-icon>
+                Забронировать сейчас
+              </button>
+              
+              <div class="secondary-actions">
+                <button mat-button color="accent" (click)="openServiceDetails(service)">
+                  <mat-icon>info</mat-icon>
+                  Подробнее
+                </button>
+                <button mat-button color="accent" (click)="openGalleryModal(service)">
+                  <mat-icon>photo_library</mat-icon>
+                  Примеры работ
+                </button>
+              </div>
+            </div>
+            
+            <!-- Hover effect overlay -->
+            <div class="service-hover-overlay"></div>
+          </div>
+        }
+      </div>
+      
+      <!-- Additional conversion elements -->
+      <div class="services-footer">
+        <!-- Money-back guarantee -->
+        <div class="guarantee-section">
+          <div class="guarantee-card">
+            <mat-icon class="guarantee-icon">security</mat-icon>
+            <div class="guarantee-content">
+              <h4>Гарантия качества</h4>
+              <p>Если результат вас не устроит, вернем 100% стоимости</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Payment options -->
+        <div class="payment-options">
+          <h4>Удобные способы оплаты:</h4>
+          <div class="payment-methods">
+            @for (method of paymentMethods; track method.name || method.icon || $index) {
+              <div class="payment-method">
+                <mat-icon>{{method.icon}}</mat-icon>
+                <span>{{method.name}}</span>
+              </div>
+            }
+          </div>
+        </div>
+        
+        <!-- FAQ teaser -->
+        <div class="faq-teaser">
+          <h4>Остались вопросы?</h4>
+          <button mat-stroked-button color="primary" (click)="openFAQ()">
+            <mat-icon>help_outline</mat-icon>
+            Посмотреть ответы на частые вопросы
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+

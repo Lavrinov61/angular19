@@ -1,0 +1,211 @@
+<!-- Document Plus Page -->
+<link rel="canonical" href="https://svoefoto.ru/document-plus" />
+<div class="document-plus-page">
+  <!-- Hero Section - ATTENTION -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="highlight">Документальный Комплект Плюс</span>
+        </h1>
+        <p class="hero-subtitle">
+          📸 Решите сразу две задачи за 10 минут! Получите 4 фото на документы и мини-портрет для соцсетей с базовой ретушью и печатью 10×15 в подарок.
+        </p>
+        <div class="price-block">
+          <div class="price-comparison">
+            <span class="old-price">{{oldPrice}} ₽</span>
+            <span class="new-price">{{price}} ₽</span>
+          </div>
+          <div class="savings">
+            <mat-icon>savings</mat-icon>
+            <span>Экономия {{savings}} ₽</span>
+          </div>
+        </div>
+        <div class="hero-benefits">
+          <div class="benefit-item">
+            <mat-icon>schedule</mat-icon>
+            <span>Готово за 10 минут</span>
+          </div>
+          <div class="benefit-item">
+            <mat-icon>auto_fix_high</mat-icon>
+            <span>С ретушью</span>
+          </div>
+          <div class="benefit-item">
+            <mat-icon>card_giftcard</mat-icon>
+            <span>Печать в подарок</span>
+          </div>
+        </div>
+        <div class="hero-cta">
+          <button mat-raised-button color="primary" class="cta-button" 
+                  onclick="window.location.href='/booking'">
+            <mat-icon>calendar_today</mat-icon>
+            Записаться онлайн
+          </button>
+          <button mat-stroked-button color="primary" class="info-button" (click)="scrollToPackage()">
+            <mat-icon>info</mat-icon>
+            Что входит
+          </button>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img 
+          src="/assets/images/document-plus-hero.jpg" 
+          alt="Документальный комплект плюс - фото на документы и портрет"
+          loading="eager"
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Package Section - INTEREST -->
+  <section class="package-section" id="package">
+    <div class="section-container">
+      <h2 class="section-title">Что входит в комплект</h2>
+      <p class="section-subtitle">
+        Получите всё необходимое за одну поездку с выгодой 160 ₽
+      </p>
+      
+      <div class="package-grid">
+        @for (item of packageIncludes; track item.title || item.icon || $index) {
+          <div class="package-item">
+            <div class="item-icon">
+              <mat-icon>{{item.icon}}</mat-icon>
+            </div>
+            <h3 class="item-title">{{item.title}}</h3>
+            <p class="item-description">{{item.description}}</p>
+            <div class="item-value">{{item.value}}</div>
+          </div>
+        }
+      </div>
+
+      <div class="package-summary">
+        <div class="summary-content">
+          <h3>Итого в комплекте:</h3>
+          <div class="summary-line">
+            <span>Обычная цена:</span>
+            <span class="old-price">{{oldPrice}} ₽</span>
+          </div>
+          <div class="summary-line highlight">
+            <span>Цена комплекта:</span>
+            <span class="new-price">{{price}} ₽</span>
+          </div>
+          <div class="savings-highlight">
+            <mat-icon>trending_down</mat-icon>
+            <span>Ваша экономия: {{savings}} ₽</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section - INTEREST -->
+  <section class="process-section" id="process">
+    <div class="section-container">
+      <h2 class="section-title">Как это работает</h2>
+      <div class="process-steps">
+        @for (step of processSteps; track step.title || step.icon || $index; let i = $index) {
+          <div class="step-item">
+            <div class="step-number">{{i + 1}}</div>
+            <div class="step-content">
+              <h3 class="step-title">{{step.title}}</h3>
+              <p class="step-description">{{step.description}}</p>
+            </div>
+            <div class="step-icon">
+              <mat-icon>{{step.icon}}</mat-icon>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantages Section - DESIRE -->
+  <section class="advantages-section">
+    <div class="section-container">
+      <h2 class="section-title">Преимущества комплекта</h2>
+      <div class="advantages-grid">
+        @for (advantage of advantages; track advantage.title || advantage.icon || $index) {
+          <div class="advantage-card">
+            <div class="advantage-icon">
+              <mat-icon>{{advantage.icon}}</mat-icon>
+            </div>
+            <h3 class="advantage-title">{{advantage.title}}</h3>
+            <p class="advantage-description">{{advantage.description}}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section - DESIRE -->
+  <section class="testimonials-section">
+    <div class="section-container">
+      <h2 class="section-title">Отзывы о комплекте</h2>
+      <app-testimonials variant="card" />
+    </div>
+  </section>
+
+  <!-- FAQ Section - INTEREST -->
+  <section class="faq-section">
+    <div class="section-container">
+      <h2 class="section-title">Часто задаваемые вопросы</h2>
+      <mat-accordion class="faq-accordion">
+        @for (faq of faqItems; track faq.question || $index) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{faq.question}}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p [innerHTML]="faq.answer"></p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <!-- CTA Section - ACTION -->
+  <section class="cta-section">
+    <div class="section-container">
+      <div class="cta-content">
+        <h2 class="cta-title">Готовы заказать комплект?</h2>
+        <p class="cta-subtitle">
+          Получите фото на документы и красивый портрет по специальной цене!
+        </p>
+        <div class="cta-highlight">
+          <div class="highlight-item">
+            <mat-icon>schedule</mat-icon>
+            <span>10-15 минут</span>
+          </div>
+          <div class="highlight-item">
+            <mat-icon>savings</mat-icon>
+            <span>Экономия {{savings}} ₽</span>
+          </div>
+          <div class="highlight-item">
+            <mat-icon>card_giftcard</mat-icon>
+            <span>Печать в подарок</span>
+          </div>
+        </div>
+        <div class="cta-buttons">
+          <button mat-raised-button color="primary" class="primary-cta" 
+                  onclick="window.location.href='/booking'">
+            <mat-icon>calendar_today</mat-icon>
+            Записаться онлайн
+          </button>
+          <button mat-stroked-button color="primary" class="secondary-cta" (click)="callPhone()">
+            <mat-icon>call</mat-icon>
+            Позвонить
+          </button>
+        </div>
+        <p class="cta-urgency">
+          ⚡ Акция действует ограниченное время!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modern Contacts Section - переиспользуемый компонент -->
+  <app-contacts-section [contacts]="contacts"
+    [addresses]="addresses"
+    [isMobile]="isMobile()"
+    [isTablet]="isTablet()"
+    [isDesktop]="isDesktop()" />
+</div>

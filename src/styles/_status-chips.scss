@@ -1,0 +1,35 @@
+// Status chip mixin для payment_links / orders / bookings.
+// Использует --crm-status-* CSS vars из crm-tokens.scss.
+
+@mixin status-chip-base {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: var(--crm-text-sm, 12px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+@mixin status-chip($variant) {
+  @if $variant == 'success' {
+    background: var(--crm-status-success-muted);
+    color: var(--crm-status-success);
+  }
+  @else if $variant == 'warning' {
+    background: var(--crm-status-warning-muted);
+    color: var(--crm-status-warning);
+  }
+  @else if $variant == 'error' {
+    background: var(--crm-status-error-muted);
+    color: var(--crm-status-error);
+  }
+  @else if $variant == 'info' {
+    background: var(--crm-status-info-muted);
+    color: var(--crm-status-info);
+  }
+  @else if $variant == 'grey' {
+    background: var(--crm-surface-raised);
+    color: var(--crm-text-secondary);
+  }
+}

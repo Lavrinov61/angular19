@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Флайер — Своё Фото</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:105mm 148mm;margin:0}
+
+:root{
+  --bg:#0a0a0a;--bg2:#131210;--bg3:#1c1b18;
+  --am:#f59e0b;--am2:#fbbf24;--amd:#d97706;
+  --t1:#f5f5f5;--t2:#a0a0a0;--t3:#666;
+  --brd:rgba(255,255,255,.07);
+  --glow:rgba(245,158,11,.12);
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+
+body{
+  background:#222;font-family:var(--fb);color:var(--t1);
+  display:flex;flex-direction:column;align-items:center;gap:50px;padding:50px 20px;
+}
+
+.tag{color:#555;font-size:9px;text-transform:uppercase;letter-spacing:.25em;margin-bottom:-38px}
+
+/* === CARD === */
+.card{
+  width:105mm;height:148mm;background:var(--bg);overflow:hidden;position:relative;
+  print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+@media screen{.card{box-shadow:0 16px 60px rgba(0,0,0,.7);border-radius:4px}}
+@media print{
+  body{background:none;padding:0;gap:0}
+  .tag{display:none}
+  .card{page-break-after:always;box-shadow:none;border-radius:0}
+}
+
+/* ========== FRONT ========== */
+.f{display:flex;flex-direction:column;height:100%}
+
+.f-top{
+  background:var(--am);color:#000;text-align:center;
+  padding:5px 10px;font-family:var(--fd);font-weight:600;
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;
+}
+
+.f-hero{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:16px 20px 10px;
+  position:relative;
+}
+.f-hero::after{
+  content:'';position:absolute;top:8%;left:50%;transform:translateX(-50%);
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,var(--glow),transparent 70%);
+  pointer-events:none;
+}
+
+.f-pre{font-size:14px;color:var(--t2);font-weight:500;position:relative;z-index:1}
+.f-h{
+  font-family:var(--fd);font-weight:800;font-size:36px;
+  text-transform:uppercase;line-height:.98;letter-spacing:.01em;
+  position:relative;z-index:1;margin:4px 0 8px;
+}
+.f-h b{color:var(--am);font-weight:800;display:block}
+.f-sub{
+  font-size:12px;color:var(--t2);line-height:1.4;max-width:220px;
+  position:relative;z-index:1;margin-bottom:16px;
+}
+.f-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--am);color:#000;padding:10px 24px;border-radius:28px;
+  font-family:var(--fd);font-weight:700;font-size:13.5px;
+  text-transform:uppercase;letter-spacing:.06em;
+  box-shadow:0 0 32px var(--glow),0 6px 16px rgba(0,0,0,.5);
+  position:relative;z-index:1;
+}
+.f-badge svg{width:15px;height:15px}
+
+/* services */
+.f-srv{
+  background:var(--bg2);border-top:1px solid var(--brd);
+  padding:10px 18px 9px;
+}
+.f-srv h3{
+  font-family:var(--fd);font-size:8.5px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--am);margin-bottom:6px;
+}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+.f-i{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:500}
+.f-i::before{content:'';width:3px;height:3px;border-radius:50%;background:var(--am);flex-shrink:0}
+.f-i .pr{color:var(--am);font-family:var(--fd);font-weight:600;margin-left:auto;font-size:10px}
+
+/* bottom */
+.f-bot{
+  background:var(--bg3);border-top:1px solid var(--brd);
+  padding:8px 18px;display:flex;align-items:center;justify-content:space-between;
+}
+.f-addr{font-family:var(--fd);font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+.f-hint{font-size:8.5px;color:var(--t3);margin-top:1px}
+.f-logo{height:28px;opacity:.9}
+
+/* ========== BACK ========== */
+.b{display:flex;flex-direction:column;height:100%;padding:14px 16px 12px}
+
+.b-head{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--brd);
+}
+.b-logo{height:30px}
+.b-tag{
+  font-size:8px;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;
+  border-left:1px solid var(--brd);padding-left:10px;line-height:1.4;
+}
+
+/* promo */
+.b-promo{
+  background:linear-gradient(135deg,rgba(245,158,11,.1),rgba(245,158,11,.03));
+  border:1.5px dashed var(--amd);border-radius:10px;
+  padding:10px 14px;text-align:center;margin-bottom:12px;
+}
+.b-promo .pl{font-size:10px;color:var(--t2)}
+.b-promo .pc{font-family:var(--fd);font-size:30px;font-weight:700;color:var(--am);letter-spacing:.15em}
+.b-promo .pv{font-size:10.5px;font-weight:600;margin-top:1px}
+.b-promo .pe{font-size:8px;color:var(--t3);margin-top:3px}
+
+/* prices */
+.b-prices{margin-bottom:12px}
+.b-st{font-family:var(--fd);font-size:8.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--am);margin-bottom:5px}
+.b-r{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:3px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:10.5px;
+}
+.b-r:last-child{border-bottom:none}
+.b-r .v{color:var(--am);font-family:var(--fd);font-weight:600;font-size:11px}
+
+/* contacts */
+.b-ct{
+  background:var(--bg2);border-radius:8px;padding:7px 11px;margin-bottom:10px;
+}
+.b-cr{display:flex;align-items:center;gap:7px;padding:2px 0;font-size:10px}
+.b-cr svg{width:12px;height:12px;fill:var(--am);flex-shrink:0}
+
+/* socials */
+.b-soc{display:flex;justify-content:center;gap:7px;margin-bottom:8px}
+.b-si{
+  width:24px;height:24px;border-radius:6px;background:var(--bg3);
+  border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;
+}
+.b-si svg{width:12px;height:12px;fill:var(--t2)}
+
+/* qr */
+.b-qr{
+  display:flex;align-items:center;gap:10px;margin-top:auto;
+  padding-top:8px;border-top:1px solid var(--brd);
+}
+.b-qb{
+  width:50px;height:50px;background:#fff;border-radius:5px;padding:3px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.b-qi{font-size:9px;color:var(--t3);line-height:1.4}
+.b-qi strong{color:var(--t1);font-size:10.5px;display:block;margin-bottom:1px}
+</style>
+</head>
+<body>
+
+<!-- ============ ЛИЦЕВАЯ ============ -->
+<div class="tag">Лицевая сторона — A6 (105×148 мм)</div>
+<div class="card">
+<div class="f">
+  <div class="f-top">Ежедневно 09:00 — 19:30 · Без выходных</div>
+  <div class="f-hero">
+    <div class="f-pre">Для новых клиентов</div>
+    <div class="f-h">2 ксерокопии<b>бесплатно</b></div>
+    <div class="f-sub">Назовите промокод СОБОР при первом визите</div>
+    <div class="f-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      По этому флайеру
+    </div>
+  </div>
+  <div class="f-srv">
+    <h3>Наши услуги</h3>
+    <div class="f-grid">
+      <div class="f-i">Фото на документы</div>
+      <div class="f-i">Деловой портрет</div>
+      <div class="f-i">Ретушь фотографий</div>
+      <div class="f-i">Реставрация фото</div>
+      <div class="f-i">Печать фото <span class="pr">от 19₽</span></div>
+      <div class="f-i">Ксерокопия <span class="pr">10₽</span></div>
+    </div>
+  </div>
+  <div class="f-bot">
+    <div>
+      <div class="f-addr">пер. Соборный, 21</div>
+      <div class="f-hint">50 м от Большой Садовой</div>
+    </div>
+    <img class="f-logo" src="logo-white.webp" alt="Своё Фото">
+  </div>
+</div>
+</div>
+
+<!-- ============ ОБОРОТ ============ -->
+<div class="tag">Оборотная сторона</div>
+<div class="card">
+<div class="b">
+
+  <div class="b-head">
+    <img class="b-logo" src="logo-white.webp" alt="Своё Фото">
+    <div class="b-tag">Фотостудия<br>в центре Ростова</div>
+  </div>
+
+  <div class="b-promo">
+    <div class="pl">Промокод для новых клиентов</div>
+    <div class="pc">СОБОР</div>
+    <div class="pv">2 ксерокопии бесплатно + скидка 100 ₽ на фото</div>
+    <div class="pe">Одноразовый · фиксируем по телефону · до 31 марта 2026</div>
+  </div>
+
+  <div class="b-prices">
+    <div class="b-st">Доступные цены</div>
+    <div class="b-r"><span>Печать фото 10×15 (глянец / матовая)</span><span class="v">от 19 ₽</span></div>
+    <div class="b-r"><span>Печать фото 10×15 супер</span><span class="v">36 ₽</span></div>
+    <div class="b-r"><span>Печать документов</span><span class="v">10 ₽</span></div>
+    <div class="b-r"><span>Ксерокопия</span><span class="v">10 ₽</span></div>
+    <div class="b-r"><span>Ламинирование</span><span class="v">100 ₽</span></div>
+    <div class="b-r"><span>Сканирование</span><span class="v">50 ₽</span></div>
+  </div>
+
+  <div class="b-ct">
+    <div class="b-cr">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+      <span>пер. Соборный, 21 · ул. 2-ая Баррикадная, 4</span>
+    </div>
+    <div class="b-cr">
+      <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+      <span>+7 (901) 417-86-68</span>
+    </div>
+    <div class="b-cr">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+      <span>svoefoto.ru</span>
+    </div>
+  </div>
+
+  <div class="b-soc">
+    <div class="b-si"><svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></div>
+    <div class="b-si"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a1.87 1.87 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></div>
+    <div class="b-si"><svg viewBox="0 0 24 24"><path d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.391 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.864-.525-2.05-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.27-1.422 2.18-3.61 2.18-3.61.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.05.17.49-.085.744-.576.744z"/></svg></div>
+    <div class="b-si"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></div>
+  </div>
+
+  <div class="b-qr">
+    <div class="b-qb">
+      <img src="qrcode-flyer1.png" alt="QR svoefoto.ru/booking" style="width:100%;height:100%;object-fit:contain">
+    </div>
+    <div class="b-qi">
+      <strong>svoefoto.ru/booking</strong>
+      Запишитесь онлайн<br>или напишите в чат
+    </div>
+  </div>
+
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+syntax = "proto3";
+package svf.orders.v1;
+
+import "google/protobuf/timestamp.proto";
+import "common/v1/common.proto";
+
+option java_package = "ru.svoefoto.proto.orders.v1";
+option java_multiple_files = true;
+
+// ── Order Service — mobile order lookup ──
+
+service OrderService {
+  rpc GetOrder(GetOrderRequest) returns (GetOrderResponse);
+  rpc GetMyOrders(GetMyOrdersRequest) returns (GetMyOrdersResponse);
+}
+
+// ── Enums ──
+
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0;
+  ORDER_STATUS_PENDING = 1;
+  ORDER_STATUS_CONFIRMED = 2;
+  ORDER_STATUS_IN_PROGRESS = 3;
+  ORDER_STATUS_RETOUCHING = 4;
+  ORDER_STATUS_APPROVAL = 5;
+  ORDER_STATUS_PRINTING = 6;
+  ORDER_STATUS_READY = 7;
+  ORDER_STATUS_COMPLETED = 8;
+  ORDER_STATUS_CANCELLED = 9;
+  ORDER_STATUS_REFUNDED = 10;
+}
+
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_UNPAID = 1;
+  PAYMENT_STATUS_PARTIALLY_PAID = 2;
+  PAYMENT_STATUS_PAID = 3;
+  PAYMENT_STATUS_REFUND_PENDING = 4;
+  PAYMENT_STATUS_REFUND_COMPLETED = 5;
+}
+
+// ── Messages ──
+
+message Order {
+  string id = 1;
+  string order_number = 2;
+  string user_id = 3;
+  OrderStatus status = 4;
+  PaymentStatus payment_status = 5;
+  svf.common.v1.Money total = 6;
+  svf.common.v1.Money paid_amount = 7;
+  repeated OrderItem items = 8;
+  repeated OrderTimelineEntry timeline = 9;
+  string notes = 10;
+  string studio_slug = 11;
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+}
+
+message OrderItem {
+  string id = 1;
+  string service_name = 2;
+  string service_slug = 3;
+  int32 quantity = 4;
+  svf.common.v1.Money price = 5;
+  map<string, string> options = 6; // format, size, etc.
+}
+
+message OrderTimelineEntry {
+  string id = 1;
+  string status = 2;
+  string description = 3;
+  string actor_name = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message CreateOrderRequest {
+  repeated CreateOrderItem items = 1;
+  string notes = 2;
+  string studio_slug = 3;
+  string chat_session_id = 4;
+  string idempotency_key = 5;
+}
+
+message CreateOrderResponse {
+  Order order = 1;
+}
+
+message CreateOrderItem {
+  string service_slug = 1;
+  int32 quantity = 2;
+  map<string, string> options = 3;
+}
+
+message GetOrderRequest {
+  string order_id = 1;
+}
+
+message GetOrderResponse {
+  Order order = 1;
+}
+
+message GetMyOrdersRequest {
+  svf.common.v1.PaginationRequest pagination = 1;
+  OrderStatus status_filter = 2; // 0 = all
+}
+
+message GetMyOrdersResponse {
+  repeated Order orders = 1;
+  svf.common.v1.Pagination pagination = 2;
+}
+
+message WatchOrderStatusRequest {
+  string order_id = 1;
+}
+
+message WatchOrderStatusResponse {
+  string order_id = 1;
+  OrderStatus status = 2;
+  PaymentStatus payment_status = 3;
+  string description = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+message ReorderRequest {
+  string original_order_id = 1;
+}
+
+message ReorderResponse {
+  Order order = 1;
+}

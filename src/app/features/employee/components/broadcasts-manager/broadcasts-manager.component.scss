@@ -1,0 +1,647 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.glass-card {
+  background: var(--crm-gradient-card);
+  backdrop-filter: blur(var(--crm-glass-blur));
+  -webkit-backdrop-filter: blur(var(--crm-glass-blur));
+  border-radius: var(--crm-radius-lg);
+  border: 1px solid var(--crm-glass-border);
+  box-shadow: var(--crm-shadow-card);
+}
+
+.broadcasts-page {
+  padding: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// ── Header ──
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  h1 {
+    margin: 0;
+    font-family: var(--crm-font-display);
+    font-size: var(--crm-text-xl);
+    font-weight: 600;
+    color: var(--crm-text-primary);
+    letter-spacing: 0.02em;
+  }
+}
+
+.header-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: var(--crm-accent);
+}
+
+// ── Layout ──
+.broadcasts-layout {
+  display: grid;
+  grid-template-columns: 208px 1fr;
+  gap: 16px;
+  flex: 1;
+  overflow: hidden;
+
+  // Левый рейл каналов остаётся фиксированным, деталь добавляет 3-ю колонку.
+  &:has(.detail-panel) {
+    grid-template-columns: 208px 1fr 420px;
+  }
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    &:has(.detail-panel) { grid-template-columns: 1fr; }
+  }
+}
+
+// ── Левый рейл каналов ──
+.channel-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  @media (max-width: 900px) {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+}
+
+.rail-title {
+  font-size: var(--crm-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--crm-text-muted);
+  padding: 4px 8px 6px;
+
+  @media (max-width: 900px) { display: none; }
+}
+
+.rail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--crm-radius-md);
+  background: transparent;
+  color: var(--crm-text-secondary);
+  font-size: var(--crm-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--crm-transition-fast), color var(--crm-transition-fast),
+    border-color var(--crm-transition-fast);
+
+  &:hover { background: rgba(255, 255, 255, 0.05); }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.07);
+    color: var(--crm-text-primary);
+    border-color: var(--crm-accent);
+  }
+
+  .rail-label { flex: 1; }
+
+  .rail-all-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--crm-text-muted);
+  }
+}
+
+.rail-count {
+  min-width: 22px;
+  text-align: center;
+  font-family: var(--crm-font-display);
+  font-weight: 700;
+  font-size: var(--crm-text-xs);
+  color: var(--crm-text-secondary);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+
+// ── Бейдж канала (брендовый цвет через --ch-color) ──
+.ch-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+
+  // solid-pill (рейл): короткий код на брендовом фоне
+  min-width: 38px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 7px;
+  font-size: 11px;
+  color: #fff;
+  background: var(--ch-color, var(--crm-text-muted));
+
+  &[data-ch='telegram'] { --ch-color: #29b6f6; }
+  &[data-ch='max']      { --ch-color: #8b5cf6; }
+  &[data-ch='vk']       { --ch-color: #4a76a8; }
+  &[data-ch='whatsapp'] { --ch-color: #25d366; }
+}
+
+// Чип канала на карточке: полное название, приглушённо, в брендовом цвете
+.ch-chip {
+  height: 20px;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ch-color, var(--crm-text-secondary));
+  background: color-mix(in srgb, var(--ch-color, #888) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ch-color, #888) 32%, transparent);
+}
+
+// ── Broadcast List ──
+.broadcasts-list {
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 4px;
+}
+
+.broadcast-card {
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: transform var(--crm-transition-fast), box-shadow var(--crm-transition-fast);
+  border: 1px solid transparent;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--crm-shadow-card-hover);
+  }
+
+  &.selected {
+    border-color: var(--crm-accent);
+    box-shadow: var(--crm-shadow-accent-glow);
+  }
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.card-name {
+  font-size: var(--crm-text-md);
+  font-weight: 600;
+  color: var(--crm-text-primary);
+  margin-bottom: 6px;
+}
+
+.card-meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--crm-text-sm);
+  color: var(--crm-text-muted);
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+// ── Audience segment badge (в карточке) ──
+.audience-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: var(--crm-text-xs);
+  font-weight: 600;
+  background: var(--crm-status-info-muted);
+  color: var(--crm-status-info);
+
+  mat-icon {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+  }
+}
+
+// ── Test / Live badges ──
+.test-badge,
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: var(--crm-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+
+  mat-icon {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+  }
+}
+
+.test-badge {
+  background: var(--crm-status-warning-muted);
+  color: var(--crm-status-warning);
+}
+
+.live-badge {
+  background: var(--crm-status-error-muted);
+  color: var(--crm-status-error);
+}
+
+// ── Funnel badges (в карточке) ──
+.funnel-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.funnel-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: var(--crm-text-xs);
+  font-weight: 600;
+  font-family: var(--crm-font-mono);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--crm-text-secondary);
+
+  mat-icon {
+    font-size: 13px;
+    width: 13px;
+    height: 13px;
+  }
+
+  &.sent { color: var(--crm-status-success); }
+  &.failed { color: var(--crm-status-error); }
+  &.blocked { color: var(--crm-text-muted); }
+  &.queued { color: var(--crm-status-info); }
+}
+
+// ── Status Badge ──
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: var(--crm-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+
+  &.status-draft {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--crm-text-secondary);
+  }
+
+  &.status-active {
+    background: var(--crm-status-success-muted);
+    color: var(--crm-status-success);
+  }
+
+  &.status-paused {
+    background: var(--crm-status-warning-muted);
+    color: var(--crm-status-warning);
+  }
+
+  &.status-completed {
+    background: var(--crm-status-info-muted);
+    color: var(--crm-status-info);
+  }
+
+  &.status-cancelled {
+    background: var(--crm-status-error-muted);
+    color: var(--crm-status-error);
+  }
+}
+
+// ── Detail Panel ──
+.detail-panel {
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.detail-name {
+  margin: 0;
+  font-family: var(--crm-font-display);
+  font-size: var(--crm-text-lg);
+  font-weight: 600;
+  color: var(--crm-text-primary);
+}
+
+.detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+// ── Actions ──
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+// Подсказка «отправка в канал скоро» (не-telegram сегмент)
+.channel-soon-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: var(--crm-radius-md);
+  font-size: var(--crm-text-sm);
+  background: var(--crm-status-info-muted);
+  color: var(--crm-status-info);
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+}
+
+// ── Sections ──
+.detail-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: var(--crm-text-md);
+  font-weight: 600;
+  color: var(--crm-text-primary);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: var(--crm-accent);
+  }
+}
+
+.section-empty {
+  color: var(--crm-text-muted);
+  font-size: var(--crm-text-sm);
+  margin: 0;
+}
+
+// ── Stats Grid (воронка) ──
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+.stat-card {
+  padding: 12px;
+  border-radius: var(--crm-radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: center;
+
+  &.accent .stat-value { color: var(--crm-status-success); }
+
+  // «Интересовались» — кликабельная плашка, ведёт в одноимённый вид списка
+  &.interested {
+    cursor: pointer;
+    border: 1px solid var(--crm-accent-muted);
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    .stat-value { color: var(--crm-accent); }
+
+    &:hover {
+      background: var(--crm-accent-container);
+      border-color: var(--crm-accent);
+    }
+  }
+}
+
+// ── Переключатель видов получателей (Все / Интересовались) ──
+.recipient-views {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--crm-radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: var(--crm-text-muted);
+  font-size: var(--crm-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  .view-count {
+    font-family: var(--crm-font-display);
+    font-weight: 700;
+    color: var(--crm-text-primary);
+  }
+
+  &:hover { border-color: rgba(255, 255, 255, 0.28); }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--crm-text-primary);
+    border-color: var(--crm-accent);
+  }
+
+  &.interested.active {
+    border-color: var(--crm-accent);
+    .view-count { color: var(--crm-accent); }
+  }
+}
+
+.stat-value {
+  font-size: var(--crm-text-lg);
+  font-weight: 700;
+  color: var(--crm-text-primary);
+  font-family: var(--crm-font-display);
+}
+
+.stat-label {
+  font-size: var(--crm-text-xs);
+  color: var(--crm-text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
+// ── Recipients Table ──
+.recipients-table {
+  width: 100%;
+  background: transparent;
+
+  th.mat-mdc-header-cell,
+  td.mat-mdc-cell {
+    font-size: var(--crm-text-sm);
+    color: var(--crm-text-primary);
+    padding: 6px 8px;
+  }
+
+  th.mat-mdc-header-cell {
+    color: var(--crm-text-muted);
+    text-transform: uppercase;
+    font-size: var(--crm-text-xs);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+}
+
+.r-status {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: var(--crm-text-xs);
+  font-weight: 600;
+
+  &.rstatus-sent { background: var(--crm-status-success-muted); color: var(--crm-status-success); }
+  &.rstatus-failed { background: var(--crm-status-error-muted); color: var(--crm-status-error); }
+  &.rstatus-queued { background: var(--crm-status-info-muted); color: var(--crm-status-info); }
+  &.rstatus-blocked,
+  &.rstatus-suppressed,
+  &.rstatus-skipped {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--crm-text-muted);
+  }
+}
+
+.error-cell {
+  font-family: var(--crm-font-mono);
+  font-size: var(--crm-text-xs);
+  color: var(--crm-status-error);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.click-yes {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--crm-status-success);
+}
+
+.muted { color: var(--crm-text-muted); }
+
+// ── Empty / Loading ──
+.loading-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+
+  &.small {
+    padding: 24px 0;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: var(--crm-text-muted);
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--crm-text-md);
+  }
+}
+
+// Композер создания: центрированный по экрану, просторный (редактор + предпросмотр)
+.composer-view {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  overflow: hidden;
+}
+
+// ── Responsive ──
+@media (max-width: 840px) {
+  .broadcasts-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .detail-panel {
+    max-height: 60vh;
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "name": "Своё Фото",
+  "short_name": "Своё Фото",
+  "description": "Фото на документы онлайн — красивые фото из вашего селфи",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "theme_color": "#232324",
+  "background_color": "#ffffff",
+  "categories": ["photo", "utilities"],
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Открыть чат",
+      "short_name": "Чат",
+      "description": "Связаться с оператором",
+      "url": "/chat",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Мои заказы",
+      "short_name": "Заказы",
+      "description": "История заказов",
+      "url": "/user-profile/order-history",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Записаться",
+      "short_name": "Запись",
+      "description": "Записаться на съёмку",
+      "url": "/booking",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Бонусы",
+      "short_name": "Бонусы",
+      "description": "Программа лояльности",
+      "url": "/user-profile/loyalty",
+      "icons": [{ "src": "/favicon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "share_target": {
+    "action": "/chat",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "photos",
+          "accept": ["image/jpeg", "image/png", "image/webp", "image/heic"]
+        }
+      ]
+    }
+  }
+}

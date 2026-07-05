@@ -1,0 +1,30 @@
+# Append to /etc/prometheus/rules/alerts.yml under groups:
+- name: fingerprint-alerts
+  rules:
+    - alert: FingerprintSignatureInvalidRate
+      expr: rate(fingerprint_signature_invalid_total[5m]) > 0.1
+      for: 2m
+      labels: { severity: warning }
+      annotations:
+        summary: "Fingerprint: invalid signature rate > 0.1/s (possible replay)"
+
+    - alert: FingerprintSignatureInvalidSpike
+      expr: rate(fingerprint_signature_invalid_total[5m]) > 1
+      for: 1m
+      labels: { severity: critical }
+      annotations:
+        summary: "CRITICAL: Fingerprint invalid signature spike > 1/s"
+
+    - alert: FingerprintDBDown
+      expr: fingerprint_db_ok == 0
+      for: 1m
+      labels: { severity: critical }
+      annotations:
+        summary: "CRITICAL: Fingerprint server DB connection lost"
+
+    - alert: FingerprintRateLimitHigh
+      expr: rate(fingerprint_rate_limit_exceeded_total[5m]) > 0.5
+      for: 5m
+      labels: { severity: warning }
+      annotations:
+        summary: "Fingerprint: rate limit exceeded > 0.5/s (possible abuse)"

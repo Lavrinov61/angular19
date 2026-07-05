@@ -1,0 +1,58 @@
+[package]
+name = "svf-print-agent"
+version = "0.1.0"
+edition = "2024"
+description = "SvoePhoto Print Agent — CUPS printing with MQTT orchestration"
+
+[dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full", "signal"] }
+
+# MQTT client (same as print-api)
+rumqttc = "0.24"
+
+# Protobuf (shared contract with print-api)
+prost = "0.13"
+
+# Image processing
+image = "0.25"
+
+# ICC color management (Phase 4.1)
+lcms2 = "6"
+
+# HTTP client (download print files)
+reqwest = { version = "0.12", features = ["rustls-tls"], default-features = false }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+
+# SQLite (offline job queue)
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# Types
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# Temp files
+tempfile = "3"
+
+# Base64 (preview encoding)
+base64 = "0.22"
+
+[build-dependencies]
+prost-build = "0.13"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

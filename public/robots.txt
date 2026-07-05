@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /user-profile/
+Disallow: /employee/
+Disallow: /photographer-dashboard/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /analytics/
+Disallow: /crm/
+
+Sitemap: https://svoefoto.ru/sitemap.xml

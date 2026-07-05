@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>
+  <mat-icon>qr_code_2</mat-icon>
+  Оплата {{ data.paymentLink.order_ref }}
+</h2>
+
+<mat-dialog-content class="qr-content">
+  @if (qrDataUrl()) {
+    <img [src]="qrDataUrl()" alt="QR-код для оплаты" class="qr-img" />
+  } @else if (error()) {
+    <div class="qr-error">{{ error() }}</div>
+  } @else {
+    <div class="qr-loading">Генерация QR…</div>
+  }
+  <div class="pl-amount">{{ data.paymentLink.amount | number:'1.0-2':'ru-RU' }} ₽</div>
+  <div class="pl-url">{{ data.payUrl }}</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="copyLink()">
+    <mat-icon>content_copy</mat-icon>
+    {{ copied() ? 'Скопировано' : 'Скопировать ссылку' }}
+  </button>
+  <button mat-button mat-dialog-close>Закрыть</button>
+</mat-dialog-actions>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Своё Фото — Нет подключения</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+      text-align: center;
+      background: #f5f5f5;
+      color: #212121;
+    }
+    .container {
+      max-width: 480px;
+      width: 100%;
+      padding: 40px 32px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .brand {
+      display: inline-block;
+      background: #1565c0;
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .icon { font-size: 56px; margin-bottom: 16px; }
+    h1 { font-size: 20px; margin-bottom: 8px; color: #212121; }
+    p { font-size: 14px; line-height: 1.6; margin-bottom: 24px; color: #616161; }
+    .retry-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: #1565c0;
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .retry-btn:hover { background: #0d47a1; }
+    .contacts {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      font-size: 13px;
+      color: #9e9e9e;
+    }
+    .contacts a { color: #1565c0; text-decoration: none; }
+    .cached-content {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      display: none;
+    }
+    .cached-title { font-size: 14px; margin-bottom: 12px; color: #616161; }
+    .cached-links { display: flex; flex-direction: column; gap: 8px; }
+    .cached-link {
+      padding: 10px 16px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #212121;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    .cached-link:hover { background: #e0e0e0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="brand">Своё Фото</div>
+    <div class="icon">📡</div>
+    <h1>Нет подключения к интернету</h1>
+    <p>Проверьте соединение и попробуйте снова. Некоторые страницы могут быть доступны из кеша.</p>
+    <button class="retry-btn" onclick="location.reload()">Попробовать снова</button>
+
+    <div class="contacts">
+      <a href="tel:+78633226575">+7 (863) 322-65-75</a> ·
+      <a href="https://t.me/magnus_photo">Telegram</a>
+    </div>
+
+    <div id="cached-content" class="cached-content">
+      <div class="cached-title">Доступные страницы:</div>
+      <div id="cached-links" class="cached-links"></div>
+    </div>
+  </div>
+
+  <script>
+    window.addEventListener('online', () => location.reload());
+
+    if ('caches' in window) {
+      caches.open('magnus-photo-cache-v1').then(cache => {
+        cache.keys().then(requests => {
+          const pages = requests.filter(r =>
+            (r.url.endsWith('/') || r.url.endsWith('.html')) && !r.url.includes('/api/')
+          );
+          if (pages.length > 0) {
+            document.getElementById('cached-content').style.display = 'block';
+            const container = document.getElementById('cached-links');
+            pages.forEach(r => {
+              const url = new URL(r.url);
+              const a = document.createElement('a');
+              a.href = url.pathname;
+              a.className = 'cached-link';
+              a.textContent = url.pathname === '/' ? 'Главная' : url.pathname;
+              container.appendChild(a);
+            });
+          }
+        });
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <!-- Palm base -->
+  <path d="M15 25v11a9 9 0 0 0 18 0V25H15Z"
+        stroke="#f59e0b" stroke-width="1.5" stroke-linejoin="round" fill="#f59e0b" fill-opacity="0.15"/>
+  <!-- Finger 1 (index) -->
+  <path d="M15 25v-8a2.5 2.5 0 0 1 5 0v8" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Finger 2 (middle) -->
+  <path d="M20 25V14a2.5 2.5 0 0 1 5 0v11" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Finger 3 (ring) -->
+  <path d="M25 25V14a2.5 2.5 0 0 1 5 0v11" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Finger 4 (pinky) -->
+  <path d="M30 25v-7a2.5 2.5 0 0 1 5 0v7" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <!-- Wave lines (to the upper right) -->
+  <path d="M37 8c2-2 4-2 6 0" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M38 12c1-1 2-1 3 0" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

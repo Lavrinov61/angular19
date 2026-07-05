@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WiX v4 installer for SVF Print Agent Windows Service.
+  Build: wix build -o svf-print-agent.msi
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="SvoePhoto Print Agent"
+    Manufacturer="SvoePhoto (MagnusFoto)"
+    Version="0.1.0"
+    UpgradeCode="D1E2F3A4-B5C6-7D8E-9F0A-1B2C3D4E5F6A"
+    Scope="perMachine">
+
+    <MajorUpgrade
+      DowngradeErrorMessage="A newer version of SvoePhoto Print Agent is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- Install directory -->
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="SvoePhoto">
+        <Directory Id="AGENTFOLDER" Name="PrintAgent" />
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Config directory -->
+    <StandardDirectory Id="CommonAppDataFolder">
+      <Directory Id="CONFIGFOLDER" Name="SvoePhoto" />
+    </StandardDirectory>
+
+    <!-- Data directories (ICC, offline DB, temp) -->
+    <StandardDirectory Id="CommonAppDataFolder">
+      <Directory Id="DATAFOLDER_ROOT" Name="SvoePhoto">
+        <Directory Id="ICCFOLDER" Name="icc" />
+        <Directory Id="TEMPFOLDER" Name="temp" />
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Main component: binary -->
+    <ComponentGroup Id="ProductComponents" Directory="AGENTFOLDER">
+      <Component Id="MainBinary" Guid="E2F3A4B5-C6D7-8E9F-0A1B-2C3D4E5F6A7B" Bitness="always64">
+        <File Id="SvfPrintAgent" Source="$(var.BinaryPath)\svf-print-agent.exe" KeyPath="yes" />
+
+        <!-- Windows Service definition -->
+        <ServiceInstall
+          Id="SvfPrintAgentService"
+          Name="SvfPrintAgent"
+          DisplayName="SvoePhoto Print Agent"
+          Description="Cross-platform MQTT-orchestrated printing for SvoePhoto photo studios"
+          Type="ownProcess"
+          Start="auto"
+          ErrorControl="normal"
+          Account="LocalSystem">
+          <ServiceConfig
+            DelayedAutoStart="yes"
+            OnInstall="yes"
+            OnReinstall="yes" />
+          <util:ServiceConfig xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
+            FirstFailureActionType="restart"
+            SecondFailureActionType="restart"
+            ThirdFailureActionType="restart"
+            RestartServiceDelayInSeconds="10"
+            ResetPeriodInDays="1" />
+        </ServiceInstall>
+
+        <ServiceControl
+          Id="StartSvfPrintAgent"
+          Name="SvfPrintAgent"
+          Start="install"
+          Stop="both"
+          Remove="uninstall"
+          Wait="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <!-- Config template (only on fresh install, not upgrade) -->
+    <ComponentGroup Id="ConfigComponents" Directory="CONFIGFOLDER">
+      <Component Id="ConfigTemplate" Guid="F3A4B5C6-D7E8-9F0A-1B2C-3D4E5F6A7B8C" Bitness="always64">
+        <File Id="ConfigToml" Source="$(var.ConfigPath)\config.example.toml" Name="config.toml" KeyPath="yes" />
+        <Condition>NOT Installed</Condition>
+      </Component>
+    </ComponentGroup>
+
+    <!-- Create data directories -->
+    <ComponentGroup Id="DataDirComponents" Directory="DATAFOLDER_ROOT">
+      <Component Id="IccDir" Guid="A4B5C6D7-E8F9-0A1B-2C3D-4E5F6A7B8C9D" Bitness="always64">
+        <CreateFolder Directory="ICCFOLDER" />
+      </Component>
+      <Component Id="TempDir" Guid="B5C6D7E8-F90A-1B2C-3D4E-5F6A7B8C9D0E" Bitness="always64">
+        <CreateFolder Directory="TEMPFOLDER" />
+      </Component>
+    </ComponentGroup>
+
+    <Feature Id="ProductFeature" Title="SvoePhoto Print Agent" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="ConfigComponents" />
+      <ComponentGroupRef Id="DataDirComponents" />
+    </Feature>
+  </Package>
+</Wix>

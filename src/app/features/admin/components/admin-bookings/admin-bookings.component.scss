@@ -1,0 +1,37 @@
+.admin-bookings-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  .admin-title {
+    margin-bottom: 24px;
+    color: var(--md-sys-color-primary);
+  }
+  
+  .bookings-card {
+    margin-bottom: 24px;
+  }
+  
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .bookings-table {
+    width: 100%;
+  }
+  
+  mat-card-content {
+    padding: 16px;
+  }
+  
+  mat-card-actions {
+    padding: 8px 16px;
+  }
+  
+  .development-note {
+    margin-top: 16px;
+    color: var(--md-sys-color-outline);
+    font-style: italic;
+  }
+}

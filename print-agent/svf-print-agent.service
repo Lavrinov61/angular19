@@ -1,0 +1,23 @@
+[Unit]
+Description=SvoePhoto Print Agent — MQTT orchestrated printing
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=svf-agent
+Group=svf-agent
+ExecStart=/usr/local/bin/svf-print-agent
+Restart=always
+RestartSec=5
+Environment=RUST_LOG=info,svf_print_agent=debug
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/svf-agent /tmp/svf-agent
+PrivateTmp=no
+
+[Install]
+WantedBy=multi-user.target

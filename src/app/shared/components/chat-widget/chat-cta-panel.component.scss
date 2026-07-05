@@ -1,0 +1,147 @@
+:host {
+  display: block;
+  background:
+    radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 34%),
+    #121212;
+  border: 1px solid rgba(245, 158, 11, 0.24);
+  border-radius: 16px;
+  color: #f8fafc;
+  overflow: hidden;
+}
+
+.cta-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-width: 280px;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 18px;
+}
+
+.cta-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cta-heading {
+  min-width: 0;
+}
+
+.cta-title {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.cta-subtitle {
+  margin: 6px 0 0;
+  color: #b6bcc6;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.cta-close {
+  flex: 0 0 auto;
+  margin: -8px -8px 0 0;
+  color: #9ca3af;
+
+  &:hover {
+    color: #f8fafc;
+  }
+}
+
+.cta-phone-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(245, 158, 11, 0.16), rgba(245, 158, 11, 0.05)),
+    rgba(255, 255, 255, 0.035);
+}
+
+.cta-phone-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: #f59e0b;
+  color: #111;
+  box-shadow: 0 10px 24px rgba(245, 158, 11, 0.18);
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.cta-phone-copy {
+  min-width: 0;
+}
+
+.cta-phone-title {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.cta-phone-subtitle {
+  margin: 4px 0 0;
+  color: #b6bcc6;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.cta-phone-btn {
+  grid-column: 1 / -1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  background: #f59e0b;
+  color: #111;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 10px 26px rgba(245, 158, 11, 0.2);
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    background: #fbbf24;
+    box-shadow: 0 12px 32px rgba(245, 158, 11, 0.28);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  mat-icon {
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+  }
+}
+
+@media (max-width: 520px) {
+  .cta-panel {
+    max-width: none;
+    padding: 16px;
+  }
+}

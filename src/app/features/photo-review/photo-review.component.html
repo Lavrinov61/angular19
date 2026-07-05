@@ -1,0 +1,757 @@
+<!-- Header -->
+<header class="review-header">
+  <div class="brand">
+    <img src="/assets/static/logo-black.webp" alt="Своё Фото" class="brand-logo" />
+  </div>
+  @if (store.session()) {
+    <h1>{{ store.session()!.title }}</h1>
+    <div class="header-meta">
+      <span>{{ store.session()!.clientName }}</span>
+      <span class="meta-dot"></span>
+      <span>{{ store.photos().length }} фото</span>
+    </div>
+  }
+</header>
+
+@if (store.loading()) {
+  <div class="center-spinner">
+    <div class="pulse-logo">
+      <img src="/assets/static/logo-black.webp" alt="" />
+    </div>
+    <p>Загружаем фотографии...</p>
+  </div>
+} @else if (store.error()) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <h2>{{ store.error() }}</h2>
+  </div>
+} @else if (store.completed()) {
+  <div class="completed-state">
+    <div class="completion-check">
+      <svg viewBox="0 0 52 52" class="check-svg">
+        <circle class="check-circle" cx="26" cy="26" r="25" fill="none"/>
+        <path class="check-path" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+      </svg>
+    </div>
+    <h2>Отличный выбор!</h2>
+    <p>Ваша фотография готова к скачиванию</p>
+
+    <!-- Download section -->
+    @if (downloadLoading()) {
+      <div class="download-loading">
+        <mat-spinner diameter="28" />
+        <span>Подготовка файлов...</span>
+      </div>
+    } @else if (downloadError()) {
+      <div class="download-error">
+        <mat-icon>warning</mat-icon>
+        <span>{{ downloadError() }}</span>
+        <button mat-stroked-button (click)="loadDownloadLinks()">Повторить</button>
+      </div>
+    } @else if (downloadPhotos().length > 0) {
+      <div class="download-section">
+        @for (photo of downloadPhotos(); track photo.id) {
+          <button class="download-btn" (click)="downloadPhoto(photo)">
+            <mat-icon>download</mat-icon>
+            <span>Скачать фотографию</span>
+          </button>
+        }
+      </div>
+    }
+
+    <!-- LK Awareness Block -->
+    @if (isAuthenticated()) {
+      <div class="lk-awareness">
+        <mat-icon>cloud_done</mat-icon>
+        <div class="lk-awareness-text">
+          <strong>Фото сохранены в вашем кабинете</strong>
+          <span>Скачивание, печать и повторный заказ, в любое время</span>
+        </div>
+      </div>
+    } @else {
+      <div class="lk-awareness lk-awareness-anon">
+        <mat-icon>lock_open</mat-icon>
+        <div class="lk-awareness-text">
+          <strong>Сохраните фото навсегда</strong>
+          <span>Войдите, и фото будут доступны в вашем личном кабинете для печати и документов</span>
+        </div>
+      </div>
+    }
+
+    <!-- Quick Registration CTA (anonymous only) -->
+    @if (!isAuthenticated()) {
+      <a href="/auth/login?returnUrl=/user-profile/my-photos" class="register-cta">
+        <mat-icon>person_add</mat-icon>
+        <span>Войти или зарегистрироваться</span>
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+    }
+
+    <!-- "Мои фотографии" (authenticated only) -->
+    @if (isAuthenticated()) {
+      <a href="/user-profile/my-photos" class="my-photos-link">
+        <mat-icon>photo_library</mat-icon>
+        <span>Мои фотографии</span>
+        <mat-icon>arrow_forward</mat-icon>
+      </a>
+    }
+
+    <!-- Value Props -->
+    <div class="value-props">
+      <div class="value-item">
+        <mat-icon>high_quality</mat-icon>
+        <span>Оригинальное качество</span>
+      </div>
+      <div class="value-item">
+        <mat-icon>print</mat-icon>
+        <span>Заказать печать от 39 &#8381;</span>
+      </div>
+      <div class="value-item">
+        <mat-icon>refresh</mat-icon>
+        <span>Повторить заказ в один клик</span>
+      </div>
+    </div>
+
+    <!-- NPS Block, Enhanced -->
+    @if (!npsSubmitted()) {
+      <div class="nps-block">
+        @if (!showNpsComment()) {
+          <p class="nps-question">Как вам результат обработки?</p>
+          <div class="nps-buttons">
+            <button class="nps-btn nps-positive" (click)="submitNps(5)">
+              <span class="nps-emoji">&#x1F44D;</span>
+              <span>Нравится</span>
+            </button>
+            <button class="nps-btn nps-negative" (click)="submitNps(1)">
+              <span class="nps-emoji">&#x1F44E;</span>
+              <span>Не очень</span>
+            </button>
+          </div>
+        } @else {
+          <p class="nps-question">Что можно улучшить?</p>
+          <textarea class="nps-comment-textarea"
+                    [value]="npsCommentText()"
+                    (input)="npsCommentText.set($any($event.target).value)"
+                    placeholder="Расскажите, что не понравилось..."
+                    rows="3"></textarea>
+          <div class="nps-comment-actions">
+            <button class="nps-btn nps-submit-comment"
+                    (click)="submitNpsComment()"
+                    [disabled]="npsCommentSubmitting()">
+              @if (npsCommentSubmitting()) {
+                <mat-spinner diameter="16"></mat-spinner>
+              } @else {
+                <mat-icon>send</mat-icon>
+              }
+              <span>Отправить</span>
+            </button>
+            <button class="nps-skip-link" (click)="skipNpsComment()">Пропустить</button>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="nps-thanks">
+        <mat-icon>favorite</mat-icon>
+        <span>Спасибо за отзыв!</span>
+      </div>
+    }
+
+    <div class="brand-footer">
+      <img src="/assets/static/logo-black.webp" alt="Своё Фото" class="footer-logo" />
+      <span>Ручная художественная обработка</span>
+    </div>
+  </div>
+} @else if (store.session()) {
+  <!-- Progress -->
+  <div class="progress-section">
+    <div class="progress-text">
+      <span>Вариант {{ store.currentPhotoIndex() + 1 }} из {{ store.photos().length }}</span>
+      @if (selectedCount() > 0) {
+        <span class="progress-pct">{{ selectedCount() }} вариантов выбрано</span>
+      }
+    </div>
+    <mat-progress-bar mode="determinate" [value]="store.progressPct()" />
+  </div>
+
+  <!-- Thumbnail Strip -->
+  <div class="thumb-strip">
+    @for (photo of store.photos(); track photo.id; let i = $index) {
+      <button class="thumb-item"
+              [class.active]="store.selectedPhoto()?.id === photo.id"
+              [class.approved]="photo.status === 'approved'"
+              [class.rejected]="photo.status === 'rejected'"
+              (click)="selectPhoto(photo); isMobile() && enterStories()">
+        <img [src]="photo.thumbnail_url || photo.retouched_photo_url" [alt]="'Фото ' + (i + 1)" loading="lazy" />
+        @switch (photo.status) {
+          @case ('approved') { <span class="thumb-badge approved-badge"><mat-icon>check</mat-icon></span> }
+          @case ('rejected') { <span class="thumb-badge rejected-badge"><mat-icon>close</mat-icon></span> }
+        }
+        @if (photo.revision_count > 1) {
+          <span class="revision-badge">R{{ photo.revision_count }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- MOBILE: Stories Fullscreen Gallery (Enhanced)   -->
+  <!-- ═══════════════════════════════════════════════ -->
+  @if (isMobile() && storiesMode() && store.selectedPhoto(); as photo) {
+    <div class="stories-overlay">
+      <!-- Stories Progress Bar (segmented) -->
+      <div class="stories-progress">
+        @for (p of store.photos(); track p.id) {
+          <div class="stories-segment"
+               [class.segment-approved]="p.status === 'approved'"
+               [class.segment-rejected]="p.status === 'rejected'"
+               [class.segment-current]="p.id === photo.id">
+          </div>
+        }
+      </div>
+
+      <!-- Top bar -->
+      <div class="stories-top-bar">
+        <button class="stories-close" (click)="exitStories()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <span class="stories-counter">{{ store.currentPhotoIndex() + 1 }} / {{ store.photos().length }}</span>
+        <div class="stories-top-right">
+          @if (photo.status === 'approved') {
+            <span class="stories-status-badge stories-approved-badge">
+              <mat-icon>check</mat-icon>
+            </span>
+          } @else if (photo.status === 'rejected') {
+            <span class="stories-status-badge stories-rejected-badge">
+              <mat-icon>close</mat-icon>
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Photo Area (Instagram-style) -->
+      <div class="stories-card-area"
+           (touchstart)="onStoriesTouchStart($event)"
+           (touchmove)="onStoriesTouchMove($event)"
+           (touchend)="onStoriesTouchEnd($event)"
+           (contextmenu)="$event.preventDefault()">
+
+        <!-- Main photo -->
+        <div class="stories-card"
+             [class.placing-pin]="placingAnnotation()">
+
+          <!-- Retouched photo (default layer) -->
+          <img [src]="displayImageUrl()" alt="Просмотр" class="stories-image" #storiesImage
+               [class.toggled-away]="showingOriginal()"
+               [class.image-loading]="displayImageLoading()"
+               [class.image-unavailable]="displayImageError()"
+               [style.transform]="'scale(' + zoomScale() + ')'"
+               [style.transform-origin]="zoomOriginX() + '% ' + zoomOriginY() + '%'"
+               (load)="onDisplayImageLoad($event)"
+               (error)="onDisplayImageError($event)"
+               (touchend)="placingAnnotation() && onStoriesImageTap($event)" />
+
+          <!-- Original photo (tap toggle layer) -->
+          @if (photo.original_photo_url) {
+            <img [src]="photo.original_photo_url" alt="Ваше фото"
+                 class="stories-image original-layer"
+                 [class.toggled-visible]="showingOriginal()"
+                 [style.transform]="'scale(' + zoomScale() + ')'"
+                 [style.transform-origin]="zoomOriginX() + '% ' + zoomOriginY() + '%'" />
+          }
+
+          @if (displayImageLoading()) {
+            <div class="image-state-overlay image-loading-overlay">
+              <mat-spinner diameter="36" />
+              <p class="image-state-text">Загружаем фото...</p>
+            </div>
+          } @else if (displayImageError()) {
+            <div class="image-state-overlay image-error-overlay">
+              <mat-icon>broken_image</mat-icon>
+              <p class="image-state-text">Не удалось загрузить фото</p>
+              <p class="image-state-subtext">Проверьте интернет и попробуйте ещё раз.</p>
+              <button type="button" class="image-retry-button" (click)="retryDisplayImage($event)">
+                <mat-icon>refresh</mat-icon>
+                <span>Повторить</span>
+              </button>
+            </div>
+          }
+
+          @if (showSwipeHint()) {
+            <div class="swipe-hints" aria-hidden="true">
+              <span class="hint hint-left">
+                <mat-icon>chevron_left</mat-icon>
+                <span>Свайп</span>
+              </span>
+              <span class="hint hint-right">
+                <span>Свайп</span>
+                <mat-icon>chevron_right</mat-icon>
+              </span>
+            </div>
+          }
+
+          <!-- Compare state badge -->
+          @if (photo.original_photo_url && !bottomSheetOpen() && !annotationPin()) {
+            <div class="compare-state-badge" [class.showing-original]="showingOriginal()">
+              <mat-icon>{{ showingOriginal() ? 'photo_camera' : 'auto_fix_high' }}</mat-icon>
+              <span>{{ showingOriginal() ? 'Исходник' : 'Готовая обработка' }}</span>
+            </div>
+          }
+
+          <!-- Annotation pins -->
+          @for (a of photo.annotations; track a.id; let i = $index) {
+            @if (isPin(a)) {
+              <div class="annotation-pin stories-pin"
+                   [style.left.%]="a.annotation['x']"
+                   [style.top.%]="a.annotation['y']"
+                   [style.transform]="'translate(-50%, -100%) scale(' + (1 / zoomScale()) + ')'">
+                <span class="pin-number">{{ i + 1 }}</span>
+              </div>
+            }
+          }
+
+          <!-- New pin placement -->
+          @if (annotationPin(); as pin) {
+            <div class="annotation-pin new-pin stories-pin"
+                 [style.left.%]="pin.x"
+                 [style.top.%]="pin.y"
+                 [style.transform]="'translate(-50%, -100%) scale(' + (1 / zoomScale()) + ')'">
+              <span class="pin-number">+</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Variant dots indicator -->
+      @if (photo.variants.length > 1 && !bottomSheetOpen() && !annotationPin()) {
+        <div class="variant-dots">
+          @for (v of photo.variants; track v.id) {
+            <span class="variant-dot" [class.active]="store.selectedVariant()?.id === v.id"></span>
+          }
+        </div>
+      }
+
+      <!-- Annotation input (stories) -->
+      @if (annotationPin()) {
+        <div class="stories-annotation-input">
+          <input type="text" [(ngModel)]="annotationText" placeholder="Комментарий к отметке..."
+                 (keydown.enter)="submitAnnotation()" />
+          <button mat-icon-button (click)="submitAnnotation()" [disabled]="!annotationText.trim()">
+            <mat-icon>send</mat-icon>
+          </button>
+          <button mat-icon-button (click)="cancelAnnotation()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Variant selector in stories -->
+      @if (photo.variants.length > 1 && !bottomSheetOpen() && !annotationPin()) {
+        <div class="stories-variants">
+          <div class="variants-scroll">
+            @for (v of photo.variants; track v.id) {
+              <button class="stories-variant-card" [class.selected]="store.selectedVariant()?.id === v.id"
+                      (click)="selectVariant(v)">
+                <img [src]="v.thumbnail_url || v.variant_url" [alt]="v.label || 'Вариант'" loading="lazy" />
+                @if (store.selectedVariant()?.id === v.id) {
+                  <div class="variant-check"><mat-icon>check</mat-icon></div>
+                }
+                @if (v.label) {
+                  <span class="variant-tag">{{ v.label }}</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Floating Action Bar -->
+      @if (!bottomSheetOpen() && !annotationPin() && (photo.status === 'pending' || photo.status === 'changes_requested')) {
+        <div class="stories-fab-bar">
+          <button class="stories-fab fab-approve" (click)="requestApprove()"
+                  [disabled]="store.actionLoading()">
+            <mat-icon>check</mat-icon>
+            <span>Утвердить фото</span>
+          </button>
+          <button class="stories-fab fab-reject" (click)="openBottomSheet()">
+            <mat-icon>edit_note</mat-icon>
+            <span>Нужны правки</span>
+          </button>
+        </div>
+      }
+
+      <!-- Already reviewed badge -->
+      @if (!bottomSheetOpen() && !annotationPin() && (photo.status === 'approved' || photo.status === 'rejected')) {
+        <div class="stories-status-bar">
+          @if (photo.status === 'approved') {
+            <div class="status-chip approved-chip"><mat-icon>check</mat-icon> Одобрено</div>
+          } @else {
+            <div class="status-chip rejected-chip"><mat-icon>close</mat-icon> На доработке</div>
+          }
+        </div>
+      }
+
+      <!-- Note: no separate finalize bar, approve auto-completes the session -->
+
+      <!-- Bottom Sheet overlay -->
+      @if (bottomSheetOpen()) {
+        <div class="stories-sheet-backdrop" (click)="closeBottomSheet()"
+             (keydown.escape)="closeBottomSheet()" tabindex="0" role="button"></div>
+        <div class="stories-bottom-sheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-title">
+            <mat-icon>edit_note</mat-icon>
+            <span>Что нужно поправить?</span>
+          </div>
+          <div class="sheet-chips">
+            @for (chip of feedbackChips; track chip) {
+              <button class="sheet-chip" (click)="addChip(chip)">{{ chip }}</button>
+            }
+          </div>
+          <textarea [(ngModel)]="commentText"
+                    placeholder="Например: сделать кожу теплее, убрать фон, поправить цвет..."
+                    rows="3"
+                    class="sheet-textarea"
+                    [class.needs-comment]="needsComment()"
+                    (input)="needsComment.set(false)"></textarea>
+          @if (needsComment()) {
+            <p class="needs-comment-hint">Введите текст пожелания</p>
+          }
+          <div class="sheet-actions">
+            <button mat-flat-button class="send-feedback-btn" (click)="submitFeedback()"
+                    [disabled]="store.actionLoading()">
+              @if (store.actionLoading()) {
+                <mat-icon class="spin-icon">sync</mat-icon>
+              } @else {
+                <mat-icon>send</mat-icon>
+              }
+              Отправить правки
+            </button>
+            <button mat-stroked-button class="sheet-cancel" (click)="closeBottomSheet()">
+              Закрыть
+            </button>
+          </div>
+        </div>
+      }
+
+      <!-- Confirmation overlay -->
+      @if (confirmationMode()) {
+        <div class="confirmation-overlay">
+          <img [src]="displayImageUrl()" class="confirmation-preview" alt="Подтверждение" />
+          <h3>Утвердить этот вариант?</h3>
+          <button class="confirm-btn" (click)="confirmApprove()">Да, утвердить</button>
+          <button class="cancel-confirm" (click)="cancelConfirmation()">Вернуться к просмотру</button>
+        </div>
+      }
+
+      <!-- Onboarding overlay -->
+      @if (showOnboarding() && !store.loading()) {
+        <div class="onboarding-overlay"
+             (keydown.escape)="dismissOnboarding()" tabindex="0" role="dialog" aria-modal="true">
+          <div class="onboarding-content" (click)="$event.stopPropagation()"
+               (keydown.enter)="$event.stopPropagation()" tabindex="-1" role="document">
+            <div class="onboarding-gesture">
+              <div class="gesture-hand swipe-anim">&#x1F446;</div>
+              <p>Свайпайте фото влево или вправо</p>
+            </div>
+            <div class="onboarding-gesture">
+              <div class="gesture-hand tap-anim">&#x1F446;</div>
+              <p>Нажмите на фото, чтобы сравнить с оригиналом</p>
+            </div>
+            <button type="button" class="onboarding-start" (click)="dismissOnboarding()">Понятно</button>
+          </div>
+        </div>
+      }
+
+      <!-- Undo toast -->
+      @if (undoAction()) {
+        <div class="undo-toast">
+          <mat-icon>check_circle</mat-icon>
+          <span>Вариант выбран</span>
+          <button (click)="undoLastAction()">Отменить</button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Celebration overlay (confetti on all reviewed) -->
+  @if (showCelebration()) {
+    <div class="celebration-overlay">
+      <div class="celebration-content">
+        <div class="celebration-emoji">&#x1F389;</div>
+        <h3>Все фото просмотрены!</h3>
+        <p>Нажмите «Отправить результат»</p>
+      </div>
+      <div class="confetti-container">
+        @for (piece of confettiPieces; track $index) {
+          <div class="confetti-piece"
+               [style.left.%]="piece.x"
+               [style.animation-delay.ms]="piece.delay"
+               [style.background]="piece.color"
+               [style.width.px]="piece.size"
+               [style.height.px]="piece.size * 1.4"
+               [style.--drift]="piece.drift + 'px'">
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- DESKTOP: Full detail view                       -->
+  <!-- ═══════════════════════════════════════════════ -->
+  @if (!isMobile() && store.selectedPhoto(); as photo) {
+    <div class="detail-section" [class.fullscreen-active]="fullscreen()">
+      <!-- Toolbar -->
+      <div class="detail-toolbar">
+        <button mat-icon-button (click)="prevPhoto()" matTooltip="Предыдущее">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="photo-index">
+          {{ store.currentPhotoIndex() + 1 }} / {{ store.photos().length }}
+        </span>
+        <button mat-icon-button (click)="nextPhoto()" matTooltip="Следующее">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <div class="toolbar-spacer"></div>
+        @if (photo.original_photo_url) {
+          <button mat-icon-button (click)="toggleCompare()" [class.active-tool]="compareMode()"
+                  matTooltip="Сравнить с оригиналом">
+            <mat-icon>compare</mat-icon>
+          </button>
+        }
+        <button mat-icon-button (click)="startAnnotation()" [class.active-tool]="placingAnnotation()"
+                matTooltip="Отметить на фото">
+          <mat-icon>push_pin</mat-icon>
+        </button>
+        <button mat-icon-button (click)="toggleFullscreen()"
+                matTooltip="На весь экран">
+          <mat-icon>{{ fullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+        </button>
+      </div>
+
+      <!-- Image Viewer -->
+      <div class="detail-image-wrap" #detailImageWrap
+           [class.compare-mode]="compareMode()"
+           [class.placing-pin]="placingAnnotation()"
+           [class.transitioning]="photoTransitioning()"
+           (click)="onImageClick($event)"
+           (keydown.enter)="onImageClick($event)"
+           tabindex="0"
+           role="button"
+           (touchstart)="onTouchStart($event)"
+           (touchend)="onTouchEnd($event)">
+
+        @if (compareMode() && photo.original_photo_url) {
+          <!-- Side-by-side comparison (clip-path) -->
+          <div class="compare-container"
+               (mousemove)="onSliderMove($event)"
+               (touchmove)="onSliderMove($event)">
+            <img [src]="photo.original_photo_url" class="compare-img" alt="Оригинал" />
+            <img [src]="displayImageUrl()" class="compare-img compare-retouched" alt="Ретушь"
+                 [class.image-loading]="displayImageLoading()"
+                 [class.image-unavailable]="displayImageError()"
+                 [style.clip-path]="'inset(0 ' + (100 - sliderPosition()) + '% 0 0)'"
+                 (load)="onDisplayImageLoad($event)"
+                 (error)="onDisplayImageError($event)" />
+            <div class="compare-slider" [style.left.%]="sliderPosition()">
+              <div class="slider-handle">
+                <mat-icon>drag_indicator</mat-icon>
+              </div>
+            </div>
+            <span class="compare-label compare-label-left">Исходник</span>
+            <span class="compare-label compare-label-right">Обработка</span>
+          </div>
+        } @else {
+          <img [src]="displayImageUrl()" alt="Просмотр" class="detail-image"
+               [class.image-loading]="displayImageLoading()"
+               [class.image-unavailable]="displayImageError()"
+               (load)="onDisplayImageLoad($event)"
+               (error)="onDisplayImageError($event)"
+               (click)="onImageClick($event)"
+               (keydown.enter)="onImageClick($event)"
+               tabindex="0" role="button" />
+        }
+
+        @if (displayImageLoading()) {
+          <div class="image-state-overlay image-loading-overlay">
+            <mat-spinner diameter="36" />
+            <p class="image-state-text">Загружаем фото...</p>
+          </div>
+        } @else if (displayImageError()) {
+          <div class="image-state-overlay image-error-overlay">
+            <mat-icon>broken_image</mat-icon>
+            <p class="image-state-text">Не удалось загрузить фото</p>
+            <p class="image-state-subtext">Проверьте интернет и попробуйте ещё раз.</p>
+            <button type="button" class="image-retry-button" (click)="retryDisplayImage($event)">
+              <mat-icon>refresh</mat-icon>
+              <span>Повторить</span>
+            </button>
+          </div>
+        }
+
+        <!-- Annotation pins -->
+        @for (a of photo.annotations; track a.id; let i = $index) {
+          @if (isPin(a)) {
+            <div class="annotation-pin"
+                 [style.left.%]="a.annotation['x']"
+                 [style.top.%]="a.annotation['y']">
+              <span class="pin-number">{{ i + 1 }}</span>
+              <div class="pin-tooltip">{{ getAnnotationText(a) }}</div>
+            </div>
+          }
+        }
+
+        <!-- Placing new pin -->
+        @if (annotationPin(); as pin) {
+          <div class="annotation-pin new-pin"
+               [style.left.%]="pin.x"
+               [style.top.%]="pin.y">
+            <span class="pin-number">+</span>
+          </div>
+        }
+      </div>
+
+      <!-- Annotation input (when pin placed) -->
+      @if (annotationPin()) {
+        <div class="annotation-input">
+          <input type="text" [(ngModel)]="annotationText" placeholder="Комментарий к отметке..."
+                 (keydown.enter)="submitAnnotation()" />
+          <button mat-icon-button (click)="submitAnnotation()" [disabled]="!annotationText.trim()">
+            <mat-icon>send</mat-icon>
+          </button>
+          <button mat-icon-button (click)="cancelAnnotation()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Variant Selector -->
+      @if (photo.variants.length) {
+        <div class="variant-selector">
+          <div class="variant-label-row">
+            <mat-icon>palette</mat-icon>
+            <span>Выберите понравившийся вариант</span>
+          </div>
+          <div class="variant-list">
+            @for (v of photo.variants; track v.id) {
+              <button class="variant-card" [class.selected]="store.selectedVariant()?.id === v.id"
+                      (click)="selectVariant(v)">
+                <img [src]="v.thumbnail_url || v.variant_url" [alt]="v.label || 'Вариант'" />
+                @if (store.selectedVariant()?.id === v.id) {
+                  <span class="variant-selected-overlay">
+                    <mat-icon>check_circle</mat-icon>
+                  </span>
+                }
+                <span class="variant-name">{{ v.label || 'Вариант ' + (v.sort_order + 1) }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Comments -->
+      @if (photo.annotations.length) {
+        <div class="comments-list">
+          @for (a of photo.annotations; track a.id; let i = $index) {
+            <div class="comment-bubble"
+                 [class.pin-comment]="isPin(a)"
+                 [class.operator-comment]="isOperatorClarification(a)">
+              @if (isOperatorClarification(a)) {
+                <mat-icon>support_agent</mat-icon>
+              } @else if (isPin(a)) {
+                <span class="comment-pin-num">{{ i + 1 }}</span>
+              } @else {
+                <mat-icon>comment</mat-icon>
+              }
+              <span>{{ getAnnotationText(a) }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Feedback panel (inline) -->
+      @if (feedbackMode()) {
+        <div class="feedback-panel" [class.needs-comment]="needsComment()">
+          <div class="feedback-label">
+            <mat-icon>edit_note</mat-icon>
+            <span>Что нужно поправить?</span>
+          </div>
+          <textarea [(ngModel)]="commentText"
+                    placeholder="Например: сделать кожу теплее, убрать фон, поправить цвет..."
+                    rows="3"
+                    (input)="needsComment.set(false)"></textarea>
+          <div class="feedback-actions">
+            <button mat-flat-button class="send-feedback-btn" (click)="submitFeedback()"
+                    [disabled]="store.actionLoading()">
+              @if (store.actionLoading()) {
+                <mat-icon class="spin-icon">sync</mat-icon>
+              } @else {
+                <mat-icon>send</mat-icon>
+              }
+              Отправить правки
+            </button>
+            <button mat-stroked-button (click)="feedbackMode.set(false)">
+              Закрыть
+            </button>
+          </div>
+          @if (needsComment()) {
+            <p class="needs-comment-hint">Введите текст пожелания</p>
+          }
+        </div>
+      } @else {
+        <!-- Comment input -->
+        <div class="comment-input">
+          <input type="text" [(ngModel)]="commentText"
+                 placeholder="Написать комментарий..."
+                 (keydown.enter)="submitComment()" />
+          <button mat-icon-button (click)="submitComment()" [disabled]="!commentText.trim()">
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      }
+
+      <!-- Status display (for already reviewed photos) -->
+      @if (photo.status === 'approved' || photo.status === 'rejected') {
+        <div class="status-display">
+          @if (photo.status === 'approved') {
+            <div class="status-chip approved-chip"><mat-icon>check</mat-icon> Одобрено</div>
+          } @else {
+            <div class="status-chip rejected-chip"><mat-icon>close</mat-icon> На доработке</div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Bottom actions (desktop only) -->
+  @if (!isMobile() && !feedbackMode()) {
+    <div class="bottom-actions">
+      @if (store.selectedPhoto()?.status === 'pending' || store.selectedPhoto()?.status === 'changes_requested') {
+        <button mat-flat-button class="finalize-btn" (click)="requestApprove()"
+                [disabled]="store.actionLoading()">
+          @if (store.actionLoading()) {
+            <mat-icon class="spin-icon">sync</mat-icon>
+          } @else {
+            <mat-icon>check_circle</mat-icon>
+          }
+          Утвердить фото
+        </button>
+        <button mat-stroked-button class="changes-btn" (click)="feedbackMode.set(true)">
+          <mat-icon>edit_note</mat-icon> Нужны правки
+        </button>
+      }
+    </div>
+  }
+
+  <!-- Desktop confirmation overlay -->
+  @if (confirmationMode() && !isMobile()) {
+    <div class="confirmation-overlay">
+      <img [src]="displayImageUrl()" class="confirmation-preview" alt="Подтверждение" />
+      <h3>Утвердить этот вариант?</h3>
+      <button class="confirm-btn" (click)="confirmApprove()">Да, утвердить</button>
+      <button class="cancel-confirm" (click)="cancelConfirmation()">Вернуться к просмотру</button>
+    </div>
+  }
+
+  <!-- Note: no separate mobile complete button, approve auto-completes -->
+}

@@ -1,0 +1,58 @@
+[package]
+name = "svf-pos-agent"
+version = "0.1.0"
+edition = "2024"
+description = "SvoePhoto POS Agent — INPAS terminal + АТОЛ fiscal via MQTT orchestration"
+
+[dependencies]
+# Shared agent core (MQTT, config, offline, heartbeat, updater)
+svf-agent-core = { path = "../svf-agent-core" }
+
+# Async runtime
+tokio = { version = "1", features = ["full", "signal"] }
+
+# MQTT client
+rumqttc = "0.24"
+
+# Protobuf
+prost = "0.13"
+
+# HTTP client (INPAS SmartSale + АТОЛ WebServer)
+reqwest = { version = "0.12", features = ["rustls-tls", "json"], default-features = false }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+roxmltree = "0.20"
+encoding_rs = "0.8"
+
+# Types
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# Windows Service support
+[target.'cfg(windows)'.dependencies]
+windows-service = "0.7"
+windows = { version = "0.58", features = [
+    "Win32_System_Services",
+    "Win32_System_LibraryLoader",
+    "Win32_Security",
+    "Win32_Foundation",
+] }
+
+[build-dependencies]
+prost-build = "0.13"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

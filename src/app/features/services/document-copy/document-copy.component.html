@@ -1,0 +1,179 @@
+<link rel="canonical" href="https://svoefoto.ru/document-copy" />
+<div class="document-copy-page">
+
+  <!-- AIDA: ATTENTION - Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">{{ documentCopyData.title }}</h1>
+        <p class="hero-subtitle">{{ documentCopyData.subtitle }}</p>
+        <div class="hero-price">{{ documentCopyData.price }}</div>
+        
+        <!-- AIDA: INTEREST - Быстрые преимущества -->
+        <div class="hero-benefits">
+          @for (benefit of documentCopyData.benefits; track benefit || $index) {
+            <div class="benefit-item">
+              {{ benefit }}
+            </div>
+          }
+        </div>
+        
+        <div class="hero-cta">
+          <button mat-raised-button color="accent" class="cta-button primary" (click)="onBookService()">
+            <mat-icon>phone</mat-icon>
+            Заказать прямо сейчас
+          </button>
+          <button mat-button class="cta-button secondary" (click)="scrollToServices()">
+            <mat-icon>info</mat-icon>
+            Узнать подробности
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AIDA: DESIRE - Features Section -->
+  <section class="features-section">
+    <div class="container">
+      <h2 class="section-title">Почему клиенты выбирают именно нас</h2>
+      <div class="features-grid">
+        @for (feature of documentCopyData.features; track feature.title || feature.icon || $index) {
+          <mat-card class="feature-card">
+            <mat-card-content>
+              <mat-icon class="feature-icon">{{ feature.icon }}</mat-icon>
+              <h3 class="feature-title">{{ feature.title }}</h3>
+              <p class="feature-description">{{ feature.description }}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <app-service-cta title="Нужна копия документа?"
+    subtitle="Звоните или приезжайте - сделаем быстро и качественно!"
+    price="от 3 ₽"
+    priceNote="за лист А4"
+    [buttons]="ctaButtons"
+    (buttonClick)="onCtaButtonClick($event)" />
+
+  <!-- Process Section -->
+  <app-service-process title="Как получить копии документов"
+    subtitle="Простой процесс - быстрый результат"
+    [steps]="processSteps" />
+
+  <!-- Pricing Section -->
+  <app-service-pricing title="Цены на копирование"
+    subtitle="Честные цены без скрытых доплат"
+    [prices]="priceItems" />
+
+  <!-- Service Info Section -->
+  <section class="service-info-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8">
+          <mat-card class="info-card">
+            <mat-card-header>
+              <mat-card-title>Качественная ксерокопия документов</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{ documentCopyData.description }}</p>
+              <mat-divider />
+              <div class="service-details">
+                <h3>Что мы копируем:</h3>
+                <ul>
+                  @for (docType of documentCopyData.documentTypes; track docType || $index) {
+                    <li>{{ docType }}</li>
+                  }
+                </ul>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-button (click)="scrollToContacts()">
+                <mat-icon>place</mat-icon>
+                Как добраться
+              </button>
+              <button mat-button (click)="onCallPhone()">
+                <mat-icon>call</mat-icon>
+                Позвонить
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+        <div class="col-md-4">
+          <mat-card class="contact-card">
+            <mat-card-header>
+              <mat-card-title>Контактная информация</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="contact-item">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ documentCopyData.workingHours }}</span>
+              </div>
+              <div class="contact-item">
+                <mat-icon>place</mat-icon>
+                <span>{{ documentCopyData.location }}</span>
+              </div>
+              <div class="contact-item">
+                <mat-icon>phone</mat-icon>
+                <span>{{ documentCopyData.phone }}</span>
+              </div>
+            </mat-card-content>
+            <mat-card-actions>
+              <button mat-raised-button color="primary" (click)="onGetDirections()">
+                <mat-icon>directions</mat-icon>
+                Маршрут
+              </button>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AIDA: ACTION - Urgency Section -->
+  <section class="urgency-section">
+    <div class="container">
+      <div class="urgency-content">
+        <h2 class="urgency-title">{{ documentCopyData.urgency.title }}</h2>
+        <p class="urgency-subtitle">{{ documentCopyData.urgency.subtitle }}</p>
+        <div class="urgency-actions">
+          <button mat-raised-button color="primary" class="urgent-cta" (click)="onCallPhone()">
+            <mat-icon>call</mat-icon>
+            {{ documentCopyData.urgency.cta }}
+          </button>
+          <button mat-stroked-button color="primary" class="direction-cta" (click)="onGetDirections()">
+            <mat-icon>directions</mat-icon>
+            Показать маршрут
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services-section">
+    <div class="container">
+      <h2 class="section-title">Другие наши услуги</h2>
+      <app-services-section [services]="services" />
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section id="reviews-section" class="reviews-section">
+    <div class="container">
+      <app-testimonials variant="card" />
+    </div>
+  </section>
+
+  <!-- Contacts Section -->
+  <section id="contacts-section" class="contacts-section">
+    <div class="container">
+      <app-contacts-section [contacts]="contacts"
+        [addresses]="addresses" />
+    </div>
+  </section>
+
+</div>
+

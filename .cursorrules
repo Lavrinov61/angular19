@@ -1,0 +1,477 @@
+# Своё Фото — Project Rules
+
+> Фотостудия "Своё Фото" (МагнусФото). Angular 21 SSR + Express 5 + PostgreSQL 16.
+> Сервер: Yandex Cloud VM, 16 GB RAM, 4 CPU.
+> Сайт: svoefoto.ru | Домен: fmagnus.org
+
+---
+
+## Язык общения
+
+Всегда отвечай на **русском языке**. Технические термины и идентификаторы кода — на английском.
+
+---
+
+## Запреты на сканирование
+
+**НЕ сканировать и НЕ анализировать:**
+- `dist/`, `node_modules/`, `.angular/`, `out-tsc/`, `tmp/`, `backend/dist/`
+- `*.js.map`, `*.d.ts.map`
+- Работать **только с исходниками** из `src/` и `backend/src/`
+
+---
+
+## Архитектура
+
+### Порты и процессы
+
+| Порт | Сервис | PM2 процесс |
+|------|--------|-------------|
+| 3001 | API + Socket.IO + Schedulers | magnus-photo-api |
+| 4000 | Angular SSR (только рендеринг) | magnus-photo-ssr |
+| 5050 | Prices API | — |
+| 5051 | Tracking API | — |
+| 5052 | Bridge API | — |
+| 5053 | Analytics API | — |
+
+`:3001` и `:4000` — независимые процессы. `pm2 restart magnus-photo-ssr` НЕ роняет чат и API.
+
+### nginx маршрутизация
+
+```
+/api/*       → :3001  (API-сервер)
+/socket.io/* → :3001  (WebSocket)
+/uploads/*   → filesystem напрямую (без Node.js)
+/*           → :4000  (Angular SSR)
+```
+
+### Инфраструктура (Yandex Cloud)
+
+- **Dev VM** (158.160.8.249 / 10.129.0.6, user: rostv) — основная нода
+- **Prod VM** (10.129.0.5, user: yc-user) — cold standby (убрана из ALB)
+- **ALB** (130.193.59.73) — L7 балансировщик, SSL termination, cookie affinity `SVOEFOTO_SRV`
+- **Managed PG** (rc1b-ihjtr0uu8m7vgdjb.mdb.yandexcloud.net:6432)
+- **Managed Redis** (rc1b-ke99dutk1jbectc6.mdb.yandexcloud.net:6379) — БЕЗ TLS
+
+### БД: `magnus_photo_db` (PostgreSQL 16, user: `magnus_user`)
+
+Схема: `backend/database/schema.sql`. 72+ таблиц.
+
+### CRM — lazy route (НЕ micro-frontend)
+
+- `loadChildren: () => import('./features/employee/employee.routes')` в `app.routes.ts`
+- `employeeGuard` защищает доступ
+- Один билд, один деплой — CRM-чанки в `dist/magnus-photo/browser/`
+- Hydration: `withIncrementalHydration()`
+
+---
+
+## Angular 21 — СТРОГИЕ ПРАВИЛА
+
+### Обязательно
+
+- `ChangeDetectionStrategy.OnPush` — ВСЕГДА на каждом компоненте
+- `input()` / `output()` функции (НЕ `@Input()` / `@Output()`)
+- `inject()` функция (НЕ constructor injection)
+- `@if`, `@for`, `@switch` (НЕ `*ngIf`, `*ngFor`, `*ngSwitch`)
+- `host: {}` вместо `@HostBinding` / `@HostListener`
+- `viewChild()` / `viewChildren()` / `contentChild()` / `contentChildren()` (НЕ декораторы)
+- `computed()`, `signal()` — предпочтительны
+- `providedIn: 'root'` для singleton сервисов
+- `unknown` вместо `any` — строгая типизация
+- `firstValueFrom()` вместо `.toPromise()` (deprecated в RxJS 7)
+
+### Запрещено
+
+- `standalone: true` — НЕ писать (дефолт с Angular 20+, бессмысленный бойлерплейт)
+- `@NgModule` — НЕ создавать новые модули
+- `@Input()` / `@Output()` декораторы — использовать `input()` / `output()` функции
+- `@HostBinding` / `@HostListener` — использовать `host: {}`
+- `@ViewChild` / `@ViewChildren` / `@ContentChild` / `@ContentChildren` — использовать signal queries
+- `constructor(private service: Service)` — использовать `inject()`
+- `*ngIf` / `*ngFor` / `*ngSwitch` — использовать `@if` / `@for` / `@switch`
+- `[ngClass]` / `[ngStyle]` — использовать `[class.x]` / `[style.x]`
+- Тип `any` — использовать `unknown`, `Record<string, unknown>`, конкретные типы
+- `.toPromise()` — использовать `firstValueFrom()` / `lastValueFrom()`
+
+### Примеры миграции
+
+```typescript
+// WRONG (legacy)
+@Input() name: string;
+@Output() clicked = new EventEmitter<void>();
+constructor(private http: HttpClient) {}
+@ViewChild('ref') el!: ElementRef;
+@HostBinding('class.active') isActive = false;
+
+// CORRECT (Angular 21)
+name = input<string>();
+clicked = output<void>();
+private http = inject(HttpClient);
+el = viewChild<ElementRef>('ref');
+host: { '[class.active]': 'isActive()' }
+```
+
+```html
+<!-- WRONG -->
+<div *ngIf="show" *ngFor="let item of items" [ngClass]="{'active': isActive}">
+
+<!-- CORRECT -->
+@if (show) {
+  @for (item of items; track item.id) {
+    <div [class.active]="isActive()">
+  }
+}
+```
+
+### Angular CLI
+
+- Angular CLI 21.1.4
+- Node.js 22.22.0 (обязателен для ESM/CJS interop)
+- `package.json` имеет `"type": "module"` → все `.js` = ESM
+- Для CJS: `.cjs` расширение или `createRequire(import.meta.url)`
+
+---
+
+## Backend: Express 5.2.1 — СТРОГИЕ ПРАВИЛА
+
+### Ключевые отличия от Express 4
+
+- Wildcards именованные: `/*splat` (НЕ `/*`)
+- `req.params` — null prototype, bracket notation: `req.params['id']`
+- `req.query` — read-only, парсер `simple` (НЕ `qs`)
+- Async handlers: rejected promises авто-пробрасываются в error middleware
+- `asyncHandler` УДАЛЁН — Express 5 сам ловит async errors
+- `res.redirect(status, url)` (НЕ `res.redirect(url, status)`)
+- Статические маршруты ВСЕГДА ДО динамических `/:param`
+
+### Паттерн ошибок
+
+- `AppError` класс: `backend/src/middleware/errorHandler.ts`
+- `throw new AppError(400, 'Name required')` — НЕ `res.status().json()`
+- try/catch НЕ писать (кроме: webhooks, DB ROLLBACK, file cleanup, fire-and-forget)
+
+### SocketServer
+
+- Доступ через: `(req.app as any)['socketServer']`
+
+---
+
+## RBAC (система прав)
+
+- Enterprise DB-backed RBAC, `rbac_*` таблицы в PostgreSQL
+- 5 системных ролей: `admin`, `manager`, `employee`, `photographer`, `client`
+- 21 permission
+- Backend: `authenticateToken` + `requirePermission('perm:slug')`
+- Frontend: `permissionsSignal` из `GET /api/auth/me`
+- `requireRole()` — DEPRECATED, использовать `requirePermission()`
+
+### Матрица прав
+
+| Permission | admin | manager | employee | photographer |
+|------------|:-----:|:-------:|:--------:|:------------:|
+| `inbox:view` | + | + | + | + |
+| `inbox:manage` | + | + | + | — |
+| `chat:reply` | + | + | + | + |
+| `chat:assign` | + | + | + | — |
+| `tasks:manage` | + | + | + | + |
+| `pos:use` | + | + | + | — |
+| `team:chat` | + | + | + | + |
+| `bookings:manage` | + | + | + | + |
+| `production:manage` | + | + | + | — |
+| `pricing:read` | + | + | + | — |
+| `pricing:manage` | + | + | — | — |
+| `clients:view` | + | + | — | + |
+| `catalog:manage` | + | + | — | — |
+| `subscriptions:manage` | + | + | — | — |
+| `analytics:view` | + | + | — | — |
+| `shifts:manage` | + | + | — | — |
+| `reports:view` | + | + | — | — |
+| `workflows:manage` | + | + | — | — |
+| `partners:manage` | + | + | — | — |
+| `users:manage` | + | — | — | — |
+| `settings:manage` | + | — | — | — |
+
+---
+
+## Ценообразование — КРИТИЧНО
+
+- Цена рассчитывается ТОЛЬКО через Pricing Engine (`pricing-engine.service.ts`)
+- API: `POST /api/pricing/calculate`
+- Бэкенд НЕ ДОЛЖЕН пересчитывать цену мимо pricing engine
+- Чат-бот НЕ считает цену — получает от pricing engine
+- Количество загруженных фото НЕ влияет на цену
+- Server-side validation при checkout обязательна
+
+---
+
+## Омниканальная платформа
+
+### Каналы (все активны)
+
+| Канал | Text | Photo | File | markAsRead | Welcome |
+|-------|------|-------|------|------------|---------|
+| Telegram | + | + | + | — | /start |
+| VK | + | + (2-step upload) | + (2-step) | + | pipeline |
+| Max | + | + | + | — | pipeline |
+| WhatsApp | + | + (link) | + (link) | + | pipeline |
+| Instagram | + | + | + | — | pipeline |
+| Web | + | + | + | WS | + |
+
+### Архитектура коннекторов
+
+- `backend/src/services/connectors/` — interface + 5 реализаций + registry + inbound-pipeline
+- BullMQ outbound queues: `outbound-{channel}`, exponential backoff, 5 retries
+- Shared CircuitBreaker per channel (5 failures → OPEN 30s → HALF_OPEN)
+- Unified Inbound Pipeline: dedup → session → upsert → reply → INSERT → Socket.IO → markAsRead → welcome
+- Bull Board: `/api/admin/queues` (auth + settings:manage)
+
+---
+
+## Build & Deploy
+
+### Верификация
+
+```bash
+npm run build:check  # НЕ трогает dist/. Никогда не коммитить некомпилируемый код.
+```
+
+### Версионирование
+
+- `APP_VERSION` в `src/app/core/constants/version.ts` — bump при мажорных фичах
+- ngsw.json генерируется автоматически при `ng build`
+
+### Деплой
+
+```bash
+# Angular SSR (НЕ трогает API/чат):
+cd /var/www/apimain/angular-app && npm run deploy
+
+# Backend (НЕ трогает SSR/сайт):
+cd /var/www/apimain/angular-app/backend && npm run build && pm2 restart magnus-photo-api
+```
+
+- `pm2 restart` (НЕ `reload`) для SSR — КРИТИЧНО
+- ngsw обеспечивает zero-downtime (кеш + атомарное обновление)
+
+---
+
+## Design System
+
+### Сайт — Editorial Bold
+
+- Display: **Barlow Condensed** 600-800 — `--ed-font-display`
+- Body: **Plus Jakarta Sans** 400-700 — `--ed-font-body`
+- НЕ использовать: Inter, Roboto, Arial, system fonts
+- Чёрный/тёмный фон, белый текст, 1 яркий акцент
+- Асимметричная сетка, full-bleed, overlap элементов
+- Scroll-triggered reveals, parallax
+
+### CRM — Editorial Dashboard
+
+- Display: **Oswald** 600, uppercase — `--crm-font-display`
+- Body: **Plus Jakarta Sans** — `--crm-font-sans`
+- Data: **JetBrains Mono** — `--crm-font-mono`
+- Accent: `#f59e0b` (amber/gold) — `--crm-accent`
+- Surfaces: `#0c0b09` → `#131210` → `#1b1a17` → `#272520` (warm, not pure black)
+- Glass morphism: `backdrop-filter: blur(16px) saturate(180%)`
+- Pill buttons: `border-radius: 14px`, glass border
+- Tokens: `src/styles/crm-tokens.scss`, scope `[data-section="crm"]`
+- CDK Overlay: `html.crm-active .cdk-overlay-container`
+- Desktop-first для CRM, mobile-first для сайта
+
+---
+
+## Контентные правила
+
+- **LinkedIn НЕ используем** — не работает в России → `hh.ru`
+- **Ретушь оплачивается отдельно** — базовая цена = съёмка + печать, обработка — опция
+- **Отзывы**: НЕ акцентировать количество, акцент на аутентичность
+- Дефолтный канал чата = `'studio'` (НЕ `'online'`)
+
+---
+
+## Принципы разработки
+
+- Enterprise уровень — не упрощать, не срезать углы
+- Проектировать под enterprise, не под текущий масштаб
+- Предлагать лучший UX и решение
+- Задавать уточняющие вопросы в начале
+- CSS fix не работает после 2 попыток → попросить скриншот
+
+---
+
+## Важные паттерны и уроки
+
+- Express 5: статические маршруты ДО динамических
+- `requireUser(req, res)` — `res` для совместимости, только `throw new AppError`
+- Date DST: `cursor.setDate(cursor.getDate() + 1)`, НЕ `+= 86400000`
+- Email XSS: `escHtml()` перед вставкой пользовательских данных
+- POS timer: транзакция с `FOR UPDATE`
+- `clamscan` npm → `createRequire(import.meta.url)`
+- REDIS_TLS=true НЕ устанавливать (Managed Redis без TLS на порту 6379)
+
+---
+
+## Структура проекта
+
+### Frontend (Angular 21 SSR)
+
+```
+src/
+  app/
+    core/           # Сервисы, guards, interceptors, providers
+    shared/         # Переиспользуемые компоненты
+    features/
+      home/         # Главная
+      about/        # О нас
+      auth/         # OAuth (Yandex/Google/Apple/VK)
+      chat-page/    # Чат + Service Selector + Cart
+      employee/     # CRM (ФотоПульт) — lazy loaded
+        components/
+          dashboard-view/        # Главный дашборд
+          inbox-panel/           # Список обращений
+          detail-panel/          # Чат с клиентом
+          workspace-layout/      # Layout wrapper
+          operator-cart-panel/   # Корзина оператора
+          team-chat/             # Внутренний чат команды
+          channel-admin/         # Управление каналами
+          heatmap-viewer/        # Heatmap
+          session-replay-viewer/ # Session Replay
+        services/                # CRM сервисы
+      photo-review/     # Обзор фото
+      services/         # Лендинги услуг
+      subscriptions/    # Подписки
+      user-profile/     # ЛК клиента
+  environments/
+  styles/
+    crm-tokens.scss   # CRM design tokens
+```
+
+### Backend (Express 5)
+
+```
+backend/
+  src/
+    config/          # Конфиг, permissions
+    database/        # DB pool
+    middleware/       # auth, errorHandler
+    routes/
+      chat/          # Чат-система (bot engine, sessions, messages, admin, upload, welcome)
+      webhooks/      # Telegram, VK, Max, WhatsApp, Instagram
+    services/
+      connectors/    # MessengerConnector interface + 5 реализаций + registry + pipeline
+    utils/           # circuit-breaker, logger, fetch-timeout
+    websocket/       # Socket.IO server
+  database/
+    schema.sql       # Полная схема
+    migrations/      # SQL миграции
+```
+
+### Key Files
+
+| Файл | Назначение |
+|------|-----------|
+| `src/app/app.routes.ts` | Все маршруты (CRM = lazy route) |
+| `src/app/core/services/auth.service.ts` | JWT auth + permissionsSignal |
+| `src/app/core/services/visitor-chat.service.ts` | WebSocket чат |
+| `src/app/core/constants/version.ts` | APP_VERSION |
+| `src/styles/crm-tokens.scss` | CRM design tokens |
+| `backend/src/server.ts` | Express app + schedulers |
+| `backend/src/services/pricing-engine.service.ts` | Pricing Engine |
+| `backend/src/services/outbound-queue.service.ts` | BullMQ outbound queues |
+| `backend/src/services/connectors/inbound-pipeline.ts` | Unified inbound |
+| `backend/src/middleware/auth.ts` | authenticateToken + requirePermission |
+| `backend/src/middleware/errorHandler.ts` | AppError class |
+| `ecosystem.config.cjs` | PM2 config |
+
+---
+
+## Singleton-механизм (Active-Passive)
+
+- Node.js schedulers: `pg_try_advisory_lock(737001)` — лидер, follower retry 30s
+- Systemd timers: `/usr/local/bin/run-once.sh` с PG advisory lock
+- BullMQ workers: на leader-ноде (concurrency=5 per channel)
+
+---
+
+## Интеграции
+
+- Claude — AI чат-бот
+- CloudPayments — приём платежей
+- Telegram Bot API (grammy) — webhook mode
+- VK Callback API — webhook mode
+- Max Bot API — webhook mode
+- WhatsApp Cloud API — webhook + HMAC
+- Instagram Graph API — webhook + HMAC + 24h reply window
+- Managed Redis — кэш, Socket.IO adapter, BullMQ
+
+- Angular Service Worker (ngsw) — PWA + push
+
+---
+
+## Бэклог фич
+
+Подробный список идей и запланированных фич: [.cursor/backlog.md](.cursor/backlog.md)
+
+---
+
+## POS-оборудование
+
+- **Тинькофф терминал** — INPAS SmartSale, HTTP порт 9015
+- **АТОЛ 27Ф** — фискальный регистратор, USB, АТОЛ Драйвер ККТ v10
+- **POS Bridge** — Electron tray app (localhost:8888)
+- **CloudKassir** — только онлайн-фискализация
+
+---
+
+## Workflow: Dev → Verify → Preview → Deploy
+
+### Порты
+
+| Порт | Назначение |
+|------|-----------|
+| 3001 | Production API (PM2, НЕ ТРОГАТЬ) |
+| 4000 | Production SSR (PM2, НЕ ТРОГАТЬ) |
+| 3002 | Dev backend (`npm run dev:back`) |
+| 4200 | Dev frontend (`npm run dev:front`) |
+
+### Команды верификации (безопасные, read-only)
+
+```bash
+npm run verify       # type-check Angular + Backend + lint
+npm run verify:full  # verify + ng test + backend vitest
+npm run dev:front    # ng serve на :4200 (proxy /api → :3001)
+npm run dev:back     # backend dev на :3002 (tsx watch)
+```
+
+### Разрешено AI в любое время
+
+- Редактировать файлы в `src/` и `backend/src/`
+- `npm run verify` / `npm run verify:full`
+- `ng test` / `cd backend && npm test`
+- `npm run dev:front` (ng serve на :4200)
+- `npm run dev:back` (backend dev на :3002)
+
+### ЗАПРЕЩЕНО AI всегда
+
+- `ng build`, `npm run build` (пишет в dist/)
+- `pm2 restart` / `pm2 reload`
+- Менять файлы в `dist/`
+- Трогать production порты :3001 и :4000
+
+### Деплой — только ночью, вручную
+
+```bash
+ng build --configuration production && pm2 restart magnus-photo-ssr
+cd backend && npm run build && pm2 restart magnus-photo-api
+```
+
+### Тесты (Vitest)
+
+- При создании нового сервиса/функции — писать Vitest-тест
+- Тесты проверяют **поведение**, НЕ формальное создание компонента
+- `vi.mock()`, `vi.spyOn()`, `vi.fn()` для мокирования
+- НЕ использовать `fakeAsync` — использовать `vi.useFakeTimers()`
+- Frontend: `provideHttpClientTesting()` для мокирования HTTP
+- Backend: `vi.mock('../../database/db.js')` для мокирования DB

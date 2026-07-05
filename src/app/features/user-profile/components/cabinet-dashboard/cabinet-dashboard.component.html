@@ -1,0 +1,191 @@
+<section class="cabinet-dashboard">
+  <div class="mobile-hero">
+    <div class="brand-mark">СФ</div>
+    <div>
+      <span>Своё Фото</span>
+      <strong>{{ displayName() }}</strong>
+    </div>
+    <a class="mobile-hero__icon" routerLink="/user-profile/account" aria-label="Профиль">
+      <mat-icon>person</mat-icon>
+    </a>
+  </div>
+
+  <header class="dashboard-head">
+    <div>
+      <p class="eyebrow">Личный кабинет</p>
+      <h1>{{ displayName() }}</h1>
+    </div>
+    <a mat-flat-button class="head-action" routerLink="/chat">
+      <mat-icon>chat_bubble</mat-icon>
+      Написать в чат
+    </a>
+  </header>
+
+  <nav class="quick-actions" aria-label="Быстрые действия">
+    @for (action of quickActions; track action.route) {
+      <a class="quick-action" [routerLink]="action.route">
+        <span class="quick-action__icon"><mat-icon>{{ action.icon }}</mat-icon></span>
+        <span class="quick-action__text">
+          <strong>{{ action.label }}</strong>
+          <small>{{ action.hint }}</small>
+        </span>
+      </a>
+    }
+  </nav>
+
+  @if (loading() && !dashboardData()) {
+    <div class="loading-state">
+      <mat-spinner diameter="36" />
+      <span>Загружаем кабинет</span>
+    </div>
+  } @else {
+    <section class="tasks-band">
+      <div class="tasks-band__status">
+        <mat-icon>check_circle</mat-icon>
+        <span>Срочных действий нет</span>
+      </div>
+      <div class="tasks-band__items">
+        @for (task of taskCards; track task.route) {
+          <a
+            class="task-item"
+            [class.task-item--red]="task.tone === 'red'"
+            [class.task-item--blue]="task.tone === 'blue'"
+            [class.task-item--green]="task.tone === 'green'"
+            [class.task-item--violet]="task.tone === 'violet'"
+            [routerLink]="task.route"
+          >
+            <mat-icon>{{ task.icon }}</mat-icon>
+            <span>
+              <strong>{{ task.title }}</strong>
+              <small>{{ task.description }}</small>
+            </span>
+          </a>
+        }
+      </div>
+    </section>
+
+    <div class="overview-grid">
+      <section class="balance-panel">
+        <div class="balance-panel__main">
+          <span>Бонусы</span>
+          <strong>{{ pointsBalance() | number }} Б</strong>
+          <small>{{ pointsAsRubles() | currency:'RUB':'symbol-narrow':'1.0-0':'ru' }} можно списать на услуги</small>
+        </div>
+        <div class="balance-panel__split"></div>
+        <div class="balance-panel__main balance-panel__main--secondary">
+          <span>Скидки аккаунта</span>
+          <strong>Тарифы</strong>
+          <small>Актуальные условия загружаются в разделе подписок</small>
+        </div>
+        <div class="balance-panel__actions">
+          <a mat-flat-button routerLink="/user-profile/loyalty">Бонусы</a>
+          <a mat-button routerLink="/user-profile/subscription">Тарифы</a>
+        </div>
+      </section>
+
+      @if (promos().length > 0) {
+        <aside class="promo-stack" aria-label="Предложения">
+          @for (promo of promos(); track promo.route) {
+            <a
+              class="promo-card"
+              [class.promo-card--blue]="promo.tone === 'blue'"
+              [class.promo-card--violet]="promo.tone === 'violet'"
+              [class.promo-card--mint]="promo.tone === 'mint'"
+              [class.promo-card--text-only]="!promo.image"
+              [routerLink]="promo.route"
+            >
+              <span>
+                <strong>{{ promo.title }}</strong>
+                <small>{{ promo.description }}</small>
+              </span>
+              @if (promo.image) {
+                <img [src]="promo.image" [alt]="promo.title" loading="lazy" />
+              }
+            </a>
+          }
+        </aside>
+      }
+    </div>
+
+    <section class="home-sections">
+      <button class="section-toggle" type="button">
+        <span>Разделы кабинета</span>
+        <mat-icon>expand_more</mat-icon>
+      </button>
+    </section>
+
+    <section class="history-panel">
+      <div class="panel-title">
+        <h2>История заказов</h2>
+        <a routerLink="/user-profile/orders">Все заказы</a>
+      </div>
+
+      <div class="history-filters">
+        <button type="button"><mat-icon>chevron_left</mat-icon></button>
+        <span>Недавние заказы</span>
+        <button type="button"><mat-icon>calendar_today</mat-icon></button>
+        <label>
+          <mat-icon>search</mat-icon>
+          <input type="search" placeholder="Ищите название услуги или номер заказа" />
+        </label>
+      </div>
+
+      @if (recentOrders().length > 0) {
+        <div class="history-table">
+          <div class="history-row history-row--head">
+            <span>Тип</span>
+            <span>Дата</span>
+            <span>Заказ и статус</span>
+            <span>Номер</span>
+            <span>Оплата</span>
+          </div>
+          @for (order of recentOrders(); track order.id) {
+            <a class="history-row" [routerLink]="['/user-profile/orders', order.id]">
+              <span class="history-icon"><mat-icon>{{ getOrderTypeIcon(order.orderType) }}</mat-icon></span>
+              <span>{{ order.createdAt | date:'dd.MM.yyyy' }}</span>
+              <span class="history-purpose">
+                <strong>{{ getOrderTypeLabel(order.orderType) }}</strong>
+                <small>{{ getStatusLabel(order.status) }}</small>
+              </span>
+              <span>{{ order.id }}</span>
+              <span class="history-price">{{ order.totalPrice | currency:'RUB':'symbol-narrow':'1.0-0':'ru' }}</span>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="empty-history">
+          <mat-icon>receipt_long</mat-icon>
+          <span>История появится после первого заказа</span>
+        </div>
+      }
+    </section>
+
+    <section class="catalog-panel">
+      <div class="panel-title">
+        <h2>Популярные сервисы</h2>
+        <a routerLink="/user-profile/services">Смотреть все</a>
+      </div>
+      @if (serviceHighlights().length > 0) {
+        <div class="service-grid">
+          @for (service of serviceHighlights(); track service.route) {
+            <a class="service-card" [routerLink]="service.route">
+              <span class="service-card__icon"><mat-icon>{{ service.icon }}</mat-icon></span>
+              <span>
+                <strong>{{ service.title }}</strong>
+                <small>{{ service.description }}</small>
+              </span>
+              @if (service.badge) {
+                <em>{{ service.badge }}</em>
+              }
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="empty-history">
+          <mat-icon>inventory_2</mat-icon>
+          <span>Каталог услуг пока пуст</span>
+        </div>
+      }
+    </section>
+  }
+</section>

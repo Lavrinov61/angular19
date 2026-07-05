@@ -1,0 +1,79 @@
+<section class="about-preview-section" [class.compact]="isMobile()" [class.medium]="isTablet()" [class.expanded]="isDesktop()">  <div class="about-container">    <!-- Hero Section with proper content -->
+    <div class="about-hero">      <!-- Используем абсолютное позиционирование для badge, чтобы он не влиял на заголовок -->
+      <div class="hero-title-container">
+        <!-- Заголовок - центрирован независимо от badge -->
+        <h2 class="hero-title">{{ aboutData().textParts.highlight }}</h2>
+        
+        <!-- Hero Badge - абсолютно позиционирован справа от заголовка -->
+        @if (badge()) {
+          <div class="hero-badge">
+            <div class="hero-badge-inner">
+              <mat-icon class="badge-icon">{{ badge()!.icon }}</mat-icon>
+              {{ badge()!.text }}
+            </div>
+          </div>
+        }
+      </div>
+      
+      <div class="hero-description">
+        @for (paragraph of aboutData().textParts.main; track paragraph || $index) {
+          <p>{{ paragraph }}</p>
+        }
+      </div>
+        
+      <div class="hero-keywords">
+        @for (keyword of aboutData().textParts.keywords; track keyword || $index) {
+          <span class="keyword">{{ keyword }}</span>
+        }
+      </div>
+    </div>
+      
+    <!-- Clean Statistics -->
+    @if (trustIndicators().length > 0) {
+      <div class="stats-section">
+        @for (indicator of trustIndicators(); track indicator.text || indicator.icon || $index) {
+          <div class="stat-item">
+            <div class="stat-icon">
+              <mat-icon>{{ indicator.icon }}</mat-icon>
+            </div>
+            <div class="stat-content">
+              <div class="stat-label">{{ indicator.text }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+      
+    <!-- Clean Features Grid -->
+    <div class="features-grid">
+      @for (feature of aboutData().features; track feature.title || $index; let i = $index) {
+        <div class="feature-card">
+          <div class="feature-icon">
+            <mat-icon>{{ feature.icon }}</mat-icon>
+          </div>
+          <h3 class="feature-title">{{ feature.title }}</h3>
+          <p class="feature-description">{{ feature.description }}</p>
+        </div>
+      }
+    </div>
+        <!-- Action Buttons below features -->
+    <div class="about-buttons">
+      @for (button of aboutData().buttons; track button.label || button.href || $index) {
+        <a mat-raised-button 
+           class="cta-button"
+           [class.primary-cta]="button.variant === 'primary'"
+           [routerLink]="button.href.startsWith('http') ? null : button.href" 
+           [href]="button.href.startsWith('http') ? button.href : null"
+           [attr.target]="button.href.startsWith('http') ? '_blank' : null"
+           [color]="button.variant === 'primary' ? 'primary' : ''" 
+           [class.mat-stroked-button]="button.variant === 'outlined'"
+           (click)="onContactButtonClick(button.label)">
+          @if (button.icon) {
+            <mat-icon>{{ button.icon }}</mat-icon>
+          }
+          {{ button.label }}
+        </a>
+      }
+    </div>
+  </div>
+</section>

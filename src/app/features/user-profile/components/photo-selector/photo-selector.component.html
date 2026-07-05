@@ -1,0 +1,155 @@
+<div class="photo-selector-container">
+  <!-- Header with session info and cart -->
+  <div class="header-section">
+    @if (session(); as sessionData) {
+      <div class="session-info">
+        <h1 class="session-title">{{ sessionData.name }}</h1>
+        <p class="session-date">{{ sessionData.date | date:'dd MMMM yyyy':'ru' }}</p>
+        <p class="photos-count">Фотографий в сессии: {{ sessionData.photos.length }}</p>
+      </div>
+    }
+
+    <div class="cart-info">
+      <button mat-fab extended color="primary" (click)="goToCart()" [matBadge]="cartItems().length" 
+              matBadgeColor="accent" [matBadgeHidden]="cartItems().length === 0">
+        <mat-icon>shopping_cart</mat-icon>
+        Корзина ({{ cartTotal() | currency:'RUB':'symbol':'1.0-0' }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="50" />
+      <p>Загрузка фотографий...</p>
+    </div>
+  }
+
+  <!-- Selection controls -->
+  @if (!loading() && session()) {
+    <div class="selection-controls">
+    <div class="selection-info">
+      <span class="selected-count">Выбрано: {{ selectedCount() }}</span>
+      <mat-chip-set>
+        <mat-chip (click)="selectAll()">
+          <mat-icon>select_all</mat-icon>
+          Выбрать все
+        </mat-chip>
+        @if (selectedCount() > 0) {
+          <mat-chip (click)="deselectAll()">
+            <mat-icon>deselect</mat-icon>
+            Снять выбор
+          </mat-chip>
+        }
+      </mat-chip-set>
+    </div>
+
+    <button mat-raised-button color="primary" 
+            [disabled]="!canAddToCart()" 
+            (click)="addSelectedToCart()"
+            class="add-to-cart-btn">
+      <mat-icon>add_shopping_cart</mat-icon>
+      Добавить в корзину ({{ selectedCount() }})
+    </button>
+    </div>
+  }
+
+  <!-- Photos grid -->
+  @if (!loading() && session(); as sessionData) {
+    <div class="photos-grid">
+      @for (photo of sessionData.photos; track photo.id || photo.fileName || $index) {
+        <div class="photo-card" [class.selected]="selectedPhotos().has(photo.id)">
+      
+      <!-- Photo preview -->
+      <div class="photo-preview" (click)="togglePhotoSelection(photo.id)" (keydown.enter)="togglePhotoSelection(photo.id)" tabindex="0">
+        <img [src]="photo.thumbnailUrl" [alt]="photo.fileName" loading="lazy">
+        <div class="selection-overlay">
+          <mat-checkbox [checked]="selectedPhotos().has(photo.id)" 
+                       (click)="$event.stopPropagation()" />
+        </div>
+        <div class="photo-info">
+          <span class="filename">{{ photo.fileName }}</span>
+        </div>
+      </div>
+
+      <!-- Photo options (visible when selected) -->
+      @if (selectedPhotos().has(photo.id)) {
+        <div class="photo-options">
+          
+          <!-- Format selection -->
+          <mat-form-field appearance="outline" class="format-field">
+            <mat-label>Формат печати</mat-label>
+            <mat-select [value]="photoFormats().get(photo.id)" 
+                       (selectionChange)="updatePhotoFormat(photo.id, $event.value)">
+              @for (format of photoFormatsData; track format.name || $index) {
+                <mat-option [value]="format">
+                  {{ format.name }} - {{ format.basePrice | currency:'RUB':'symbol':'1.0-0' }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Retouching options -->
+          <mat-form-field appearance="outline" class="retouching-field">
+            <mat-label>Ретушь</mat-label>
+            <mat-select multiple [value]="retouchingOptions().get(photo.id)" 
+                       (selectionChange)="updateRetouchingOptions(photo.id, $event.value)">
+              @for (option of retouchingOptionsData; track option.name || $index) {
+                <mat-option [value]="option">
+                  {{ option.name }} (+{{ option.price | currency:'RUB':'symbol':'1.0-0' }})
+                </mat-option>
+              }
+            </mat-select>
+            <mat-hint>{{ getPhotoRetouchingText(photo.id) }}</mat-hint>
+          </mat-form-field>
+
+          <!-- Price display -->
+          <div class="price-display">
+            <span class="total-price">
+              {{ calculatePhotoPrice(photo.id) | currency:'RUB':'symbol':'1.0-0' }}
+            </span>
+          </div>
+        </div>
+      }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Empty state -->
+  @if (!loading() && !session()) {
+    <div class="empty-state">
+    <mat-icon>photo_library</mat-icon>
+    <h3>Фотосессия не найдена</h3>
+    <p>Не удалось загрузить фотографии из указанной фотосессии.</p>
+    <button mat-raised-button color="primary" (click)="goToCart()">
+      Вернуться к выборам
+    </button>
+    </div>
+  }
+
+  <!-- Floating action button for cart -->
+  <button mat-fab class="floating-cart" 
+          color="primary" 
+          (click)="goToCart()" 
+          [matBadge]="cartItems().length"
+          matBadgeColor="accent" 
+          [matBadgeHidden]="cartItems().length === 0"
+          matTooltip="Корзина">
+    <mat-icon>shopping_cart</mat-icon>
+  </button>
+
+  <!-- Bottom action bar (mobile) -->
+  @if (selectedCount() > 0) {
+    <div class="bottom-action-bar">
+    <div class="action-info">
+      <span>Выбрано: {{ selectedCount() }}</span>
+    </div>
+    <button mat-raised-button color="primary" (click)="addSelectedToCart()">
+      <mat-icon>add_shopping_cart</mat-icon>
+      В корзину
+    </button>
+    </div>
+  }
+</div>

@@ -1,0 +1,126 @@
+<div class="photo-permissions-container">
+  <h2 class="page-title">Разрешения на использование фотографий</h2>
+  
+  <p class="info-text">
+    Здесь вы можете просмотреть и управлять разрешениями на использование ваших фотографий для рекламы и других целей Своё Фото.
+  </p>
+  
+  @if (isLoading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="40" />
+      <p>Загрузка разрешений...</p>
+    </div>
+  }
+  
+  @if (error()) {
+    <div class="error-message">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{ error() }}</p>
+      <button mat-button color="primary" (click)="loadPermissions()">Повторить</button>
+    </div>
+  }
+  
+  @if (!isLoading() && !error() && permissions().length === 0) {
+    <div class="no-permissions">
+      <mat-icon class="empty-icon">security</mat-icon>
+      <p>У вас пока нет запросов на разрешение использования фотографий</p>
+    </div>
+  }
+  
+  @if (!isLoading() && permissions().length > 0) {
+    <mat-accordion>
+      @for (permission of permissions(); track permission.id || permission.createdAt || $index) {
+        <mat-expansion-panel [expanded]="permission.status === 'pending'">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <div class="permission-header">
+            <span class="permission-title">{{ getPermissionTitle(permission) }}</span>
+            <mat-chip [class]="getStatusClass(permission.status)">
+              {{ getStatusText(permission.status) }}
+            </mat-chip>
+          </div>
+        </mat-panel-title>
+        <mat-panel-description>
+          {{ formatDate(permission.createdAt) }}
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      
+      <div class="permission-content">
+        <div class="permission-details">
+          <h3>Цели использования:</h3>
+          <div class="purpose-chips">
+            @for (purpose of permission.purposes; track purpose || $index) {
+              <mat-chip>
+                {{ getPurposeText(purpose) }}
+              </mat-chip>
+            }
+          </div>
+          
+          @if (permission.expiresAt) {
+            <ng-container>
+              <h3>Срок действия:</h3>
+              <p>до {{ formatDate(permission.expiresAt) }}</p>
+            </ng-container>
+          }
+          
+          @if (permission.comments) {
+            <ng-container>
+              <h3>Комментарии:</h3>
+              <p class="comments">{{ permission.comments }}</p>
+            </ng-container>
+          }
+          
+          @if (permission.status === 'approved' && permission.signature) {
+            <ng-container>
+              <h3>Подписано:</h3>
+              <p>{{ formatDate(permission.signature.signedAt) }}</p>
+              
+              @if (permission.signature.signatureImage) {
+                <div class="signature-display">
+                  <img [src]="permission.signature.signatureImage" alt="Ваша подпись" />
+                </div>
+              }
+            </ng-container>
+          }
+        </div>
+        
+        <mat-divider />
+        
+        <div class="permission-actions">
+          @if (permission.status === 'pending') {
+            <ng-container>
+              <button mat-raised-button color="primary" (click)="approvePermission(permission)">
+                Подписать и одобрить
+              </button>
+              
+              <button mat-stroked-button color="warn" (click)="declinePermission(permission)">
+                Отклонить
+              </button>
+            </ng-container>
+          }
+          
+          @if (permission.status === 'approved') {
+            <ng-container>
+              <button mat-stroked-button color="warn" (click)="revokePermission(permission)">
+                Отозвать разрешение
+              </button>
+            </ng-container>
+          }
+        </div>
+      </div>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  }
+  
+  <div class="info-box">
+    <mat-icon color="primary">info</mat-icon>
+    <div class="info-content">
+      <h3>Важно знать:</h3>
+      <p>
+        Вы всегда можете отозвать данное разрешение в любой момент. Однако, это не повлияет на материалы, 
+        опубликованные до момента отзыва.
+      </p>
+    </div>
+  </div>
+</div>

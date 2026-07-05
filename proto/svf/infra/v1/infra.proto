@@ -1,0 +1,386 @@
+syntax = "proto3";
+package svf.infra.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "ru.svoefoto.proto.infra.v1";
+option java_multiple_files = true;
+
+// ── Infrastructure Services ──
+
+service InfraService {
+  rpc ReportMetrics(ReportMetricsRequest) returns (ReportMetricsResponse);
+  rpc SendAlert(SendAlertRequest) returns (SendAlertResponse);
+}
+
+service PosService {
+  rpc ProcessPayment(ProcessPaymentRequest) returns (ProcessPaymentResponse);
+  rpc ProcessRefund(ProcessRefundRequest) returns (ProcessRefundResponse);
+  rpc PrintReceipt(PrintReceiptRequest) returns (PrintReceiptResponse);
+}
+
+// ── Agent Types ──
+
+enum AgentType {
+  AGENT_TYPE_UNSPECIFIED = 0;
+  AGENT_TYPE_PRINT = 1;
+  AGENT_TYPE_POS = 2;
+  AGENT_TYPE_VISION = 3;
+  AGENT_TYPE_MONITOR = 4;
+}
+
+enum UpdateState {
+  UPDATE_STATE_UNSPECIFIED = 0;
+  UPDATE_STATE_DOWNLOADING = 1;
+  UPDATE_STATE_VERIFYING = 2;
+  UPDATE_STATE_INSTALLING = 3;
+  UPDATE_STATE_RESTARTING = 4;
+  UPDATE_STATE_COMPLETED = 5;
+  UPDATE_STATE_FAILED = 6;
+  UPDATE_STATE_ROLLED_BACK = 7;
+}
+
+enum PosTransactionType {
+  POS_TRANSACTION_TYPE_UNSPECIFIED = 0;
+  POS_TRANSACTION_TYPE_CARD_PAYMENT = 1;
+  POS_TRANSACTION_TYPE_CARD_REFUND = 2;
+  POS_TRANSACTION_TYPE_SBP_PAYMENT = 3;
+  POS_TRANSACTION_TYPE_SBP_REFUND = 4;
+  POS_TRANSACTION_TYPE_FISCAL_SALE = 5;
+  POS_TRANSACTION_TYPE_FISCAL_REFUND = 6;
+}
+
+enum PaymentMethod {
+  PAYMENT_METHOD_UNSPECIFIED = 0;
+  PAYMENT_METHOD_CARD = 1;
+  PAYMENT_METHOD_SBP = 2;
+  PAYMENT_METHOD_CASH = 3;
+}
+
+enum ReceiptType {
+  RECEIPT_TYPE_UNSPECIFIED = 0;
+  RECEIPT_TYPE_SALE = 1;
+  RECEIPT_TYPE_REFUND = 2;
+}
+
+enum Severity {
+  SEVERITY_UNSPECIFIED = 0;
+  SEVERITY_INFO = 1;
+  SEVERITY_WARNING = 2;
+  SEVERITY_ERROR = 3;
+  SEVERITY_CRITICAL = 4;
+}
+
+enum AlertType {
+  ALERT_TYPE_UNSPECIFIED = 0;
+  ALERT_TYPE_HARDWARE = 1;
+  ALERT_TYPE_SOFTWARE = 2;
+  ALERT_TYPE_NETWORK = 3;
+  ALERT_TYPE_SECURITY = 4;
+}
+
+enum VatRate {
+  VAT_RATE_UNSPECIFIED = 0;
+  VAT_RATE_VAT20 = 1;
+  VAT_RATE_VAT10 = 2;
+  VAT_RATE_VAT0 = 3;
+  VAT_RATE_NONE = 4;
+}
+
+enum FiscalPaymentMethod {
+  FISCAL_PAYMENT_METHOD_UNSPECIFIED = 0;
+  FISCAL_PAYMENT_METHOD_FULL_PAYMENT = 1;
+  FISCAL_PAYMENT_METHOD_PREPAYMENT = 2;
+  FISCAL_PAYMENT_METHOD_ADVANCE = 3;
+}
+
+enum FiscalPaymentObject {
+  FISCAL_PAYMENT_OBJECT_UNSPECIFIED = 0;
+  FISCAL_PAYMENT_OBJECT_COMMODITY = 1;
+  FISCAL_PAYMENT_OBJECT_SERVICE = 2;
+  FISCAL_PAYMENT_OBJECT_PAYMENT = 3;
+}
+
+enum ShiftAction {
+  SHIFT_ACTION_UNSPECIFIED = 0;
+  SHIFT_ACTION_OPEN = 1;
+  SHIFT_ACTION_CLOSE = 2;
+}
+
+enum ShiftStatus {
+  SHIFT_STATUS_UNSPECIFIED = 0;
+  SHIFT_STATUS_OPEN = 1;
+  SHIFT_STATUS_CLOSED = 2;
+  SHIFT_STATUS_EXPIRED = 3;
+}
+
+enum TaxationType {
+  TAXATION_TYPE_UNSPECIFIED = 0;
+  TAXATION_TYPE_OSN = 1;
+  TAXATION_TYPE_USN_INCOME = 2;
+  TAXATION_TYPE_USN_INCOME_OUTCOME = 3;
+  TAXATION_TYPE_PATENT = 4;
+}
+
+// ── Unified Heartbeat (all agents) ──
+
+message AgentHeartbeat {
+  string agent_id = 1;
+  AgentType agent_type = 2;
+  string version = 3;
+  string os_info = 4;
+  string os_arch = 5;
+  string hostname = 6;
+  int64 uptime_seconds = 7;
+  int32 config_version = 8;
+  google.protobuf.Timestamp timestamp = 9;
+  map<string, string> metadata = 10;
+}
+
+// ── Auto-Update ──
+
+message UpdateCommand {
+  string command_id = 1;
+  string target_version = 2;
+  string artifact_url = 3;
+  string artifact_hash_sha256 = 4;
+  int64 artifact_size_bytes = 5;
+  bool force = 6;
+  string rollback_url = 7;
+}
+
+message UpdateStatus {
+  string command_id = 1;
+  UpdateState state = 2;
+  int32 progress_percent = 3;
+  string error_message = 4;
+  string new_version = 5;
+  google.protobuf.Timestamp timestamp = 6;
+}
+
+// ── Remote Config ──
+
+message ConfigUpdate {
+  int32 config_version = 1;
+  bytes config_toml = 2;
+  bool restart_required = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+message ConfigAck {
+  string agent_id = 1;
+  int32 applied_version = 2;
+  bool success = 3;
+  string error_message = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+// ── System Metrics (Device Monitor) ──
+
+message SystemMetrics {
+  string agent_id = 1;
+  float cpu_percent = 2;
+  int32 memory_used_mb = 3;
+  int32 memory_total_mb = 4;
+  float disk_used_gb = 5;
+  float disk_total_gb = 6;
+  int64 network_rx_bytes_sec = 7;
+  int64 network_tx_bytes_sec = 8;
+  repeated PeripheralStatus peripherals = 9;
+  map<string, string> agent_statuses = 10;
+  google.protobuf.Timestamp timestamp = 11;
+}
+
+message PeripheralStatus {
+  string device_type = 1;
+  string device_name = 2;
+  string status = 3;
+  string details = 4;
+}
+
+// ── InfraService RPC wrappers ──
+
+message ReportMetricsRequest {
+  SystemMetrics metrics = 1;
+}
+
+message ReportMetricsResponse {}
+
+message SendAlertRequest {
+  AgentAlert alert = 1;
+}
+
+message SendAlertResponse {}
+
+// ── PosService RPC wrappers ──
+
+message ProcessPaymentRequest {
+  PosPayCommand command = 1;
+}
+
+message ProcessPaymentResponse {
+  PosTransactionResult result = 1;
+}
+
+message ProcessRefundRequest {
+  PosRefundCommand command = 1;
+}
+
+message ProcessRefundResponse {
+  PosTransactionResult result = 1;
+}
+
+message PrintReceiptRequest {
+  PosFiscalCommand command = 1;
+}
+
+message PrintReceiptResponse {
+  PosTransactionResult result = 1;
+}
+
+// ── POS ──
+
+// Server -> Agent: card payment
+message PosPayCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string order_id = 3;
+  PaymentMethod payment_method = 4;
+  string description = 5;
+}
+
+// Server -> Agent: card refund
+message PosRefundCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string original_transaction_id = 3;
+  string original_rrn = 4;
+}
+
+// Server -> Agent: SBP QR generation
+message PosSbpGenerateCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string order_id = 3;
+}
+
+// Agent -> Server: SBP QR result
+message PosSbpQrResult {
+  string transaction_id = 1;
+  bool success = 2;
+  string error_message = 3;
+  string qr_data = 4;        // QR code content
+  bytes qr_image = 5;         // PNG image
+  google.protobuf.Timestamp timestamp = 6;
+}
+
+// Server -> Agent: check SBP payment status
+message PosSbpStatusCommand {
+  string transaction_id = 1;
+  string order_id = 2;
+}
+
+// Server -> Agent: fiscal receipt (ATOL)
+message PosFiscalCommand {
+  string receipt_id = 1;
+  ReceiptType receipt_type = 2;
+  repeated FiscalItem items = 3;
+  int64 total_kopecks = 4;
+  PaymentMethod payment_method = 5;
+  string cashier = 6;
+  string customer_email = 7;
+  TaxationType taxation_type = 8;
+}
+
+message FiscalItem {
+  string name = 1;
+  int64 price_kopecks = 2;
+  int32 quantity = 3;
+  VatRate vat_rate = 4;
+  FiscalPaymentMethod payment_method = 5;
+  FiscalPaymentObject payment_object = 6;
+}
+
+// Server -> Agent: shift management
+message PosShiftCommand {
+  string command_id = 1;
+  ShiftAction action = 2;
+  string cashier = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+// Agent -> Server: transaction result (universal)
+message PosTransactionResult {
+  string transaction_id = 1;
+  PosTransactionType transaction_type = 2;
+  bool success = 3;
+  string error_message = 4;
+  string approval_code = 5;
+  string rrn = 6;
+  string card_mask = 7;
+  // Fiscal data (populated after PosFiscalCommand)
+  string fiscal_number = 8;
+  string fiscal_sign = 9;
+  string fiscal_receipt_url = 10;
+  // SBP data (populated after SBP payment confirmed)
+  bool sbp_paid = 11;
+  bytes receipt_data = 12;
+  google.protobuf.Timestamp timestamp = 13;
+}
+
+// Agent -> Server: shift result
+message PosShiftResult {
+  string command_id = 1;
+  bool success = 2;
+  string error_message = 3;
+  ShiftAction action = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+// Agent -> Server: POS telemetry (periodic health)
+message PosTelemetry {
+  string agent_id = 1;
+  bool terminal_online = 2;       // INPAS SmartSale reachable
+  bool fiscal_online = 3;         // ATOL WebServer reachable
+  string terminal_model = 4;
+  string fiscal_model = 5;
+  ShiftStatus shift_status = 6;
+  google.protobuf.Timestamp timestamp = 7;
+}
+
+// ── Vision ──
+
+message MotionEvent {
+  string camera_id = 1;
+  float confidence = 2;
+  bytes thumbnail = 3;
+  string zone = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+message CameraStatus {
+  string camera_id = 1;
+  bool is_online = 2;
+  string resolution = 3;
+  float fps = 4;
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+// ── Agent Alert (agent -> server) ──
+
+message AgentAlert {
+  string agent_id = 1;
+  AlertType alert_type = 2;
+  Severity severity = 3;
+  string title = 4;
+  string details_json = 5;
+  google.protobuf.Timestamp timestamp = 6;
+}
+
+// ── Restart Command ──
+
+message RestartCommand {
+  string reason = 1;
+  int32 delay_seconds = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}

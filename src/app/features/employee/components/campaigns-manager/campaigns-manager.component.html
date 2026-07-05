@@ -1,0 +1,285 @@
+<div class="campaigns-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">campaign</mat-icon>
+      <h1>Кампании</h1>
+    </div>
+    <button mat-fab extended color="primary" (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon>
+      Создать кампанию
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-row">
+    <mat-form-field appearance="outline" class="filter-field search-field">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput placeholder="Поиск по названию..."
+             [value]="searchQuery()"
+             (input)="searchQuery.set($any($event.target).value)" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Статус</mat-label>
+      <mat-select [value]="filterStatus()" (selectionChange)="filterStatus.set($event.value)">
+        @for (opt of statusOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Тип</mat-label>
+      <mat-select [value]="filterType()" (selectionChange)="filterType.set($event.value)">
+        @for (opt of typeOptions; track opt.value) {
+          <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="campaigns-layout">
+    <!-- Campaigns List -->
+    <div class="campaigns-list">
+      @if (loading()) {
+        <div class="loading-center">
+          <mat-spinner diameter="36" />
+        </div>
+      } @else if (filteredCampaigns().length === 0) {
+        <div class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <p>Кампаний не найдено</p>
+        </div>
+      } @else {
+        @for (c of filteredCampaigns(); track c.id) {
+          <mat-card class="campaign-card"
+                    [class.selected]="selectedCampaign()?.id === c.id"
+                    (click)="selectCampaign(c)">
+            <div class="card-top">
+              <div class="card-type">
+                <mat-icon class="type-icon">{{ typeIcon(c.type) }}</mat-icon>
+                <span class="type-label">{{ typeLabel(c.type) }}</span>
+              </div>
+              <span class="status-badge" [class]="statusClass(c.status)">
+                {{ statusLabel(c.status) }}
+              </span>
+            </div>
+            <div class="card-name">{{ c.name }}</div>
+            <div class="card-meta">
+              @if (c.start_date) {
+                <span class="meta-item">
+                  <mat-icon>calendar_today</mat-icon>
+                  {{ c.start_date | date:'dd.MM.yy' }}
+                  @if (c.end_date) {
+                    — {{ c.end_date | date:'dd.MM.yy' }}
+                  }
+                </span>
+              }
+              @if (c.budget) {
+                <span class="meta-item">
+                  <mat-icon>account_balance_wallet</mat-icon>
+                  {{ formatBudget(c.budget) }}
+                </span>
+              }
+            </div>
+            @if (c.promo_codes.length > 0) {
+              <div class="card-promos">
+                @for (pc of c.promo_codes; track pc.id) {
+                  <span class="promo-chip" [class.inactive]="!pc.is_active">
+                    {{ pc.code }}
+                    <span class="promo-uses">{{ pc.usage_count }}@if (pc.max_uses !== null) {/{{ pc.max_uses }}}</span>
+                  </span>
+                }
+              </div>
+            }
+          </mat-card>
+        }
+      }
+    </div>
+
+    <!-- Detail Panel -->
+    @if (selectedCampaign(); as detail) {
+      <div class="detail-panel glass-card">
+        @if (detailLoading()) {
+          <div class="loading-center">
+            <mat-spinner diameter="32" />
+          </div>
+        } @else {
+          <div class="detail-header">
+            <div>
+              <h2 class="detail-name">{{ detail.name }}</h2>
+              <div class="detail-type">
+                <mat-icon>{{ typeIcon(detail.type) }}</mat-icon>
+                {{ typeLabel(detail.type) }}
+                <span class="status-badge" [class]="statusClass(detail.status)">
+                  {{ statusLabel(detail.status) }}
+                </span>
+              </div>
+            </div>
+            <button mat-icon-button (click)="closeDetail()" matTooltip="Закрыть">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+
+          @if (detail.description) {
+            <p class="detail-description">{{ detail.description }}</p>
+          }
+
+          <!-- Info Grid -->
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Даты</span>
+              <span class="info-value">
+                @if (detail.start_date) {
+                  {{ detail.start_date | date:'dd.MM.yyyy' }}
+                  @if (detail.end_date) {
+                    — {{ detail.end_date | date:'dd.MM.yyyy' }}
+                  }
+                } @else {
+                  Не указаны
+                }
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Бюджет</span>
+              <span class="info-value">{{ formatBudget(detail.budget) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Потрачено</span>
+              <span class="info-value">{{ formatBudget(detail.spent) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Создал</span>
+              <span class="info-value">{{ detail.created_by_name || '—' }}</span>
+            </div>
+            @if (detail.utm_source) {
+              <div class="info-item">
+                <span class="info-label">UTM Source</span>
+                <span class="info-value mono">{{ detail.utm_source }}</span>
+              </div>
+            }
+            @if (detail.utm_campaign) {
+              <div class="info-item">
+                <span class="info-label">UTM Campaign</span>
+                <span class="info-value mono">{{ detail.utm_campaign }}</span>
+              </div>
+            }
+          </div>
+
+          <mat-divider />
+
+          <!-- Promo Codes -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <mat-icon>loyalty</mat-icon>
+              Промокоды
+            </h3>
+            @if (detail.promo_codes.length === 0) {
+              <p class="section-empty">Нет привязанных промокодов</p>
+            } @else {
+              <div class="promo-list">
+                @for (pc of detail.promo_codes; track pc.id) {
+                  <div class="promo-row">
+                    <span class="promo-code" [class.inactive]="!pc.is_active">{{ pc.code }}</span>
+                    <span class="promo-discount">
+                      @if (pc.discount_type === 'percent') {
+                        -{{ pc.discount_value }}%
+                      } @else {
+                        -{{ pc.discount_value }}₽
+                      }
+                    </span>
+                    <span class="promo-usage">
+                      {{ pc.usage_count }}@if (pc.max_uses !== null) { / {{ pc.max_uses }}} исп.
+                    </span>
+                    <span class="promo-status-dot" [class.active]="pc.is_active"></span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+
+          <mat-divider />
+
+          <!-- Stats -->
+          <div class="detail-section">
+            <h3 class="section-title">
+              <mat-icon>bar_chart</mat-icon>
+              Статистика
+            </h3>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">{{ detail.stats.total_redemptions }}</div>
+                <div class="stat-label">Использований</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ formatBudget(detail.stats.total_discount_amount) }}</div>
+                <div class="stat-label">Сумма скидок</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ detail.stats.total_orders }}</div>
+                <div class="stat-label">Заказов</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ formatBudget(detail.stats.total_revenue) }}</div>
+                <div class="stat-label">Выручка</div>
+              </div>
+              <div class="stat-card roi" [class.positive]="(detail.stats.roi ?? 0) >= 0" [class.negative]="(detail.stats.roi ?? 0) < 0">
+                <div class="stat-value">{{ formatRoi(detail.stats.roi) }}</div>
+                <div class="stat-label">ROI</div>
+              </div>
+            </div>
+          </div>
+
+          <mat-divider />
+
+          <!-- Actions -->
+          <div class="detail-actions">
+            @if (detail.status === 'draft') {
+              <button mat-flat-button color="primary"
+                      [disabled]="statusUpdating()"
+                      (click)="updateStatus(detail.id, 'active')">
+                <mat-icon>play_arrow</mat-icon>
+                Запустить
+              </button>
+              <button mat-button color="warn"
+                      [disabled]="statusUpdating()"
+                      (click)="updateStatus(detail.id, 'cancelled')">
+                <mat-icon>cancel</mat-icon>
+                Отменить
+              </button>
+            }
+            @if (detail.status === 'active') {
+              <button mat-flat-button
+                      [disabled]="statusUpdating()"
+                      (click)="updateStatus(detail.id, 'paused')">
+                <mat-icon>pause</mat-icon>
+                Приостановить
+              </button>
+              <button mat-flat-button color="primary"
+                      [disabled]="statusUpdating()"
+                      (click)="updateStatus(detail.id, 'completed')">
+                <mat-icon>check_circle</mat-icon>
+                Завершить
+              </button>
+            }
+            @if (detail.status === 'paused') {
+              <button mat-flat-button color="primary"
+                      [disabled]="statusUpdating()"
+                      (click)="updateStatus(detail.id, 'active')">
+                <mat-icon>play_arrow</mat-icon>
+                Возобновить
+              </button>
+              <button mat-flat-button
+                      [disabled]="statusUpdating()"
+                      (click)="updateStatus(detail.id, 'completed')">
+                <mat-icon>check_circle</mat-icon>
+                Завершить
+              </button>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

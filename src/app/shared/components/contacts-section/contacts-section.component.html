@@ -1,0 +1,162 @@
+<section class="contacts-section" [class.contacts-section--document]="variant() === 'document'">
+  <div class="section-container">
+    <h2 class="section-title">{{ contacts().title }}</h2>
+    <p class="section-subtitle">{{ contacts().prompt }}</p>
+
+    <div class="contacts-grid">
+      <!-- Contact Methods -->
+      <div class="contacts-column">
+          <div class="contact-cards">
+            @for (link of dynamicLinks(); track link.href || link.label || $index) {
+              <a [href]="link.href"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 class="contact-card-link"
+                 [class.contact-card-link--notice]="link.notice"
+                 [attr.aria-label]="link.notice ? link.label + ': ' + link.notice : null"
+                 (click)="onContactClick(link, $event)">
+                <mat-card appearance="outlined">
+                  <mat-card-content>
+                    <div class="contact-icon" [class]="'icon-' + link.icon">
+                      @switch (link.icon) {
+                        @case ('max') {
+                          <mat-icon class="messenger-icon" svgIcon="channel-max" />
+                        }
+                        @case ('vk') {
+                          <mat-icon class="messenger-icon" svgIcon="channel-vk" />
+                        }
+                        @case ('whatsapp') {
+                          <mat-icon class="messenger-icon" svgIcon="channel-whatsapp" />
+                        }
+                        @case ('telegram') {
+                          <mat-icon class="messenger-icon" svgIcon="channel-telegram" />
+                        }
+                        @case ('call') {
+                          <mat-icon>call</mat-icon>
+                        }
+                        @default {
+                          <mat-icon>{{ link.icon }}</mat-icon>
+                        }
+                      }
+                    </div>
+                    <span class="contact-label">{{ link.label }}</span>
+                    @if (link.notice) {
+                      <span class="contact-notice">{{ link.notice }}</span>
+                    }
+                  </mat-card-content>
+                </mat-card>
+              </a>
+            }
+          </div>
+
+          @if (studioAddresses().length > 0) {
+            <!-- Quick Info -->
+            <mat-card appearance="outlined" class="quick-info-card">
+              <mat-card-content>
+                @if (variant() === 'document') {
+                  <div class="quick-info-card__head">
+                    <span>Перед визитом</span>
+                    <strong>Можно прийти без записи</strong>
+                  </div>
+                }
+                <div class="info-item">
+                  <mat-icon>location_on</mat-icon>
+                  <span>Центр города, удобная парковка</span>
+                </div>
+                <div class="info-item">
+                  <mat-icon>camera_alt</mat-icon>
+                  <span>Профессиональное оборудование</span>
+                </div>
+                <div class="info-item">
+                  <mat-icon>schedule</mat-icon>
+                  <span>Работаем без выходных</span>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+        </div>
+
+      @if (studioAddresses().length > 0) {
+      <!-- Address Cards -->
+      <div class="address-column">
+        @for (addr of studioAddresses(); track addr.id) {
+          <mat-card appearance="outlined" class="address-card">
+            <mat-card-content>
+              <div class="address-header">
+                <mat-icon class="address-icon">store</mat-icon>
+                <div class="address-title-block">
+                  <span class="address-name">{{ addr.name }}</span>
+                  <span class="address-text">{{ addr.address }}</span>
+                </div>
+              </div>
+
+              <div class="address-details">
+                <div class="address-detail">
+                  <mat-icon>schedule</mat-icon>
+                  <span>{{ addr.workHours }}</span>
+                </div>
+                <div class="address-detail">
+                  <mat-icon>{{ studioPhoneAvailable ? 'phone' : 'phone_disabled' }}</mat-icon>
+                  @if (studioPhoneAvailable) {
+                    <a [href]="studioPhoneHref" class="phone-link">{{ studioPhone }}</a>
+                  } @else {
+                    <span class="phone-link phone-link--disabled">{{ studioPhoneUnavailableLabel }}</span>
+                  }
+                </div>
+              </div>
+
+              <span class="walk-in-badge">
+                <mat-icon>directions_walk</mat-icon>
+                Без записи ежедневно
+              </span>
+            </mat-card-content>
+
+            @if (addr.mapLinks) {
+              <mat-card-actions>
+                @if (addr.mapLinks['2gis']) {
+                  <a mat-stroked-button
+                     [href]="addr.mapLinks['2gis']"
+                     target="_blank"
+                     rel="noopener noreferrer">
+                    <mat-icon>place</mat-icon>
+                    2ГИС
+                  </a>
+                }
+                @if (addr.mapLinks.yandex) {
+                  <a mat-stroked-button
+                     [href]="addr.mapLinks.yandex"
+                     target="_blank"
+                     rel="noopener noreferrer">
+                    <mat-icon>near_me</mat-icon>
+                    Яндекс Карты
+                  </a>
+                }
+              </mat-card-actions>
+            }
+          </mat-card>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- Trust Indicators -->
+    <div class="trust-section">
+      <div class="trust-item">
+        <mat-icon>person</mat-icon>
+        <span>Персональный фотограф</span>
+      </div>
+      <div class="trust-item">
+        <mat-icon>security</mat-icon>
+        <span>Конфиденциальность гарантирована</span>
+      </div>
+      <div class="trust-item">
+        <mat-icon>replay</mat-icon>
+        <span>Переснимем при необходимости</span>
+      </div>
+      <div class="trust-item">
+        <mat-icon>photo_filter</mat-icon>
+        <span>Профессиональная ретушь</span>
+      </div>
+    </div>
+  </div>
+</section>

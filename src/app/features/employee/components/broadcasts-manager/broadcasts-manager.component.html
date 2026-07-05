@@ -1,0 +1,357 @@
+<div class="broadcasts-page">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <mat-icon class="header-icon">send</mat-icon>
+      <h1>Рассылки</h1>
+    </div>
+    @if (!creating()) {
+      <button mat-flat-button color="primary" class="create-btn" (click)="startCreate()">
+        <mat-icon>add</mat-icon>
+        Создать рассылку
+      </button>
+    }
+  </div>
+
+  @if (creating()) {
+    <!-- Композер по центру: редактор + предпросмотр Telegram -->
+    <div class="composer-view">
+      <app-create-broadcast-dialog [editId]="editingId()"
+                                   (created)="onCreated()" (cancelled)="onCancelCreate()" />
+    </div>
+  } @else {
+  <div class="broadcasts-layout">
+    <!-- Левый рейл каналов: фильтр многоканальной связи -->
+    <nav class="channel-rail" aria-label="Каналы рассылок">
+      <div class="rail-title">Каналы</div>
+      @for (ch of channelRail; track ch.id) {
+        <button type="button" class="rail-item"
+                [class.active]="selectedChannel() === ch.id"
+                (click)="selectChannel(ch.id)">
+          @if (ch.short) {
+            <span class="ch-badge" [attr.data-ch]="ch.id">{{ ch.short }}</span>
+          } @else {
+            <mat-icon class="rail-all-icon">apps</mat-icon>
+          }
+          <span class="rail-label">{{ ch.label }}</span>
+          <span class="rail-count">{{ channelCount(ch.id) }}</span>
+        </button>
+      }
+    </nav>
+
+    <!-- Broadcasts List -->
+    <div class="broadcasts-list">
+      @if (loading()) {
+        <div class="loading-center">
+          <mat-spinner diameter="36" />
+        </div>
+      } @else if (filteredBroadcasts().length === 0) {
+        <div class="empty-state">
+          <mat-icon>inbox</mat-icon>
+          <p>
+            {{ selectedChannel() === 'all'
+                ? 'Рассылок пока нет'
+                : 'В канале «' + channelLabel(selectedChannel()) + '» рассылок пока нет' }}
+          </p>
+        </div>
+      } @else {
+        @for (b of filteredBroadcasts(); track b.id) {
+          <mat-card class="broadcast-card"
+                    [class.selected]="selectedId() === b.id"
+                    (click)="selectBroadcast(b)">
+            <div class="card-top">
+              <span class="ch-badge ch-chip" [attr.data-ch]="channelOf(b)"
+                    [matTooltip]="channelLabel(channelOf(b))">
+                {{ channelLabel(channelOf(b)) }}
+              </span>
+              <span class="status-badge" [class]="statusClass(b.status)">
+                {{ statusLabel(b.status) }}
+              </span>
+              @if (b.test_mode) {
+                <span class="test-badge">
+                  <mat-icon>science</mat-icon> ТЕСТ
+                </span>
+              } @else {
+                <span class="live-badge">
+                  <mat-icon>campaign</mat-icon> БОЕВАЯ
+                </span>
+              }
+            </div>
+            <div class="card-name">{{ b.name }}</div>
+            <div class="card-meta">
+              <span class="meta-item">
+                <mat-icon>calendar_today</mat-icon>
+                {{ b.created_at | date:'dd.MM.yy HH:mm' }}
+              </span>
+              @if (b.test_mode) {
+                <span class="meta-item">
+                  <mat-icon>group</mat-icon>
+                  {{ b.allowed_count }} тест-конт.
+                </span>
+              }
+            </div>
+            @if (b.audience_filter; as af) {
+              <div class="audience-badge" matTooltip="Сегмент аудитории">
+                <mat-icon>filter_list</mat-icon>
+                <span>{{ audienceSummary(af) }}</span>
+              </div>
+            }
+            <!-- Воронка-бейджи -->
+            <div class="funnel-badges">
+              <span class="funnel-chip queued" matTooltip="В очереди">
+                <mat-icon>schedule</mat-icon>{{ b.funnel.queued }}
+              </span>
+              <span class="funnel-chip sent" matTooltip="Отправлено">
+                <mat-icon>check</mat-icon>{{ b.funnel.sent }}
+              </span>
+              <span class="funnel-chip failed" matTooltip="Ошибки">
+                <mat-icon>error_outline</mat-icon>{{ b.funnel.failed }}
+              </span>
+              <span class="funnel-chip blocked" matTooltip="Заблокированы / отписаны">
+                <mat-icon>block</mat-icon>{{ b.funnel.blocked + b.funnel.suppressed }}
+              </span>
+            </div>
+          </mat-card>
+        }
+      }
+    </div>
+
+    <!-- Detail Panel -->
+    @if (selected(); as detail) {
+      <div class="detail-panel glass-card">
+        <div class="detail-header">
+          <div>
+            <h2 class="detail-name">{{ detail.name }}</h2>
+            <div class="detail-meta">
+              <span class="status-badge" [class]="statusClass(detail.status)">
+                {{ statusLabel(detail.status) }}
+              </span>
+              @if (detail.test_mode) {
+                <span class="test-badge"><mat-icon>science</mat-icon> ТЕСТ</span>
+              } @else {
+                <span class="live-badge"><mat-icon>campaign</mat-icon> БОЕВАЯ</span>
+              }
+            </div>
+          </div>
+          <button mat-icon-button (click)="closeDetail()" matTooltip="Закрыть">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Actions -->
+        @if (detail.audience_filter && !isDispatchableChannel(detail.audience_filter.channel)) {
+          <div class="channel-soon-note">
+            <mat-icon>schedule</mat-icon>
+            Отправка в канал «{{ channelLabel(detail.audience_filter.channel) }}» скоро.
+            Сейчас доступен счётчик; реальная рассылка в Telegram, МАКС и ВКонтакте.
+          </div>
+        }
+        <div class="detail-actions">
+          @if (detail.status === 'draft') {
+            <button mat-stroked-button (click)="startEdit(detail)" matTooltip="Изменить текст, картинку, кнопки и сегмент">
+              <mat-icon>edit</mat-icon>
+              Редактировать
+            </button>
+          }
+          <button mat-flat-button color="primary"
+                  [disabled]="dispatching() || (detail.audience_filter && !isDispatchableChannel(detail.audience_filter.channel))"
+                  (click)="dispatch(detail)">
+            <mat-icon>play_arrow</mat-icon>
+            Запустить рассылку
+          </button>
+          @if (detail.test_mode) {
+            <button mat-stroked-button color="warn"
+                    [disabled]="dispatching() || (detail.audience_filter && !isDispatchableChannel(detail.audience_filter.channel))"
+                    (click)="goLiveAndDispatch(detail)">
+              <mat-icon>campaign</mat-icon>
+              Запустить на всех
+            </button>
+          }
+        </div>
+
+        <mat-divider />
+
+        @if (detail.audience_filter; as af) {
+          <div class="detail-section">
+            <h3 class="section-title">
+              <mat-icon>group_work</mat-icon>
+              Аудитория
+            </h3>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">{{ channelLabel(af.channel) }}</div>
+                <div class="stat-label">Канал</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ af.serviceSlugs?.length || 'Все' }}</div>
+                <div class="stat-label">{{ af.serviceSlugs?.length ? 'Услуг' : 'Услуги' }}</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ recencyLabel(af.recencyDays) }}</div>
+                <div class="stat-label">Давность</div>
+              </div>
+            </div>
+          </div>
+
+          <mat-divider />
+        }
+
+        <!-- Воронка доставки -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <mat-icon>bar_chart</mat-icon>
+            Воронка доставки
+          </h3>
+          @if (statsLoading()) {
+            <div class="loading-center small">
+              <mat-spinner diameter="24" />
+            </div>
+          } @else if (stats(); as s) {
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-value">{{ s.byStatus['queued'] || 0 }}</div>
+                <div class="stat-label">В очереди</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ s.byStatus['sent'] || 0 }}</div>
+                <div class="stat-label">Отправлено</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ s.byStatus['failed'] || 0 }}</div>
+                <div class="stat-label">Ошибки</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ s.byStatus['blocked'] || 0 }}</div>
+                <div class="stat-label">Заблокир.</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ s.byStatus['skipped'] || 0 }}</div>
+                <div class="stat-label">Пропущено</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ s.byStatus['suppressed'] || 0 }}</div>
+                <div class="stat-label">Отписаны</div>
+              </div>
+              <div class="stat-card accent">
+                <div class="stat-value">{{ formatRate(s.sentRate) }}</div>
+                <div class="stat-label">Доставка</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ formatRate(s.blockRate) }}</div>
+                <div class="stat-label">Блок-рейт</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-value">{{ etaLabel() }}</div>
+                <div class="stat-label">ETA</div>
+              </div>
+              <div class="stat-card interested"
+                   matTooltip="Кликнули по ссылке перехода на сайт"
+                   (click)="setRecipientView('interested')">
+                <div class="stat-value">{{ s.clicks }}</div>
+                <div class="stat-label">👀 Интересовались</div>
+              </div>
+            </div>
+          } @else {
+            <p class="section-empty">Нет данных по воронке</p>
+          }
+        </div>
+
+        <mat-divider />
+
+        <!-- Получатели -->
+        <div class="detail-section">
+          <h3 class="section-title">
+            <mat-icon>group</mat-icon>
+            Получатели
+          </h3>
+
+          <!-- Переключатель: все ↔ только кликнувшие («Интересовались») -->
+          <div class="recipient-views">
+            <button type="button" class="view-toggle"
+                    [class.active]="recipientView() === 'all'"
+                    (click)="setRecipientView('all')">
+              Все
+              @if (stats(); as s) { <span class="view-count">{{ s.total }}</span> }
+            </button>
+            <button type="button" class="view-toggle interested"
+                    [class.active]="recipientView() === 'interested'"
+                    (click)="setRecipientView('interested')">
+              👀 Интересовались
+              <span class="view-count">{{ clicksCount() }}</span>
+            </button>
+          </div>
+
+          @if (recipientsLoading() && recipients().length === 0) {
+            <div class="loading-center small">
+              <mat-spinner diameter="24" />
+            </div>
+          } @else if (recipients().length === 0) {
+            <p class="section-empty">
+              {{ recipientView() === 'interested' ? 'Пока никто не кликнул по ссылке' : 'Получателей пока нет' }}
+            </p>
+          } @else {
+            <table mat-table [dataSource]="recipients()" class="recipients-table">
+              <ng-container matColumnDef="contact">
+                <th mat-header-cell *matHeaderCellDef>Контакт</th>
+                <td mat-cell *matCellDef="let r">{{ r.contact_name || r.contact_id || '—' }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Статус</th>
+                <td mat-cell *matCellDef="let r">
+                  <span class="r-status" [class]="recipientStatusClass(r.status)">
+                    {{ recipientStatusLabel(r.status) }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="error">
+                <th mat-header-cell *matHeaderCellDef>Ошибка</th>
+                <td mat-cell *matCellDef="let r" class="error-cell">
+                  @if (r.error_code) {
+                    <span [matTooltip]="r.error_detail || ''">{{ r.error_code }}</span>
+                  } @else {
+                    —
+                  }
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="clicked">
+                <th mat-header-cell *matHeaderCellDef>Клик</th>
+                <td mat-cell *matCellDef="let r">
+                  @if (r.clicked) {
+                    <mat-icon class="click-yes"
+                              [matTooltip]="(r.clicked_at | date:'dd.MM.yy HH:mm') || ''">
+                      ads_click
+                    </mat-icon>
+                  } @else {
+                    <span class="muted">—</span>
+                  }
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="sent_at">
+                <th mat-header-cell *matHeaderCellDef>Отправлено</th>
+                <td mat-cell *matCellDef="let r">
+                  {{ r.sent_at ? (r.sent_at | date:'dd.MM.yy HH:mm') : '—' }}
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="recipientColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: recipientColumns;"></tr>
+            </table>
+
+            <mat-paginator
+              [length]="recipientsTotal()"
+              [pageSize]="pageSize()"
+              [pageIndex]="pageIndex()"
+              [pageSizeOptions]="[25, 50, 100]"
+              (page)="onPage($event)">
+            </mat-paginator>
+          }
+        </div>
+      </div>
+    }
+  </div>
+  }
+</div>

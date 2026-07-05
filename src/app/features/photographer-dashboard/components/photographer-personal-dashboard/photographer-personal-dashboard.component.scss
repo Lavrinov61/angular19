@@ -1,0 +1,101 @@
+// Photographer Personal Dashboard — layout only, mobile-first + Material tokens
+
+.photographer-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (min-width: 840px) { padding: 24px; gap: 24px; }
+
+  .unauthorized-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+
+    .error-avatar { background: var(--mat-sys-error); color: var(--mat-sys-on-error); }
+  }
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 60px 20px;
+
+    p { color: var(--mat-sys-on-surface-variant); margin: 0; }
+  }
+
+  .dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .welcome-card {
+    .photographer-avatar { background: var(--mat-sys-primary); color: var(--mat-sys-on-primary); }
+
+    .role-chip {
+      margin-left: 8px;
+      background: var(--mat-sys-primary-container);
+      color: var(--mat-sys-on-primary-container);
+      font-size: 12px;
+      height: 24px;
+    }
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+
+    @media (min-width: 840px) { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+
+    .stat-card {
+      mat-card-content {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+
+        .stat-icon {
+          flex-shrink: 0;
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          background: var(--mat-sys-primary-container);
+          color: var(--mat-sys-on-primary-container);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .stat-info {
+          flex: 1;
+          .stat-number { font-size: 24px; font-weight: 600; color: var(--mat-sys-on-surface); line-height: 1.2; }
+          .stat-label { color: var(--mat-sys-on-surface-variant); margin-top: 4px; }
+        }
+      }
+    }
+  }
+
+  .actions-card {
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+
+      @media (min-width: 840px) { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+
+      button {
+        height: 56px;
+        font-weight: 500;
+        border-radius: 12px;
+        mat-icon { margin-right: 8px; }
+      }
+    }
+  }
+}

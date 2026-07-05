@@ -1,0 +1,175 @@
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <img src="/assets/static/logo-black.webp" alt="Своё Фото" width="140" height="44"
+           class="logo-light" />
+      <img src="/assets/static/logo-white.webp" alt="Своё Фото" width="140" height="44"
+           class="logo-dark" />
+    </div>
+
+    <!-- Экран "Проверьте почту" -->
+    @if (registeredEmail()) {
+      <div class="verify-email-screen">
+        <div class="verify-icon">✉️</div>
+        <h2 class="auth-title">Проверьте почту</h2>
+        <p class="verify-text">
+          Мы отправили ссылку для подтверждения на<br>
+          <strong>{{ registeredEmail() }}</strong>
+        </p>
+        <p class="verify-hint">Перейдите по ссылке в письме, чтобы войти в аккаунт.</p>
+
+        @if (resendDone()) {
+          <p class="resend-done">Письмо отправлено повторно</p>
+        } @else {
+          <button mat-stroked-button class="resend-btn" (click)="onResendVerification()"
+                  [disabled]="resendLoading()">
+            @if (resendLoading()) {
+              <mat-spinner diameter="16" />
+            } @else {
+              Отправить письмо повторно
+            }
+          </button>
+        }
+
+        <a routerLink="/auth/login" [queryParams]="returnUrl !== '/' ? {returnUrl} : {}" class="auth-link to-login">Войти в аккаунт</a>
+      </div>
+    } @else {
+
+    <h1 class="auth-title">Создать аккаунт</h1>
+    @if (returnUrl.includes('/partners')) {
+      <p class="auth-subtitle">Зарегистрируйтесь, чтобы стать партнёром</p>
+    } @else {
+      <p class="auth-subtitle">Зарегистрируйтесь для доступа ко всем возможностям</p>
+    }
+
+    <!-- Error -->
+    @if (error()) {
+      <div class="auth-error">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ error() }}</span>
+      </div>
+    }
+
+    <!-- Form -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <mat-form-field appearance="outline">
+        <mat-label>Имя</mat-label>
+        <input matInput formControlName="displayName" type="text"
+               name="name" autocomplete="name" placeholder="Ваше имя (необязательно)">
+        <mat-icon matPrefix>person</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email"
+               name="email" autocomplete="email" placeholder="example@mail.com">
+        <mat-icon matPrefix>mail</mat-icon>
+        @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
+          <mat-error>Введите email</mat-error>
+        }
+        @if (registerForm.get('email')?.hasError('email')) {
+          <mat-error>Некорректный email</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Пароль</mat-label>
+        <input matInput formControlName="password"
+               [type]="hidePassword() ? 'password' : 'text'"
+               name="new-password" autocomplete="new-password" placeholder="Минимум 8 символов">
+        <mat-icon matPrefix>lock</mat-icon>
+        <button mat-icon-button matSuffix type="button" tabindex="-1"
+                (click)="hidePassword.set(!hidePassword())">
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
+          <mat-error>Введите пароль</mat-error>
+        }
+        @if (registerForm.get('password')?.hasError('minlength')) {
+          <mat-error>Минимум 8 символов</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Password strength -->
+      @if (registerForm.get('password')?.value) {
+        <div class="password-strength">
+          <div class="strength-bar" [class.active-weak]="passwordStrength().level >= 1"
+               [class.active-medium]="passwordStrength().level >= 2"
+               [class.active-strong]="passwordStrength().level >= 3"></div>
+          <div class="strength-bar" [class.active-medium]="passwordStrength().level >= 2"
+               [class.active-strong]="passwordStrength().level >= 3"></div>
+          <div class="strength-bar" [class.active-strong]="passwordStrength().level >= 3"></div>
+        </div>
+        <span class="strength-text"
+              [class.weak]="passwordStrength().level === 1"
+              [class.medium]="passwordStrength().level === 2"
+              [class.strong]="passwordStrength().level === 3">
+          {{ passwordStrength().label }}
+        </span>
+      }
+
+      <mat-form-field appearance="outline">
+        <mat-label>Подтвердите пароль</mat-label>
+        <input matInput formControlName="confirmPassword"
+               [type]="hideConfirmPassword() ? 'password' : 'text'"
+               name="confirm-password" autocomplete="new-password" placeholder="Повторите пароль">
+        <mat-icon matPrefix>lock_outline</mat-icon>
+        <button mat-icon-button matSuffix type="button" tabindex="-1"
+                (click)="hideConfirmPassword.set(!hideConfirmPassword())">
+          <mat-icon>{{ hideConfirmPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
+          <mat-error>Подтвердите пароль</mat-error>
+        }
+        @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+          <mat-error>Пароли не совпадают</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-checkbox formControlName="agreeTerms" class="terms-checkbox">
+        Я согласен с
+        <a href="/terms" target="_blank" class="auth-link">условиями</a>
+        и
+        <a href="/privacy" target="_blank" class="auth-link">политикой конфиденциальности</a>
+      </mat-checkbox>
+
+      <button mat-flat-button type="submit" class="auth-submit"
+              [disabled]="registerForm.invalid || isLoading()">
+        @if (isLoading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          Зарегистрироваться
+        }
+      </button>
+    </form>
+
+    <!-- Divider + OAuth, показываются только если хотя бы один провайдер настроен -->
+    @if (availableButtons().length > 0) {
+      <div class="auth-divider">
+        <span>или</span>
+      </div>
+      <div class="oauth-buttons">
+        @for (btn of availableButtons(); track btn.id) {
+          <button [class]="'oauth-btn ' + btn.cssClass"
+                  (click)="onOAuthSignIn(btn.id)"
+                  [disabled]="isLoading()"
+                  type="button">
+            <span class="oauth-icon" [innerHTML]="btn.safeSvg"></span>
+            <span>{{ btn.registerLabel }}</span>
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Login link -->
+    <p class="auth-footer-text">
+      Уже есть аккаунт?
+      <a routerLink="/auth/login" [queryParams]="returnUrl !== '/' ? {returnUrl} : {}" class="auth-link">Войти</a>
+    </p>
+
+    } <!-- end @if (registeredEmail()) @else -->
+
+  </div>
+</div>

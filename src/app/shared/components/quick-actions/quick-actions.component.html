@@ -1,0 +1,47 @@
+<section class="quick-action-section">
+  <div class="section-container">
+    <div class="action-buttons">
+      <!-- Book Session -->
+      <a [href]="photographer().bookingLink" target="_blank" class="action-button primary">
+        <div class="button-content">
+          <div class="button-icon">
+            <mat-icon>event</mat-icon>
+          </div>
+          <div class="button-text">
+            <div class="button-title">Записаться на съемку</div>
+            <div class="button-description">Выбрать удобную дату и время</div>
+          </div>
+        </div>
+        <mat-icon class="arrow">arrow_forward</mat-icon>
+      </a>
+
+      <!-- View Portfolio -->
+      <button class="action-button" (click)="scrollToPortfolio()">
+        <div class="button-content">
+          <div class="button-icon">
+            <mat-icon>photo_library</mat-icon>
+          </div>
+          <div class="button-text">
+            <div class="button-title">Смотреть портфолио</div>
+            <div class="button-description">Оценить стиль и качество работ</div>
+          </div>
+        </div>
+        <mat-icon class="arrow">arrow_forward</mat-icon>
+      </button>
+
+      <!-- Contact -->
+      <a [href]="'tel:' + photographer().contactInfo.phone" class="action-button">
+        <div class="button-content">
+          <div class="button-icon">
+            <mat-icon>call</mat-icon>
+          </div>
+          <div class="button-text">
+            <div class="button-title">Связаться</div>
+            <div class="button-description">Задать вопросы по телефону</div>
+          </div>
+        </div>
+        <mat-icon class="arrow">arrow_forward</mat-icon>
+      </a>
+    </div>
+  </div>
+</section>

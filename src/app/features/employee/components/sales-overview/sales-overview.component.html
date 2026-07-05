@@ -1,0 +1,236 @@
+<div class="sales-page">
+  <header class="sales-header">
+    <div>
+      <h1>{{ pageTitle() }}</h1>
+      <p>{{ pageSubtitle() }}</p>
+    </div>
+
+    <div class="header-actions">
+      <mat-button-toggle-group
+        [value]="period()"
+        (change)="onPeriodChange($event.value)"
+        hideSingleSelectionIndicator>
+        <mat-button-toggle value="today">Сегодня</mat-button-toggle>
+        <mat-button-toggle value="yesterday">Вчера</mat-button-toggle>
+        <mat-button-toggle value="7d">7 дней</mat-button-toggle>
+        <mat-button-toggle value="30d">30 дней</mat-button-toggle>
+      </mat-button-toggle-group>
+
+      @if (!ownSalesOnly()) {
+        <a mat-stroked-button routerLink="/employee/cash-control" matTooltip="Недостачи по сменам и кассирам">
+          <mat-icon>account_balance_wallet</mat-icon>
+          Контроль кассы
+        </a>
+      }
+
+      <button mat-icon-button type="button" matTooltip="Обновить" (click)="reload()" [disabled]="loading()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  @if (error()) {
+    <div class="sales-error">
+      <mat-icon>error</mat-icon>
+      <span>{{ error() }}</span>
+    </div>
+  }
+
+  @if (canUseStudioFilter() && studioOptions().length > 0) {
+    <section class="studio-filter" aria-label="Фильтр по точке">
+      <span class="studio-filter-label">
+        <mat-icon>location_on</mat-icon>
+        Точка продаж
+      </span>
+
+      <mat-button-toggle-group
+        [value]="selectedStudioId()"
+        (change)="onStudioChange($event.value)"
+        hideSingleSelectionIndicator>
+        <mat-button-toggle value="all">Все точки</mat-button-toggle>
+        @for (studio of studioOptions(); track studio.id) {
+          <mat-button-toggle [value]="studio.id">{{ studio.label }}</mat-button-toggle>
+        }
+      </mat-button-toggle-group>
+    </section>
+  }
+
+  <section class="summary-grid" aria-label="Сводка продаж">
+    <div class="summary-tile summary-main">
+      <span class="tile-label">Оплачено</span>
+      <strong>{{ summary().revenue | number:'1.0-0' }} ₽</strong>
+      <span class="tile-note">{{ summaryNote() }}</span>
+    </div>
+    <div class="summary-tile">
+      <span class="tile-label">Касса</span>
+      <strong>{{ summary().posNet | number:'1.0-0' }} ₽</strong>
+      <span class="tile-note">{{ summary().receiptsCount }} чеков</span>
+    </div>
+    <div class="summary-tile">
+      <span class="tile-label">Счета оплачены</span>
+      <strong>{{ summary().issuedPaid | number:'1.0-0' }} ₽</strong>
+      <span class="tile-note">из {{ summary().issuedCount }} счетов/заказов</span>
+    </div>
+    <div class="summary-tile">
+      <span class="tile-label">Выставлено</span>
+      <strong>{{ summary().issuedTotal | number:'1.0-0' }} ₽</strong>
+      <span class="tile-note">ожидает {{ summary().pendingAmount | number:'1.0-0' }} ₽</span>
+    </div>
+  </section>
+
+  <section class="payments-grid" aria-label="Сводка по способам оплаты">
+    @for (item of paymentBreakdown(); track item.key) {
+      <div class="payment-tile">
+        <span class="payment-icon"><mat-icon>{{ item.icon }}</mat-icon></span>
+        <span class="payment-copy">
+          <span class="tile-label">{{ item.label }}</span>
+          <strong>{{ item.amount | number:'1.0-0' }} ₽</strong>
+          <span class="tile-note">{{ item.count }} оплат</span>
+        </span>
+      </div>
+    }
+  </section>
+
+  <section class="filters-bar" aria-label="Фильтры продаж">
+    <mat-button-toggle-group
+      [value]="sourceFilter()"
+      (change)="onSourceChange($event.value)"
+      hideSingleSelectionIndicator>
+      <mat-button-toggle value="all">Все</mat-button-toggle>
+      <mat-button-toggle value="pos">Касса</mat-button-toggle>
+      <mat-button-toggle value="links">Счета/заказы</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-button-toggle-group
+      [value]="statusFilter()"
+      (change)="onStatusChange($event.value)"
+      hideSingleSelectionIndicator>
+      <mat-button-toggle value="all">Все статусы</mat-button-toggle>
+      <mat-button-toggle value="paid">Оплачено</mat-button-toggle>
+      <mat-button-toggle value="pending">Ожидает</mat-button-toggle>
+      <mat-button-toggle value="refund">Возвраты</mat-button-toggle>
+      <mat-button-toggle value="problem">Проблемы</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic" class="search-field">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        type="search"
+        placeholder="Клиент, сотрудник, услуга, номер"
+        [value]="searchQuery()"
+        (input)="onSearchInput($event)" />
+    </mat-form-field>
+  </section>
+
+  @if (loading()) {
+    <div class="sales-loading">
+      <mat-spinner diameter="34" />
+    </div>
+  } @else if (filteredRows().length === 0) {
+    <div class="sales-empty">
+      <mat-icon>receipt_long</mat-icon>
+      <p>Нет продаж под выбранные фильтры</p>
+    </div>
+  } @else {
+    <section class="sales-list" aria-label="Список продаж">
+      <div class="list-head">
+        <span>Документ</span>
+        <span>Сотрудник</span>
+        <span>Клиент</span>
+        <span>Оплата</span>
+        <span>Сумма</span>
+      </div>
+
+      @for (row of filteredRows(); track row.id) {
+        <article class="sale-row" [class.is-expanded]="isExpanded(row.id)">
+          <button
+            class="row-main"
+            type="button"
+            (click)="toggleRow(row.id)"
+            [attr.aria-expanded]="isExpanded(row.id)">
+            <span class="doc-cell">
+              <span class="source-chip" [class.source-pos]="row.source === 'pos'" [class.source-link]="row.source === 'links'">
+                <mat-icon>{{ row.sourceIcon }}</mat-icon>
+                {{ row.sourceLabel }}
+              </span>
+              <strong>{{ row.number }}</strong>
+              <small>{{ row.createdAt | date:'dd.MM HH:mm' }}</small>
+            </span>
+
+            <span class="employee-cell">
+              <span>{{ row.employeeName }}</span>
+              @if (row.studioName) {
+                <small>{{ row.studioName }}</small>
+              }
+            </span>
+
+            <span class="customer-cell">
+              <strong>{{ row.customerName }}</strong>
+              @if (row.customerPhone) {
+                <small>{{ row.customerPhone }}</small>
+              }
+            </span>
+
+            <span class="payment-cell">
+              <span
+                class="status-pill"
+                [class.status-paid]="row.status === 'paid'"
+                [class.status-pending]="row.status === 'pending'"
+                [class.status-refund]="row.status === 'refund'"
+                [class.status-voided]="row.status === 'voided'"
+                [class.status-expired]="row.status === 'expired'"
+                [class.status-cancelled]="row.status === 'cancelled'"
+                [class.status-failed]="row.status === 'failed'">
+                {{ row.statusLabel }}
+              </span>
+              <small>{{ row.paymentText }}</small>
+            </span>
+
+            <span class="amount-cell">
+              <strong
+                [class.amount-paid]="row.status === 'paid'"
+                [class.amount-refund]="row.status === 'refund'"
+                [class.amount-pending]="row.status === 'pending'"
+                [class.amount-muted]="row.status === 'voided' || row.status === 'expired' || row.status === 'cancelled' || row.status === 'failed'">
+                {{ row.amount | number:'1.0-0' }} ₽
+              </strong>
+              <mat-icon>{{ isExpanded(row.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </span>
+          </button>
+
+          @if (isExpanded(row.id)) {
+            <div class="row-details">
+              @if (row.description) {
+                <p class="row-description">{{ row.description }}</p>
+              }
+
+              <div class="lines-table">
+                <div class="lines-head">
+                  <span>Позиция</span>
+                  <span>Кол-во</span>
+                  <span>Цена</span>
+                  <span>Итого</span>
+                </div>
+                @for (line of row.lines; track line.name + line.total + $index) {
+                  <div class="line-row">
+                    <span>{{ line.name }}</span>
+                    <span>{{ line.quantity | number:'1.0-2' }}</span>
+                    <span>
+                      @if (line.unitPrice !== null) {
+                        {{ line.unitPrice | number:'1.0-0' }} ₽
+                      } @else {
+                        —
+                      }
+                    </span>
+                    <span>{{ line.total | number:'1.0-0' }} ₽</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </article>
+      }
+    </section>
+  }
+</div>

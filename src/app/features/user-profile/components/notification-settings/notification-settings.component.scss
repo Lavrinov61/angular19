@@ -1,0 +1,134 @@
+// Notification Settings — M3 Expressive
+
+.notification-settings-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+
+  // Remove duplicate h1 (title is in app bar)
+  h1 { display: none; }
+
+  mat-card {
+    margin-bottom: 16px;
+    border-radius: var(--m3e-corner-lg, 16px);
+    background: var(--ed-surface-container, #1a1a1a);
+    border: 1px solid var(--ed-outline-variant, #2a2a2a);
+    box-shadow: none;
+
+    // Card header typography
+    ::ng-deep .mat-mdc-card-header {
+      padding: 20px 20px 0;
+    }
+
+    ::ng-deep .mat-mdc-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ed-on-surface, #f5f5f5);
+    }
+
+    ::ng-deep .mat-mdc-card-subtitle {
+      font-size: 13px;
+      color: var(--ed-on-surface-variant, #a0a0a0);
+      margin-top: 4px;
+    }
+
+    ::ng-deep .mat-mdc-card-content {
+      padding: 20px;
+    }
+  }
+
+  // M3E amber slide toggles (override Material default blue)
+  ::ng-deep {
+    --mdc-switch-selected-handle-color: var(--ed-accent, #f59e0b);
+    --mdc-switch-selected-track-color: rgba(245, 158, 11, 0.38);
+    --mdc-switch-selected-hover-handle-color: var(--ed-accent-hover, #fbbf24);
+    --mdc-switch-selected-focus-handle-color: var(--ed-accent, #f59e0b);
+    --mdc-switch-selected-pressed-handle-color: var(--ed-accent-dim, #d97706);
+    --mdc-switch-selected-hover-track-color: rgba(245, 158, 11, 0.45);
+    --mdc-switch-selected-focus-track-color: rgba(245, 158, 11, 0.38);
+    --mdc-switch-selected-pressed-track-color: rgba(245, 158, 11, 0.38);
+    --mdc-switch-selected-icon-color: var(--ed-on-accent, #0a0a0a);
+  }
+}
+
+.settings-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 16px;
+
+  mat-slide-toggle {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ed-on-surface, #f5f5f5);
+  }
+
+  .setting-description {
+    color: var(--ed-on-surface-variant, #a0a0a0);
+    font-size: 13px;
+    margin-top: 6px;
+    margin-left: 48px;
+    line-height: 1.4;
+  }
+}
+
+.delivery-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 16px;
+
+  mat-slide-toggle {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ed-on-surface, #f5f5f5);
+  }
+
+  mat-form-field {
+    max-width: 300px;
+  }
+}
+
+.actions-container {
+  padding: 8px 0 24px;
+}
+
+.push-permission-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .permission-status {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+
+    .permission-badge {
+      padding: 4px 12px;
+      border-radius: var(--m3e-corner-full, 9999px);
+      font-size: 12px;
+      font-weight: 600;
+
+      &.granted {
+        background: rgba(34, 197, 94, 0.15);
+        color: #86efac;
+      }
+
+      &.denied {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+      }
+    }
+  }
+
+  .permission-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 600px) {
+  .notification-settings-container { padding: 20px; }
+}

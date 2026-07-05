@@ -1,0 +1,52 @@
+[package]
+name = "svf-guard-agent"
+version = "0.1.0"
+edition = "2024"
+description = "SvoePhoto Guard Agent — Windows Defender monitoring + CDR file scanning via MQTT"
+
+[dependencies]
+# Shared agent core (MQTT, config, offline, heartbeat, updater)
+svf-agent-core = { path = "../svf-agent-core" }
+
+# Async runtime
+tokio = { version = "1", features = ["full", "signal"] }
+
+# MQTT client
+rumqttc = { version = "0.24", features = ["use-rustls"] }
+
+# HTTP client (auto-update downloads)
+reqwest = { version = "0.12", features = ["rustls-tls"], default-features = false }
+
+# Protobuf (decode infra commands from svf-agent-core proto)
+prost = "0.13"
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Types
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+
+# Error handling
+anyhow = "1"
+
+# System info (self-monitoring CPU/memory)
+sysinfo = "0.33"
+
+# Crypto (file hashing for CDR)
+sha2 = "0.10"
+hex = "0.4"
+
+# Filesystem watcher for CDR
+notify = "7"
+
+[target.'cfg(windows)'.dependencies]
+windows-service = "0.7"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

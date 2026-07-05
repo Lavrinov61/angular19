@@ -1,0 +1,78 @@
+:host { display: block; min-height: 100vh; background-color: var(--ed-surface, #0a0a0a); color: var(--ed-on-surface, #f5f5f5); }
+
+.location-detail-container { min-height: 100vh; }
+
+.loading-section { display: flex; justify-content: center; align-items: center; min-height: 50vh; flex-direction: column; gap: 16px;
+  p { color: var(--ed-on-surface-variant, #a0a0a0); }
+}
+
+.error-section { text-align: center; padding: 48px 24px; background-color: var(--ed-error-container, #7f1d1d); color: var(--ed-on-error-container, #fecaca); border-radius: 12px; margin: 24px;
+  mat-icon { font-size: 48px; width: 48px; height: 48px; margin-bottom: 16px; color: var(--ed-error, #ef4444); }
+  h3 { margin: 0 0 8px; font-size: 1.25rem; font-weight: 500; }
+  p { margin: 0 0 24px; }
+}
+
+.hero-section { position: relative; height: 200px; overflow: hidden;
+  .hero-image { width: 100%; height: 100%; object-fit: cover; }
+  .hero-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 16px; background: linear-gradient(transparent, rgba(0,0,0,0.6));
+    h1 { color: white; margin: 0 0 4px; font-size: 1.5rem; font-weight: 500; }
+    .hero-subtitle { color: rgba(255,255,255,0.9); margin: 0; font-size: 0.875rem; }
+  }
+}
+
+.detail-content { padding: 16px; max-width: 1200px; margin: 0 auto; }
+
+.info-cards { display: grid; gap: 16px; margin-bottom: 24px; }
+
+.info-card { padding: 16px; border-radius: 12px; background: var(--ed-surface-container-low, #111); border: 1px solid var(--ed-outline-variant, #2a2a2a);
+  h3 { margin: 0 0 12px; font-size: 1.125rem; font-weight: 500; display: flex; align-items: center; gap: 8px; color: var(--ed-accent, #f59e0b);
+    mat-icon { font-size: 20px; width: 20px; height: 20px; }
+  }
+  p { margin: 4px 0; color: var(--ed-on-surface-variant, #a0a0a0); font-size: 0.875rem; line-height: 1.5; }
+}
+
+.features-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.feature-chip { padding: 4px 12px; border-radius: 16px; font-size: 0.75rem; background: var(--ed-surface-container, #1a1a1a); color: var(--ed-on-surface-variant, #a0a0a0); display: flex; align-items: center; gap: 4px;
+  mat-icon { font-size: 14px; width: 14px; height: 14px; }
+}
+
+.gallery-section { margin-bottom: 24px;
+  h2 { font-size: 1.25rem; font-weight: 500; margin: 0 0 16px; }
+  .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+    img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+  }
+}
+
+.reviews-section { margin-bottom: 24px;
+  h2 { font-size: 1.25rem; font-weight: 500; margin: 0 0 16px; }
+}
+
+.review-card { padding: 16px; border-radius: 12px; background: var(--ed-surface-container-low, #111); border: 1px solid var(--ed-outline-variant, #2a2a2a); margin-bottom: 12px;
+  .review-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .review-author { font-weight: 500; }
+  .review-date { font-size: 0.75rem; color: var(--ed-on-surface-variant, #a0a0a0); }
+  .review-rating { display: flex; align-items: center; gap: 4px; mat-icon { font-size: 16px; width: 16px; height: 16px; color: var(--ed-accent, #f59e0b); } }
+  .review-text { font-size: 0.875rem; color: var(--ed-on-surface-variant, #a0a0a0); line-height: 1.5; }
+}
+
+.booking-card { padding: 16px; border-radius: 12px; background: var(--ed-accent-container, #451a03); border: 1px solid var(--ed-accent, #f59e0b); text-align: center;
+  h3 { margin: 0 0 8px; color: var(--ed-accent, #f59e0b); }
+  p { color: var(--ed-on-accent-container, #fef3c7); margin: 0 0 16px; }
+}
+
+.map-section { margin-bottom: 24px; border-radius: 12px; overflow: hidden; height: 200px; background: var(--ed-surface-container, #1a1a1a); }
+
+@media (min-width: 600px) {
+  .hero-section { height: 300px; }
+  .detail-content { padding: 24px; }
+  .info-cards { grid-template-columns: repeat(2, 1fr); }
+  .gallery-section .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+  .hero-section .hero-overlay h1 { font-size: 2rem; }
+  .map-section { height: 300px; }
+}
+
+@media (min-width: 960px) {
+  .hero-section { height: 400px; }
+  .info-cards { grid-template-columns: repeat(3, 1fr); }
+  .gallery-section .gallery-grid { grid-template-columns: repeat(4, 1fr); }
+}

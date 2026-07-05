@@ -1,0 +1,358 @@
+<div class="referral-page">
+  <section class="referral-hero">
+    <div class="referral-shell referral-hero__grid">
+      <div class="referral-hero__copy">
+        <span class="referral-kicker">Для себя</span>
+        <h1>Платим до 5&nbsp;000&nbsp;₽ за каждого друга</h1>
+        <p>
+          Рекомендуйте Своё Фото: друг активирует личную, образовательную
+          или бизнес-доступ, а мы начислим вам бонусы. 1 бонус = 1 ₽,
+          оплатить ими можно до 15% заказа.
+        </p>
+        <div class="referral-hero__actions">
+          <a class="referral-button referral-button--primary" href="#registration">
+            Рекомендовать
+          </a>
+          <a class="referral-button referral-button--ghost" href="#how">
+            Как это работает
+          </a>
+        </div>
+      </div>
+
+      <div class="referral-hero-art" aria-hidden="true">
+        <span class="referral-hero-art__ticket referral-hero-art__ticket--top">5 000 ₽</span>
+        <span class="referral-hero-art__ticket referral-hero-art__ticket--bottom">15% заказа</span>
+        <span class="referral-hero-art__phone">
+          <span class="referral-hero-art__screen">
+            <mat-icon>link</mat-icon>
+          </span>
+        </span>
+        <span class="referral-hero-art__card referral-hero-art__card--red">СФ</span>
+        <span class="referral-hero-art__card referral-hero-art__card--blue">
+          <mat-icon>ios_share</mat-icon>
+        </span>
+        <span class="referral-hero-art__photo referral-hero-art__photo--one"></span>
+        <span class="referral-hero-art__photo referral-hero-art__photo--two"></span>
+      </div>
+    </div>
+  </section>
+
+  <main class="referral-stage">
+    <section class="referral-shell referral-section referral-section--steps" id="how">
+      <div class="section-head">
+        <h2>Как заработать со Своё Фото</h2>
+        <div class="segmented" role="tablist" aria-label="Статус клиента">
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="audience() === 'new'"
+            [class.active]="audience() === 'new'"
+            (click)="setAudience('new')"
+          >
+            Я не клиент
+          </button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="audience() === 'client'"
+            [class.active]="audience() === 'client'"
+            (click)="setAudience('client')"
+          >
+            Я клиент
+          </button>
+        </div>
+      </div>
+
+      <div class="steps-grid">
+        @for (step of steps; track step.number) {
+          <article class="step-card">
+            <span class="step-card__number">{{ step.number }}</span>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.description }}</p>
+            @if (step.cta && step.link) {
+              <a class="step-card__action" [href]="step.link">
+                {{ step.cta }}
+              </a>
+            }
+          </article>
+        }
+      </div>
+
+      <div class="audience-note">
+        @if (audience() === 'new') {
+          <mat-icon>person_add</mat-icon>
+          <div>
+            <strong>Сначала создайте профиль</strong>
+            <p>Заполните форму ниже, подтвердите телефон и заберите личную ссылку для рекомендаций.</p>
+          </div>
+          <a href="#registration">Оформить профиль</a>
+        } @else {
+          <mat-icon>verified_user</mat-icon>
+          <div>
+            <strong>Ссылка уже ждёт в бонусах</strong>
+            <p>Откройте профиль, скопируйте ссылку и отправьте её тем, кому подойдёт личный, образовательный или бизнес-доступ.</p>
+          </div>
+          <a routerLink="/user-profile/loyalty">Открыть бонусы</a>
+        }
+      </div>
+    </section>
+
+    <section class="referral-shell referral-section referral-section--products">
+      <div class="section-head section-head--plain">
+        <h2>Какая подписка засчитывается</h2>
+        <p>Платим до 5 000 ₽ бонусами, когда приглашённый друг активирует один из аккаунтов подпиской.</p>
+      </div>
+
+      <div class="recommend-grid">
+        @for (card of productCards; track card.title) {
+          <a [class]="'recommend-card recommend-card--' + card.tone" [routerLink]="card.link">
+            <span class="recommend-card__copy">
+              <strong>{{ card.title }}</strong>
+              <small>{{ card.description }}</small>
+            </span>
+            <span class="recommend-card__visual" aria-hidden="true">
+              <mat-icon>{{ card.icon }}</mat-icon>
+            </span>
+            <span class="recommend-card__reward">
+              <span>
+                <small>Вам</small>
+                <strong>{{ card.reward }}</strong>
+              </span>
+              <span>
+                <small>Условие</small>
+                <strong>{{ card.activation }}</strong>
+              </span>
+            </span>
+          </a>
+        }
+      </div>
+    </section>
+
+    <section class="referral-shell referral-section referral-section--profile" id="registration">
+      <div class="profile-panel">
+        <div class="profile-panel__copy">
+          <span class="referral-kicker">Если ещё не в Своё Фото</span>
+          <h2>Заполните форму, и ссылка ваша</h2>
+          <ul>
+            <li>
+              <mat-icon>check</mat-icon>
+              <span>Робот продиктует код в звонке на указанный телефон.</span>
+            </li>
+            <li>
+              <mat-icon>check</mat-icon>
+              <span>После подтверждения откроем профиль и раздел бонусов.</span>
+            </li>
+            <li>
+              <mat-icon>check</mat-icon>
+              <span>Там будет личная ссылка, бонусный счёт и история начислений.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div
+          class="registration-form"
+          aria-label="Регистрация клиента"
+        >
+          <div class="registration-form__head">
+            <span>Профиль клиента</span>
+            <strong>Платим до 5 000 ₽ бонусами</strong>
+          </div>
+
+          @if (registrationStep() === 'details') {
+            <form class="registration-form__body" [formGroup]="registrationForm" (ngSubmit)="submitRegistrationForm()">
+              <label class="registration-field">
+                <span>Имя</span>
+                <input
+                  type="text"
+                  formControlName="displayName"
+                  autocomplete="given-name"
+                  placeholder="Марина"
+                >
+                @if (registrationForm.controls.displayName.touched && registrationForm.controls.displayName.invalid) {
+                  <small>Введите имя, минимум 2 символа.</small>
+                }
+              </label>
+
+              <label class="registration-field">
+                <span>Фамилия</span>
+                <input
+                  type="text"
+                  formControlName="lastName"
+                  autocomplete="family-name"
+                  placeholder="Иванова"
+                >
+                @if (registrationForm.controls.lastName.touched && registrationForm.controls.lastName.invalid) {
+                  <small>Введите фамилию, минимум 2 символа.</small>
+                }
+              </label>
+
+              <label class="registration-field">
+                <span>Дата рождения</span>
+                <input
+                  type="date"
+                  formControlName="dateOfBirth"
+                  autocomplete="bday"
+                  [attr.min]="minBirthDate"
+                  [attr.max]="maxBirthDate"
+                >
+                @if (registrationForm.controls.dateOfBirth.touched && registrationForm.controls.dateOfBirth.invalid) {
+                  <small>Укажите дату рождения.</small>
+                }
+              </label>
+
+              <label class="registration-field">
+                <span>Телефон</span>
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  autocomplete="tel"
+                  inputmode="tel"
+                  placeholder="+7 900 000-00-00"
+                >
+                @if (registrationForm.controls.phone.touched && registrationForm.controls.phone.invalid) {
+                  <small>Нужен российский номер телефона.</small>
+                }
+              </label>
+
+              <label class="registration-consent">
+                <input type="checkbox" formControlName="consent">
+                <span>
+                  Согласен на обработку персональных данных и принимаю
+                  <a routerLink="/privacy">политику конфиденциальности</a>.
+                </span>
+              </label>
+
+              <button
+                class="referral-button referral-button--primary registration-form__submit"
+                type="submit"
+                [disabled]="registrationLoading()"
+              >
+                {{ registrationLoading() ? 'Отправляем код...' : 'Рекомендовать' }}
+              </button>
+            </form>
+          } @else if (registrationStep() === 'code') {
+            <form class="registration-form__body" [formGroup]="codeForm" (ngSubmit)="submitRegistrationCode()">
+              <div class="registration-code">
+                <span>Код подтверждения</span>
+                <p>Введите 4 цифры, которые робот продиктует в звонке на номер +{{ registrationPhone() }}.</p>
+                <input
+                  type="text"
+                  formControlName="code"
+                  inputmode="numeric"
+                  autocomplete="one-time-code"
+                  maxlength="4"
+                  placeholder="0000"
+                  (input)="onRegistrationCodeInput($event)"
+                >
+              </div>
+
+              <button
+                class="referral-button referral-button--primary registration-form__submit"
+                type="submit"
+                [disabled]="registrationLoading()"
+              >
+                {{ registrationLoading() ? 'Проверяем...' : 'Подтвердить и открыть бонусы' }}
+              </button>
+
+              <button
+                class="registration-form__edit"
+                type="button"
+                [disabled]="registrationLoading()"
+                (click)="editRegistrationPhone()"
+              >
+                Изменить телефон
+              </button>
+            </form>
+          } @else {
+            <div class="registration-done">
+              <mat-icon>check_circle</mat-icon>
+              <strong>Готово</strong>
+              <p>Профиль создан, открываем раздел с вашей ссылкой.</p>
+            </div>
+          }
+
+          @if (registrationError()) {
+            <p class="registration-form__error">{{ registrationError() }}</p>
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="referral-shell referral-section referral-section--reviews">
+      <div class="section-head section-head--plain">
+        <h2>Говорят, это просто</h2>
+        <p>Клиенты рекомендуют услуги, которыми уже пользуются сами.</p>
+      </div>
+
+      <div class="review-list">
+        @for (review of reviews; track review.name) {
+          <article class="review-card">
+            <div class="review-card__top">
+              <strong>{{ review.name }}</strong>
+              <span>{{ review.tag }}</span>
+            </div>
+            <div class="review-card__stars" aria-label="5 из 5">♥ ♥ ♥ ♥ ♥</div>
+            <p>{{ review.text }}</p>
+            <small>{{ review.date }}</small>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="referral-shell referral-section referral-section--faq">
+      <div class="section-head">
+        <h2>Что ещё нужно знать?</h2>
+        <div class="segmented" role="tablist" aria-label="Информация о программе">
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="infoTab() === 'faq'"
+            [class.active]="infoTab() === 'faq'"
+            (click)="setInfoTab('faq')"
+          >
+            Вопросы и ответы
+          </button>
+          <button
+            type="button"
+            role="tab"
+            [attr.aria-selected]="infoTab() === 'terms'"
+            [class.active]="infoTab() === 'terms'"
+            (click)="setInfoTab('terms')"
+          >
+            Условия
+          </button>
+        </div>
+      </div>
+
+      @if (infoTab() === 'faq') {
+        <div class="faq-list">
+          @for (item of faqItems; track item.question; let index = $index) {
+            <article class="faq-item">
+              <button
+                type="button"
+                [attr.aria-expanded]="activeFaqIndex() === index"
+                (click)="toggleFaq(index)"
+              >
+                <span>{{ item.question }}</span>
+                <mat-icon>{{ activeFaqIndex() === index ? 'expand_less' : 'expand_more' }}</mat-icon>
+              </button>
+              @if (activeFaqIndex() === index) {
+                <p>{{ item.answer }}</p>
+              }
+            </article>
+          }
+        </div>
+      } @else {
+        <div class="terms-grid">
+          @for (item of termItems; track item.title) {
+            <article class="term-card">
+              <mat-icon>{{ item.icon }}</mat-icon>
+              <h3>{{ item.title }}</h3>
+              <p>{{ item.description }}</p>
+            </article>
+          }
+        </div>
+      }
+    </section>
+  </main>
+</div>

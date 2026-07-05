@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Подписка на фотопечать — Своё Фото</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+@page{size:A4;margin:0}
+
+:root{
+  --bg:#0a0a0a;--bg2:#131210;--bg3:#1c1b18;
+  --am:#f59e0b;--am2:#fbbf24;--amd:#d97706;
+  --t1:#f5f5f5;--t2:#a0a0a0;--t3:#666;
+  --brd:rgba(255,255,255,.07);
+  --glow:rgba(245,158,11,.12);
+  --fd:'Oswald',sans-serif;--fb:'Plus Jakarta Sans',sans-serif;
+}
+
+body{
+  width:210mm;height:297mm;margin:0 auto;
+  background:var(--bg);font-family:var(--fb);color:var(--t1);
+  display:flex;flex-direction:column;position:relative;overflow:hidden;
+  print-color-adjust:exact;-webkit-print-color-adjust:exact;
+}
+
+@media print{body{width:210mm;height:297mm}}
+
+body::before{
+  content:'';position:absolute;inset:0;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+body::after{
+  content:'';position:absolute;top:8%;left:50%;transform:translateX(-50%);
+  width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,var(--glow),transparent 70%);
+  pointer-events:none;z-index:0;
+}
+
+.top-bar{
+  background:var(--am);color:#000;text-align:center;
+  padding:7px 16px;font-family:var(--fd);font-weight:600;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  flex-shrink:0;z-index:1;
+}
+
+.content{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:28px 32px 20px;position:relative;z-index:1;
+}
+
+.heading{
+  font-family:var(--fd);font-weight:800;font-size:42px;
+  text-transform:uppercase;line-height:.96;letter-spacing:.01em;
+  text-align:center;margin-bottom:6px;
+}
+.heading b{color:var(--am);font-weight:800}
+
+.subheading{
+  font-size:15px;color:var(--t2);text-align:center;
+  margin-bottom:20px;line-height:1.3;
+}
+
+/* emotional block */
+.emotional{
+  background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(245,158,11,.02));
+  border:1px solid rgba(245,158,11,.2);border-radius:12px;
+  padding:16px 28px;text-align:center;margin-bottom:24px;
+  width:100%;
+}
+.emotional-big{
+  font-family:var(--fd);font-weight:700;font-size:26px;
+  color:var(--am);text-transform:uppercase;margin-bottom:4px;
+}
+.emotional-small{font-size:14px;color:var(--t2)}
+
+/* cards */
+.cards{display:flex;gap:14px;width:100%;margin-bottom:22px}
+.card{
+  flex:1;background:var(--bg2);border:1px solid var(--brd);
+  border-radius:12px;padding:18px 14px 16px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.card.featured{
+  border-color:var(--amd);
+  box-shadow:0 0 30px rgba(245,158,11,.1);
+}
+.card.featured::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--amd),var(--am2),var(--amd));
+}
+
+.card-name{
+  font-family:var(--fd);font-weight:700;font-size:18px;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;
+}
+.card.featured .card-name{color:var(--am)}
+
+.card-price{
+  font-family:var(--fd);font-weight:800;font-size:36px;
+  color:var(--am);line-height:1;margin-bottom:2px;
+}
+.card-price-unit{
+  font-size:12px;color:var(--t3);margin-bottom:14px;
+}
+
+.card-features{list-style:none;text-align:left}
+.card-features li{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12.5px;
+}
+.card-features li:last-child{border-bottom:none}
+.card-features .label{color:var(--t2)}
+.card-features .value{font-family:var(--fd);font-weight:600;color:var(--t1);font-size:13px}
+.card-features .value.amber{color:var(--am)}
+.card-features .dash{color:var(--t3);font-size:11px}
+
+/* bonus */
+.bonus{
+  display:flex;align-items:center;gap:12px;
+  width:100%;background:var(--bg2);border:1px solid var(--brd);
+  border-radius:10px;padding:14px 20px;margin-bottom:18px;
+}
+.bonus-icon{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(245,158,11,.1);border:1px solid var(--amd);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.bonus-icon svg{width:18px;height:18px;fill:var(--am)}
+.bonus-text{font-size:13px;color:var(--t2);line-height:1.4}
+.bonus-text strong{color:var(--t1);font-weight:600}
+
+/* CTA */
+.cta{text-align:center;margin-bottom:16px}
+.cta-text{
+  font-family:var(--fd);font-size:15px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--t1);
+  margin-bottom:4px;
+}
+.cta-sub{font-size:12px;color:var(--t3)}
+
+/* QR */
+.qr-section{display:flex;align-items:center;gap:16px}
+.qr-box{
+  width:80px;height:80px;background:#fff;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:4px;
+}
+.qr-box svg{width:100%;height:100%}
+.qr-info{font-size:11px;color:var(--t3);line-height:1.5}
+.qr-info strong{color:var(--t1);font-size:13px;display:block;margin-bottom:2px}
+
+.bottom-bar{
+  background:var(--bg3);border-top:1px solid var(--brd);
+  padding:10px 32px;display:flex;align-items:center;justify-content:center;
+  gap:16px;flex-shrink:0;z-index:1;
+  font-family:var(--fd);font-size:11px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--t2);
+}
+.bottom-bar .sep{color:var(--t3);font-weight:400}
+.bottom-bar .brand{color:var(--am);font-weight:700;font-size:12px}
+</style>
+</head>
+<body>
+
+<div class="top-bar">Ежедневно 09:00 — 19:30 | Без выходных</div>
+
+<div class="content">
+  <div class="heading">Живые фото —<br><b>не только на экране</b></div>
+  <div class="subheading">Печатайте любимые моменты каждый месяц по подписке</div>
+
+  <div class="emotional">
+    <div class="emotional-big">20 фото в месяц — от 249 &#8381;</div>
+    <div class="emotional-small">Дешевле одного кофе в неделю</div>
+  </div>
+
+  <div class="cards">
+    <!-- Любитель -->
+    <div class="card">
+      <div class="card-name">Любитель</div>
+      <div class="card-price">249 <span style="font-size:20px">&#8381;</span></div>
+      <div class="card-price-unit">в месяц</div>
+      <ul class="card-features">
+        <li><span class="label">10x15</span><span class="value">20</span></li>
+        <li><span class="label">15x21</span><span class="value">3</span></li>
+        <li><span class="label">21x30</span><span class="dash">--</span></li>
+        <li><span class="label">30x40</span><span class="dash">--</span></li>
+        <li><span class="label">Сверх лимита</span><span class="value amber">-10%</span></li>
+      </ul>
+    </div>
+
+    <!-- Семейный -->
+    <div class="card featured">
+      <div class="card-name">Семейный</div>
+      <div class="card-price">599 <span style="font-size:20px">&#8381;</span></div>
+      <div class="card-price-unit">в месяц</div>
+      <ul class="card-features">
+        <li><span class="label">10x15</span><span class="value">40</span></li>
+        <li><span class="label">15x21</span><span class="value">8</span></li>
+        <li><span class="label">21x30</span><span class="value">2</span></li>
+        <li><span class="label">30x40</span><span class="dash">--</span></li>
+        <li><span class="label">Сверх лимита</span><span class="value amber">-15%</span></li>
+      </ul>
+    </div>
+
+    <!-- Фотограф -->
+    <div class="card">
+      <div class="card-name">Фотограф</div>
+      <div class="card-price">1 290 <span style="font-size:20px">&#8381;</span></div>
+      <div class="card-price-unit">в месяц</div>
+      <ul class="card-features">
+        <li><span class="label">10x15</span><span class="value">80</span></li>
+        <li><span class="label">15x21</span><span class="value">15</span></li>
+        <li><span class="label">21x30</span><span class="value">5</span></li>
+        <li><span class="label">30x40</span><span class="value">2</span></li>
+        <li><span class="label">Сверх лимита</span><span class="value amber">-20%</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="bonus">
+    <div class="bonus-icon">
+      <svg viewBox="0 0 24 24"><path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+    </div>
+    <div class="bonus-text">
+      <strong>Неиспользованные кредиты переносятся на 3 месяца</strong><br>
+      Не успели забрать фото в этом месяце — заберите в следующем
+    </div>
+  </div>
+
+  <div class="cta">
+    <div class="cta-text">Оформите подписку — и каждый месяц забирайте готовые фото</div>
+    <div class="cta-sub">Отмена в любой момент</div>
+  </div>
+
+  <div class="qr-section">
+    <div class="qr-box">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" fill="#fff"/>
+        <rect x="4" y="4" width="24" height="24" fill="#000"/>
+        <rect x="7" y="7" width="18" height="18" fill="#fff"/>
+        <rect x="10" y="10" width="12" height="12" fill="#000"/>
+        <rect x="72" y="4" width="24" height="24" fill="#000"/>
+        <rect x="75" y="7" width="18" height="18" fill="#fff"/>
+        <rect x="78" y="10" width="12" height="12" fill="#000"/>
+        <rect x="4" y="72" width="24" height="24" fill="#000"/>
+        <rect x="7" y="75" width="18" height="18" fill="#fff"/>
+        <rect x="10" y="78" width="12" height="12" fill="#000"/>
+        <rect x="34" y="4" width="4" height="4" fill="#000"/>
+        <rect x="42" y="4" width="4" height="4" fill="#000"/>
+        <rect x="50" y="4" width="4" height="4" fill="#000"/>
+        <rect x="58" y="4" width="4" height="4" fill="#000"/>
+        <rect x="34" y="12" width="4" height="4" fill="#000"/>
+        <rect x="46" y="12" width="4" height="4" fill="#000"/>
+        <rect x="54" y="12" width="4" height="4" fill="#000"/>
+        <rect x="62" y="12" width="4" height="4" fill="#000"/>
+        <rect x="34" y="20" width="4" height="4" fill="#000"/>
+        <rect x="42" y="20" width="4" height="4" fill="#000"/>
+        <rect x="50" y="20" width="4" height="4" fill="#000"/>
+        <rect x="34" y="34" width="4" height="4" fill="#000"/>
+        <rect x="46" y="34" width="4" height="4" fill="#000"/>
+        <rect x="54" y="34" width="4" height="4" fill="#000"/>
+        <rect x="66" y="34" width="4" height="4" fill="#000"/>
+        <rect x="78" y="34" width="4" height="4" fill="#000"/>
+        <rect x="86" y="34" width="4" height="4" fill="#000"/>
+        <rect x="4" y="34" width="4" height="4" fill="#000"/>
+        <rect x="12" y="34" width="4" height="4" fill="#000"/>
+        <rect x="20" y="34" width="4" height="4" fill="#000"/>
+        <rect x="38" y="42" width="4" height="4" fill="#000"/>
+        <rect x="50" y="42" width="4" height="4" fill="#000"/>
+        <rect x="62" y="42" width="4" height="4" fill="#000"/>
+        <rect x="74" y="42" width="4" height="4" fill="#000"/>
+        <rect x="4" y="42" width="4" height="4" fill="#000"/>
+        <rect x="16" y="42" width="4" height="4" fill="#000"/>
+        <rect x="24" y="42" width="4" height="4" fill="#000"/>
+        <rect x="34" y="50" width="4" height="4" fill="#000"/>
+        <rect x="46" y="50" width="4" height="4" fill="#000"/>
+        <rect x="58" y="50" width="4" height="4" fill="#000"/>
+        <rect x="70" y="50" width="4" height="4" fill="#000"/>
+        <rect x="82" y="50" width="4" height="4" fill="#000"/>
+        <rect x="4" y="50" width="4" height="4" fill="#000"/>
+        <rect x="12" y="50" width="4" height="4" fill="#000"/>
+        <rect x="24" y="50" width="4" height="4" fill="#000"/>
+        <rect x="38" y="58" width="4" height="4" fill="#000"/>
+        <rect x="50" y="58" width="4" height="4" fill="#000"/>
+        <rect x="62" y="58" width="4" height="4" fill="#000"/>
+        <rect x="78" y="58" width="4" height="4" fill="#000"/>
+        <rect x="4" y="58" width="4" height="4" fill="#000"/>
+        <rect x="20" y="58" width="4" height="4" fill="#000"/>
+        <rect x="34" y="66" width="4" height="4" fill="#000"/>
+        <rect x="46" y="66" width="4" height="4" fill="#000"/>
+        <rect x="58" y="66" width="4" height="4" fill="#000"/>
+        <rect x="70" y="66" width="4" height="4" fill="#000"/>
+        <rect x="86" y="66" width="4" height="4" fill="#000"/>
+        <rect x="42" y="74" width="4" height="4" fill="#000"/>
+        <rect x="54" y="74" width="4" height="4" fill="#000"/>
+        <rect x="66" y="74" width="4" height="4" fill="#000"/>
+        <rect x="78" y="74" width="4" height="4" fill="#000"/>
+        <rect x="90" y="74" width="4" height="4" fill="#000"/>
+        <rect x="34" y="82" width="4" height="4" fill="#000"/>
+        <rect x="46" y="82" width="4" height="4" fill="#000"/>
+        <rect x="58" y="82" width="4" height="4" fill="#000"/>
+        <rect x="74" y="82" width="4" height="4" fill="#000"/>
+        <rect x="86" y="82" width="4" height="4" fill="#000"/>
+        <rect x="38" y="90" width="4" height="4" fill="#000"/>
+        <rect x="50" y="90" width="4" height="4" fill="#000"/>
+        <rect x="62" y="90" width="4" height="4" fill="#000"/>
+        <rect x="78" y="90" width="4" height="4" fill="#000"/>
+        <rect x="68" y="68" width="12" height="12" fill="#000"/>
+        <rect x="70" y="70" width="8" height="8" fill="#fff"/>
+        <rect x="72" y="72" width="4" height="4" fill="#000"/>
+      </svg>
+    </div>
+    <div class="qr-info">
+      <strong>svoefoto.ru/subscriptions</strong>
+      Отсканируйте, чтобы оформить<br>подписку на фотопечать
+    </div>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <span class="brand">Своё Фото</span>
+  <span class="sep">|</span>
+  <span>пер. Соборный, 21</span>
+  <span class="sep">|</span>
+  <span>ул. 2-ая Баррикадная, 4</span>
+  <span class="sep">|</span>
+  <span>svoefoto.ru</span>
+  <span class="sep">|</span>
+  <span>@magnus_photo</span>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<div class="notification-settings-container">
+  <h1>Настройки уведомлений</h1>
+  
+  <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Типы уведомлений</mat-card-title>
+        <mat-card-subtitle>Выберите, какие уведомления вы хотите получать</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="settings-grid">
+          <mat-slide-toggle formControlName="bookingConfirmation" color="primary">
+            Подтверждения записей
+            <div class="setting-description">
+              Уведомления о подтверждении и изменении статуса ваших записей на фотосессии
+            </div>
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="bookingReminders" color="primary">
+            Напоминания о записях
+            <div class="setting-description">
+              Напоминания о предстоящих фотосессиях за день и за час до начала
+            </div>
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="systemUpdates" color="primary">
+            Системные уведомления
+            <div class="setting-description">
+              Важные уведомления о системе, обновлениях и изменениях в работе сервиса
+            </div>
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="specialOffers" color="primary">
+            Специальные предложения
+            <div class="setting-description">
+              Акции, скидки и специальные предложения от нашей студии
+            </div>
+          </mat-slide-toggle>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Способы получения уведомлений</mat-card-title>
+        <mat-card-subtitle>Выберите, как вы хотите получать уведомления</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div formGroupName="userPreferences" class="delivery-settings">
+          <mat-slide-toggle formControlName="emailNotifications" color="primary">
+            Email-уведомления
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="pushNotifications" color="primary" [disabled]="!isPushSupported()">
+            Push-уведомления в браузере
+          </mat-slide-toggle>
+          
+          <mat-slide-toggle formControlName="smsNotifications" color="primary">
+            SMS-уведомления
+          </mat-slide-toggle>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Предпочтительное время для уведомлений</mat-label>
+            <input matInput type="time" formControlName="preferredDeliveryTime">
+            <mat-hint>Мы будем отправлять уведомления не раньше этого времени</mat-hint>
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    
+    <div class="actions-container">
+      <button type="submit" mat-raised-button color="primary" [disabled]="settingsForm.invalid || loading()">
+        <mat-icon>save</mat-icon>
+        Сохранить настройки
+      </button>
+    </div>
+  </form>
+  
+  <!-- Информация о разрешениях на push-уведомления -->
+  @if (isPushSupported()) {
+    <mat-card>
+      <mat-card-content>
+        <div class="push-permission-info">
+          <div class="permission-status">
+            <div>
+              <strong>Статус разрешения на push-уведомления:</strong>
+              <span class="permission-badge" [class.granted]="pushPermission()" [class.denied]="!pushPermission()">
+                {{ pushPermission() ? 'Разрешены' : 'Не разрешены' }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="permission-buttons">
+            <button type="button" mat-stroked-button color="primary" 
+                    (click)="requestPushPermission()" 
+                    [disabled]="pushPermission()">
+              Запросить разрешение
+            </button>
+            
+            <button type="button" mat-stroked-button color="warn" 
+                    (click)="disablePushNotifications()" 
+                    [disabled]="!pushPermission()">
+              Отключить уведомления
+            </button>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

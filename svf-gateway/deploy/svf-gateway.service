@@ -1,0 +1,27 @@
+[Unit]
+Description=SvoePhoto gRPC Gateway
+After=network.target
+
+[Service]
+Type=simple
+User=rostv
+Group=rostv
+WorkingDirectory=/var/www/apimain/angular-dev/svf-gateway
+ExecStart=/var/www/apimain/angular-dev/svf-gateway/target/release/svf-gateway
+EnvironmentFile=/var/www/apimain/angular-dev/backend/.env
+Environment=SPLIT_ENABLED=true
+Environment=PHONE_AUTH_URL=http://127.0.0.1:3009
+Environment=AWS_CONFIG_FILE=/dev/null
+Environment=AWS_SHARED_CREDENTIALS_FILE=/dev/null
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+PrivateTmp=true
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

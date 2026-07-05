@@ -1,0 +1,21 @@
+// Photographer Profile — editorial dark cinematic layout, mobile-first
+
+.photographer-profile-container { width: 100%; min-height: 100vh; display: flex; flex-direction: column; }
+
+.loading-container {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px 0;
+  p { margin-top: 16px; color: var(--ed-on-surface-variant, #a0a0a0); }
+}
+
+.error-message {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 120px 0; text-align: center;
+  mat-icon { font-size: 48px; height: 48px; width: 48px; color: var(--ed-error, #ef4444); margin-bottom: 16px; }
+  p { color: var(--ed-on-surface-variant, #a0a0a0); margin-bottom: 24px; }
+}
+
+.back-button-container {
+  max-width: 1200px; margin: 0 auto; padding: 0 16px 80px; width: 100%;
+  @media (min-width: 600px) { padding: 0 24px 100px; }
+  @media (min-width: 840px) { padding: 0 32px 120px; }
+  a { display: inline-flex; align-items: center; mat-icon { margin-right: 8px; } }
+}

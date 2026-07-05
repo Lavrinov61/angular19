@@ -1,0 +1,46 @@
+// Compatibility layer for Material Design 3 token usage in Angular Material 20
+// This file provides a mapping between older token formats and the new
+// Material Design 3 token system used in Angular Material 20.
+
+:root {
+  // Fixed colors for light and dark themes
+  --mat-sys-color-primary-fixed: var(--mat-sys-primary-fixed);
+  --mat-sys-color-on-primary-fixed: var(--mat-sys-on-primary-fixed);
+  --mat-sys-color-primary-fixed-dim: var(--mat-sys-primary-fixed-dim);
+  
+  --mat-sys-color-secondary-fixed: var(--mat-sys-secondary-fixed);
+  --mat-sys-color-on-secondary-fixed: var(--mat-sys-on-secondary-fixed);
+  --mat-sys-color-secondary-fixed-dim: var(--mat-sys-secondary-fixed-dim);
+  
+  --mat-sys-color-tertiary-fixed: var(--mat-sys-tertiary-fixed);
+  --mat-sys-color-on-tertiary-fixed: var(--mat-sys-on-tertiary-fixed);
+  --mat-sys-color-tertiary-fixed-dim: var(--mat-sys-tertiary-fixed-dim);
+  
+  // Background colors
+  --mat-sys-color-background: var(--mat-sys-background);
+  --mat-sys-color-on-background: var(--mat-sys-on-background);
+  
+  // Map old light/dark theme variables to new system
+  --mat-sys-light-surface: var(--mat-sys-surface);
+  --mat-sys-light-on-surface: var(--mat-sys-on-surface);
+  --mat-sys-dark-surface: var(--mat-sys-surface);
+  --mat-sys-dark-on-surface: var(--mat-sys-on-surface);
+  
+  // Additional compatibility for Material components
+  --mat-card-background-color: var(--mat-sys-surface-container-high);
+  --mat-dialog-background-color: var(--mat-sys-surface-container);
+  --mat-toolbar-background-color: var(--mat-sys-surface-container-low);
+  --mat-sidenav-background-color: var(--mat-sys-surface-container);
+  --mat-drawer-background-color: var(--mat-sys-surface-container);
+}
+
+// Dark mode overrides
+html.dark-theme,
+html[data-theme="dark"] {
+  // Dark mode overrides for components
+  --mat-card-background-color: var(--mat-sys-surface-container-high);
+  --mat-dialog-background-color: var(--mat-sys-surface-container);
+  --mat-toolbar-background-color: var(--mat-sys-surface-container-low);
+  --mat-sidenav-background-color: var(--mat-sys-surface-container);
+  --mat-drawer-background-color: var(--mat-sys-surface-container);
+}

@@ -1,0 +1,25 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '14.x'
+    - name: Install dependencies
+      run: npm install
+    - name: Run tests
+      run: npm test
+      
+    - name: Deploy to Server
+      run: |
+        scp -r ./path/to/project user@yourserver.com:/path/to/server
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}

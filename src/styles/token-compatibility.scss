@@ -1,0 +1,59 @@
+// token-compatibility.scss
+// This file provides compatibility between old Material Design token format and new Material Design 3 format
+// Old format: --mat-sys-color-primary
+// New format: --mat-sys-primary
+
+// Color system tokens - updated for Angular Material 20
+:root {
+  // Primary colors
+  --mat-sys-color-primary: var(--mat-sys-primary);
+  --mat-sys-color-on-primary: var(--mat-sys-on-primary);
+  --mat-sys-color-primary-container: var(--mat-sys-primary-container);
+  --mat-sys-color-on-primary-container: var(--mat-sys-on-primary-container);
+  
+  // Secondary colors
+  --mat-sys-color-secondary: var(--mat-sys-secondary);
+  --mat-sys-color-on-secondary: var(--mat-sys-on-secondary);
+  --mat-sys-color-secondary-container: var(--mat-sys-secondary-container);
+  --mat-sys-color-on-secondary-container: var(--mat-sys-on-secondary-container);
+  
+  // Tertiary colors
+  --mat-sys-color-tertiary: var(--mat-sys-tertiary);
+  --mat-sys-color-on-tertiary: var(--mat-sys-on-tertiary);
+  --mat-sys-color-tertiary-container: var(--mat-sys-tertiary-container);
+  --mat-sys-color-on-tertiary-container: var(--mat-sys-on-tertiary-container);
+  
+  // Error colors
+  --mat-sys-color-error: var(--mat-sys-error);
+  --mat-sys-color-on-error: var(--mat-sys-on-error);
+  --mat-sys-color-error-container: var(--mat-sys-error-container);
+  --mat-sys-color-on-error-container: var(--mat-sys-on-error-container);
+  
+  // Surface colors
+  --mat-sys-color-surface: var(--mat-sys-surface);
+  --mat-sys-color-on-surface: var(--mat-sys-on-surface);
+  --mat-sys-color-surface-variant: var(--mat-sys-surface-variant);
+  --mat-sys-color-on-surface-variant: var(--mat-sys-on-surface-variant);
+  
+  // Surface container colors
+  --mat-sys-color-surface-container: var(--mat-sys-surface-container);
+  --mat-sys-color-surface-container-low: var(--mat-sys-surface-container-low);
+  --mat-sys-color-surface-container-lowest: var(--mat-sys-surface-container-lowest);
+  --mat-sys-color-surface-container-high: var(--mat-sys-surface-container-high);
+  --mat-sys-color-surface-container-highest: var(--mat-sys-surface-container-highest);
+  
+  // Surface brightness variants
+  --mat-sys-color-surface-dim: var(--mat-sys-surface-dim);
+  --mat-sys-color-surface-bright: var(--mat-sys-surface-bright);
+  
+  // Outline colors
+  --mat-sys-color-outline: var(--mat-sys-outline);
+  --mat-sys-color-outline-variant: var(--mat-sys-outline-variant);
+  
+  // Legacy compatibility variables
+  --mat-app-background: var(--mat-sys-surface);
+  --mat-app-foreground: var(--mat-sys-on-surface);
+  --mat-app-primary: var(--mat-sys-primary);
+  --mat-app-accent: var(--mat-sys-secondary);
+  --mat-app-warn: var(--mat-sys-error);
+}

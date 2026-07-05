@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Реклама — Пульт / Своё Фото (концепт вкладки)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo+Black&family=Archivo:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+
+  :root {
+    /* Тот же язык что Пульт — вытащено из crm-tokens.scss */
+    --bg-0:          #0b0d10;
+    --bg-1:          #111419;
+    --bg-2:          #161a20;
+    --bg-3:          #1b2028;
+    --line:          rgba(255,255,255,.06);
+    --line-strong:   rgba(255,255,255,.10);
+
+    --txt-0:         #f2efe8;
+    --txt-1:         #c8c6bf;
+    --txt-2:         #8f8c85;
+    --txt-3:         #5e5c57;
+
+    /* Брендовый амбер — тот же что в flyer-new/*.html */
+    --am:            #d97706;
+    --am2:           #f59e0b;
+    --am3:           #fbbf24;
+    --amd:           #b45309;
+    --am-glow:       rgba(245,158,11,.18);
+    --am-soft:       rgba(245,158,11,.08);
+
+    --err:           #ef4444;
+    --ok:            #22c55e;
+    --info:          #60a5fa;
+
+    --radius-sm:     6px;
+    --radius:        10px;
+    --radius-lg:     14px;
+
+    --fd:            'Oswald', sans-serif;
+    --fb:            'Plus Jakarta Sans', sans-serif;
+    --fm:            'IBM Plex Mono', monospace;
+
+    --shadow-1:      0 2px 10px rgba(0,0,0,.4);
+    --shadow-2:      0 16px 60px rgba(0,0,0,.5);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg-0);
+    color: var(--txt-0);
+    font-family: var(--fb);
+    font-size: 14px;
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(245,158,11,.06), transparent 60%),
+      radial-gradient(900px 400px at -10% 110%, rgba(245,158,11,.04), transparent 60%),
+      var(--bg-0);
+    min-height: 100vh;
+  }
+
+  button { font-family: inherit; cursor: pointer; color: inherit; background: none; border: none; }
+  button:focus-visible { outline: 2px solid var(--am2); outline-offset: 2px; }
+  ::selection { background: var(--am2); color: #111; }
+
+  /* ─────────────────────────────────────────────────────────
+     ШЕЛЛ ВКЛАДКИ — иммитирует канву Пульта
+     ───────────────────────────────────────────────────────── */
+  .shell {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    padding: 16px;
+    min-height: 100vh;
+  }
+
+  .side {
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    height: calc(100vh - 32px);
+    position: sticky; top: 16px;
+    overflow-y: auto;
+  }
+  .side-search {
+    display:flex; align-items:center; gap:8px;
+    padding:8px 10px;
+    background: rgba(255,255,255,.03);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    color: var(--txt-2);
+    font-family: var(--fm);
+    font-size: 12px;
+  }
+  .side-search .kbd {
+    margin-left:auto;
+    padding: 1px 6px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-size: 10px;
+    color: var(--txt-3);
+  }
+  .side-item {
+    display:flex; align-items:center; gap:10px;
+    padding: 8px 10px;
+    border-radius: var(--radius);
+    color: var(--txt-1);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    width: 100%;
+    text-align: left;
+  }
+  .side-item .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--txt-3); flex-shrink: 0;
+  }
+  .side-item .count {
+    margin-left:auto;
+    font-family: var(--fm);
+    font-size: 11px;
+    color: var(--txt-3);
+  }
+  .side-item:hover { background: rgba(255,255,255,.03); }
+  .side-item.active {
+    background: linear-gradient(90deg, var(--am-soft), transparent 70%);
+    color: var(--am3);
+  }
+  .side-item.active .dot { background: var(--am2); box-shadow: 0 0 10px var(--am-glow); }
+  .side-item.active .count { color: var(--am2); }
+
+  .side-divider {
+    height: 1px; background: var(--line);
+    margin: 10px 2px;
+  }
+  .side-label {
+    font-family: var(--fm);
+    font-size: 10px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    padding: 4px 10px 6px;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     ОСНОВНАЯ КОЛОНКА
+     ───────────────────────────────────────────────────────── */
+  .main {
+    display: grid;
+    grid-template-columns: minmax(0,1fr) 340px;
+    gap: 16px;
+    min-height: 0;
+  }
+
+  /* ───── HERO / PRESS-ROOM HEADER ───── */
+  .hero {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px 24px 20px;
+    background:
+      linear-gradient(135deg, rgba(245,158,11,.08), rgba(245,158,11,.01) 40%, transparent 60%),
+      linear-gradient(180deg, #141820, #10141a);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .hero::before {
+    content: 'P';
+    position: absolute;
+    top: -40px; right: -20px;
+    font-family: var(--fd);
+    font-weight: 800;
+    font-size: 300px;
+    line-height: 1;
+    color: rgba(245,158,11,.04);
+    letter-spacing: -0.04em;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position:absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--am2) 20%, var(--am2) 80%, transparent);
+    opacity: .4;
+  }
+
+  .hero-top {
+    display:flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-meta-line {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    font-family: var(--fm);
+    font-size: 10.5px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin-bottom: 12px;
+  }
+  .hero-meta-line .sep { color: var(--txt-3); opacity: .5; }
+  .hero-meta-line b { color: var(--am2); font-weight: 600; }
+  .hero-meta-line .dot-ok { width:8px; height:8px; border-radius:50%; background:var(--ok); box-shadow: 0 0 10px rgba(34,197,94,.7); }
+
+  .hero h1 {
+    font-family: var(--fd);
+    font-weight: 700;
+    font-size: 64px;
+    line-height: .95;
+    letter-spacing: -.01em;
+    text-transform: uppercase;
+    color: var(--txt-0);
+    margin-bottom: 8px;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--am2);
+    position: relative;
+  }
+  .hero-sub {
+    max-width: 520px;
+    color: var(--txt-1);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 8px;
+  }
+  .stat {
+    min-width: 100px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    text-align: left;
+  }
+  .stat.accent { border-color: rgba(245,158,11,.3); background: rgba(245,158,11,.06); }
+  .stat-label {
+    font-family: var(--fm);
+    font-size: 9.5px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin-bottom: 4px;
+  }
+  .stat-val {
+    font-family: var(--fd);
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--txt-0);
+  }
+  .stat.accent .stat-val { color: var(--am2); }
+  .stat-unit { color: var(--txt-3); font-size: 10px; font-family: var(--fm); margin-left: 3px; }
+
+  /* ───── TOOLBAR (фильтры + режим вида) ───── */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .filter-label {
+    font-family: var(--fm);
+    font-size: 10px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--txt-3);
+    margin-right: 2px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    color: var(--txt-1);
+    font-size: 12px;
+    font-weight: 500;
+    transition: all .15s;
+  }
+  .chip:hover { border-color: var(--am-soft); color: var(--txt-0); }
+  .chip.on {
+    background: rgba(245,158,11,.12);
+    border-color: rgba(245,158,11,.5);
+    color: var(--am3);
+  }
+  .chip .num {
+    font-family: var(--fm);
+    font-size: 10.5px;
+    color: var(--txt-3);
+  }
+  .chip.on .num { color: var(--am2); }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toolbar-spacer { flex: 1; }
+
+  .view-switch {
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .view-switch button {
+    padding: 6px 10px;
+    font-size: 12px;
+    color: var(--txt-2);
+    font-family: var(--fm);
+  }
+  .view-switch button.on { background: var(--am-soft); color: var(--am2); }
+  .view-switch button + button { border-left: 1px solid var(--line); }
+
+  /* ─────────────────────────────────────────────────────────
+     GRID МАКЕТОВ
+     ───────────────────────────────────────────────────────── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+  }
+
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    cursor: pointer;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(245,158,11,.35);
+    box-shadow: var(--shadow-2);
+  }
+  .card.selected {
+    border-color: var(--am2);
+    box-shadow: 0 0 0 1px var(--am2), var(--shadow-2);
+  }
+
+  .card-spine {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    pointer-events: none;
+  }
+  .spine-code {
+    background: rgba(17,20,25,.85);
+    backdrop-filter: blur(6px);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-family: var(--fm);
+    font-size: 10px;
+    color: var(--am2);
+    letter-spacing: .08em;
+    font-weight: 600;
+  }
+
+  .card-tags {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .ctag {
+    font-family: var(--fm);
+    font-size: 9.5px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .ctag.promo { background: rgba(34,197,94,.18); color: #86efac; border:1px solid rgba(34,197,94,.3); }
+  .ctag.season { background: rgba(96,165,250,.15); color: #93c5fd; border:1px solid rgba(96,165,250,.3); }
+  .ctag.hot { background: rgba(239,68,68,.18); color: #fca5a5; border:1px solid rgba(239,68,68,.3); }
+  .ctag.new { background: var(--am); color: #111; border:1px solid var(--am2); }
+
+  .preview-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1.414;
+    background: #1f242b;
+    border-bottom: 1px solid var(--line);
+    overflow: hidden;
+  }
+  .preview-wrap::before,
+  .preview-wrap::after {
+    content:'';
+    position:absolute;
+    width:14px; height:14px;
+    border: 1px solid rgba(255,255,255,.18);
+    pointer-events: none;
+  }
+  .preview-wrap::before { top:6px; left:6px; border-right:none; border-bottom:none; }
+  .preview-wrap::after  { bottom:6px; right:6px; border-left:none; border-top:none; }
+
+  .preview {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 14px;
+  }
+  .preview-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+
+  .preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(11,13,16,.88));
+    opacity: 0;
+    transition: opacity .18s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 14px;
+    gap: 8px;
+    z-index: 2;
+  }
+  .card:hover .preview-overlay,
+  .card.selected .preview-overlay { opacity: 1; }
+  .preview-overlay .quick-row {
+    display: flex;
+    gap: 6px;
+  }
+  .qbtn {
+    flex: 1;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 6px;
+    font-family: var(--fm);
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all .15s;
+  }
+  .qbtn.ghost {
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--line-strong);
+    color: var(--txt-0);
+  }
+  .qbtn.ghost:hover { background: rgba(255,255,255,.1); }
+  .qbtn.solid {
+    background: var(--am2);
+    color: #111;
+    font-weight: 700;
+    border: 1px solid var(--am2);
+  }
+  .qbtn.solid:hover { background: var(--am3); }
+
+  .card-foot {
+    padding: 10px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .card-title {
+    font-family: var(--fd);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.15;
+    letter-spacing: .005em;
+    color: var(--txt-0);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-meta {
+    display:flex; justify-content: space-between; align-items: center;
+    font-family: var(--fm); font-size: 10.5px; color: var(--txt-3);
+    letter-spacing: .06em;
+  }
+  .card-meta .fmt { color: var(--txt-1); }
+  .card-meta .chev { color: var(--am2); font-size: 11px; }
+
+  .card-rule {
+    height: 1px;
+    background: var(--line);
+    position: relative;
+  }
+  .card-rule::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0;
+    width: 30%;
+    height: 1px;
+    background: var(--am2);
+    opacity: .5;
+  }
+
+  /* ─────────────────────────────────────────────────────────
+     ПРЕВЬЮ-МОКАПЫ (иммитация реальных флайеров)
+     ───────────────────────────────────────────────────────── */
+
+  /* Amber Editorial */
+  .mk-amber {
+    width: 100%; height: 100%;
+    background: #faf9f7; color: #1a1a1a;
+    display: flex; flex-direction: column;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow: hidden; border-radius: 3px;
+  }
+  .mk-amber .top {
+    background: #d97706; color:#fff;
+    padding: 3px 0; text-align: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700; font-size: 6px;
+    letter-spacing: .15em; text-transform: uppercase;
+  }
+  .mk-amber .hero {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 0 8px; text-align: center;
+    position: relative;
+    background: none; border: none;
+  }
+  .mk-amber .hero::before {
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 60px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(217,119,6,.1) 0%, transparent 70%);
+  }
+  .mk-amber .hero::after { display: none; }
+  .mk-amber .offer {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800; font-size: 15px;
+    line-height: 1; text-transform: uppercase;
+    color: #1a1a1a; margin-bottom: 2px;
+  }
+  .mk-amber .offer b { color: #d97706; }
+  .mk-amber .sub {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700; font-size: 8px;
+    color: #d97706; text-transform: uppercase;
+    letter-spacing: .1em; margin-bottom: 6px;
+  }
+  .mk-amber .promo {
+    margin: 0 8px; padding: 4px 6px;
+    border: 1.5px dashed #d97706; background: #fff;
+    border-radius: 6px; font-family: 'Oswald', sans-serif;
+  }
+  .mk-amber .promo .code { font-weight: 800; font-size: 9px; color: #000; letter-spacing: .04em; }
+  .mk-amber .promo .hint { font-size: 5px; color: #888; text-transform: uppercase; letter-spacing: .15em; }
+  .mk-amber .bot {
+    background: #f3f1ee; padding: 4px 8px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .mk-amber .bot .brand {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800; font-size: 8px;
+    text-transform: uppercase; letter-spacing: .04em;
+  }
+  .mk-amber .bot .brand span { color: #d97706; }
+  .mk-amber .bot .qr {
+    width: 20px; height: 20px;
+    background: repeating-conic-gradient(#000 0% 25%, #fff 0% 50%) 50% / 4px 4px;
+    border-radius: 2px; border: 1px solid #ddd;
+  }
+
+  /* 4-UP grid — A4 с 4 карточками */
+  .mk-4up {
+    width: 100%; height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0;
+    background: #fff;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+  .mk-4up::before,
+  .mk-4up::after {
+    content: ''; position: absolute;
+    background: rgba(0,0,0,.08); z-index: 5;
+  }
+  .mk-4up::before { left:0; right:0; top: 50%; height: 1px; }
+  .mk-4up::after { top:0; bottom:0; left: 50%; width: 1px; }
+
+  /* Zine / Xerox */
+  .mk-zine {
+    width: 100%; height: 100%;
+    background: #f5f3ee; color: #0a0a0a;
+    display: flex; flex-direction: column;
+    font-family: 'Archivo', sans-serif;
+    overflow: hidden; border-radius: 3px;
+    position: relative;
+  }
+  .mk-zine::before {
+    content: ''; position: absolute; inset: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(10,10,10,.1) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 82% 22%, rgba(10,10,10,.08) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 40% 55%, rgba(10,10,10,.07) 0 1px, transparent 2px),
+      radial-gradient(circle at 70% 80%, rgba(10,10,10,.08) 0 1px, transparent 2px);
+    background-size: 15px 15px, 20px 20px, 12px 12px, 22px 22px;
+  }
+  .mk-zine .strip {
+    background: #e4322c; color: #fff;
+    padding: 4px 8px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 8px; letter-spacing: .12em; text-transform: uppercase;
+    display: flex; justify-content: space-between;
+  }
+  .mk-zine .body {
+    flex: 1; padding: 10px;
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+  .mk-zine .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 6px; color: #6b655c;
+    letter-spacing: .15em; text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .mk-zine .title {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 22px; line-height: .85;
+    color: #0a0a0a; letter-spacing: -.02em;
+    margin-bottom: 6px;
+  }
+  .mk-zine .title span { color: #e4322c; }
+  .mk-zine .pricebox { margin-top: auto; display: flex; gap: 6px; }
+  .mk-zine .pricebox > div {
+    flex: 1; padding: 4px 6px;
+    border: 1.5px solid #0a0a0a;
+    background: #f7d34a;
+  }
+  .mk-zine .pricebox .p {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px; line-height: .9;
+  }
+  .mk-zine .pricebox .l {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 5.5px; color:#0a0a0a;
+    letter-spacing: .1em; text-transform: uppercase;
+  }
+  .mk-zine .bot {
+    padding: 4px 8px; background: #0a0a0a; color: #f7d34a;
+    font-family: 'IBM Plex Mono', monospace; font-size: 6px;
+    display: flex; justify-content: space-between;
+  }
+
+  /* Envelope Kraft */
+  .mk-env {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #ede0c8, #d9c5a5);
+    border-radius: 3px;
+    display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    padding: 10px;
+  }
+  .mk-env::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 20% 30%, rgba(139,92,35,.08) 0 30%, transparent 50%),
+      radial-gradient(circle at 80% 70%, rgba(139,92,35,.1) 0 30%, transparent 50%);
+  }
+  .mk-env::after {
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-top: 30px solid rgba(139,92,35,.15);
+  }
+  .mk-env .brand {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800; font-size: 14px;
+    letter-spacing: .04em; text-transform: uppercase;
+    color: #4a3419; margin-top: auto; align-self: flex-start;
+  }
+  .mk-env .brand span { color: #d97706; }
+  .mk-env .label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 7px; color: #6b4a28;
+    letter-spacing: .12em; text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .mk-env .photos {
+    position: absolute;
+    top: 20px; right: 14px;
+    display: flex; gap: 3px;
+  }
+  .mk-env .photos i {
+    width: 14px; height: 18px;
+    background: linear-gradient(135deg, #b8a582, #8b6f42);
+    border: 1px solid rgba(0,0,0,.1);
+    display: block;
+  }
+
+  /* Dark slide (1920×1080) */
+  .mk-slide {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #0b0d10, #1a1410);
+    border-radius: 3px;
+    position: relative; overflow: hidden;
+  }
+  .mk-slide::before {
+    content: ''; position: absolute;
+    top: -20%; right: -20%;
+    width: 60%; height: 80%;
+    background: radial-gradient(ellipse, rgba(245,158,11,.25) 0%, transparent 70%);
+    filter: blur(10px);
+  }
+  .mk-slide .sl-body {
+    position: absolute; inset: 0;
+    padding: 12px 14px;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+  }
+  .mk-slide .sl-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 7px; letter-spacing: .2em; text-transform: uppercase;
+    color: #f59e0b;
+  }
+  .mk-slide .sl-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700; font-size: 22px;
+    line-height: .95; text-transform: uppercase;
+    color: #f2efe8; letter-spacing: -.01em;
+  }
+  .mk-slide .sl-title em { font-style: normal; color: #f59e0b; }
+  .mk-slide .sl-date {
+    font-family: 'Oswald', sans-serif;
+    font-size: 9px; color: #8f8c85; letter-spacing: .1em;
+  }
+
+  /* Certificate */
+  .mk-cert {
+    width: 100%; height: 100%;
+    background: #fffbea;
+    border-radius: 3px; padding: 14px 12px;
+    text-align: center;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between;
+    position: relative;
+    border: 3px double rgba(217,119,6,.4);
+  }
+  .mk-cert .eyebrow {
+    font-family: 'Oswald', sans-serif;
+    font-size: 7px; color: #d97706;
+    letter-spacing: .2em; text-transform: uppercase;
+  }
+  .mk-cert .title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800; font-size: 16px;
+    color: #1a1a1a; line-height: 1; margin-top: 4px;
+  }
+  .mk-cert .amt {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800; font-size: 30px;
+    color: #d97706; line-height: 1; margin: 4px 0;
+  }
+  .mk-cert .amt sup { font-size: 11px; font-weight: 600; vertical-align: top; }
+  .mk-cert .seal {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid #d97706;
+    display: grid; place-items: center;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700; font-size: 7px;
+    color: #d97706; letter-spacing: .1em;
+  }
+
+  /* Documents */
+  .mk-doc {
+    width: 100%; height: 100%;
+    background: #fff; border-radius: 3px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .mk-doc .head { padding: 10px; background: #1a1a1a; color: #fff; }
+  .mk-doc .head .l { font-family: 'IBM Plex Mono', monospace; font-size:6px; letter-spacing:.15em; text-transform:uppercase; color:#999; }
+  .mk-doc .head .t { font-family: 'Oswald', sans-serif; font-weight:700; font-size: 14px; text-transform: uppercase; line-height: 1; margin-top: 2px; }
+  .mk-doc .head .t span { color: #f59e0b; }
+  .mk-doc .list {
+    padding: 8px 10px; flex: 1;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .mk-doc .row {
+    display: flex; justify-content: space-between;
+    font-size: 7px; color: #444;
+    border-bottom: 1px dotted rgba(0,0,0,.1);
+    padding: 2px 0;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  .mk-doc .row b { color: #d97706; font-family: 'Oswald', sans-serif; font-weight: 700; }
+  .mk-doc .bot {
+    padding: 5px 10px; background: #f3f1ee;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 800; font-size: 9px;
+    text-transform: uppercase;
+  }
+  .mk-doc .bot span { color: #d97706; }
+
+  /* ─────────────────────────────────────────────────────────
+     INSPECTOR
+     ───────────────────────────────────────────────────────── */
+  .inspector {
+    position: sticky;
+    top: 16px;
+    height: fit-content;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    background: linear-gradient(180deg, var(--bg-2), var(--bg-1));
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .insp-eyebrow {
+    font-family: var(--fm);
+    font-size: 10px; letter-spacing:.18em; text-transform: uppercase;
+    color: var(--am2);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .insp-eyebrow::before {
+    content: ''; display: block;
+    width: 6px; height: 6px; border-radius:50%;
+    background: var(--am2); box-shadow: 0 0 10px var(--am-glow);
+  }
+  .insp-title {
+    font-family: var(--fd);
+    font-weight: 700; font-size: 20px;
+    line-height: 1.1; color: var(--txt-0);
+    text-transform: uppercase;
+  }
+  .insp-preview {
+    width: 100%; aspect-ratio: 1 / 1.414;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    overflow: hidden; background: #1f242b;
+    padding: 10px;
+  }
+  .insp-specs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  }
+  .insp-spec {
+    padding: 8px 10px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+  .insp-spec .l {
+    font-family: var(--fm);
+    font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--txt-3); margin-bottom: 2px;
+  }
+  .insp-spec .v {
+    font-family: var(--fd);
+    font-weight: 600; font-size: 14px;
+    color: var(--txt-0);
+  }
+  .insp-spec .v span { color: var(--am2); font-size: 11px; }
+
+  .insp-section { display: flex; flex-direction: column; gap: 8px; }
+  .insp-label {
+    font-family: var(--fm);
+    font-size: 10px; letter-spacing:.14em; text-transform: uppercase;
+    color: var(--txt-3);
+  }
+
+  /* stepper копий */
+  .stepper {
+    display: flex; align-items: center;
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255,255,255,.02);
+  }
+  .stepper button {
+    width: 38px; height: 38px;
+    font-family: var(--fd);
+    font-weight: 700; font-size: 18px;
+    color: var(--txt-1);
+    transition: background .15s, color .15s;
+  }
+  .stepper button:hover { background: rgba(245,158,11,.1); color: var(--am3); }
+  .stepper .val {
+    flex: 1; text-align: center;
+    font-family: var(--fd);
+    font-weight: 700; font-size: 18px;
+    color: var(--txt-0);
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    padding: 8px 0;
+  }
+  .stepper .val .note {
+    font-family: var(--fm);
+    font-size: 10px; color: var(--txt-3);
+    margin-left: 6px; font-weight: 500;
+  }
+
+  .select {
+    width: 100%; padding: 10px 12px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    color: var(--txt-0); font-size: 13px;
+    font-family: var(--fb);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .select .aux { font-family: var(--fm); font-size: 10.5px; color: var(--txt-2); }
+  .select:hover { border-color: rgba(245,158,11,.4); }
+
+  .cta-print {
+    width: 100%; padding: 14px 16px;
+    border: none; border-radius: 10px;
+    background: linear-gradient(180deg, var(--am3), var(--am));
+    color: #111;
+    font-family: var(--fd);
+    font-weight: 800; font-size: 18px;
+    text-transform: uppercase; letter-spacing: .08em;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 8px 24px rgba(245,158,11,.25), inset 0 -2px 0 rgba(0,0,0,.15);
+    transition: transform .15s, box-shadow .15s;
+  }
+  .cta-print:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 30px rgba(245,158,11,.35), inset 0 -2px 0 rgba(0,0,0,.15);
+  }
+  .cta-print:active { transform: translateY(0); }
+  .cta-print .count {
+    font-family: var(--fm); font-weight: 600; font-size: 14px; opacity: .7;
+  }
+
+  .cta-secondary { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .cta-secondary button {
+    padding: 10px; border-radius: 8px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--line-strong);
+    color: var(--txt-1);
+    font-family: var(--fm);
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    transition: background .15s;
+  }
+  .cta-secondary button:hover { background: rgba(255,255,255,.07); color: var(--txt-0); }
+
+  .history { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .hist-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 6px 8px;
+    background: rgba(255,255,255,.015);
+    border-radius: 6px;
+    font-family: var(--fm);
+    font-size: 10.5px; color: var(--txt-2);
+  }
+  .hist-row b { color: var(--txt-0); font-weight: 600; }
+  .hist-row .tick { color: var(--ok); }
+
+  .i { width: 16px; height: 16px; flex-shrink: 0; }
+  .i-sm { width: 14px; height: 14px; flex-shrink: 0; }
+
+  @media (max-width: 1240px) {
+    .main { grid-template-columns: 1fr; }
+    .inspector { position: static; max-height: none; }
+  }
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .side { position: static; height: auto; }
+    .hero h1 { font-size: 42px; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ═══════════ SIDEBAR Пульта (как more-section) ═══════════ -->
+  <aside class="side">
+    <div class="side-search">
+      <svg class="i-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+      <span>Поиск раздела</span>
+      <span class="kbd">⌘K</span>
+    </div>
+
+    <div class="side-label">Операции</div>
+    <button class="side-item"><span class="dot"></span><span>Очередь заказов</span><span class="count">12</span></button>
+    <button class="side-item"><span class="dot"></span><span>Каталог</span><span class="count">246</span></button>
+    <button class="side-item"><span class="dot"></span><span>Склад</span><span class="count">31</span></button>
+
+    <div class="side-divider"></div>
+    <div class="side-label">Клиенты</div>
+    <button class="side-item"><span class="dot"></span><span>Записи</span><span class="count">4</span></button>
+    <button class="side-item"><span class="dot"></span><span>Ретушь</span><span class="count">2</span></button>
+    <button class="side-item"><span class="dot"></span><span>Производства</span><span class="count">7</span></button>
+
+    <div class="side-divider"></div>
+    <div class="side-label">Маркетинг</div>
+    <button class="side-item active"><span class="dot"></span><span>Реклама</span><span class="count">34</span></button>
+    <button class="side-item"><span class="dot"></span><span>Кампании</span><span class="count">6</span></button>
+    <button class="side-item"><span class="dot"></span><span>Промокоды</span><span class="count">12</span></button>
+
+    <div class="side-divider"></div>
+    <div class="side-label">Аналитика</div>
+    <button class="side-item"><span class="dot"></span><span>Отчёты</span><span class="count">—</span></button>
+    <button class="side-item"><span class="dot"></span><span>KPI</span><span class="count">—</span></button>
+  </aside>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <div class="main">
+    <div class="col-left">
+
+      <!-- ─── HERO ─── -->
+      <section class="hero">
+        <div class="hero-meta-line">
+          <span>ПУЛЬТ · МАРКЕТИНГ</span>
+          <span class="sep">/</span>
+          <span>АРХИВ <b>№24</b></span>
+          <span class="sep">/</span>
+          <span>ОПЕРАТОР: <b>naaalya</b></span>
+          <span class="sep">/</span>
+          <span class="dot-ok"></span>
+          <span>ПРИНТЕР: <b>Canon C3226i · Соборный 21</b></span>
+        </div>
+
+        <div class="hero-top">
+          <div>
+            <h1>Реклама.<br><em>Архив макетов</em></h1>
+            <p class="hero-sub">Флайеры, конверты, сертификаты и слайды для ТВ. Печать на рабочем принтере студии в один клик, предпросмотр в окне, скачивание PDF. Все макеты собраны, промокоды проверены, формат готов к пакету A4.</p>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <div class="stat-label">Всего</div>
+              <div class="stat-val">34<span class="stat-unit">шт</span></div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">К печати</div>
+              <div class="stat-val">27<span class="stat-unit">шт</span></div>
+            </div>
+            <div class="stat accent">
+              <div class="stat-label">С промо</div>
+              <div class="stat-val">8<span class="stat-unit">акт.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── TOOLBAR ─── -->
+      <section class="toolbar">
+        <span class="filter-label">Формат:</span>
+        <div class="chip-group">
+          <button class="chip on">Всё <span class="num">34</span></button>
+          <button class="chip">A4 · 4-up <span class="num">14</span></button>
+          <button class="chip">A4 · 2-up <span class="num">6</span></button>
+          <button class="chip">Одиночные <span class="num">7</span></button>
+          <button class="chip">Цифровые <span class="num">7</span></button>
+        </div>
+
+        <span class="filter-label" style="margin-left:12px">Тема:</span>
+        <div class="chip-group">
+          <button class="chip on">Все</button>
+          <button class="chip">СтудВесна</button>
+          <button class="chip">Документы</button>
+          <button class="chip">Портрет</button>
+          <button class="chip">Печать</button>
+          <button class="chip">Холсты</button>
+          <button class="chip">Конверты</button>
+          <button class="chip">Реставрация</button>
+        </div>
+
+        <div class="toolbar-spacer"></div>
+
+        <div class="view-switch">
+          <button class="on" title="Большая сетка">GRID</button>
+          <button title="Компактная">DENSE</button>
+          <button title="Список">LIST</button>
+        </div>
+      </section>
+
+      <!-- ─── GRID ─── -->
+      <section class="grid">
+
+        <!-- 1. Студенты / Zine (выделенная) -->
+        <article class="card selected">
+          <div class="card-spine"><span class="spine-code">FLR-STU-03</span></div>
+          <div class="card-tags">
+            <span class="ctag new">NEW</span>
+            <span class="ctag promo">STUD-BIND10</span>
+            <span class="ctag promo">STUD-PRINT3</span>
+          </div>
+          <div class="preview-wrap">
+            <div class="preview">
+              <div class="preview-inner">
+                <div class="mk-4up">
+                  <div class="mk-zine">
+                    <div class="strip"><span>Студентам</span><span>С 30.04</span></div>
+                    <div class="body">
+                      <div class="eyebrow">Соборный 21 / Баррикадная 4</div>
+                      <div class="title">Переплёт <span>10₽</span></div>
+                      <div class="pricebox">
+                        <div><div class="l">Переплёт</div><div class="p">10<sup>₽</sup></div></div>
+                        <div><div class="l">Лист А4</div><div class="p">3<sup>₽</sup></div></div>
+                      </div>
+                    </div>
+                    <div class="bot"><span>STUD-BIND10</span><span>до 30.09.26</span></div>
+                  </div>
+                  <div class="mk-zine">
+                    <div class="strip"><span>Студентам</span><span>С 30.04</span></div>
+                    <div class="body">
+                      <div class="eyebrow">Соборный 21 / Баррикадная 4</div>
+                      <div class="title">Печать <span>3₽</span></div>
+                      <div class="pricebox">
+                        <div><div class="l">Переплёт</div><div class="p">10<sup>₽</sup></div></div>
+                        <div><div class="l">Лист А4</div><div class="p">3<sup>₽</sup></div></div>
+                      </div>
+                    </div>
+                    <div class="bot"><span>STUD-PRINT3</span><span>до 30.09.26</span></div>
+                  </div>
+                  <div class="mk-zine">
+                    <div class="strip"><span>Студентам</span><span>С 30.04</span></div>
+                    <div class="body">
+                      <div class="eyebrow">Соборный 21 / Баррикадная 4</div>
+                      <div class="title">Переплёт <span>10₽</span></div>
+                      <div class="pricebox">
+                        <div><div class="l">Переплёт</div><div class="p">10<sup>₽</sup></div></div>
+                        <div><div class="l">Лист А4</div><div class="p">3<sup>₽</sup></div></div>
+                      </div>
+                    </div>
+                    <div class="bot"><span>STUD-BIND10</span><span>до 30.09.26</span></div>
+                  </div>
+                  <div class="mk-zine">
+                    <div class="strip"><span>Студентам</span><span>С 30.04</span></div>
+                    <div class="body">
+                      <div class="eyebrow">Соборный 21 / Баррикадная 4</div>
+                      <div class="title">Печать <span>3₽</span></div>
+                      <div class="pricebox">
+                        <div><div class="l">Переплёт</div><div class="p">10<sup>₽</sup></div></div>
+                        <div><div class="l">Лист А4</div><div class="p">3<sup>₽</sup></div></div>
+                      </div>
+                    </div>
+                    <div class="bot"><span>STUD-PRINT3</span><span>до 30.09.26</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-overlay">
+              <div class="quick-row">
+                <button class="qbtn ghost">
+                  <svg class="i-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Просмотр
+                </button>
+                <button class="qbtn solid">
+                  <svg class="i-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                  ПЕЧАТЬ
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-rule"></div>
+          <div class="card-foot">
+            <div class="card-title">Студентам · Zine / Xerox</div>
+            <div class="card-meta">
+              <span class="fmt">A4 · 4-up · 105×148.5мм</span>
+              <span class="chev">Выбран →</span>
+            </div>
+          </div>
+        </article>
+
+        <!-- 2. Портрет / Amber Editorial -->
+        <article class="card">
+          <div class="card-spine"><span class="spine-code">FLR-PRT-10</span></div>
+          <div class="card-tags"><span class="ctag promo">FLR780</span></div>
+          <div class="preview-wrap">
+            <div class="preview">
+              <div class="preview-inner">
+                <div class="mk-4up">
+                  <div class="mk-amber">
+                    <div class="top">Деловой портрет · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Портрет <b>от 780₽</b></div>
+                      <div class="sub">Свет · стиль · ретушь</div>
+                      <div class="promo"><div class="code">FLR780</div><div class="hint">До 31.05</div></div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Деловой портрет · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Портрет <b>от 780₽</b></div>
+                      <div class="sub">Свет · стиль · ретушь</div>
+                      <div class="promo"><div class="code">FLR780</div><div class="hint">До 31.05</div></div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Деловой портрет · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Портрет <b>от 780₽</b></div>
+                      <div class="sub">Свет · стиль · ретушь</div>
+                      <div class="promo"><div class="code">FLR780</div><div class="hint">До 31.05</div></div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Деловой портрет · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Портрет <b>от 780₽</b></div>
+                      <div class="sub">Свет · стиль · ретушь</div>
+                      <div class="promo"><div class="code">FLR780</div><div class="hint">До 31.05</div></div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-overlay">
+              <div class="quick-row">
+                <button class="qbtn ghost">Просмотр</button>
+                <button class="qbtn solid">ПЕЧАТЬ</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-rule"></div>
+          <div class="card-foot">
+            <div class="card-title">Деловой портрет · 780₽</div>
+            <div class="card-meta"><span class="fmt">A4 · 4-up · визитный формат</span><span class="chev">→</span></div>
+          </div>
+        </article>
+
+        <!-- 3. Документы -->
+        <article class="card">
+          <div class="card-spine"><span class="spine-code">FLR-DOC-10</span></div>
+          <div class="card-tags"><span class="ctag hot">Хит</span></div>
+          <div class="preview-wrap">
+            <div class="preview">
+              <div class="preview-inner">
+                <div class="mk-4up">
+                  <div class="mk-doc">
+                    <div class="head"><div class="l">Документы · Своё Фото</div><div class="t">Фото на <span>документы</span></div></div>
+                    <div class="list">
+                      <div class="row">Паспорт РФ<b>250₽</b></div>
+                      <div class="row">Загран / Виза<b>350₽</b></div>
+                      <div class="row">Детское / Пенс.<b>250₽</b></div>
+                      <div class="row">Студенческий<b>200₽</b></div>
+                    </div>
+                    <div class="bot">Своё<span>Фото</span> · 5 минут</div>
+                  </div>
+                  <div class="mk-doc">
+                    <div class="head"><div class="l">Документы · Своё Фото</div><div class="t">Фото на <span>документы</span></div></div>
+                    <div class="list">
+                      <div class="row">Паспорт РФ<b>250₽</b></div>
+                      <div class="row">Загран / Виза<b>350₽</b></div>
+                      <div class="row">Детское / Пенс.<b>250₽</b></div>
+                      <div class="row">Студенческий<b>200₽</b></div>
+                    </div>
+                    <div class="bot">Своё<span>Фото</span> · 5 минут</div>
+                  </div>
+                  <div class="mk-doc">
+                    <div class="head"><div class="l">Документы · Своё Фото</div><div class="t">Фото на <span>документы</span></div></div>
+                    <div class="list">
+                      <div class="row">Паспорт РФ<b>250₽</b></div>
+                      <div class="row">Загран / Виза<b>350₽</b></div>
+                      <div class="row">Детское / Пенс.<b>250₽</b></div>
+                      <div class="row">Студенческий<b>200₽</b></div>
+                    </div>
+                    <div class="bot">Своё<span>Фото</span> · 5 минут</div>
+                  </div>
+                  <div class="mk-doc">
+                    <div class="head"><div class="l">Документы · Своё Фото</div><div class="t">Фото на <span>документы</span></div></div>
+                    <div class="list">
+                      <div class="row">Паспорт РФ<b>250₽</b></div>
+                      <div class="row">Загран / Виза<b>350₽</b></div>
+                      <div class="row">Детское / Пенс.<b>250₽</b></div>
+                      <div class="row">Студенческий<b>200₽</b></div>
+                    </div>
+                    <div class="bot">Своё<span>Фото</span> · 5 минут</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-overlay">
+              <div class="quick-row">
+                <button class="qbtn ghost">Просмотр</button>
+                <button class="qbtn solid">ПЕЧАТЬ</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-rule"></div>
+          <div class="card-foot">
+            <div class="card-title">Фото на документы · прайс</div>
+            <div class="card-meta"><span class="fmt">A4 · 4-up · с QR</span><span class="chev">→</span></div>
+          </div>
+        </article>
+
+        <!-- 4. Конверт -->
+        <article class="card">
+          <div class="card-spine"><span class="spine-code">ENV-07-1</span></div>
+          <div class="card-tags"><span class="ctag season">Ежедневно</span></div>
+          <div class="preview-wrap">
+            <div class="preview">
+              <div class="preview-inner">
+                <div style="display:flex;flex-direction:column;height:100%;gap:2px">
+                  <div class="mk-env">
+                    <div class="photos"><i></i><i></i><i></i></div>
+                    <div>
+                      <div class="label">Ваши фото</div>
+                      <div class="brand">Своё<span>Фото</span></div>
+                    </div>
+                  </div>
+                  <div class="mk-env">
+                    <div class="photos"><i></i><i></i><i></i></div>
+                    <div>
+                      <div class="label">Ваши фото</div>
+                      <div class="brand">Своё<span>Фото</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-overlay">
+              <div class="quick-row">
+                <button class="qbtn ghost">Просмотр</button>
+                <button class="qbtn solid">ПЕЧАТЬ</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-rule"></div>
+          <div class="card-foot">
+            <div class="card-title">Конверт для фото · v7-1</div>
+            <div class="card-meta"><span class="fmt">A4 · 2-up · 200×138мм</span><span class="chev">→</span></div>
+          </div>
+        </article>
+
+        <!-- 5. Сертификат -->
+        <article class="card">
+          <div class="card-spine"><span class="spine-code">CERT-SV-A4</span></div>
+          <div class="card-tags"><span class="ctag season">Сезон</span></div>
+          <div class="preview-wrap">
+            <div class="preview">
+              <div class="preview-inner">
+                <div class="mk-cert">
+                  <div class="eyebrow">Подарочный · Своё Фото</div>
+                  <div>
+                    <div class="title">Сертификат</div>
+                    <div class="amt">3000<sup>₽</sup></div>
+                    <div class="eyebrow">на любую услугу студии</div>
+                  </div>
+                  <div class="seal">SF ·24</div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-overlay">
+              <div class="quick-row">
+                <button class="qbtn ghost">Просмотр</button>
+                <button class="qbtn solid">ПЕЧАТЬ</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-rule"></div>
+          <div class="card-foot">
+            <div class="card-title">Сертификат · СтудВесна</div>
+            <div class="card-meta"><span class="fmt">A4 · Одиночный · 3000₽</span><span class="chev">→</span></div>
+          </div>
+        </article>
+
+        <!-- 6. Слайд ТВ -->
+        <article class="card">
+          <div class="card-spine"><span class="spine-code">SL-SV-HD</span></div>
+          <div class="card-tags"><span class="ctag season">На экран</span></div>
+          <div class="preview-wrap">
+            <div class="preview">
+              <div class="preview-inner">
+                <div class="mk-slide">
+                  <div class="sl-body">
+                    <div class="sl-eyebrow">Своё Фото · Май 2026</div>
+                    <div class="sl-title">Студ<br><em>Весна</em><br>—5 000₽</div>
+                    <div class="sl-date">01.05 — 31.05.26</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-overlay">
+              <div class="quick-row">
+                <button class="qbtn ghost">Просмотр</button>
+                <button class="qbtn solid" style="background: #60a5fa; border-color:#60a5fa;">НА ЭКРАН</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-rule"></div>
+          <div class="card-foot">
+            <div class="card-title">Слайд СтудВесна · для ТВ</div>
+            <div class="card-meta"><span class="fmt">1920×1080 · цифровой</span><span class="chev">→</span></div>
+          </div>
+        </article>
+
+        <!-- 7. Визитка -->
+        <article class="card">
+          <div class="card-spine"><span class="spine-code">BC-10</span></div>
+          <div class="card-tags"></div>
+          <div class="preview-wrap">
+            <div class="preview">
+              <div class="preview-inner">
+                <div class="mk-4up">
+                  <div class="mk-amber">
+                    <div class="top">Визитка · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Фотостудия</div>
+                      <div class="sub">+7 (901) 417-86-68</div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Визитка · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Фотостудия</div>
+                      <div class="sub">+7 (901) 417-86-68</div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Визитка · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Фотостудия</div>
+                      <div class="sub">+7 (901) 417-86-68</div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Визитка · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Фотостудия</div>
+                      <div class="sub">+7 (901) 417-86-68</div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-overlay">
+              <div class="quick-row">
+                <button class="qbtn ghost">Просмотр</button>
+                <button class="qbtn solid">ПЕЧАТЬ</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-rule"></div>
+          <div class="card-foot">
+            <div class="card-title">Визитка студии</div>
+            <div class="card-meta"><span class="fmt">A4 · 4-up · 90×50мм</span><span class="chev">→</span></div>
+          </div>
+        </article>
+
+        <!-- 8. Холсты -->
+        <article class="card">
+          <div class="card-spine"><span class="spine-code">FLR-CVS-10</span></div>
+          <div class="card-tags"></div>
+          <div class="preview-wrap">
+            <div class="preview">
+              <div class="preview-inner">
+                <div class="mk-4up">
+                  <div class="mk-amber">
+                    <div class="top">Холсты · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Фото на <b>холсте</b></div>
+                      <div class="sub">30×40 · 50×70 · 70×100</div>
+                      <div class="promo"><div class="code">CANVAS15</div><div class="hint">−15%</div></div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Холсты · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Фото на <b>холсте</b></div>
+                      <div class="sub">30×40 · 50×70 · 70×100</div>
+                      <div class="promo"><div class="code">CANVAS15</div><div class="hint">−15%</div></div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Холсты · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Фото на <b>холсте</b></div>
+                      <div class="sub">30×40 · 50×70 · 70×100</div>
+                      <div class="promo"><div class="code">CANVAS15</div><div class="hint">−15%</div></div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                  <div class="mk-amber">
+                    <div class="top">Холсты · Своё Фото</div>
+                    <div class="hero">
+                      <div class="offer">Фото на <b>холсте</b></div>
+                      <div class="sub">30×40 · 50×70 · 70×100</div>
+                      <div class="promo"><div class="code">CANVAS15</div><div class="hint">−15%</div></div>
+                    </div>
+                    <div class="bot"><div class="brand">Своё<span>Фото</span></div><div class="qr"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-overlay">
+              <div class="quick-row">
+                <button class="qbtn ghost">Просмотр</button>
+                <button class="qbtn solid">ПЕЧАТЬ</button>
+              </div>
+            </div>
+          </div>
+          <div class="card-rule"></div>
+          <div class="card-foot">
+            <div class="card-title">Фото на холсте</div>
+            <div class="card-meta"><span class="fmt">A4 · 4-up · с промокодом</span><span class="chev">→</span></div>
+          </div>
+        </article>
+
+      </section>
+    </div>
+
+    <!-- ═══════════ INSPECTOR ═══════════ -->
+    <aside class="inspector">
+      <div class="insp-eyebrow">Выбранный макет · FLR-STU-03</div>
+      <div class="insp-title">Студентам ·<br>Zine / Xerox</div>
+
+      <div class="insp-preview">
+        <div class="mk-4up">
+          <div class="mk-zine">
+            <div class="strip"><span>Студентам</span><span>С 30.04</span></div>
+            <div class="body">
+              <div class="eyebrow">Соборный · Баррикадная</div>
+              <div class="title">Переплёт <span>10₽</span></div>
+              <div class="pricebox">
+                <div><div class="l">Переплёт</div><div class="p">10<sup>₽</sup></div></div>
+                <div><div class="l">Лист А4</div><div class="p">3<sup>₽</sup></div></div>
+              </div>
+            </div>
+            <div class="bot"><span>STUD-BIND10</span><span>до 30.09</span></div>
+          </div>
+          <div class="mk-zine">
+            <div class="strip"><span>Студентам</span><span>С 30.04</span></div>
+            <div class="body">
+              <div class="eyebrow">Соборный · Баррикадная</div>
+              <div class="title">Печать <span>3₽</span></div>
+              <div class="pricebox">
+                <div><div class="l">Переплёт</div><div class="p">10<sup>₽</sup></div></div>
+                <div><div class="l">Лист А4</div><div class="p">3<sup>₽</sup></div></div>
+              </div>
+            </div>
+            <div class="bot"><span>STUD-PRINT3</span><span>до 30.09</span></div>
+          </div>
+          <div class="mk-zine">
+            <div class="strip"><span>Студентам</span><span>С 30.04</span></div>
+            <div class="body">
+              <div class="eyebrow">Соборный · Баррикадная</div>
+              <div class="title">Переплёт <span>10₽</span></div>
+              <div class="pricebox">
+                <div><div class="l">Переплёт</div><div class="p">10<sup>₽</sup></div></div>
+                <div><div class="l">Лист А4</div><div class="p">3<sup>₽</sup></div></div>
+              </div>
+            </div>
+            <div class="bot"><span>STUD-BIND10</span><span>до 30.09</span></div>
+          </div>
+          <div class="mk-zine">
+            <div class="strip"><span>Студентам</span><span>С 30.04</span></div>
+            <div class="body">
+              <div class="eyebrow">Соборный · Баррикадная</div>
+              <div class="title">Печать <span>3₽</span></div>
+              <div class="pricebox">
+                <div><div class="l">Переплёт</div><div class="p">10<sup>₽</sup></div></div>
+                <div><div class="l">Лист А4</div><div class="p">3<sup>₽</sup></div></div>
+              </div>
+            </div>
+            <div class="bot"><span>STUD-PRINT3</span><span>до 30.09</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="insp-specs">
+        <div class="insp-spec"><div class="l">Формат</div><div class="v">A4 <span>210×297</span></div></div>
+        <div class="insp-spec"><div class="l">На листе</div><div class="v">×4 <span>105×148.5</span></div></div>
+        <div class="insp-spec"><div class="l">Бумага</div><div class="v">80 <span>г/м²</span></div></div>
+        <div class="insp-spec"><div class="l">Цвет</div><div class="v">RGB <span>CMYK-ready</span></div></div>
+        <div class="insp-spec"><div class="l">Промо</div><div class="v" style="color:var(--am2)">2 <span>активных</span></div></div>
+        <div class="insp-spec"><div class="l">Действует</div><div class="v">до 30.09 <span>26</span></div></div>
+      </div>
+
+      <div class="insp-section">
+        <div class="insp-label">Принтер</div>
+        <button class="select">
+          <span>Canon C3226i · Соборный 21</span>
+          <span class="aux">готов ✓</span>
+        </button>
+      </div>
+
+      <div class="insp-section">
+        <div class="insp-label">Количество листов</div>
+        <div class="stepper">
+          <button data-step="-1">−</button>
+          <div class="val"><span class="num">5</span><span class="note">листов · <span class="cards">20</span> карточек</span></div>
+          <button data-step="+1">+</button>
+        </div>
+      </div>
+
+      <button class="cta-print">
+        <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Печать <span class="count">· <span class="num-mirror">5</span> л.</span>
+      </button>
+
+      <div class="cta-secondary">
+        <button>
+          <svg class="i-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          Просмотр
+        </button>
+        <button>
+          <svg class="i-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PDF
+        </button>
+      </div>
+
+      <div class="insp-section">
+        <div class="insp-label">Последние печати</div>
+        <div class="history">
+          <div class="hist-row">
+            <span>16:12 · <b>5 л.</b> · naaalya</span>
+            <span class="tick">✓</span>
+          </div>
+          <div class="hist-row">
+            <span>14:40 · <b>10 л.</b> · reception</span>
+            <span class="tick">✓</span>
+          </div>
+          <div class="hist-row">
+            <span>21.04 · <b>20 л.</b> · naaalya</span>
+            <span class="tick">✓</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.chip-group').forEach(group => {
+    group.addEventListener('click', (e) => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      group.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+      chip.classList.add('on');
+    });
+  });
+
+  document.querySelectorAll('.view-switch').forEach(sw => {
+    sw.addEventListener('click', (e) => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      sw.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+    });
+  });
+
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.qbtn')) return;
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+    });
+  });
+
+  const stepper = document.querySelector('.stepper');
+  if (stepper) {
+    const numEl = stepper.querySelector('.num');
+    const cardsEl = stepper.querySelector('.cards');
+    const mirror = document.querySelector('.num-mirror');
+    let n = 5;
+    const render = () => {
+      numEl.textContent = String(n);
+      cardsEl.textContent = String(n * 4);
+      if (mirror) mirror.textContent = String(n);
+    };
+    stepper.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const step = Number(btn.dataset.step);
+        n = Math.max(1, Math.min(200, n + step));
+        render();
+      });
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<section class="advantages-section">
+  <div class="advantages-container">
+    <div class="section-header">
+      <h2 class="section-title">{{ title() }}</h2>
+      @if (subtitle()) {
+        <p class="section-subtitle">{{ subtitle() }}</p>
+      }
+    </div>
+    
+    <div class="advantages-grid">
+      @for (advantage of advantages(); track advantage.title || $index; let i = $index) {
+        <div class="advantage-card" 
+             [style.animation-delay]="getCardAnimation(i)">
+          
+          <div class="card-background"></div>
+          
+          <div class="card-content">
+            <div class="advantage-icon">
+              <div class="icon-container">
+                <mat-icon>{{ advantage.icon }}</mat-icon>
+              </div>
+            </div>
+            
+            <div class="advantage-text">
+              <h3 class="advantage-title">{{ advantage.title }}</h3>
+              <p class="advantage-description">{{ advantage.description }}</p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

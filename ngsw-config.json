@@ -1,0 +1,65 @@
+{
+  "$schema": "./node_modules/@angular/service-worker/config/schema.json",
+  "index": "/index.csr.html",
+  "navigationRequestStrategy": "freshness",
+  "assetGroups": [
+    {
+      "name": "app-shell",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/favicon.svg",
+          "/favicon-96x96.png",
+          "/apple-touch-icon.png",
+          "/index.csr.html",
+          "/manifest.webmanifest",
+          "/*.css"
+        ]
+      }
+    },
+    {
+      "name": "app-js",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/*.js"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/assets/**",
+          "/rrweb-player/**",
+          "/*.svg",
+          "/*.webp",
+          "/*.png",
+          "/*.jpg",
+          "/*.woff2"
+        ],
+        "urls": []
+      }
+    }
+  ],
+  "navigationUrls": [
+    "/**",
+    "!/**/*.*",
+    "!/**/*__*",
+    "!/**/*__*/**",
+    "!/api/**",
+    "!/socket.io/**",
+    "!/uploads/**",
+    "!/employee/**",
+    "!/admin/**",
+    "!/auth/**",
+    "!/user-profile/**",
+    "!/photographer-dashboard/**",
+    "!/partner-dashboard/**"
+  ]
+}

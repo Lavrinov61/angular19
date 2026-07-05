@@ -1,0 +1,26 @@
+# Guard Agent — Dev Laptop
+# Место: рядом с svf-guard-agent.exe как config.toml
+
+[agent]
+agent_id = "b0000006-0000-0000-0000-000000000006"
+studio_id = "00000000-0000-0000-0000-000000000000"
+agent_type = "guard"
+version = "0.1.0"
+
+[mqtt]
+host = "svoefoto.ru"
+port = 8883
+username = "guard_dev_laptop"
+password = "SvfDev2026AgentPass"
+use_tls = true
+
+[offline]
+db_path = "C:\\ProgramData\\SvoePhoto\\guard-agent\\offline.db"
+
+[heartbeat]
+interval_secs = 60
+
+[download]
+temp_dir = "C:\\ProgramData\\SvoePhoto\\guard-agent\\temp"
+timeout_secs = 120
+max_file_size = 104857600

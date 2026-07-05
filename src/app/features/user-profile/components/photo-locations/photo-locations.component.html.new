@@ -1,0 +1,290 @@
+<div class="locations-container">
+  <!-- Header -->
+  <div class="locations-header">
+    <h1>Локации для фотосъемки в Ростове-на-Дону</h1>
+    <p class="subtitle">Откройте для себя лучшие места для фотосессий в нашем городе</p>
+  </div>
+
+  <!-- Search and filters -->
+  <div class="search-filters-section">
+    <div class="search-bar">
+      <form [formGroup]="filterForm">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Поиск локаций</mat-label>
+          <input matInput formControlName="search" placeholder="Название, адрес, описание...">
+          <mat-icon matPrefix>search</mat-icon>
+          @if (searchQuery()) {
+            <button mat-icon-button matSuffix (click)="clearSearch()">
+              <mat-icon>clear</mat-icon>
+            </button>
+          }
+        </mat-form-field>
+      </form>
+    </div>
+
+    <!-- Quick category filters -->
+    <div class="quick-filters">
+      <mat-chip-set>
+        @for (category of categories; track category.value || $index) {
+          <mat-chip (click)="filterByCategory(category.value)"
+                   [disabled]="!activeFilters().categories?.includes(category.value)">
+            <mat-icon>{{ category.icon }}</mat-icon>
+            {{ category.label }}
+          </mat-chip>
+        }
+      </mat-chip-set>
+    </div>
+
+    <!-- Advanced filters toggle -->
+    <mat-expansion-panel class="filters-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <mat-icon>tune</mat-icon>
+          Фильтры
+          @if (hasActiveFilters()) {
+            <mat-chip class="filter-badge">{{ locationCount() }}</mat-chip>
+          }
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <form [formGroup]="filterForm" class="advanced-filters">
+        <!-- District filter -->
+        <div class="filter-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Район</mat-label>
+            <mat-select formControlName="districts" multiple>
+              @for (district of districts; track district.value || $index) {
+                <mat-option [value]="district.value">
+                  {{ district.label }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Price range -->
+        <div class="filter-group">
+          <label class="filter-label">Стоимость (₽)</label>
+          <div class="price-range">
+            <mat-form-field appearance="outline" class="price-field">
+              <mat-label>От</mat-label>
+              <input matInput type="number" formControlName="priceMin" min="0">
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="price-field">
+              <mat-label>До</mat-label>
+              <input matInput type="number" formControlName="priceMax" min="0">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Time of day -->
+        <div class="filter-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Лучшее время для съемки</mat-label>
+            <mat-select formControlName="timeOfDay" multiple>
+              @for (time of timeOfDayOptions; track time.value || $index) {
+                <mat-option [value]="time.value">
+                  <mat-icon>{{ time.icon }}</mat-icon>
+                  {{ time.label }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Difficulty -->
+        <div class="filter-group">
+          <mat-form-field appearance="outline">
+            <mat-label>Сложность съемки</mat-label>
+            <mat-select formControlName="difficulty" multiple>
+              @for (level of difficultyLevels; track level.value || $index) {
+                <mat-option [value]="level.value">
+                  <mat-icon [style.color]="level.color">{{ level.icon }}</mat-icon>
+                  {{ level.label }}
+                </mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Additional filters -->
+        <div class="filter-group">
+          <div class="checkbox-filters">
+            <mat-checkbox formControlName="hasParking">
+              <mat-icon>local_parking</mat-icon>
+              Есть парковка
+            </mat-checkbox>
+            <mat-checkbox formControlName="weatherIndependent">
+              <mat-icon>wb_sunny</mat-icon>
+              Не зависит от погоды
+            </mat-checkbox>
+          </div>
+        </div>
+
+        <!-- Filter actions -->
+        <div class="filter-actions">
+          <button mat-button (click)="clearFilters()">
+            Сбросить
+          </button>
+          <span class="results-count">Найдено: {{ locationCount() }}</span>
+        </div>
+      </form>
+    </mat-expansion-panel>
+  </div>
+
+  <!-- Loading state -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Загрузка локаций...</p>
+    </div>
+  }
+
+  <!-- Popular locations section -->
+  @if (!loading() && popularLocations().length > 0) {
+    <div class="popular-section">
+    <h2>Популярные локации</h2>
+    <div class="popular-grid">
+      @for (location of popularLocations(); track location.id || $index) {
+        <mat-card class="popular-card">
+        <div class="card-image" [style.background-image]="'url(' + getLocationImageUrl(location) + ')'">
+          <div class="rating-badge">
+            <mat-icon>star</mat-icon>
+            {{ location.rating }}
+          </div>
+        </div>
+        <mat-card-content>
+          <h3>{{ location.name }}</h3>
+          <p class="location-description">{{ location.shortDescription }}</p>
+          <div class="location-info">
+            <span class="price">{{ formatPrice(location.pricing.basePrice) }}</span>
+            <mat-chip [style.background-color]="getDifficultyColor(location.difficulty)">
+              {{ getDifficultyLabel(location.difficulty) }}
+            </mat-chip>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button (click)="viewLocationDetails(location)">
+            Подробнее
+          </button>
+          <button mat-raised-button color="primary" (click)="bookLocation(location)">
+            Забронировать
+          </button>
+        </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+
+  <!-- All locations grid -->
+  @if (!loading()) {
+    <div class="locations-section">
+    <div class="section-header">
+      <h2>Все локации</h2>
+      <div class="results-info">
+        <span>{{ locationCount() }} локаций найдено</span>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    @if (filteredLocations().length === 0) {
+      <div class="empty-state">
+      <mat-icon>location_off</mat-icon>
+      <h3>Локации не найдены</h3>
+      <p>Попробуйте изменить параметры поиска или сбросьте фильтры</p>
+      <button mat-raised-button color="primary" (click)="clearFilters()">
+        Сбросить фильтры
+      </button>
+      </div>
+    }
+
+    <!-- Locations grid -->
+    @if (filteredLocations().length > 0) {
+      <div class="locations-grid">
+        @for (location of filteredLocations(); track location.id || $index) {
+          <mat-card class="location-card">
+        <div class="card-header">
+          <div class="location-image" [style.background-image]="'url(' + getLocationImageUrl(location) + ')'">
+            <div class="image-overlay">
+              <div class="rating">
+                <mat-icon>star</mat-icon>
+                {{ location.rating }}
+                <span class="reviews">({{ location.reviewsCount }})</span>
+              </div>
+              <div class="category-badge">
+                <mat-icon>{{ getCategoryIcon(location.category) }}</mat-icon>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <mat-card-content>
+          <div class="location-header">
+            <h3>{{ location.name }}</h3>
+            <div class="price">{{ formatPrice(location.pricing.basePrice) }}</div>
+          </div>
+
+          <p class="description">{{ location.shortDescription }}</p>
+
+          <div class="location-details">
+            <div class="detail-item">
+              <mat-icon>location_on</mat-icon>
+              <span>{{ getDistrictLabel(location.district) }}</span>
+            </div>
+
+            <div class="detail-item">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ getTimeOfDayText(location.bestTimeForPhotos) }}</span>
+            </div>
+
+            <div class="detail-item">
+              <mat-icon [style.color]="getDifficultyColor(location.difficulty)">
+                {{ getDifficultyIcon(location.difficulty) }}
+              </mat-icon>
+              <span>{{ getDifficultyLabel(location.difficulty) }}</span>
+            </div>
+
+            @if (location.transportAccess.car?.parkingAvailable) {
+              <div class="detail-item">
+                <mat-icon>local_parking</mat-icon>
+                <span>Парковка</span>
+              </div>
+            }
+          </div>
+
+          <div class="tags">
+            <mat-chip-set>
+              @for (tag of location.tags.slice(0, 3); track tag || $index) {
+                <mat-chip>{{ tag }}</mat-chip>
+              }
+              @if (location.tags.length > 3) {
+                <mat-chip>+{{ location.tags.length - 3 }}</mat-chip>
+              }
+            </mat-chip-set>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-button (click)="viewLocationDetails(location)">
+            <mat-icon>visibility</mat-icon>
+            Подробнее
+          </button>
+          <button mat-button (click)="shareLocation(location)">
+            <mat-icon>share</mat-icon>
+            Поделиться
+          </button>
+          <button mat-raised-button color="primary" (click)="bookLocation(location)">
+            <mat-icon>event</mat-icon>
+            Забронировать
+          </button>
+        </mat-card-actions>
+          </mat-card>
+        }
+      </div>
+    }
+  
+  <!-- Floating action button -->
+  <button mat-fab class="floating-action" color="primary" (click)="openBookingDialog()" matTooltip="Забронировать фотосессию">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

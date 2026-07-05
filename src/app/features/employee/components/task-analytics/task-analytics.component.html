@@ -1,0 +1,156 @@
+<div class="analytics">
+
+  <div class="analytics-header">
+    <h1>Аналитика задач</h1>
+  </div>
+
+  <div class="period-filters">
+    <mat-chip-listbox [value]="period()" (change)="setPeriod($event.value)">
+      @for (p of periods; track p.value) {
+        <mat-chip-option [value]="p.value">{{ p.label }}</mat-chip-option>
+      }
+    </mat-chip-listbox>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">Загрузка...</div>
+  }
+
+  @if (data(); as d) {
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <mat-card class="kpi-card">
+        <div class="kpi-value">{{ d.overview.completed }}</div>
+        <div class="kpi-label">Завершено</div>
+        <div class="kpi-sub">из {{ d.overview.total }}</div>
+      </mat-card>
+      <mat-card class="kpi-card">
+        <div class="kpi-value">{{ formatHours(d.overview.avg_completion_hours) }}</div>
+        <div class="kpi-label">Ср. время</div>
+        <div class="kpi-sub">выполнения</div>
+      </mat-card>
+      <mat-card class="kpi-card"
+                [class.good]="slaGood(d.overview.sla_met_percent)"
+                [class.warn]="slaWarn(d.overview.sla_met_percent)"
+                [class.bad]="slaBad(d.overview.sla_met_percent)">
+        <div class="kpi-value">{{ d.overview.sla_met_percent !== null ? d.overview.sla_met_percent + '%' : '---' }}</div>
+        <div class="kpi-label">SLA в срок</div>
+        <div class="kpi-sub">по дедлайну</div>
+      </mat-card>
+      <mat-card class="kpi-card" [class.bad]="d.overview.overdue_count > 0">
+        <div class="kpi-value">{{ d.overview.active }}</div>
+        <div class="kpi-label">Активных</div>
+        <div class="kpi-sub">{{ d.overview.overdue_count > 0 ? d.overview.overdue_count + ' просрочено' : 'все в срок' }}</div>
+      </mat-card>
+    </div>
+
+    <!-- By Employee -->
+    @if (d.by_employee.length) {
+      <mat-card class="table-card" appearance="outlined">
+        <h2>По сотрудникам</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Сотрудник</th><th>Всего</th><th>Готово</th><th>Ср. время</th><th>Активные</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (e of d.by_employee; track e.employee_id) {
+                <tr>
+                  <td class="name-cell">{{ e.name }}</td>
+                  <td>{{ e.total }}</td>
+                  <td>{{ e.completed }}</td>
+                  <td>{{ formatHours(e.avg_hours) }}</td>
+                  <td>{{ e.active }}</td>
+                  <td class="bar-cell"><div class="bar" [style.width.%]="barWidth(e.completed, e.total)"></div></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </mat-card>
+    }
+
+    <!-- By Type -->
+    @if (d.by_type.length) {
+      <mat-card class="table-card" appearance="outlined">
+        <h2>По типам</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Тип</th><th>Кол-во</th><th>Готово</th><th>Ср. время</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (t of d.by_type; track t.task_type) {
+                <tr>
+                  <td class="name-cell"><mat-icon class="type-icon">{{ typeIcon(t.task_type) }}</mat-icon> {{ typeLabel(t.task_type) }}</td>
+                  <td>{{ t.count }}</td>
+                  <td>{{ t.completed }}</td>
+                  <td>{{ formatHours(t.avg_hours) }}</td>
+                  <td class="bar-cell"><div class="bar" [style.width.%]="barWidth(t.completed, t.count)"></div></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </mat-card>
+    }
+
+    <!-- By Priority -->
+    @if (d.by_priority.length) {
+      <mat-card class="table-card" appearance="outlined">
+        <h2>По приоритетам</h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Приоритет</th><th>Кол-во</th><th>Готово</th><th>Ср. время</th><th>SLA</th><th></th></tr>
+            </thead>
+            <tbody>
+              @for (p of d.by_priority; track p.priority) {
+                <tr>
+                  <td class="name-cell"><span class="priority-dot" [class]="'p-' + p.priority"></span> {{ priorityLabel(p.priority) }}</td>
+                  <td>{{ p.count }}</td>
+                  <td>{{ p.completed }}</td>
+                  <td>{{ formatHours(p.avg_hours) }}</td>
+                  <td [class.good]="slaGood(p.sla_met)" [class.warn]="slaWarn(p.sla_met)" [class.bad]="slaBad(p.sla_met)">
+                    {{ p.sla_met !== null ? p.sla_met + '%' : '---' }}
+                  </td>
+                  <td class="bar-cell"><div class="bar" [style.width.%]="barWidth(p.completed, p.count)"></div></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </mat-card>
+    }
+
+    <!-- By Day -->
+    @if (d.by_day.length) {
+      <mat-card class="chart-card" appearance="outlined">
+        <h2>По дням</h2>
+        <div class="day-chart">
+          @for (day of d.by_day.slice(-14); track day.date) {
+            <div class="day-bar-group">
+              <div class="day-bars">
+                <div class="day-bar created" [style.height.px]="dayBarHeight(day.created, d.by_day)"></div>
+                <div class="day-bar completed" [style.height.px]="dayBarHeight(day.completed, d.by_day)"></div>
+              </div>
+              <div class="day-label">{{ formatDay(day.date) }}</div>
+            </div>
+          }
+        </div>
+        <div class="day-legend">
+          <span><span class="legend-dot created"></span> Создано</span>
+          <span><span class="legend-dot completed"></span> Завершено</span>
+        </div>
+      </mat-card>
+    }
+
+    @if (!d.overview.total) {
+      <div class="empty-state">
+        <mat-icon>analytics</mat-icon>
+        <p>Нет данных за выбранный период</p>
+      </div>
+    }
+  }
+
+</div>

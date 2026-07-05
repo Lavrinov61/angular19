@@ -1,0 +1,44 @@
+# SVF Print Agent Configuration
+# Copy to /etc/svf-agent/config.toml and adjust values
+
+[agent]
+# Unique station identifier (from bridge_devices table)
+bridge_id = "00000000-0000-0000-0000-000000000000"
+studio_id = "00000000-0000-0000-0000-000000000000"
+version = "0.1.0"
+
+[mqtt]
+host = "svoefoto.ru"
+port = 8883
+username = "bridge_station_01"
+password = "changeme"
+# Use TLS for remote connections
+use_tls = false
+
+[cups]
+# Target DPI for image rendering (before sending to CUPS)
+target_dpi = 300
+# Default CUPS printer name (fallback if not specified in job)
+default_printer = ""
+
+[offline]
+# SQLite database path for offline job queue
+db_path = "/var/lib/svf-agent/offline.db"
+
+[telemetry]
+# Interval in seconds between CUPS status polls
+poll_interval_secs = 30
+# Interval in seconds between heartbeat reports
+heartbeat_interval_secs = 60
+
+[icc]
+# Local cache directory for ICC color profiles synced from server
+cache_dir = "/var/lib/svf-agent/icc"
+
+[download]
+# Temp directory for downloaded files
+temp_dir = "/tmp/svf-agent"
+# Download timeout in seconds
+timeout_secs = 120
+# Max file size in bytes (100 MB)
+max_file_size = 104857600

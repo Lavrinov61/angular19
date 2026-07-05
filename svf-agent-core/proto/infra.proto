@@ -1,0 +1,293 @@
+syntax = "proto3";
+package svf.infra;
+
+// ── Agent Types ──
+
+enum AgentType {
+  AGENT_TYPE_UNSPECIFIED = 0;
+  PRINT = 1;
+  POS = 2;
+  VISION = 3;
+  MONITOR = 4;
+  GUARD = 5;
+}
+
+enum UpdateState {
+  UPDATE_STATE_UNSPECIFIED = 0;
+  DOWNLOADING = 1;
+  VERIFYING = 2;
+  INSTALLING = 3;
+  RESTARTING = 4;
+  COMPLETED = 5;
+  FAILED = 6;
+  ROLLED_BACK = 7;
+}
+
+// ── Unified Heartbeat (all agents) ──
+
+message AgentHeartbeat {
+  string agent_id = 1;
+  AgentType agent_type = 2;
+  string version = 3;
+  string os_info = 4;
+  string os_arch = 5;
+  string hostname = 6;
+  int64 uptime_seconds = 7;
+  int32 config_version = 8;
+  int64 timestamp_ms = 9;
+  map<string, string> metadata = 10;
+}
+
+// ── Auto-Update ──
+
+message UpdateCommand {
+  string command_id = 1;
+  string target_version = 2;
+  string artifact_url = 3;
+  string artifact_hash_sha256 = 4;
+  int64 artifact_size_bytes = 5;
+  bool force = 6;
+  string rollback_url = 7;
+}
+
+message UpdateStatus {
+  string command_id = 1;
+  UpdateState state = 2;
+  int32 progress_percent = 3;
+  string error_message = 4;
+  string new_version = 5;
+  int64 timestamp_ms = 6;
+}
+
+// ── Remote Config ──
+
+message ConfigUpdate {
+  int32 config_version = 1;
+  bytes config_toml = 2;
+  bool restart_required = 3;
+  int64 timestamp_ms = 4;
+}
+
+message ConfigAck {
+  string agent_id = 1;
+  int32 applied_version = 2;
+  bool success = 3;
+  string error_message = 4;
+  int64 timestamp_ms = 5;
+}
+
+// ── System Metrics (Device Monitor) ──
+
+message SystemMetrics {
+  string agent_id = 1;
+  float cpu_percent = 2;
+  int32 memory_used_mb = 3;
+  int32 memory_total_mb = 4;
+  float disk_used_gb = 5;
+  float disk_total_gb = 6;
+  int64 network_rx_bytes_sec = 7;
+  int64 network_tx_bytes_sec = 8;
+  repeated PeripheralStatus peripherals = 9;
+  map<string, string> agent_statuses = 10;
+  int64 timestamp_ms = 11;
+}
+
+message PeripheralStatus {
+  string device_type = 1;
+  string device_name = 2;
+  string status = 3;
+  string details = 4;
+}
+
+// ── POS ──
+
+enum PosTransactionType {
+  POS_TX_UNSPECIFIED = 0;
+  CARD_PAYMENT = 1;
+  CARD_REFUND = 2;
+  SBP_PAYMENT = 3;
+  SBP_REFUND = 4;
+  FISCAL_SALE = 5;
+  FISCAL_REFUND = 6;
+}
+
+// Server → Agent: card payment
+message PosPayCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string order_id = 3;
+  string payment_method = 4;  // "card" | "sbp"
+  string description = 5;
+}
+
+// Server → Agent: card refund
+message PosRefundCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string original_transaction_id = 3;
+  string original_rrn = 4;
+}
+
+// Server → Agent: SBP QR generation
+message PosSbpGenerateCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string order_id = 3;
+}
+
+// Agent → Server: SBP QR result
+message PosSbpQrResult {
+  string transaction_id = 1;
+  bool success = 2;
+  string error_message = 3;
+  string qr_data = 4;       // QR code content
+  bytes qr_image = 5;        // PNG image
+  int64 timestamp_ms = 6;
+}
+
+// Server → Agent: check SBP payment status
+message PosSbpStatusCommand {
+  string transaction_id = 1;
+  string order_id = 2;
+}
+
+// Server → Agent: fiscal receipt (АТОЛ)
+message PosFiscalCommand {
+  string receipt_id = 1;
+  string receipt_type = 2;     // "sale" | "refund"
+  repeated FiscalItem items = 3;
+  int64 total_kopecks = 4;
+  string payment_method = 5;   // "cash" | "card" | "sbp"
+  string cashier = 6;
+  string customer_email = 7;
+  string taxation_type = 8;    // "osn" | "usn_income" | "usn_income_outcome" | "patent"
+}
+
+message FiscalItem {
+  string name = 1;
+  int64 price_kopecks = 2;
+  int32 quantity = 3;
+  string vat_rate = 4;          // "vat20" | "vat10" | "vat0" | "none"
+  string payment_method = 5;    // "fullPayment" | "prepayment" | "advance"
+  string payment_object = 6;    // "commodity" | "service" | "payment"
+}
+
+// Server → Agent: shift management
+message PosShiftCommand {
+  string command_id = 1;
+  string action = 2;            // "open" | "close"
+  string cashier = 3;
+  int64 timestamp_ms = 4;
+}
+
+// Agent → Server: transaction result (universal)
+message PosTransactionResult {
+  string transaction_id = 1;
+  PosTransactionType transaction_type = 2;
+  bool success = 3;
+  string error_message = 4;
+  string approval_code = 5;
+  string rrn = 6;
+  string card_mask = 7;
+  // Fiscal data (populated after PosFiscalCommand)
+  string fiscal_number = 8;
+  string fiscal_sign = 9;
+  string fiscal_receipt_url = 10;
+  // SBP data (populated after SBP payment confirmed)
+  bool sbp_paid = 11;
+  bytes receipt_data = 12;
+  int64 timestamp_ms = 13;
+}
+
+// Agent → Server: shift result
+message PosShiftResult {
+  string command_id = 1;
+  bool success = 2;
+  string error_message = 3;
+  string action = 4;            // "open" | "close"
+  int64 timestamp_ms = 5;
+}
+
+// Agent → Server: POS telemetry (periodic health)
+message PosTelemetry {
+  string agent_id = 1;
+  bool terminal_online = 2;      // INPAS SmartSale reachable
+  bool fiscal_online = 3;        // АТОЛ WebServer reachable
+  string terminal_model = 4;
+  string fiscal_model = 5;
+  string shift_status = 6;       // "open" | "closed" | "expired"
+  int64 timestamp_ms = 7;
+}
+
+// ── Vision ──
+
+message MotionEvent {
+  string camera_id = 1;
+  float confidence = 2;
+  bytes thumbnail = 3;
+  string zone = 4;
+  int64 timestamp_ms = 5;
+}
+
+message CameraStatus {
+  string camera_id = 1;
+  bool is_online = 2;
+  string resolution = 3;
+  float fps = 4;
+  int64 timestamp_ms = 5;
+}
+
+// ── Agent Alert (agent → server) ──
+
+message AgentAlert {
+  string agent_id = 1;
+  string alert_type = 2;
+  string severity = 3;
+  string title = 4;
+  string details_json = 5;
+  int64 timestamp_ms = 6;
+}
+
+// ── Restart Command ──
+
+message RestartCommand {
+  string reason = 1;
+  int32 delay_seconds = 2;
+  int64 timestamp_ms = 3;
+}
+
+// ── Guard Agent (CDR + Security Watchdog) ──
+
+message CdrScanResult {
+  string agent_id = 1;
+  string file_name = 2;
+  string file_hash = 3;
+  int64 original_size = 4;
+  int64 clean_size = 5;
+  bool quarantined = 6;
+  string threat_type = 7;
+  int64 timestamp_ms = 8;
+}
+
+message SecurityThreatEvent {
+  string agent_id = 1;
+  string file_name = 2;
+  string file_path = 3;
+  string threat_type = 4;
+  string action_taken = 5;
+  string file_hash = 6;
+  bytes details = 7;
+  int64 timestamp_ms = 8;
+}
+
+message GuardHeartbeat {
+  string agent_id = 1;
+  string version = 2;
+  bool defender_realtime = 3;
+  bool defender_updated = 4;
+  int32 days_since_update = 5;
+  int64 files_scanned_today = 6;
+  int64 files_quarantined_today = 7;
+  int64 uptime_seconds = 8;
+  int64 timestamp_ms = 9;
+}

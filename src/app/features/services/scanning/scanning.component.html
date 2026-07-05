@@ -1,0 +1,219 @@
+<!-- Scanning Page -->
+<link rel="canonical" href="https://svoefoto.ru/scanning" />
+<div class="scanning-page">
+  <!-- Hero Section - ATTENTION -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          <span class="highlight">Сканирование документов</span> в Ростове-на-Дону
+        </h1>
+        <p class="hero-subtitle">
+          Цифровая копия с высоким разрешением за считанные минуты. 
+          Сохраните важные документы навсегда!
+        </p>
+        <div class="hero-benefits">
+          <div class="benefit-item">
+            <mat-icon>high_quality</mat-icon>
+            <span>Разрешение до 1200 dpi</span>
+          </div>
+          <div class="benefit-item">
+            <mat-icon>speed</mat-icon>
+            <span>Готово за 30 минут</span>
+          </div>
+          <div class="benefit-item">
+            <mat-icon>cloud_upload</mat-icon>
+            <span>Удобная передача файлов</span>
+          </div>
+        </div>
+        <div class="hero-cta">
+          <button mat-raised-button color="primary" class="cta-button" (click)="scrollToContacts()">
+            <mat-icon>scanner</mat-icon>
+            Заказать сканирование
+          </button>
+          <div class="price-info">
+            <span class="price">от {{price}} ₽</span>
+            <span class="price-note">за страницу</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img 
+          src="/assets/images/scanning-hero.jpg" 
+          alt="Профессиональное сканирование документов в Своё Фото"
+          loading="eager"
+        >
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section - INTEREST -->
+  <section class="services-section" id="services">
+    <div class="section-container">
+      <h2 class="section-title">Что мы сканируем</h2>
+      <p class="section-subtitle">
+        Профессиональное сканирование любых документов и фотографий
+      </p>
+      
+      <div class="services-grid">
+        @for (service of scanningServices; track service.title || service.icon || $index) {
+          <div class="service-card">
+            <div class="service-icon">
+              <mat-icon>{{service.icon}}</mat-icon>
+            </div>
+            <h3 class="service-title">{{service.title}}</h3>
+            <p class="service-description">{{service.description}}</p>
+            <div class="service-specs">
+              @for (spec of service.specifications; track spec.label || $index) {
+                <div class="spec-item">
+                  <span class="spec-label">{{spec.label}}:</span>
+                  <span class="spec-value">{{spec.value}}</span>
+                </div>
+              }
+            </div>
+            <div class="service-price">
+              <span class="price">от {{service.price}}</span>
+              <span class="price-unit">₽</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section - INTEREST/DESIRE -->
+  <section class="process-section">
+    <div class="section-container">
+      <h2 class="section-title">Как проходит сканирование</h2>
+      <div class="process-steps">
+        @for (step of processSteps; track step.title || step.icon || $index; let i = $index) {
+          <div class="step-item">
+            <div class="step-number">{{i + 1}}</div>
+            <div class="step-content">
+              <h3 class="step-title">{{step.title}}</h3>
+              <p class="step-description">{{step.description}}</p>
+            </div>
+            <div class="step-icon">
+              <mat-icon>{{step.icon}}</mat-icon>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantages Section - DESIRE -->
+  <section class="advantages-section">
+    <div class="section-container">
+      <h2 class="section-title">Наши преимущества</h2>
+      <div class="advantages-grid">
+        @for (advantage of advantages; track advantage.title || advantage.icon || $index) {
+          <div class="advantage-card">
+            <div class="advantage-icon">
+              <mat-icon>{{advantage.icon}}</mat-icon>
+            </div>
+            <h3 class="advantage-title">{{advantage.title}}</h3>
+            <p class="advantage-description">{{advantage.description}}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Formats Section - INTEREST -->
+  <section class="formats-section">
+    <div class="section-container">
+      <h2 class="section-title">Поддерживаемые форматы</h2>
+      <div class="formats-content">        <div class="formats-list">
+          <h3>Сохраняем в форматах:</h3>
+          <div class="format-chips">
+            @for (format of supportedFormats; track format || $index) {
+              <div class="format-chip">
+                <mat-icon>check_circle</mat-icon>
+                <span>{{format}}</span>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="formats-image">
+          <img 
+            src="/assets/images/file-formats.jpg" 
+            alt="Поддерживаемые форматы файлов"
+            loading="lazy"
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section - DESIRE -->
+  <section class="testimonials-section">
+    <div class="section-container">
+      <h2 class="section-title">Отзывы клиентов</h2>
+      <app-testimonials variant="card" />
+    </div>
+  </section>
+
+  <!-- FAQ Section - INTEREST -->
+  <section class="faq-section">
+    <div class="section-container">
+      <h2 class="section-title">Частые вопросы</h2>
+      <mat-accordion class="faq-accordion">
+        @for (faq of faqItems; track faq.question || $index) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{faq.question}}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p [innerHTML]="faq.answer"></p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <!-- CTA Section - ACTION -->
+  <section class="cta-section">
+    <div class="section-container">
+      <div class="cta-content">
+        <h2 class="cta-title">Нужно качественное сканирование?</h2>
+        <p class="cta-subtitle">
+          Закажите сканирование прямо сейчас и получите цифровые копии высочайшего качества!
+        </p>
+        <div class="cta-benefits">
+          <div class="cta-benefit">
+            <mat-icon>flash_on</mat-icon>
+            <span>Быстрое выполнение</span>
+          </div>
+          <div class="cta-benefit">
+            <mat-icon>high_quality</mat-icon>
+            <span>Максимальное качество</span>
+          </div>
+          <div class="cta-benefit">
+            <mat-icon>cloud</mat-icon>
+            <span>Удобная передача</span>
+          </div>
+        </div>
+        <div class="cta-buttons">
+          <button mat-raised-button color="primary" class="primary-cta" (click)="scrollToContacts()">
+            <mat-icon>scanner</mat-icon>
+            Заказать сканирование
+          </button>
+          <button mat-stroked-button color="primary" class="secondary-cta" (click)="callPhone()">
+            <mat-icon>call</mat-icon>
+            Позвонить сейчас
+          </button>
+        </div>
+        <p class="cta-urgency">
+          ⏰ Акция: При заказе от 20 страниц, скидка 20%!
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modern Contacts Section - переиспользуемый компонент -->
+  <app-contacts-section [contacts]="contacts"
+    [addresses]="addresses"
+    [isMobile]="isMobile()"
+    [isTablet]="isTablet()"
+    [isDesktop]="isDesktop()" />
+</div>

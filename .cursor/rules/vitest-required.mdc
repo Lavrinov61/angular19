@@ -1,0 +1,102 @@
+---
+description: Требование писать Vitest-тесты при создании нового кода
+alwaysApply: true
+---
+
+# Vitest-тесты для нового кода
+
+## Когда тесты ОБЯЗАТЕЛЬНЫ
+
+Тесты нужны только для кода с **бизнес-логикой и вычислениями**:
+
+- Backend: route-обработчики, сервисы с логикой, хелперы/утилиты
+- Frontend: сервисы с HTTP-запросами или вычислениями, утилиты, хелперы, пайпы
+
+## Когда тесты НЕ нужны
+
+- Компоненты-обёртки без логики (просто шаблон + стили)
+- Модели / интерфейсы / типы
+- Конфиги, константы, enum-файлы
+- Чисто визуальные компоненты (лейаут, навигация)
+
+## Именование файлов
+
+- **Backend:** `*.test.ts` рядом с исходником (например `pricing.routes.ts` → `pricing.routes.test.ts`)
+- **Frontend:** `*.spec.ts` рядом с исходником (например `auth.service.ts` → `auth.service.spec.ts`)
+
+## Что тестировать
+
+- **Поведение** — вход → выход, побочные эффекты, граничные случаи
+- НЕ тестировать: формальное создание (`should be created` без логики)
+- Минимум: 2–3 теста (happy path + edge case + error)
+
+## Backend-тесты (Express routes / services)
+
+```typescript
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import request from 'supertest';
+import { createTestApp } from '../test-utils/index.js';
+
+vi.mock('../database/db.js', () => ({
+  default: {
+    query: vi.fn().mockResolvedValue([]),
+    queryOne: vi.fn().mockResolvedValue(null),
+    transaction: vi.fn(),
+  },
+}));
+
+describe('POST /api/example', () => {
+  it('returns 400 when name is missing', async () => {
+    const app = createTestApp();
+    const res = await request(app).post('/api/example').send({});
+    expect(res.status).toBe(400);
+  });
+});
+```
+
+## Frontend-тесты (Angular services / components)
+
+```typescript
+import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+
+describe('MyService', () => {
+  let service: MyService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    });
+    service = TestBed.inject(MyService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => httpMock.verify());
+
+  it('should fetch data correctly', () => {
+    // тест поведения, не формальное `toBeTruthy()`
+  });
+});
+```
+
+## Правила мокирования
+
+- `vi.mock()` — мокирование модулей (db, config, external API)
+- `vi.hoisted()` — переменные, используемые в фабриках `vi.mock()`
+- `vi.spyOn()` — шпион на существующий метод
+- `vi.fn()` — мок-функция
+- `vi.useFakeTimers()` — вместо `fakeAsync`
+- НЕ использовать `jasmine.*`, `fakeAsync`, `.toPromise()`
+
+## Запуск
+
+```bash
+cd backend && npm test          # backend vitest
+ng test                         # frontend vitest
+npm run verify:full             # всё вместе
+```

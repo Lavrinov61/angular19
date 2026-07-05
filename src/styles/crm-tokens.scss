@@ -1,0 +1,482 @@
+// CRM Editorial Dashboard — ФотоПульт
+// Scoped to CRM section via [data-section="crm"]
+// Public site (editorial-tokens) remains untouched
+
+[data-section="crm"] {
+  // ══════════════════════════════════════════════════
+  // CRM Design Tokens
+  // ══════════════════════════════════════════════════
+
+  // ── Typography ──
+  --crm-font-display: 'Oswald', sans-serif;
+  --crm-font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --crm-font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+  // ── Surface layers (warm dark tones) ──
+  --crm-surface-base: #0c0b09;
+  --crm-surface: #131210;
+  --crm-surface-raised: #1b1a17;
+  --crm-surface-overlay: #272520;
+  --crm-surface-hover: rgba(255, 255, 255, 0.035);
+  --crm-surface-active: rgba(255, 255, 255, 0.05);
+
+  // ── Text hierarchy ──
+  --crm-text-primary: #ececec;
+  --crm-text-secondary: #a0a0a0;
+  --crm-text-muted: #7a7a7a;
+
+  // ── Accent (amber/gold) ──
+  --crm-accent: #f59e0b;
+  --crm-accent-hover: #fbbf24;
+  --crm-accent-dim: #d97706;
+  --crm-accent-muted: rgba(245, 158, 11, 0.12);
+  --crm-accent-container: rgba(245, 158, 11, 0.15);
+  --crm-on-accent: #0a0a0a;
+  --crm-on-colored: #0a0a0a;
+
+  // ── Borders ──
+  --crm-border: rgba(255, 255, 255, 0.06);
+  --crm-border-subtle: rgba(255, 255, 255, 0.04);
+  --crm-border-focus: rgba(245, 158, 11, 0.5);
+  --crm-divider: rgba(255, 255, 255, 0.06);
+
+  // ── Status colors (desaturated, Tailwind-like) ──
+  --crm-status-info: #60a5fa;
+  --crm-status-info-muted: rgba(96, 165, 250, 0.12);
+  --crm-status-info-container: rgba(96, 165, 250, 0.08);
+
+  --crm-status-success: #34d399;
+  --crm-status-success-muted: rgba(52, 211, 153, 0.12);
+  --crm-status-success-container: rgba(52, 211, 153, 0.08);
+
+  --crm-status-warning: #fbbf24;
+  --crm-status-warning-muted: rgba(251, 191, 36, 0.12);
+  --crm-status-warning-container: rgba(251, 191, 36, 0.08);
+
+  --crm-status-error: #f87171;
+  --crm-status-error-muted: rgba(248, 113, 113, 0.12);
+  --crm-status-error-container: rgba(248, 113, 113, 0.08);
+
+  --crm-status-approval: #2dd4bf;
+
+  // ── Shadows ──
+  --crm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --crm-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --crm-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --crm-shadow-accent: 0 0 0 1px var(--crm-border-focus);
+
+  // ── Enhanced shadows with color glow ──
+  --crm-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.2);
+  --crm-shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.2);
+  --crm-shadow-accent-glow: 0 0 20px rgba(245, 158, 11, 0.15);
+  --crm-shadow-info-glow: 0 0 16px rgba(96, 165, 250, 0.12);
+  --crm-shadow-success-glow: 0 0 16px rgba(52, 211, 153, 0.12);
+  --crm-shadow-warning-glow: 0 0 16px rgba(251, 191, 36, 0.12);
+  --crm-shadow-error-glow: 0 0 16px rgba(248, 113, 113, 0.12);
+
+  // ── Radius ──
+  --crm-radius-sm: 6px;
+  --crm-radius-md: 8px;
+  --crm-radius-lg: 12px;
+  --crm-radius-xl: 16px;
+
+  // ── Glass surfaces ──
+  --crm-glass-bg: rgba(255, 255, 255, 0.03);
+  --crm-glass-bg-hover: rgba(255, 255, 255, 0.05);
+  --crm-glass-border: rgba(255, 255, 255, 0.08);
+  --crm-glass-blur: 12px;
+
+  // ── Gradients ──
+  --crm-gradient-card: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  --crm-gradient-accent: linear-gradient(135deg, #b45309 0%, #f59e0b 50%, #fbbf24 100%);
+
+  // ── Spacing scale (4px base) ──
+  --crm-space-1: 4px;
+  --crm-space-2: 8px;
+  --crm-space-3: 12px;
+  --crm-space-4: 16px;
+  --crm-space-5: 20px;
+  --crm-space-6: 24px;
+
+  // ── Typography scale ──
+  --crm-text-xs: 10px;
+  --crm-text-sm: 11px;
+  --crm-text-base: 13px;
+  --crm-text-md: 14px;
+  --crm-text-lg: 16px;
+  --crm-text-xl: 20px;
+  --crm-text-2xl: 24px;
+
+  // ── Transitions ──
+  --crm-transition-fast: 120ms ease;
+  --crm-transition-normal: 200ms ease;
+  --crm-transition-slow: 300ms ease;
+  --crm-transition-panel: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --crm-transition-collapse: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --crm-transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --crm-transition-smooth: 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --crm-hover-lift: translateY(-2px);
+  --crm-active-press: scale(0.97);
+
+  // ── Ghost buttons ──
+  --crm-ghost-hover: rgba(255, 255, 255, 0.04);
+  --crm-ghost-active: rgba(255, 255, 255, 0.06);
+
+  // ── Kbd hints ──
+  --crm-kbd-bg: rgba(255, 255, 255, 0.06);
+  --crm-kbd-border: rgba(255, 255, 255, 0.1);
+
+  // ── Skeleton ──
+  --crm-skeleton-base: var(--crm-surface-raised);
+  --crm-skeleton-shine: var(--crm-surface-overlay);
+
+  // ── Print-specific tokens ──
+  --crm-printer-photo: #42A5F5;
+  --crm-printer-mfp: #FFA726;
+  --crm-printer-sublimation: #AB47BC;
+  --crm-printer-document: #AB47BC;
+  --crm-supply-critical: var(--crm-status-error);
+  --crm-supply-low: var(--crm-status-warning);
+  --crm-supply-ok: var(--crm-status-success);
+  --crm-document-accent: #546E7A;
+  --crm-collage-accent: #7B1FA2;
+
+  // ── Print Job Status ──
+  --crm-print-queued: #94a3b8;
+  --crm-print-queued-bg: rgba(148, 163, 184, 0.12);
+  --crm-print-held: #a78bfa;
+  --crm-print-held-bg: rgba(167, 139, 250, 0.12);
+  --crm-print-scheduled: #818cf8;
+  --crm-print-scheduled-bg: rgba(129, 140, 248, 0.12);
+  --crm-print-converting: #fbbf24;
+  --crm-print-converting-bg: rgba(251, 191, 36, 0.12);
+  --crm-print-splitting: #fb923c;
+  --crm-print-splitting-bg: rgba(251, 146, 60, 0.12);
+  --crm-print-rendering: #f59e0b;
+  --crm-print-rendering-bg: rgba(245, 158, 11, 0.12);
+  --crm-print-icc: #d97706;
+  --crm-print-icc-bg: rgba(217, 119, 6, 0.12);
+  --crm-print-sending: #60a5fa;
+  --crm-print-sending-bg: rgba(96, 165, 250, 0.12);
+  --crm-print-printing: #38bdf8;
+  --crm-print-printing-bg: rgba(56, 189, 248, 0.12);
+  --crm-print-finishing: #2dd4bf;
+  --crm-print-finishing-bg: rgba(45, 212, 191, 0.12);
+  --crm-print-paused: #f59e0b;
+  --crm-print-paused-bg: rgba(245, 158, 11, 0.12);
+  --crm-print-completed: #34d399;
+  --crm-print-completed-bg: rgba(52, 211, 153, 0.12);
+  --crm-print-failed: #f87171;
+  --crm-print-failed-bg: rgba(248, 113, 113, 0.12);
+  --crm-print-cancelled: #6b7280;
+  --crm-print-cancelled-bg: rgba(107, 114, 128, 0.12);
+
+  // ── Supply Levels ──
+  --crm-supply-full: #34d399;
+  --crm-supply-ok-level: #60a5fa;
+  --crm-supply-low-level: #fbbf24;
+  --crm-supply-critical-level: #f87171;
+  --crm-supply-empty: #6b7280;
+
+  // ── Priority Levels ──
+  --crm-priority-normal: var(--crm-text-muted, #7a7a7a);
+  --crm-priority-elevated: #fbbf24;
+  --crm-priority-urgent: #fb923c;
+  --crm-priority-critical: #f87171;
+
+  // ── Z-index layers ──
+  --crm-z-dropdown: 100;
+  --crm-z-overlay: 200;
+  --crm-z-modal: 300;
+
+  // ── Layout dimensions ──
+  --crm-inbox-width: 300px;
+  --crm-panel-width-sm: 280px;
+  --crm-panel-width-md: 340px;
+  --crm-panel-width-lg: 400px;
+  --crm-toolbar-height: 44px;
+  --crm-bottom-nav-height: 52px;
+  --crm-breakpoint-desktop: 840px;
+
+  // ══════════════════════════════════════════════════
+  // Material --mat-sys-* Overrides
+  // ══════════════════════════════════════════════════
+
+  --mat-sys-primary: #f59e0b;
+  --mat-sys-on-primary: #0a0a0a;
+  --mat-sys-primary-container: rgba(245, 158, 11, 0.15);
+  --mat-sys-on-primary-container: #fbbf24;
+
+  --mat-sys-secondary: #a0a0a0;
+  --mat-sys-on-secondary: #0c0b09;
+  --mat-sys-secondary-container: rgba(255, 255, 255, 0.06);
+  --mat-sys-on-secondary-container: #ececec;
+
+  --mat-sys-tertiary: #34d399;
+  --mat-sys-on-tertiary: #0c0b09;
+  --mat-sys-tertiary-container: rgba(52, 211, 153, 0.12);
+  --mat-sys-on-tertiary-container: #6ee7b7;
+
+  --mat-sys-error: #f87171;
+  --mat-sys-on-error: #0c0b09;
+  --mat-sys-error-container: rgba(248, 113, 113, 0.12);
+  --mat-sys-on-error-container: #fca5a5;
+
+  --mat-sys-surface: #131210;
+  --mat-sys-on-surface: #ececec;
+  --mat-sys-on-surface-variant: #a0a0a0;
+
+  --mat-sys-surface-container-lowest: #0c0b09;
+  --mat-sys-surface-container-low: #131210;
+  --mat-sys-surface-container: #1b1a17;
+  --mat-sys-surface-container-high: #242320;
+  --mat-sys-surface-container-highest: #2c2b28;
+
+  --mat-sys-outline: #333230;
+  --mat-sys-outline-variant: rgba(255, 255, 255, 0.06);
+
+  --mat-sys-inverse-surface: #ececec;
+  --mat-sys-inverse-on-surface: #0c0b09;
+
+  // ══════════════════════════════════════════════════
+  // MDC Component Token Overrides
+  // ══════════════════════════════════════════════════
+
+  // ── Filled button ──
+  --mat-button-filled-container-color: #f59e0b;
+  --mat-button-filled-label-text-color: #0a0a0a;
+  --mat-button-filled-container-shape: 8px;
+
+  // ── Outlined button ──
+  --mat-button-outlined-outline-color: rgba(255, 255, 255, 0.1);
+  --mat-button-outlined-label-text-color: #ececec;
+  --mat-button-outlined-container-shape: 8px;
+
+  // ── Text button ──
+  --mat-button-text-label-text-color: #f59e0b;
+  --mat-button-text-container-shape: 8px;
+
+  // ── FAB ──
+  --mat-fab-container-color: #f59e0b;
+  --mat-fab-foreground-color: #0a0a0a;
+
+  // ── Icon button ──
+  --mat-icon-button-icon-color: #a0a0a0;
+
+  // ── Chips ──
+  --mdc-chip-elevated-container-color: #1b1a17;
+  --mdc-chip-label-text-color: #ececec;
+
+  // ── Text field ──
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.1);
+  --mdc-outlined-text-field-focus-outline-color: #f59e0b;
+  --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.15);
+  --mdc-outlined-text-field-input-text-color: #ececec;
+  --mdc-outlined-text-field-label-text-color: #a0a0a0;
+  --mdc-outlined-text-field-container-shape: 8px;
+
+  // ── Lists ──
+  --mdc-list-list-item-label-text-color: #ececec;
+  --mdc-list-list-item-supporting-text-color: #a0a0a0;
+  --mdc-list-list-item-leading-icon-color: #a0a0a0;
+  --mdc-list-list-item-hover-state-layer-opacity: 0.04;
+
+  // ══════════════════════════════════════════════════
+  // Material Angular Component Overrides
+  // ══════════════════════════════════════════════════
+
+  // ── Cards ──
+  --mat-card-background-color: #1b1a17;
+  --mat-card-subtitle-text-color: #a0a0a0;
+
+  // ── Menu ──
+  --mat-menu-container-color: #1e1d1a;
+  --mat-menu-item-label-text-color: #ececec;
+  --mat-menu-item-icon-color: #a0a0a0;
+  --mat-menu-item-hover-state-layer-color: rgba(255, 255, 255, 0.04);
+  --mat-menu-container-shape: 8px;
+
+  // ── Dialog ──
+  --mat-dialog-container-color: #1e1d1a;
+  --mat-dialog-headline-color: #ececec;
+  --mat-dialog-supporting-text-color: #a0a0a0;
+
+  // ── Snackbar ──
+  --mat-snack-bar-button-color: #fbbf24;
+
+  // ── Tooltip ──
+  --mat-tooltip-container-color: #2a2920;
+  --mat-tooltip-supporting-text-color: #ececec;
+
+  // ── Tabs ──
+  --mat-tab-header-active-label-text-color: #f59e0b;
+  --mat-tab-header-active-focus-label-text-color: #f59e0b;
+  --mat-tab-header-active-hover-label-text-color: #fbbf24;
+  --mat-tab-header-inactive-label-text-color: #a0a0a0;
+  --mat-tab-header-active-focus-indicator-color: #f59e0b;
+
+  // ── Badge ──
+  --mat-badge-background-color: #f59e0b;
+  --mat-badge-text-color: #0a0a0a;
+
+  // ── Divider ──
+  --mat-divider-color: rgba(255, 255, 255, 0.06);
+
+  // ── Progress spinner ──
+  --mdc-circular-progress-active-indicator-color: #f59e0b;
+
+  // ── Progress bar ──
+  --mdc-linear-progress-active-indicator-color: #f59e0b;
+  --mdc-linear-progress-track-color: rgba(245, 158, 11, 0.12);
+
+  // ── Checkbox / Radio / Slide toggle ──
+  --mdc-checkbox-selected-checkmark-color: #0a0a0a;
+  --mdc-checkbox-selected-focus-icon-color: #f59e0b;
+  --mdc-checkbox-selected-hover-icon-color: #fbbf24;
+  --mdc-checkbox-selected-icon-color: #f59e0b;
+  --mdc-checkbox-unselected-icon-color: #5c5c5c;
+
+  --mdc-radio-selected-icon-color: #f59e0b;
+  --mdc-radio-unselected-icon-color: #5c5c5c;
+
+  --mdc-switch-selected-handle-color: #f59e0b;
+  --mdc-switch-selected-track-color: rgba(245, 158, 11, 0.3);
+  --mdc-switch-unselected-handle-color: #5c5c5c;
+  --mdc-switch-unselected-track-color: rgba(255, 255, 255, 0.06);
+
+  // ── Select / Option ──
+  --mat-select-panel-background-color: #1e1d1a;
+  --mat-option-selected-state-label-text-color: #f59e0b;
+  --mat-option-label-text-color: #ececec;
+
+  // ── Datepicker ──
+  --mat-datepicker-calendar-container-background-color: #1e1d1a;
+  --mat-datepicker-calendar-body-label-text-color: #a0a0a0;
+
+  // ── Base font ──
+  font-family: var(--crm-font-sans);
+
+  // ══════════════════════════════════════════════════
+  // Global CRM Element Styles
+  // ══════════════════════════════════════════════════
+
+  // ── Scrollbar ──
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+  }
+
+  // ── Text selection ──
+  ::selection {
+    background: rgba(245, 158, 11, 0.3);
+    color: #ececec;
+  }
+
+  // ── Focus visible ──
+  :focus-visible {
+    outline: 2px solid var(--crm-border-focus);
+    outline-offset: 2px;
+  }
+
+  // ── Links ──
+  a {
+    color: var(--crm-accent);
+
+    &:hover {
+      color: var(--crm-accent-hover);
+    }
+  }
+}
+
+// ── CDK Overlay scoping (menus, dialogs, snackbars) ──
+html.crm-active .cdk-overlay-container {
+  --mat-sys-primary: #f59e0b;
+  --mat-sys-on-primary: #0a0a0a;
+  --mat-sys-primary-container: rgba(245, 158, 11, 0.15);
+  --mat-sys-on-primary-container: #fbbf24;
+
+  --mat-sys-secondary-container: rgba(255, 255, 255, 0.06);
+  --mat-sys-on-secondary-container: #ececec;
+
+  --mat-sys-tertiary-container: rgba(52, 211, 153, 0.12);
+  --mat-sys-on-tertiary-container: #6ee7b7;
+
+  --mat-sys-error: #f87171;
+  --mat-sys-error-container: rgba(248, 113, 113, 0.12);
+  --mat-sys-on-error-container: #fca5a5;
+
+  --mat-sys-surface: #131210;
+  --mat-sys-on-surface: #ececec;
+  --mat-sys-on-surface-variant: #a0a0a0;
+
+  --mat-sys-surface-container: #1b1a17;
+  --mat-sys-surface-container-high: #242320;
+  --mat-sys-surface-container-highest: #2c2b28;
+
+  --mat-sys-outline: #333230;
+  --mat-sys-outline-variant: rgba(255, 255, 255, 0.06);
+
+  --mat-menu-container-color: #1e1d1a;
+  --mat-menu-item-label-text-color: #ececec;
+  --mat-menu-item-icon-color: #a0a0a0;
+  --mat-menu-item-hover-state-layer-color: rgba(255, 255, 255, 0.04);
+  --mat-menu-container-shape: 8px;
+
+  --mat-dialog-container-color: #1e1d1a;
+  --mat-dialog-headline-color: #ececec;
+  --mat-dialog-supporting-text-color: #a0a0a0;
+
+  --mat-snack-bar-button-color: #fbbf24;
+
+  --mat-tooltip-container-color: #2a2920;
+  --mat-tooltip-supporting-text-color: #ececec;
+
+  --mat-button-filled-container-color: #f59e0b;
+  --mat-button-filled-label-text-color: #0a0a0a;
+  --mat-button-filled-container-shape: 8px;
+
+  --mat-button-outlined-outline-color: rgba(255, 255, 255, 0.1);
+  --mat-button-outlined-label-text-color: #ececec;
+  --mat-button-outlined-container-shape: 8px;
+
+  --mat-button-text-label-text-color: #f59e0b;
+
+  --mdc-list-list-item-label-text-color: #ececec;
+  --mdc-list-list-item-supporting-text-color: #a0a0a0;
+  --mdc-list-list-item-leading-icon-color: #a0a0a0;
+  --mdc-list-list-item-hover-state-layer-opacity: 0.04;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-section="crm"] {
+    --crm-transition-fast: 0ms;
+    --crm-transition-normal: 0ms;
+    --crm-transition-slow: 0ms;
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

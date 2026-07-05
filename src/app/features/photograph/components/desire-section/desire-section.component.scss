@@ -1,0 +1,32 @@
+// Desire Section — editorial dark cinematic layout, mobile-first
+
+.desire-section {
+  padding: 3rem 1rem;
+  background: var(--ed-surface-container, #1a1a1a);
+  @media (min-width: 840px) { padding: 5rem 2rem; }
+
+  .section-container { max-width: 1200px; margin: 0 auto; text-align: center; }
+
+  .section-title {
+    font-family: var(--ed-font-display, 'Oswald', sans-serif);
+    font-size: 2rem; font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em;
+    margin-bottom: 1rem; color: var(--ed-accent, #f59e0b);
+    @media (min-width: 840px) { font-size: 3rem; }
+  }
+  .section-subtitle { font-size: 1.1rem; color: var(--ed-on-surface-variant, #a0a0a0); max-width: 600px; margin: 0 auto 3rem; @media (min-width: 840px) { font-size: 1.2rem; } }
+
+  .services-grid {
+    display: grid; grid-template-columns: 1fr; gap: 1.5rem;
+    @media (min-width: 840px) { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+  }
+
+  .service-card {
+    background: var(--ed-surface-container-high, #222); border-radius: 16px; padding: 2rem; text-align: center;
+    border: 1px solid var(--ed-outline-variant, #2a2a2a);
+
+    .service-icon mat-icon { font-size: 2.5rem; color: var(--ed-accent, #f59e0b); }
+    .service-name { font-size: 1.25rem; font-weight: 600; margin: 1rem 0 0.5rem; color: var(--ed-on-surface, #f5f5f5); }
+    .service-description { color: var(--ed-on-surface-variant, #a0a0a0); margin-bottom: 1rem; font-size: 0.9rem; }
+    .service-price { font-weight: 700; font-size: 1.1rem; color: var(--ed-accent, #f59e0b); }
+  }
+}

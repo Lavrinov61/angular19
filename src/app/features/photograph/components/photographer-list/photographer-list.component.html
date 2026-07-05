@@ -1,0 +1,112 @@
+<div class="photographers-page photographers-page--alfa" data-section="public">
+
+  <app-team-hero />
+
+  <app-team-stats />
+
+  <section class="team-section" id="team-list">
+    <div class="section-inner">
+      <div class="section-header" appScrollReveal direction="up">
+        <p class="section-eyebrow">Что делает мастер на смене</p>
+        <h2 class="section-title">Кто работает со съёмкой в студии</h2>
+        <p class="section-lead">
+          На смене работает мастер студии: поможет выстроить кадр, проверит требования к документам,
+          снимет портрет, напечатает и передаст готовый файл. Хотите попасть к конкретному мастеру,
+          скажите при записи.
+        </p>
+      </div>
+
+      <div class="team-list" aria-label="Что делает мастер на смене">
+        @for (item of studioWorkItems; track item.title; let i = $index) {
+          <article class="studio-work-card" appScrollReveal direction="up" [delay]="i * 80">
+            <span class="studio-work-card__icon" aria-hidden="true">
+              <mat-icon>{{ item.icon }}</mat-icon>
+            </span>
+            <h3 class="studio-work-card__title">{{ item.title }}</h3>
+            <p class="studio-work-card__text">{{ item.text }}</p>
+            <div class="studio-work-card__points" aria-label="Что входит">
+              @for (point of item.points; track point) {
+                <span>{{ point }}</span>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <app-our-approach />
+
+  <section class="testimonials-section">
+    <div class="section-inner">
+      <div class="testimonials-header" appScrollReveal direction="up">
+        <p class="section-eyebrow">Отзывы</p>
+        <h2 class="section-title">Клиенты приходят за спокойным результатом</h2>
+        <p class="testimonials-rating">
+          <mat-icon class="rating-star">star</mat-icon>
+          <span>Рейтинг 5.0 на Яндекс Картах</span>
+        </p>
+      </div>
+      <app-testimonials variant="slider" />
+    </div>
+  </section>
+
+  <section class="faq-section">
+    <div class="section-inner faq-inner">
+      <div class="faq-header" appScrollReveal direction="up">
+        <p class="section-eyebrow">Вопросы и ответы</p>
+        <h2 class="section-title">Что важно перед записью</h2>
+      </div>
+
+      <mat-accordion class="faq-accordion" appScrollReveal direction="up" [delay]="100">
+        @for (item of faqItems; track item.question) {
+          <mat-expansion-panel class="faq-panel">
+            <mat-expansion-panel-header>
+              <mat-panel-title class="faq-question">{{ item.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p class="faq-answer">{{ item.answer }}</p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <section class="final-cta" appScrollReveal direction="up">
+    <div class="final-cta__inner">
+      <div class="final-cta__copy">
+        <p class="final-cta__eyebrow">Готовы к съёмке?</p>
+        <h2 class="final-cta__title">Выберите время, мы подготовим кадр</h2>
+        <p class="final-cta__sub">Запись откроет свободные слоты студии. Остальные детали можно уточнить в чате.</p>
+        <div class="final-cta__actions">
+          <a class="final-cta__btn" routerLink="/booking" href="/booking">
+            Выбрать время
+            <span class="final-cta__btn-arrow">→</span>
+          </a>
+          <div class="final-cta__contacts">
+            <a href="tel:+78633226575" class="final-cta__contact-link">
+              <mat-icon>phone</mat-icon>
+              Позвонить
+            </a>
+            <a href="https://max.ru/id262603741214_bot" target="_blank" rel="noopener" class="final-cta__contact-link">
+              <mat-icon svgIcon="channel-max" />
+              МАКС
+            </a>
+            <a href="https://t.me/magnus_photo" target="_blank" rel="noopener" class="final-cta__contact-link">
+              <mat-icon svgIcon="channel-telegram" />
+              Telegram
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="final-cta__visual" aria-hidden="true">
+        <img src="/assets/static/promo/portrait-hero.webp" alt="" loading="lazy">
+        <div class="final-cta__note">
+          <span>Съёмка</span>
+          <strong>Портрет, документы, печать</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

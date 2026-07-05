@@ -1,0 +1,43 @@
+.create-page {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.create-header {
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 599px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.section-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mat-sys-on-surface-variant);
+  margin: 12px 0 8px;
+}
+
+mat-divider {
+  margin: 8px 0 4px;
+}

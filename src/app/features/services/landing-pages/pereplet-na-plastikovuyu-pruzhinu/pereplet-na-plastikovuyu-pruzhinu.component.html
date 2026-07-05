@@ -1,0 +1,323 @@
+<main class="binding-page">
+  <section class="binding-hero" appScrollReveal>
+    <img
+      class="binding-hero__background"
+      src="/assets/static/promo/pechat-dokumentov.webp"
+      alt=""
+      width="1600"
+      height="900"
+      loading="eager"
+    />
+    <div class="binding-hero__shade" aria-hidden="true"></div>
+
+    <div class="binding-hero__inner">
+      <div class="binding-hero__content">
+        <p class="binding-kicker">Ростов-на-Дону · Соборный</p>
+        <h1>
+          <span>{{ page.heroHighlight }}</span>
+          {{ page.heroTitle }}
+        </h1>
+        <p class="binding-hero__lead">{{ page.heroSubtitle }}</p>
+
+        <div class="binding-hero__benefits" aria-label="Ключевые условия">
+          @for (benefit of page.heroBenefits; track benefit.text) {
+            <span>
+              <mat-icon>{{ benefit.icon }}</mat-icon>
+              {{ benefit.text }}
+            </span>
+          }
+        </div>
+
+        <div class="binding-hero__actions">
+          <button
+            mat-flat-button
+            type="button"
+            class="binding-action binding-action--primary"
+            appTrackClick
+            eventName="binding_landing_order_click"
+            trackCategory="conversion"
+            trackLabel="hero"
+            (click)="scrollToContacts($event)"
+          >
+            <mat-icon>upload_file</mat-icon>
+            {{ page.heroCtaText }}
+          </button>
+          <button
+            mat-stroked-button
+            type="button"
+            class="binding-action binding-action--ghost"
+            appTrackClick
+            eventName="binding_landing_education_click"
+            trackCategory="engagement"
+            trackLabel="hero_anchor"
+            (click)="scrollToEducation($event)"
+          >
+            <mat-icon>school</mat-icon>
+            Учебные цены
+          </button>
+        </div>
+      </div>
+
+      <aside class="binding-hero__product" aria-label="Пластиковая пружина А4">
+        <img
+          src="/assets/static/education-smart/card-binding.webp"
+          alt="Документ А4 на пластиковой пружине"
+          width="280"
+          height="280"
+          loading="eager"
+        />
+        <strong>3 ₽</strong>
+        <span>страница А4 с образовательным доступом</span>
+      </aside>
+    </div>
+  </section>
+
+  <section class="binding-price-strip" aria-label="Цены и сроки" appScrollReveal>
+    <div class="binding-section-inner binding-price-strip__grid">
+      @for (tile of priceTiles; track tile.label) {
+        <article class="binding-metric-card">
+          <mat-icon>{{ tile.icon }}</mat-icon>
+          <span>{{ tile.label }}</span>
+          <strong>{{ tile.value }}</strong>
+          <p>{{ tile.note }}</p>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="binding-section binding-section--white" appScrollReveal>
+    <div class="binding-section-inner">
+      <div class="binding-section-heading">
+        <p>Что переплетаем</p>
+        <h2>Учебные и рабочие документы А4</h2>
+        <span>Можно принести готовые листы или сразу распечатать файл в студии.</span>
+      </div>
+
+      <div class="binding-use-grid">
+        @for (item of useCases; track item.title) {
+          <article class="binding-use-card">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section
+    class="binding-section binding-section--education"
+    id="education-binding"
+    appScrollReveal
+  >
+    <div class="binding-section-inner binding-education-layout">
+      <div class="binding-education-copy">
+        <p class="binding-kicker">Учебные цены</p>
+        <h2>Печать А4 всего от 3 ₽ за страницу</h2>
+        <p>
+          После подтверждения образовательного статуса цены применяются в профиле:
+          ч/б А4, от 3 ₽ за страницу, пластиковая пружина, 10 ₽.
+          Это постоянные условия для подтверждённого учебного профиля, а не разовый промокод.
+        </p>
+        <div class="binding-education-actions">
+          <a
+            mat-flat-button
+            routerLink="/education"
+            class="binding-action binding-action--primary"
+            appTrackClick
+            eventName="binding_landing_education_click"
+            trackCategory="conversion"
+            trackLabel="education_status"
+          >
+            <mat-icon>verified_user</mat-icon>
+            Подтвердить статус
+          </a>
+          <button
+            mat-stroked-button
+            type="button"
+            class="binding-action binding-action--light"
+            appTrackClick
+            eventName="binding_landing_order_click"
+            trackCategory="conversion"
+            trackLabel="education_chat"
+            (click)="scrollToContacts($event)"
+          >
+            <mat-icon>chat</mat-icon>
+            Уточнить заказ
+          </button>
+        </div>
+      </div>
+
+      <div class="binding-education-prices" aria-label="Образовательные цены">
+        @for (price of educationPrices; track price.label) {
+          <article class="binding-education-price">
+            <mat-icon>{{ price.icon }}</mat-icon>
+            <div>
+              <span>{{ price.label }}</span>
+              <strong>{{ price.value }}</strong>
+              <p>{{ price.note }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="binding-section binding-section--white" appScrollReveal>
+    <div class="binding-section-inner">
+      <div class="binding-section-heading">
+        <p>{{ page.processTitle }}</p>
+        <h2>От файла до готовой работы</h2>
+      </div>
+
+      <div class="binding-process">
+        @for (step of page.processSteps; track step.number) {
+          <article class="binding-process-step">
+            <span class="binding-process-step__number">{{ step.number }}</span>
+            <mat-icon>{{ step.icon }}</mat-icon>
+            <h3>{{ step.title }}</h3>
+            <p>{{ step.description }}</p>
+            @if (step.details?.length) {
+              <ul>
+                @for (detail of step.details; track detail) {
+                  <li>{{ detail }}</li>
+                }
+              </ul>
+            }
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="binding-section binding-section--split" appScrollReveal>
+    <div class="binding-section-inner binding-details-layout">
+      <div class="binding-requirements">
+        <p class="binding-kicker">{{ page.requirementsTitle }}</p>
+        <h2>Чтобы сделать быстро</h2>
+        <ul>
+          @for (requirement of page.requirements; track requirement) {
+            <li>
+              <mat-icon>check_circle</mat-icon>
+              <span>{{ requirement }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+
+      <div class="binding-note">
+        <mat-icon>info</mat-icon>
+        <h3>По ВКР и дипломным работам</h3>
+        <p>
+          Мы делаем именно пластиковую пружину А4. Если вуз требует другой вид
+          оформления, лучше уточнить это на кафедре до заказа.
+        </p>
+        <button
+          mat-flat-button
+          type="button"
+          class="binding-action binding-action--primary"
+          appTrackClick
+          eventName="binding_landing_order_click"
+          trackCategory="conversion"
+          trackLabel="requirements"
+          (click)="scrollToContacts($event)"
+        >
+          <mat-icon>upload_file</mat-icon>
+          Загрузить файл
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="binding-section binding-section--white" appScrollReveal>
+    <div class="binding-section-inner">
+      <div class="binding-section-heading">
+        <p>Вопросы</p>
+        <h2>Что уточняют перед заказом</h2>
+      </div>
+
+      <mat-accordion class="binding-faq" multi>
+        @for (item of page.faqItems; track item.question) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ item.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{ item.answer }}</p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <section class="binding-section binding-section--related" appScrollReveal>
+    <div class="binding-section-inner">
+      <div class="binding-section-heading">
+        <p>Рядом</p>
+        <h2>Что часто заказывают вместе</h2>
+      </div>
+
+      <div class="binding-related-grid">
+        @for (service of page.relatedServices; track service.url) {
+          <a
+            class="binding-related-card"
+            [routerLink]="service.url"
+            appTrackClick
+            eventName="binding_landing_related_click"
+            trackCategory="navigation"
+            [trackLabel]="service.url"
+            [trackCustomParams]="{ service_title: service.title, service_price: service.price }"
+          >
+            <mat-icon>{{ service.icon }}</mat-icon>
+            <span>{{ service.title }}</span>
+            <strong>от {{ service.price }} ₽</strong>
+          </a>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="binding-final-cta" appScrollReveal>
+    <div class="binding-section-inner binding-final-cta__inner">
+      @if (page.cta; as cta) {
+        <div>
+          <p class="binding-kicker">{{ cta.urgencyText }}</p>
+          <h2>{{ cta.title }}</h2>
+          <span>{{ cta.subtitle }}</span>
+        </div>
+        <div class="binding-final-cta__actions">
+          <button
+            mat-flat-button
+            type="button"
+            class="binding-action binding-action--primary"
+            appTrackClick
+            eventName="binding_landing_order_click"
+            trackCategory="conversion"
+            trackLabel="final"
+            (click)="scrollToContacts($event)"
+          >
+            <mat-icon>upload_file</mat-icon>
+            {{ cta.primaryButtonText }}
+          </button>
+          <a
+            mat-stroked-button
+            class="binding-action binding-action--ghost"
+            [href]="studioPhoneHref"
+            appTrackClick
+            eventName="binding_landing_phone_click"
+            trackCategory="conversion"
+            trackLabel="final"
+          >
+            <mat-icon>call</mat-icon>
+            {{ studioPhone }}
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section id="binding-order" class="binding-order" appScrollReveal>
+    <div class="binding-section-inner">
+      <app-document-print-order-widget intent="binding" />
+    </div>
+  </section>
+</main>

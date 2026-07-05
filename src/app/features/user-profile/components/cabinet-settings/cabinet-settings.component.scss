@@ -1,0 +1,362 @@
+:host {
+  display: block;
+  color-scheme: light;
+  --cab-bg: #f1f2f4;
+  --cab-card: #ffffff;
+  --cab-text: #20242a;
+  --cab-muted: #737985;
+  --cab-line: #dfe3e8;
+  --cab-soft: #eceff3;
+  --cab-red: #ef3124;
+}
+
+.settings-page {
+  min-height: calc(100vh - 72px);
+  padding: 34px clamp(20px, 4vw, 56px) 84px;
+  background: var(--cab-bg);
+  color: var(--cab-text);
+  font-family: Inter, "Plus Jakarta Sans", system-ui, sans-serif;
+}
+
+.mobile-title,
+.profile-card,
+.settings-section {
+  max-width: 1250px;
+  margin-inline: auto;
+}
+
+.mobile-title {
+  display: none;
+}
+
+.profile-card {
+  display: none;
+}
+
+.settings-card:hover,
+.settings-card:focus-visible,
+.edit-button:hover,
+.edit-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08);
+}
+
+.settings-card:focus-visible,
+.edit-button:focus-visible,
+.mobile-title a:focus-visible {
+  outline: 2px solid var(--cab-red);
+  outline-offset: 2px;
+}
+
+.settings-section {
+  margin-bottom: 34px;
+}
+
+.settings-section h2 {
+  margin: 0 0 18px;
+  color: var(--cab-text);
+  font-size: 28px;
+  line-height: 1.2;
+  font-weight: 900;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.settings-section--primary .settings-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.settings-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 16px;
+  align-items: start;
+  min-height: 146px;
+  padding: 22px;
+  border-radius: 8px;
+  background: var(--cab-card);
+  color: var(--cab-text);
+  text-decoration: none;
+  box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+  transition:
+    background-color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.16s ease;
+}
+
+.settings-card--featured {
+  border: 1px solid #dfe3e8;
+  background: #fafbfc;
+}
+
+.item-icon {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border-radius: 8px;
+  background: #f0f2f5;
+  color: #111827;
+}
+
+.item-icon mat-icon {
+  font-size: 26px;
+  width: 26px;
+  height: 26px;
+}
+
+.settings-card > span:last-of-type {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.settings-card strong {
+  font-size: 18px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.settings-card small {
+  color: var(--cab-muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.settings-card em {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: #dcf8e9;
+  color: #058548;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1120px) {
+  .settings-section--primary .settings-grid,
+  .settings-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .settings-page {
+    min-height: 100vh;
+    padding: 16px 14px 92px;
+  }
+
+  .mobile-title {
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
+    align-items: center;
+    min-height: 52px;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+
+  .mobile-title a {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    color: var(--cab-text);
+    text-decoration: none;
+  }
+
+  .mobile-title h1 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 700;
+  }
+
+  .profile-card {
+    display: grid;
+    grid-template-columns: 74px 1fr;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 26px;
+    padding: 26px 24px;
+    border-radius: 8px;
+    background: var(--cab-card);
+  }
+
+  .profile-card__avatar {
+    display: grid;
+    width: 74px;
+    height: 74px;
+    place-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--cab-soft);
+    color: #0f2537;
+  }
+
+  .profile-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .profile-card__avatar mat-icon {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+  }
+
+  .profile-card__text {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .profile-card__text strong {
+    overflow: hidden;
+    font-size: 22px;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .profile-card__text span {
+    color: var(--cab-muted);
+    font-size: 17px;
+  }
+
+  .edit-button {
+    grid-column: 1 / -1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    border-radius: 8px;
+    background: var(--cab-soft);
+    color: var(--cab-text);
+    font-size: 18px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .settings-section {
+    margin-bottom: 34px;
+  }
+
+  .settings-section--primary {
+    display: block;
+    margin-bottom: 34px;
+  }
+
+  .settings-section--primary h2 {
+    display: none;
+  }
+
+  .settings-section h2 {
+    margin-bottom: 22px;
+    font-size: 31px;
+  }
+
+  .settings-section--primary + .settings-section h2 {
+    margin-top: 0;
+  }
+
+  .settings-section--primary + .settings-section {
+    margin-top: 0;
+  }
+
+  .settings-section--primary .settings-grid,
+  .settings-grid {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+
+  .settings-card {
+    grid-template-columns: 74px 1fr;
+    gap: 20px;
+    min-height: 74px;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .settings-card--mobile-hidden {
+    display: none;
+  }
+
+  .settings-card--featured {
+    min-height: 98px;
+    padding: 16px;
+    background: var(--cab-soft);
+  }
+
+  .settings-card--featured .item-icon {
+    background: #20242a;
+    color: #ffffff;
+  }
+
+  .settings-card:hover,
+  .settings-card:focus-visible {
+    box-shadow: none;
+    transform: none;
+  }
+
+  .item-icon {
+    width: 74px;
+    height: 74px;
+    background: var(--cab-card);
+  }
+
+  .item-icon mat-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .settings-card strong {
+    font-size: 25px;
+  }
+
+  .settings-card small {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 420px) {
+  .settings-page {
+    padding-inline: 12px;
+  }
+
+  .profile-card {
+    padding: 22px 18px;
+  }
+
+  .settings-card strong {
+    font-size: 22px;
+  }
+
+  .settings-card small {
+    font-size: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-card {
+    transition: none;
+  }
+
+  .settings-card:hover,
+  .settings-card:focus-visible,
+  .edit-button:hover,
+  .edit-button:focus-visible {
+    transform: none;
+  }
+}

@@ -1,0 +1,107 @@
+<div class="create-page">
+
+  <div class="create-header">
+    <h1>Новая задача</h1>
+  </div>
+
+  <mat-card appearance="outlined">
+    <mat-card-content>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Тип задачи</mat-label>
+          <mat-select [(ngModel)]="form.task_type" required>
+            <mat-option value="walk_in">
+              <mat-icon>storefront</mat-icon> Клиент на точке
+            </mat-option>
+            <mat-option value="photo_order">
+              <mat-icon>print</mat-icon> Заказ на фото/печать
+            </mat-option>
+            <mat-option value="callback">
+              <mat-icon>phone_callback</mat-icon> Перезвонить
+            </mat-option>
+            <mat-option value="chat_inquiry">
+              <mat-icon>chat</mat-icon> Из чата
+            </mat-option>
+            <mat-option value="retouch">
+              <mat-icon>auto_fix_high</mat-icon> Ретушь
+            </mat-option>
+            <mat-option value="delivery">
+              <mat-icon>local_shipping</mat-icon> Доставка
+            </mat-option>
+            <mat-option value="cross_location">
+              <mat-icon>swap_horiz</mat-icon> Межточечная
+            </mat-option>
+            <mat-option value="internal">
+              <mat-icon>assignment</mat-icon> Внутренняя
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Приоритет</mat-label>
+          <mat-select [(ngModel)]="form.priority">
+            <mat-option value="low">Низкий</mat-option>
+            <mat-option value="normal">Обычный</mat-option>
+            <mat-option value="high">Высокий</mat-option>
+            <mat-option value="urgent">Срочный</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Заголовок</mat-label>
+        <input matInput [(ngModel)]="form.title" required placeholder="Что нужно сделать">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Описание</mat-label>
+        <textarea matInput [(ngModel)]="form.description" rows="3"
+                  placeholder="Подробности задачи (необязательно)"></textarea>
+      </mat-form-field>
+
+      <mat-divider />
+
+      <h3 class="section-title">Клиент</h3>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Имя клиента</mat-label>
+          <input matInput [(ngModel)]="form.client_name">
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>Телефон</mat-label>
+          <input matInput [(ngModel)]="form.client_phone" type="tel">
+          <mat-icon matPrefix>phone</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Канал обращения</mat-label>
+        <mat-select [(ngModel)]="form.client_channel">
+          <mat-option value="walk_in">На точке</mat-option>
+          <mat-option value="phone">Телефон</mat-option>
+          <mat-option value="whatsapp">WhatsApp</mat-option>
+          <mat-option value="telegram">Telegram</mat-option>
+          <mat-option value="online">Онлайн</mat-option>
+          <mat-option value="max">МАКС</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button routerLink="/employee/tasks">Отмена</button>
+      <button mat-flat-button (click)="create()"
+              [disabled]="!form.task_type || !form.title || isSubmitting()">
+        @if (isSubmitting()) {
+          Создание...
+        } @else {
+          Создать задачу
+        }
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+</div>

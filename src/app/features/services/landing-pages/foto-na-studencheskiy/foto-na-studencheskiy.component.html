@@ -1,0 +1,167 @@
+<main class="student-photo-page">
+  <section class="hero" appScrollReveal>
+    <div class="hero__inner">
+      <a class="hero__badge" routerLink="/foto-na-document">
+        <span class="hero__stars">
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <mat-icon>star</mat-icon>
+          }
+        </span>
+        <span>Фото на документы в студии</span>
+      </a>
+
+      <h1 class="hero__title">
+        <span>Фото на студенческий,</span>
+        <span class="hero__line-accent">которое выглядит аккуратно</span>
+      </h1>
+
+      <p class="hero__subtitle">
+        Для студенческого билета, зачётки, пропуска и личного дела. Делаем
+        несколько кадров, подбираем свет, готовим нужный размер и печатаем
+        комплект в студии.
+      </p>
+
+      <div class="hero__actions">
+        <a mat-flat-button routerLink="/booking" class="hero__cta-primary">
+          <mat-icon>event_available</mat-icon>
+          Записаться онлайн
+        </a>
+        <a
+          mat-stroked-button
+          routerLink="/education"
+          class="hero__cta-secondary"
+        >
+          <mat-icon>school</mat-icon>
+          Образовательный доступ
+        </a>
+      </div>
+
+      <p class="hero__walkin">
+        или просто приходите без записи, пн-вс 9:00-19:30
+      </p>
+
+      <div class="hero__pills" aria-label="Стоимость и условия">
+        <span class="hero__pill">
+          <mat-icon>cloud_upload</mat-icon>
+          Онлайн от {{ onlinePrice() }} ₽
+        </span>
+        <span class="hero__pill">
+          <mat-icon>photo_camera</mat-icon>
+          В студии {{ studioPrice() }} ₽
+        </span>
+        <span class="hero__pill">
+          <mat-icon>print</mat-icon>
+          Печатный комплект
+        </span>
+        <span class="hero__pill">
+          <mat-icon>brush</mat-icon>
+          Естественная ретушь
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" appScrollReveal>
+    <div class="section-inner">
+      <div class="section-header">
+        <h2>Почему не фотоавтомат</h2>
+        <p>
+          Студенческий билет живёт с вами несколько лет. На фото можно выглядеть
+          спокойно и аккуратно, а не как на случайном снимке.
+        </p>
+      </div>
+
+      <div class="features__grid">
+        @for (feature of features; track feature.title) {
+          <article class="feature-card">
+            <div class="feature-card__icon">
+              <mat-icon>{{ feature.icon }}</mat-icon>
+            </div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="documents" appScrollReveal>
+    <div class="section-inner documents__inner">
+      <div class="section-header section-header--left">
+        <h2>Подойдёт для учёбы</h2>
+        <p>
+          Если учебное заведение прислало точные требования, покажите их перед
+          съёмкой. Подготовим размер, фон и комплект под задачу.
+        </p>
+      </div>
+
+      <div class="documents__pills">
+        @for (type of documentTypes; track type) {
+          <span>{{ type }}</span>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="process" appScrollReveal>
+    <div class="section-inner">
+      <div class="section-header section-header--split">
+        <h2>Как это работает</h2>
+        <p>
+          В студии всё занимает один визит: съёмка, выбор кадра, подготовка
+          размера и печать.
+        </p>
+      </div>
+
+      <div class="process__list">
+        @for (step of steps; track step.title; let index = $index) {
+          <article class="process-row">
+            <span class="process-row__number">{{ index + 1 }}</span>
+            <mat-icon>{{ step.icon }}</mat-icon>
+            <div>
+              <h3>{{ step.title }}</h3>
+              <p>{{ step.description }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" appScrollReveal>
+    <div class="section-inner faq__inner">
+      <h2>Частые вопросы</h2>
+
+      <mat-accordion class="faq__accordion">
+        @for (item of faqs; track item.question) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{ item.question }}</mat-panel-title>
+            </mat-expansion-panel-header>
+            <p>{{ item.answer }}</p>
+          </mat-expansion-panel>
+        }
+      </mat-accordion>
+    </div>
+  </section>
+
+  <section class="final-cta" appScrollReveal>
+    <div class="final-cta__inner">
+      <h2>Нужно фото на студенческий?</h2>
+      <p>
+        Запишитесь на удобное время или приходите без записи. Сделаем фото на
+        документы аккуратно и без лишней суеты.
+      </p>
+      <div class="final-cta__actions">
+        <a mat-flat-button routerLink="/booking" class="final-cta__button">
+          <mat-icon>event_available</mat-icon>
+          Записаться онлайн
+        </a>
+        <a mat-stroked-button routerLink="/foto-na-document">
+          <mat-icon>badge</mat-icon>
+          Все фото на документы
+        </a>
+      </div>
+    </div>
+  </section>
+</main>

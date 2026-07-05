@@ -1,0 +1,346 @@
+syntax = "proto3";
+package svf.infra;
+
+// ── Agent Types ──
+
+enum AgentType {
+  AGENT_TYPE_UNSPECIFIED = 0;
+  PRINT = 1;
+  POS = 2;
+  VISION = 3;
+  MONITOR = 4;
+}
+
+enum UpdateState {
+  UPDATE_STATE_UNSPECIFIED = 0;
+  DOWNLOADING = 1;
+  VERIFYING = 2;
+  INSTALLING = 3;
+  RESTARTING = 4;
+  COMPLETED = 5;
+  FAILED = 6;
+  ROLLED_BACK = 7;
+}
+
+// ── Unified Heartbeat (all agents) ──
+
+message AgentHeartbeat {
+  string agent_id = 1;
+  AgentType agent_type = 2;
+  string version = 3;
+  string os_info = 4;
+  string os_arch = 5;
+  string hostname = 6;
+  int64 uptime_seconds = 7;
+  int32 config_version = 8;
+  int64 timestamp_ms = 9;
+  map<string, string> metadata = 10;
+}
+
+// ── Auto-Update ──
+
+message UpdateCommand {
+  string command_id = 1;
+  string target_version = 2;
+  string artifact_url = 3;
+  string artifact_hash_sha256 = 4;
+  int64 artifact_size_bytes = 5;
+  bool force = 6;
+  string rollback_url = 7;
+}
+
+message UpdateStatus {
+  string command_id = 1;
+  UpdateState state = 2;
+  int32 progress_percent = 3;
+  string error_message = 4;
+  string new_version = 5;
+  int64 timestamp_ms = 6;
+}
+
+// ── Remote Config ──
+
+message ConfigUpdate {
+  int32 config_version = 1;
+  bytes config_toml = 2;
+  bool restart_required = 3;
+  int64 timestamp_ms = 4;
+}
+
+message ConfigAck {
+  string agent_id = 1;
+  int32 applied_version = 2;
+  bool success = 3;
+  string error_message = 4;
+  int64 timestamp_ms = 5;
+}
+
+// ── System Metrics (Device Monitor) ──
+
+message SystemMetrics {
+  string agent_id = 1;
+  float cpu_percent = 2;
+  int32 memory_used_mb = 3;
+  int32 memory_total_mb = 4;
+  float disk_used_gb = 5;
+  float disk_total_gb = 6;
+  int64 network_rx_bytes_sec = 7;
+  int64 network_tx_bytes_sec = 8;
+  repeated PeripheralStatus peripherals = 9;
+  map<string, string> agent_statuses = 10;
+  int64 timestamp_ms = 11;
+}
+
+message PeripheralStatus {
+  string device_type = 1;
+  string device_name = 2;
+  string status = 3;
+  string details = 4;
+}
+
+// ── POS ──
+
+enum PosTransactionType {
+  POS_TX_UNSPECIFIED = 0;
+  CARD_PAYMENT = 1;
+  CARD_REFUND = 2;
+  SBP_PAYMENT = 3;
+  SBP_REFUND = 4;
+  FISCAL_SALE = 5;
+  FISCAL_REFUND = 6;
+  CASH_DRAWER = 7;
+  BANK_SETTLEMENT = 8;
+  FISCAL_CORRECTION = 9;
+  RECEIPT_COPY_PRINT = 10;
+}
+
+// Server → Agent: card payment
+message PosPayCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string order_id = 3;
+  string payment_method = 4;  // "card" | "sbp"
+  string description = 5;
+}
+
+// Server → Agent: card refund
+message PosRefundCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string original_transaction_id = 3;
+  string original_rrn = 4;
+}
+
+// Server → Agent: SBP QR generation
+message PosSbpGenerateCommand {
+  string transaction_id = 1;
+  int64 amount_kopecks = 2;
+  string order_id = 3;
+}
+
+// Agent → Server: SBP QR result
+message PosSbpQrResult {
+  string transaction_id = 1;
+  bool success = 2;
+  string error_message = 3;
+  string qr_data = 4;       // QR code content
+  bytes qr_image = 5;        // PNG image
+  int64 timestamp_ms = 6;
+}
+
+// Server → Agent: check SBP payment status
+message PosSbpStatusCommand {
+  string transaction_id = 1;
+  string order_id = 2;
+}
+
+// Server → Agent: fiscal receipt (АТОЛ)
+message PosFiscalCommand {
+  string receipt_id = 1;
+  string receipt_type = 2;     // "sale" | "refund" | "correction" | "refund_correction"
+  repeated FiscalItem items = 3;
+  int64 total_kopecks = 4;
+  string payment_method = 5;   // fallback: "cash" | "card" | "sbp" | "prepaid"
+  string cashier = 6;
+  string customer_email = 7;
+  string taxation_type = 8;    // "osn" | "usn_income" | "usn_income_outcome" | "patent"
+  repeated FiscalPayment payments = 9;
+  FiscalReceiptPrintOptions receipt_print_options = 10;
+  BankSlipPrintOptions bank_slip_options = 11;
+  string cashier_inn = 12;
+  string correction_type = 13;         // "self" | "instruction"
+  string correction_base_date = 14;    // ATOL correctionBaseDate, yyyy.mm.dd
+  string correction_base_number = 15;  // ATOL correctionBaseNumber
+  string correction_base_name = 16;    // Audit/UI label, not required by ATOL
+}
+
+message FiscalItem {
+  string name = 1;
+  int64 price_kopecks = 2;
+  int32 quantity = 3;
+  string vat_rate = 4;          // "vat20" | "vat10" | "vat0" | "none"
+  string payment_method = 5;    // "fullPayment" | "prepayment" | "advance"
+  string payment_object = 6;    // "commodity" | "service" | "payment"
+  string measurement_unit = 7;  // ATOL measurementUnit / FFD tag 2108, default "piece"
+}
+
+message FiscalPayment {
+  string payment_method = 1;    // "cash" | "card" | "sbp" | "prepaid"
+  int64 amount_kopecks = 2;
+  string transaction_id = 3;
+  string approval_code = 4;
+  string rrn = 5;
+  string card_mask = 6;
+  string card_info = 7;
+}
+
+// Server → Agent: non-fiscal customer copy of an existing POS receipt
+message PosReceiptCopyCommand {
+  string command_id = 1;
+  string receipt_number = 2;
+  string created_at = 3;
+  repeated ReceiptCopyLine lines = 4;
+  repeated ReceiptCopyPayment payments = 5;
+  int64 total_kopecks = 6;
+  string cashier = 7;
+}
+
+message ReceiptCopyLine {
+  string name = 1;
+  double quantity = 2;
+  int64 amount_kopecks = 3;
+}
+
+message ReceiptCopyPayment {
+  string payment_method = 1;
+  int64 amount_kopecks = 2;
+  string approval_code = 3;
+  string rrn = 4;
+  string card_mask = 5;
+}
+
+message FiscalReceiptPrintOptions {
+  bool print_receipt = 1;
+  uint32 receipt_copies = 2;
+  repeated string header_lines = 3;
+  repeated string footer_lines = 4;
+  bool show_cashier = 5;
+  bool show_receipt_number = 6;
+  bool show_order_number = 7;
+  bool show_customer = 8;
+}
+
+message BankSlipPrintOptions {
+  bool print_bank_slip_on_atol = 1;
+  uint32 bank_slip_copies = 2;
+  bool print_merchant_copy = 3;
+  bool print_customer_copy = 4;
+  bool include_rrn = 5;
+  bool include_approval_code = 6;
+  bool include_card_mask = 7;
+  bool include_sbp_id = 8;
+  repeated string footer_lines = 9;
+}
+
+message ShiftPrintOptions {
+  bool print_open_report = 1;
+  bool print_close_report = 2;
+}
+
+// Server → Agent: shift management
+message PosShiftCommand {
+  string command_id = 1;
+  string action = 2;            // "open" | "close"
+  string cashier = 3;
+  int64 timestamp_ms = 4;
+  string cashier_inn = 5;
+  ShiftPrintOptions shift_print_options = 6;
+}
+
+// Server → Agent: open cash drawer
+message PosCashDrawerCommand {
+  string command_id = 1;
+  int64 timestamp_ms = 2;
+}
+
+// Server → Agent: bank end-of-day reconciliation via DualConnector
+message PosSettlementCommand {
+  string transaction_id = 1;
+  int64 timestamp_ms = 2;
+}
+
+// Agent → Server: transaction result (universal)
+message PosTransactionResult {
+  string transaction_id = 1;
+  PosTransactionType transaction_type = 2;
+  bool success = 3;
+  string error_message = 4;
+  string approval_code = 5;
+  string rrn = 6;
+  string card_mask = 7;
+  // Fiscal data (populated after PosFiscalCommand)
+  string fiscal_number = 8;
+  string fiscal_sign = 9;
+  string fiscal_receipt_url = 10;
+  // SBP data (populated after SBP payment confirmed)
+  bool sbp_paid = 11;
+  bytes receipt_data = 12;
+  int64 timestamp_ms = 13;
+}
+
+// Agent → Server: shift result
+message PosShiftResult {
+  string command_id = 1;
+  bool success = 2;
+  string error_message = 3;
+  string action = 4;            // "open" | "close"
+  int64 timestamp_ms = 5;
+}
+
+// Agent → Server: POS telemetry (periodic health)
+message PosTelemetry {
+  string agent_id = 1;
+  bool terminal_online = 2;      // INPAS SmartSale reachable
+  bool fiscal_online = 3;        // АТОЛ WebServer reachable
+  string terminal_model = 4;
+  string fiscal_model = 5;
+  string shift_status = 6;       // "open" | "closed" | "expired"
+  int64 timestamp_ms = 7;
+}
+
+// ── Vision ──
+
+message MotionEvent {
+  string camera_id = 1;
+  float confidence = 2;
+  bytes thumbnail = 3;
+  string zone = 4;
+  int64 timestamp_ms = 5;
+}
+
+message CameraStatus {
+  string camera_id = 1;
+  bool is_online = 2;
+  string resolution = 3;
+  float fps = 4;
+  int64 timestamp_ms = 5;
+}
+
+// ── Agent Alert (agent → server) ──
+
+message AgentAlert {
+  string agent_id = 1;
+  string alert_type = 2;
+  string severity = 3;
+  string title = 4;
+  string details_json = 5;
+  int64 timestamp_ms = 6;
+}
+
+// ── Restart Command ──
+
+message RestartCommand {
+  string reason = 1;
+  int32 delay_seconds = 2;
+  int64 timestamp_ms = 3;
+}

@@ -1,0 +1,44 @@
+# SVF POS Agent — пример конфигурации
+# Скопировать в config.toml и настроить
+
+[agent]
+agent_id = "00000000-0000-0000-0000-000000000000"  # UUID из БД (agents.id)
+studio_id = "00000000-0000-0000-0000-000000000000"  # UUID студии
+agent_type = "pos"
+version = "0.1.0"
+
+[mqtt]
+host = "svoefoto.ru"
+port = 8883
+username = "pos_agent_studio1"
+password = "mqtt_password_here"
+use_tls = true
+
+[offline]
+db_path = "C:\\ProgramData\\SvoePhoto\\pos-agent\\offline.db"
+
+[heartbeat]
+interval_secs = 60
+
+[download]
+temp_dir = "C:\\ProgramData\\SvoePhoto\\pos-agent\\tmp"
+timeout_secs = 120
+max_file_size = 104857600
+
+# INPAS SmartSale (Тинькофф платёжный терминал)
+[inpas]
+url = "http://localhost:9015"
+timeout_secs = 120  # терминал может ждать ввод PIN
+terminal_id = "11087928"  # field 27 в DualConnector; для другого терминала заменить
+currency_code = "643"    # RUB
+
+# АТОЛ WebServer (фискальный регистратор)
+[atol]
+url = "http://localhost:16732"
+timeout_secs = 30
+taxation_type = "osn"  # osn | usn_income | usn_income_outcome | patent
+paper_width_mm = 58    # АТОЛ 27Ф: 58 мм использует настройку ККТ "Ширина бумаги" = 57 мм
+
+# Телеметрия POS (проверка здоровья терминала и ФР)
+[pos_telemetry]
+interval_secs = 60

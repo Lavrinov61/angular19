@@ -1,0 +1,46 @@
+<section class="process-section">
+  <div class="process-container">
+    <h2 class="process-title">{{ title() }}</h2>
+
+    <div class="process-grid">
+      @for (step of steps(); track step.number; let i = $index) {
+        <div class="process-step" [class.active]="i === currentSlide" (click)="goToSlide(i)" (keydown.enter)="goToSlide(i)" tabindex="0">
+          <div class="step-header">
+            <div class="step-number">
+              <mat-icon>{{ step.icon }}</mat-icon>
+            </div>
+            @if (i < steps().length - 1) {
+              <div class="step-connector"></div>
+            }
+          </div>
+          <h3 class="step-title">{{ step.title }}</h3>
+          <p class="step-description">{{ step.description }}</p>
+          @if (step.details && step.details.length > 0) {
+            <ul class="step-details">
+              @for (detail of step.details; track detail) {
+                <li>
+                  <mat-icon>check</mat-icon>
+                  <span>{{ detail }}</span>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Mobile: indicators -->
+    @if (steps().length > 1) {
+      <div class="process-indicators">
+        @for (step of steps(); track step.number; let i = $index) {
+          <button
+            class="process-dot"
+            [class.active]="i === currentSlide"
+            (click)="goToSlide(i)"
+            [attr.aria-label]="'Шаг ' + (i + 1)">
+          </button>
+        }
+      </div>
+    }
+  </div>
+</section>

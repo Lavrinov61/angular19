@@ -1,0 +1,1172 @@
+<div class="card-designs-container">
+  <!-- Design Selector -->
+  <div class="design-selector">    <h1 class="headline-large">Выберите дизайн карточки услуги</h1>
+    <p class="body-large">20 современных дизайнов на выбор</p>
+    
+    <div class="design-chips">
+      @for (design of designs; track design.id) {
+        <button 
+          mat-stroked-button
+          [class.selected]="selectedDesign() === design.id"
+          (click)="selectDesign(design.id)">
+          {{ design.name }}
+          <small>{{ design.description }}</small>
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Design Preview -->
+  <div class="design-preview">
+    <!-- Design 1: Glassmorphism Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 1">
+      <article class="service-card design-1">
+        <div class="card-background"></div>
+        <div class="glass-overlay"></div>
+        
+        <div class="card-header">
+          <div class="category-badge">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge">
+              <mat-icon>star</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="features-grid">
+            @for (feature of sampleService.features; track feature) {
+              <div class="feature-item">
+                <mat-icon>check_circle</mat-icon>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="price-section">
+            @if (sampleService.originalPrice) {
+              <span class="original-price">{{ sampleService.originalPrice }}₽</span>
+            }
+            <span class="current-price">{{ sampleService.price }}₽</span>
+            @if (sampleService.discount) {
+              <span class="discount">-{{ sampleService.discount }}%</span>
+            }
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button mat-raised-button color="primary" (click)="onBook()">
+            <mat-icon>event</mat-icon>
+            Записаться
+          </button>
+          <button mat-icon-button (click)="onVK()">
+            <mat-icon svgIcon="channel-vk" />
+          </button>
+          <button mat-icon-button (click)="onTelegram()">
+            <mat-icon svgIcon="channel-telegram" />
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 2: Neumorphism Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 2">
+      <article class="service-card design-2">
+        <div class="neuro-background"></div>
+        
+        <div class="card-header">
+          <div class="rating-section">
+            <div class="stars">
+              @for (star of [1,2,3,4,5]; track star) {
+                <mat-icon>{{ star <= sampleService.rating ? 'star' : 'star_border' }}</mat-icon>
+              }
+            </div>
+            <span class="rating-text">{{ sampleService.rating }} ({{ sampleService.reviews }})</span>
+          </div>
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="meta-info">
+            <div class="meta-item">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ sampleService.duration }}</span>
+            </div>
+            <div class="meta-item">
+              <mat-icon>category</mat-icon>
+              <span>{{ sampleService.category }}</span>
+            </div>
+          </div>
+
+          <div class="features-list">
+            @for (feature of sampleService.features; track feature) {
+              <div class="feature-bubble">{{ feature }}</div>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-wrapper">
+              <span class="price-label">от</span>
+              <span class="price-value">{{ sampleService.price }}</span>
+              <span class="price-currency">₽</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button mat-fab extended color="primary" (click)="onBook()">
+            <mat-icon>bookmark</mat-icon>
+            Забронировать
+          </button>
+          <div class="contact-buttons">
+            <button mat-mini-fab (click)="onVK()">
+              <mat-icon svgIcon="channel-vk" />
+            </button>
+            <button mat-mini-fab (click)="onTelegram()">
+              <mat-icon svgIcon="channel-telegram" />
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 3: Gradient Mesh Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 3">
+      <article class="service-card design-3">
+        <div class="gradient-mesh"></div>
+        <div class="mesh-overlay"></div>
+        
+        <div class="card-header">
+          <mat-chip-set>
+            <mat-chip highlighted>{{ sampleService.category }}</mat-chip>
+            @if (sampleService.new) {
+              <mat-chip color="accent">NEW</mat-chip>
+            }
+          </mat-chip-set>
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="stats-grid">
+            <div class="stat-item">
+              <mat-icon>star_rate</mat-icon>
+              <span class="stat-value">{{ sampleService.rating }}</span>
+              <span class="stat-label">рейтинг</span>
+            </div>
+            <div class="stat-item">
+              <mat-icon>reviews</mat-icon>
+              <span class="stat-value">{{ sampleService.reviews }}</span>
+              <span class="stat-label">отзывов</span>
+            </div>
+            <div class="stat-item">
+              <mat-icon>schedule</mat-icon>
+              <span class="stat-value">1-2</span>
+              <span class="stat-label">часа</span>
+            </div>
+          </div>
+
+          <div class="features-carousel">
+            @for (feature of sampleService.features; track feature; let i = $index) {
+              <div class="feature-card" [style.--delay]="i * 0.1 + 's'">
+                <mat-icon>verified</mat-icon>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-container">
+              <span class="old-price">{{ sampleService.originalPrice }}₽</span>
+              <span class="new-price">{{ sampleService.price }}₽</span>
+              <div class="savings">Экономия {{ sampleService.originalPrice! - sampleService.price }}₽</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button mat-raised-button class="primary-action" (click)="onBook()">
+            <mat-icon>event_available</mat-icon>
+            Записаться онлайн
+          </button>
+          <div class="secondary-actions">
+            <button mat-stroked-button (click)="onVK()">
+              <mat-icon svgIcon="channel-vk" />
+              ВКонтакте
+            </button>
+            <button mat-stroked-button (click)="onTelegram()">
+              <mat-icon svgIcon="channel-telegram" />
+              Telegram
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 4: Minimal Glass Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 4">
+      <article class="service-card design-4">
+        <div class="minimal-background"></div>
+        
+        <div class="card-content">
+          <div class="title-section">
+            <h3 class="service-title">{{ sampleService.title }}</h3>
+            <div class="title-underline"></div>
+          </div>
+          
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="minimal-features">
+            @for (feature of sampleService.features; track feature) {
+              <div class="minimal-feature">
+                <div class="feature-dot"></div>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="minimal-price">
+            <span class="price-from">от</span>
+            <span class="price-amount">{{ sampleService.price }}</span>
+            <span class="price-rub">₽</span>
+          </div>
+
+          <div class="minimal-actions">
+            <button mat-flat-button color="primary" (click)="onBook()">Записаться</button>
+            <div class="contact-links">
+              <button mat-icon-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+              </button>
+              <button mat-icon-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 5: Floating Action Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 5">
+      <article class="service-card design-5">
+        <div class="floating-background"></div>
+        
+        <div class="floating-badge">
+          @if (sampleService.popular) {
+            <mat-icon>trending_up</mat-icon>
+            <span>Хит</span>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="floating-features">
+            @for (feature of sampleService.features; track feature; let i = $index) {
+              <div class="floating-feature" [style.--index]="i">
+                <mat-icon>done</mat-icon>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="floating-price">
+            <div class="price-circle">
+              @if (sampleService.originalPrice) {
+                <span class="crossed-price">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="main-price">{{ sampleService.price }}₽</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="floating-actions">
+          <button mat-fab color="primary" (click)="onBook()">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-mini-fab class="vk-fab" (click)="onVK()">
+            <mat-icon svgIcon="channel-vk" />
+          </button>
+          <button mat-mini-fab class="telegram-fab" (click)="onTelegram()">
+            <mat-icon svgIcon="channel-telegram" />
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 6: Holographic Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 6">
+      <article class="service-card design-6">
+        <div class="holographic-background"></div>
+        <div class="holo-reflection"></div>
+        
+        <div class="card-content">
+          <div class="holo-header">
+            <h3 class="service-title">{{ sampleService.title }}</h3>
+            <div class="holo-badge">
+              <mat-icon>auto_awesome</mat-icon>
+            </div>
+          </div>
+          
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="holo-grid">
+            @for (feature of sampleService.features; track feature) {
+              <div class="holo-feature">
+                <div class="holo-icon">
+                  <mat-icon>stars</mat-icon>
+                </div>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="holo-price">
+            <div class="price-hologram">
+              <span class="holo-amount">{{ sampleService.price }}</span>
+              <span class="holo-currency">₽</span>
+            </div>
+          </div>
+
+          <div class="holo-actions">
+            <button mat-raised-button class="holo-button" (click)="onBook()">
+              <mat-icon>rocket_launch</mat-icon>
+              Записаться
+            </button>
+            <div class="holo-contacts">
+              <button mat-icon-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+              </button>
+              <button mat-icon-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 7: Retro Futurism Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 7">
+      <article class="service-card design-7">
+        <div class="retro-background"></div>
+        <div class="retro-grid"></div>
+        
+        <div class="card-content">
+          <div class="retro-header">
+            <h3 class="service-title">{{ sampleService.title }}</h3>
+            <div class="retro-line"></div>
+          </div>
+          
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="retro-features">
+            @for (feature of sampleService.features; track feature) {
+              <div class="retro-feature">
+                <div class="retro-bullet"></div>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="retro-price">
+            <div class="price-display">
+              <span class="retro-amount">{{ sampleService.price }}</span>
+              <span class="retro-rub">RUB</span>
+            </div>
+          </div>
+
+          <div class="retro-actions">
+            <button mat-stroked-button class="retro-button" (click)="onBook()">
+              <mat-icon>play_arrow</mat-icon>
+              EXECUTE
+            </button>
+            <div class="retro-contacts">
+              <button mat-icon-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+              </button>
+              <button mat-icon-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 8: Organic Shapes Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 8">
+      <article class="service-card design-8">
+        <div class="organic-background"></div>
+        <div class="organic-blob blob-1"></div>
+        <div class="organic-blob blob-2"></div>
+        
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="organic-features">
+            @for (feature of sampleService.features; track feature) {
+              <div class="organic-feature">
+                <div class="organic-check">
+                  <mat-icon>nature</mat-icon>
+                </div>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="organic-price">
+            <div class="price-bubble">
+              <span class="bubble-amount">{{ sampleService.price }}</span>
+              <span class="bubble-currency">₽</span>
+            </div>
+          </div>
+
+          <div class="organic-actions">
+            <button mat-fab extended color="primary" (click)="onBook()">
+              <mat-icon>eco</mat-icon>
+              Записаться
+            </button>
+            <div class="organic-contacts">
+              <button mat-mini-fab (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+              </button>
+              <button mat-mini-fab (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 9: Dark Mode Neon Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 9">
+      <article class="service-card design-9">
+        <div class="neon-background"></div>
+        <div class="neon-border"></div>
+        
+        <div class="card-content">
+          <div class="neon-header">
+            <h3 class="service-title">{{ sampleService.title }}</h3>
+            <div class="neon-pulse"></div>
+          </div>
+          
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="neon-features">
+            @for (feature of sampleService.features; track feature) {
+              <div class="neon-feature">
+                <div class="neon-icon">
+                  <mat-icon>flash_on</mat-icon>
+                </div>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="neon-price">
+            <div class="price-neon">
+              <span class="neon-amount">{{ sampleService.price }}</span>
+              <span class="neon-currency">₽</span>
+            </div>
+          </div>
+
+          <div class="neon-actions">
+            <button mat-raised-button class="neon-button" (click)="onBook()">
+              <mat-icon>electric_bolt</mat-icon>
+              BOOK NOW
+            </button>
+            <div class="neon-contacts">
+              <button mat-icon-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+              </button>
+              <button mat-icon-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 10: Premium Luxury Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 10">
+      <article class="service-card design-10">
+        <div class="luxury-background"></div>
+        <div class="gold-accents"></div>
+        
+        <div class="card-content">
+          <div class="luxury-header">
+            <div class="premium-badge">
+              <mat-icon>diamond</mat-icon>
+              <span>PREMIUM</span>
+            </div>
+            <h3 class="service-title">{{ sampleService.title }}</h3>
+          </div>
+          
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="luxury-features">
+            @for (feature of sampleService.features; track feature) {
+              <div class="luxury-feature">
+                <div class="gold-check">
+                  <mat-icon>workspace_premium</mat-icon>
+                </div>
+                <span>{{ feature }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="luxury-price">
+            <div class="price-luxury">
+              @if (sampleService.originalPrice) {
+                <span class="original-luxury">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-luxury">{{ sampleService.price }}₽</span>
+              <div class="luxury-line"></div>
+            </div>
+          </div>
+
+          <div class="luxury-actions">
+            <button mat-raised-button class="luxury-button" (click)="onBook()">
+              <mat-icon>crown</mat-icon>
+              Забронировать
+            </button>
+            <div class="luxury-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 11: Cyber Matrix Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 11">
+      <article class="service-card design-11">
+        <div class="matrix-background">
+          <div class="matrix-rain"></div>
+          <div class="matrix-grid"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge cyber">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge matrix">
+              <mat-icon>trending_up</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip cyber">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price cyber">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="cyber-actions">
+            <button mat-raised-button class="cyber-button" (click)="onBook()">
+              <mat-icon>code</mat-icon>
+              Подключиться
+            </button>
+            <div class="cyber-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 12: Material 3D Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 12">
+      <article class="service-card design-12">
+        <div class="material-3d-background">
+          <div class="elevation-layer-1"></div>
+          <div class="elevation-layer-2"></div>
+          <div class="elevation-layer-3"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge material">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge material-3d">
+              <mat-icon>star</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip material-3d">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price material">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge material">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="material-actions">
+            <button mat-raised-button class="material-button" (click)="onBook()">
+              <mat-icon>touch_app</mat-icon>
+              Забронировать
+            </button>
+            <div class="material-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 13: Arctic Frost Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 13">
+      <article class="service-card design-13">
+        <div class="arctic-background">
+          <div class="frost-overlay"></div>
+          <div class="ice-crystals"></div>
+          <div class="snow-particles"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge arctic">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge frost">
+              <mat-icon>ac_unit</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip arctic">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price arctic">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge arctic">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="arctic-actions">
+            <button mat-raised-button class="arctic-button" (click)="onBook()">
+              <mat-icon>camera_alt</mat-icon>
+              Забронировать
+            </button>
+            <div class="arctic-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 14: Liquid Motion Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 14">
+      <article class="service-card design-14">
+        <div class="liquid-background">
+          <div class="blob blob-1"></div>
+          <div class="blob blob-2"></div>
+          <div class="blob blob-3"></div>
+          <div class="wave-animation"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge liquid">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge motion">
+              <mat-icon>waves</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title">{{ sampleService.title }}</h3>
+          <p class="service-description">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip liquid">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price liquid">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge liquid">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="liquid-actions">
+            <button mat-raised-button class="liquid-button" (click)="onBook()">
+              <mat-icon>bubble_chart</mat-icon>
+              Забронировать
+            </button>
+            <div class="liquid-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 15: Vintage Paper Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 15">
+      <article class="service-card design-15">
+        <div class="vintage-background">
+          <div class="paper-texture"></div>
+          <div class="aged-overlay"></div>
+          <div class="vintage-border"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge vintage">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge vintage-style">
+              <mat-icon>vintage</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title vintage">{{ sampleService.title }}</h3>
+          <p class="service-description vintage">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip vintage">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price vintage">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price vintage">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge vintage">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="vintage-actions">
+            <button mat-raised-button class="vintage-button" (click)="onBook()">
+              <mat-icon>camera</mat-icon>
+              Забронировать
+            </button>
+            <div class="vintage-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 16: Neon Glow Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 16">
+      <article class="service-card design-16">
+        <div class="neon-background">
+          <div class="neon-grid"></div>
+          <div class="glow-particles"></div>
+          <div class="neon-border"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge neon">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge neon-glow">
+              <mat-icon>flash_on</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title neon">{{ sampleService.title }}</h3>
+          <p class="service-description neon">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip neon">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price neon">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price neon">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge neon">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="neon-actions">
+            <button mat-raised-button class="neon-button" (click)="onBook()">
+              <mat-icon>electric_bolt</mat-icon>
+              Забронировать
+            </button>
+            <div class="neon-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 17: Marble Luxury Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 17">
+      <article class="service-card design-17">
+        <div class="marble-background">
+          <div class="marble-texture"></div>
+          <div class="marble-veins"></div>
+          <div class="golden-accents"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge marble">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge marble-luxury">
+              <mat-icon>diamond</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title marble">{{ sampleService.title }}</h3>
+          <p class="service-description marble">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip marble">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price marble">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price marble">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge marble">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="marble-actions">
+            <button mat-raised-button class="marble-button" (click)="onBook()">
+              <mat-icon>star</mat-icon>
+              Забронировать
+            </button>
+            <div class="marble-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 18: Cosmic Space Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 18">
+      <article class="service-card design-18">
+        <div class="cosmic-background">
+          <div class="star-field"></div>
+          <div class="nebula-clouds"></div>
+          <div class="cosmic-particles"></div>
+          <div class="planet-ring"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge cosmic">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge space">
+              <mat-icon>stars</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title cosmic">{{ sampleService.title }}</h3>
+          <p class="service-description cosmic">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip cosmic">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price cosmic">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price cosmic">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge cosmic">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="cosmic-actions">
+            <button mat-raised-button class="cosmic-button" (click)="onBook()">
+              <mat-icon>rocket_launch</mat-icon>
+              Забронировать
+            </button>
+            <div class="cosmic-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 19: Geometric Modern Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 19">
+      <article class="service-card design-19">
+        <div class="geometric-background">
+          <div class="geometric-pattern"></div>
+          <div class="triangular-shapes"></div>
+          <div class="hexagon-grid"></div>
+          <div class="modern-lines"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge geometric">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge modern">
+              <mat-icon>category</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title geometric">{{ sampleService.title }}</h3>
+          <p class="service-description geometric">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip geometric">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price geometric">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price geometric">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge geometric">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="geometric-actions">
+            <button mat-raised-button class="geometric-button" (click)="onBook()">
+              <mat-icon>square</mat-icon>
+              Забронировать
+            </button>
+            <div class="geometric-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Design 20: Watercolor Art Card -->
+    <div class="card-container" [class.active]="selectedDesign() === 20">
+      <article class="service-card design-20">
+        <div class="watercolor-background">
+          <div class="watercolor-splash splash-1"></div>
+          <div class="watercolor-splash splash-2"></div>
+          <div class="watercolor-splash splash-3"></div>
+          <div class="paint-drops"></div>
+        </div>
+        
+        <div class="card-header">
+          <div class="category-badge watercolor">{{ sampleService.category }}</div>
+          @if (sampleService.popular) {
+            <div class="popular-badge artistic">
+              <mat-icon>palette</mat-icon>
+              <span>Популярно</span>
+            </div>
+          }
+        </div>
+
+        <div class="card-content">
+          <h3 class="service-title watercolor">{{ sampleService.title }}</h3>
+          <p class="service-description watercolor">{{ sampleService.description }}</p>
+          
+          <div class="service-features">
+            @for (feature of sampleService.features; track feature) {
+              <span class="feature-chip watercolor">{{ feature }}</span>
+            }
+          </div>
+
+          <div class="price-section">
+            <div class="price-display">
+              @if (sampleService.originalPrice) {
+                <span class="original-price watercolor">{{ sampleService.originalPrice }}₽</span>
+              }
+              <span class="current-price watercolor">{{ sampleService.price }}₽</span>
+              @if (sampleService.discount) {
+                <span class="discount-badge watercolor">-{{ sampleService.discount }}%</span>
+              }
+            </div>
+          </div>
+
+          <div class="watercolor-actions">
+            <button mat-raised-button class="watercolor-button" (click)="onBook()">
+              <mat-icon>brush</mat-icon>
+              Забронировать
+            </button>
+            <div class="watercolor-contacts">
+              <button mat-stroked-button (click)="onVK()">
+                <mat-icon svgIcon="channel-vk" />
+                ВКонтакте
+              </button>
+              <button mat-stroked-button (click)="onTelegram()">
+                <mat-icon svgIcon="channel-telegram" />
+                Telegram
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</div>

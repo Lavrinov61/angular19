@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Памятка промоутера — Своё Фото</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 12mm 15mm;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      font-size: 11pt;
+      line-height: 1.45;
+      color: #1a1a1a;
+      background: #fff;
+      padding: 12mm 15mm;
+    }
+
+    @media print {
+      body { padding: 0; }
+    }
+
+    h1 {
+      font-size: 18pt;
+      text-align: center;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 9pt;
+      color: #666;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #1a1a1a;
+    }
+
+    h2 {
+      font-size: 12pt;
+      margin: 14px 0 6px;
+      padding: 3px 8px;
+      background: #f0f0f0;
+      border-left: 3px solid #1a1a1a;
+    }
+
+    h3 {
+      font-size: 10pt;
+      margin: 8px 0 3px;
+      color: #333;
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 8px 10px;
+    }
+
+    .card-label {
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      margin-bottom: 3px;
+    }
+
+    .speech {
+      font-style: italic;
+      color: #2a2a2a;
+    }
+
+    .speech::before { content: "\2014\00a0"; color: #999; }
+
+    ul {
+      padding-left: 18px;
+      margin: 3px 0;
+    }
+
+    li {
+      margin-bottom: 2px;
+    }
+
+    .faq-item {
+      margin-bottom: 6px;
+    }
+
+    .faq-q {
+      font-weight: 600;
+    }
+
+    .faq-a {
+      margin-left: 12px;
+      color: #333;
+    }
+
+    .faq-a::before {
+      content: "\2192\00a0";
+      color: #999;
+    }
+
+    .danger-box {
+      border: 2px solid #c00;
+      border-radius: 4px;
+      padding: 8px 10px;
+      margin-top: 10px;
+    }
+
+    .danger-box h2 {
+      background: #c00;
+      color: #fff;
+      border-left: none;
+      margin: -8px -10px 8px;
+      padding: 4px 10px;
+      border-radius: 2px 2px 0 0;
+    }
+
+    .danger-box li {
+      color: #900;
+      font-weight: 500;
+    }
+
+    .info-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+      padding: 8px;
+      background: #f8f8f8;
+      border-radius: 4px;
+      font-size: 9pt;
+    }
+
+    .info-row strong {
+      display: block;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      margin-bottom: 2px;
+    }
+
+    .tip {
+      background: #f8f8f0;
+      border-left: 3px solid #b90;
+      padding: 6px 10px;
+      margin: 6px 0;
+      font-size: 10pt;
+    }
+
+    .time-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10pt;
+      margin-top: 4px;
+    }
+
+    .time-table th,
+    .time-table td {
+      border: 1px solid #ddd;
+      padding: 4px 8px;
+      text-align: left;
+    }
+
+    .time-table th {
+      background: #f0f0f0;
+      font-size: 9pt;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .footer {
+      margin-top: 14px;
+      padding-top: 8px;
+      border-top: 2px solid #1a1a1a;
+      text-align: center;
+      font-size: 9pt;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Памятка промоутера — Своё Фото</h1>
+  <div class="subtitle">svoefoto.ru &nbsp;|&nbsp; +7 (901) 417-86-68 &nbsp;|&nbsp; Пн&ndash;Вс 09:00&ndash;19:30</div>
+
+  <!-- Контактная информация -->
+  <div class="info-row">
+    <div>
+      <strong>Адрес 1</strong>
+      Соборный 21
+    </div>
+    <div>
+      <strong>Адрес 2</strong>
+      2-ая Баррикадная 4
+    </div>
+    <div>
+      <strong>Промокод</strong>
+      Твой личный код на флаере.<br>Клиент получает скидку, ты — комиссию.
+    </div>
+  </div>
+
+  <!-- 1. Подход к людям (промоутер стоит рядом со входом в студию) -->
+  <h2>1. Первый контакт — варианты подхода</h2>
+  <p style="margin-bottom: 6px; color: #666; font-size: 10pt;">Ты стоишь рядом со входом в студию. Люди проходят мимо — твоя задача остановить и пригласить зайти.</p>
+  <div class="columns">
+    <div class="card">
+      <div class="card-label">К прохожему</div>
+      <p class="speech">Добрый день! Фото на документы — 5 минут, вот прямо тут. Зайдите — сделаем сразу! Вот флаер со скидкой.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">К студенту</div>
+      <p class="speech">Привет! Нужно фото на студенческий? Мы вот тут, за 5 минут сделаем. Вот промокод на скидку!</p>
+    </div>
+    <div class="card">
+      <div class="card-label">К маме с ребёнком</div>
+      <p class="speech">Здравствуйте! Фото на документы делаем и для детей тоже — быстро, за 5 минут. Зайдите, мы прямо тут!</p>
+    </div>
+    <div class="card">
+      <div class="card-label">К офисному работнику</div>
+      <p class="speech">Добрый день! Фото на паспорт или загран? Вот прямо тут — за 5 минут готово. Вот флаер с промокодом.</p>
+    </div>
+  </div>
+
+  <!-- 2. При интересе -->
+  <h2>2. Если человек заинтересовался</h2>
+  <ul>
+    <li><b>Вход:</b> &laquo;Вот прямо тут, заходите — сделаем сразу&raquo; — покажи рукой на вход</li>
+    <li><b>Скорость:</b> &laquo;Фото на документы — 5 минут, сразу на руки + электронная версия&raquo;</li>
+    <li><b>Гарантия:</b> &laquo;Если не примут — переснимем бесплатно&raquo;</li>
+    <li><b>Дети:</b> &laquo;Детей тоже фотографируем — любой возраст, любые документы&raquo;</li>
+    <li><b>Промокод:</b> &laquo;На флаере промокод — покажете на кассе и получите скидку&raquo;</li>
+    <li><b>Подробности:</b> &laquo;Все цены — на сайте svoefoto.ru, или напишите в Telegram @magnus_photo&raquo;</li>
+  </ul>
+
+  <!-- 3. При отказе -->
+  <div class="tip">
+    <b>При отказе</b> — не настаивай. Просто скажи: &laquo;Понял, возьмите флаер на всякий случай — вдруг пригодится! Хорошего дня!&raquo;
+  </div>
+
+  <!-- 4. FAQ -->
+  <h2>3. Частые вопросы и ответы</h2>
+
+  <div class="faq-item">
+    <div class="faq-q">&laquo;Сколько стоит?&raquo;</div>
+    <div class="faq-a">Зависит от типа документа, но цены приятные. Напишите в Telegram @magnus_photo или на сайте svoefoto.ru — ответим за минуту!</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">&laquo;Долго ждать?&raquo;</div>
+    <div class="faq-a">Фото на документы — 5 минут, сразу на руки + электронная версия. Без записи, без очереди. Если не примут — переснимем бесплатно.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">&laquo;А где вы находитесь?&raquo;</div>
+    <div class="faq-a">Соборный 21 и 2-ая Баррикадная 4. Работаем каждый день с 9 до 19:30.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">&laquo;Есть скидки?&raquo;</div>
+    <div class="faq-a">Да! На флаере мой промокод — покажете в студии и получите скидку.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">&laquo;Какие документы делаете?&raquo;</div>
+    <div class="faq-a">Любые: паспорт, загранпаспорт, визы, студенческий, пропуск, водительское — всё по стандартам.</div>
+  </div>
+
+  <div class="faq-item">
+    <div class="faq-q">&laquo;А детей фотографируете?&raquo;</div>
+    <div class="faq-a">Да, фото на документы делаем для любого возраста — и для детей тоже. Заходите прямо сейчас!</div>
+  </div>
+
+  <!-- 5. Что НЕ говорить -->
+  <div class="danger-box">
+    <h2>Что НЕЛЬЗЯ говорить</h2>
+    <ul>
+      <li>Не называй конкретные цены — направляй на svoefoto.ru или в Telegram @magnus_photo</li>
+      <li>Не сравнивай с конкурентами и не говори плохо о других студиях</li>
+      <li>Не дави и не уговаривай — один раз предложил, при отказе отдал флаер</li>
+      <li>Не звони за клиента в студию — он сам свяжется, когда будет готов</li>
+      <li>Не обещай то, в чём не уверен (сроки, наличие услуг)</li>
+      <li>Не рассказывай подробности по телефону — направляй в Telegram @magnus_photo или чат на svoefoto.ru</li>
+    </ul>
+  </div>
+
+  <!-- 6. Время и аудитория -->
+  <h2>4. Когда и кого ловить</h2>
+  <table class="time-table">
+    <tr>
+      <th>Время</th>
+      <th>Аудитория</th>
+      <th>Акцент</th>
+    </tr>
+    <tr>
+      <td><b>09:00 — 11:00</b></td>
+      <td>Офисные работники, по делам</td>
+      <td>Фото на документы, загранпаспорт, быстро</td>
+    </tr>
+    <tr>
+      <td><b>11:00 — 14:00</b></td>
+      <td>Студенты, молодёжь</td>
+      <td>Студенческий, скидка по промокоду, недорого</td>
+    </tr>
+    <tr>
+      <td><b>14:00 — 17:00</b></td>
+      <td>Смешанный поток</td>
+      <td>Универсальный подход, фото на документы</td>
+    </tr>
+    <tr>
+      <td><b>17:00 — 19:00</b></td>
+      <td>Семьи, родители с детьми</td>
+      <td>Детские фото на документы, копии, печать</td>
+    </tr>
+  </table>
+
+  <div class="tip" style="margin-top: 10px;">
+    <b>Совет:</b> Ты стоишь у входа — твоя главная сила в том, что клиенту не нужно никуда идти. &laquo;Вот мы, прямо тут, зайдите&raquo; — это самый сильный аргумент. Используй его в каждом подходе.
+  </div>
+
+  <!-- 5. Какой флаер давать -->
+  <h2>5. Три флаера — какой давать</h2>
+  <p style="margin-bottom: 8px;">У тебя три разных флаера. Выбирай по ситуации — смотри на человека и давай подходящий.</p>
+
+  <div class="columns" style="grid-template-columns: 1fr; gap: 8px;">
+    <div class="card">
+      <div class="card-label">Флаер &laquo;Фото на документы&raquo;</div>
+      <p><b>Оффер:</b> скидка 100&nbsp;&#8381; на первое фото по промокоду</p>
+      <p><b>Кому давать:</b> всем, кто спешит по делам; спрашивают про фото; с папкой документов; студентам; родителям с детьми</p>
+      <p><b>Что говорить:</b></p>
+      <p class="speech">Фото на документы — 5 минут, вот прямо тут. Зайдите — сделаем сразу. Вот скидка 100 рублей! Если не примут — переснимем бесплатно.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Флаер &laquo;Ксерокопия / Печать&raquo;</div>
+      <p><b>Оффер:</b> 2 копии бесплатно по промокоду</p>
+      <p><b>Кому давать:</b> универсальный, подходит всем; особенно если человек не заинтересован в фото — это повод сохранить флаер</p>
+      <p><b>Что говорить:</b></p>
+      <p class="speech">Ксерокопия 10 рублей — вот мы, заходите. Две копии бесплатно по промокоду!</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Флаер &laquo;Планшетное сканирование&raquo;</div>
+      <p><b>Оффер:</b> первые 10 страниц по 3&nbsp;&#8381; (обычная цена — 5&nbsp;&#8381;/стр, обычное сканирование — 50&nbsp;&#8381;)</p>
+      <p><b>Кому давать:</b> офисным работникам, людям с пачками документов, деловой вид</p>
+      <p><b>Что говорить:</b></p>
+      <p class="speech">Планшетное сканирование от 5 рублей за страницу — вот мы, прямо тут. Большие объёмы — без проблем!</p>
+    </div>
+  </div>
+
+  <div class="tip" style="margin-top: 8px;">
+    <b>Не знаешь какой дать?</b> Давай &laquo;Ксерокопия / Печать&raquo; — он универсальный, с прайсом. Прайс не выбрасывают.
+  </div>
+
+  <!-- 6. Ответы на возражения -->
+  <h2>6. Ответы на возражения</h2>
+  <div class="faq-item">
+    <div class="faq-q">&laquo;Есть дома принтер&raquo;</div>
+    <div class="faq-a">У нас профессиональное оборудование и быстрее — 10&nbsp;&#8381; за копию, не нужно тратить свой картридж.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">&laquo;Делаю в другом месте&raquo;</div>
+    <div class="faq-a">У нас планшетное сканирование от 5&nbsp;&#8381;/стр при больших объёмах — сравните цены.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">&laquo;Ничего не нужно&raquo;</div>
+    <div class="faq-a">Сохраните на всякий случай — на флаере цены, пригодится.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">&laquo;Сейчас некогда&raquo;</div>
+    <div class="faq-a">Возьмите флаер — зайдёте, когда будет удобно. Мы тут каждый день с 9 до 19:30.</div>
+  </div>
+
+  <div class="tip">
+    <b>Совет:</b> У тебя три флаера — выбирай нужный по ситуации. Видишь человека с папкой документов — давай &laquo;Сканирование&raquo;. Спрашивают про фото — давай &laquo;Фото на документы&raquo;. Просто проходит мимо — &laquo;Ксерокопия&raquo; (универсальный). Комбинируй по пачке каждого.
+  </div>
+
+  <div class="footer">
+    Своё Фото &nbsp;&bull;&nbsp; svoefoto.ru &nbsp;&bull;&nbsp; +7 (901) 417-86-68 &nbsp;&bull;&nbsp; Соборный 21 &nbsp;/&nbsp; 2-ая Баррикадная 4
+  </div>
+
+</body>
+</html>

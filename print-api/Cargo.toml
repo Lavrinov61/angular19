@@ -1,0 +1,80 @@
+[package]
+name = "print-api"
+version = "0.1.0"
+edition = "2024"
+description = "Print Service API — Axum-based print queue, printers, telemetry, bridge devices"
+
+[dependencies]
+# Web framework
+axum = { version = "0.8", features = ["macros", "multipart"] }
+tower = { version = "0.5", features = ["full"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "limit"] }
+tokio = { version = "1", features = ["full"] }
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio", "tls-rustls", "postgres", "uuid", "chrono", "json", "bigdecimal"] }
+bigdecimal = { version = "0.4", features = ["serde"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Protobuf (Phase 0 contract — used in Phase 1 for MQTT payloads)
+prost = "0.13"
+
+# Auth
+jsonwebtoken = "9"
+
+# Types
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Observability
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Config
+dotenvy = "0.15"
+
+# HTTP client (for bridge proxy)
+reqwest = { version = "0.12", features = ["json", "rustls-tls"], default-features = false }
+
+# Error handling
+thiserror = "2"
+
+# URL parsing (SSRF validation)
+url = "2"
+
+# Crypto (for API key generation)
+rand = "0.9"
+hex = "0.4"
+sha2 = "0.10"
+
+# MQTT client (Phase 1 — broker integration, replaces Python bridge)
+rumqttc = "0.24"
+
+# Redis (relay job/telemetry events to Socket.IO via pub/sub)
+redis = { version = "0.32", features = ["tokio-comp"] }
+
+# S3 upload (Yandex Object Storage / AWS S3 compatible)
+aws-config = { version = "1", features = ["behavior-version-latest"] }
+aws-sdk-s3 = "1"
+aws-smithy-http-client = { version = "1", features = ["rustls-aws-lc"] }
+
+# Temp file management
+tempfile = "3"
+
+# Image decoding (coverage analysis)
+image = { version = "0.25", default-features = false, features = ["jpeg", "png", "webp", "bmp", "tiff"] }
+
+# DOCX preprocessing before LibreOffice conversion
+regex = "1"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+
+[build-dependencies]
+prost-build = "0.13"
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

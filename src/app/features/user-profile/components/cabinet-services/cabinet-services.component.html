@@ -1,0 +1,109 @@
+<section class="services-page">
+  <header class="services-head">
+    <div class="brand-mark">СФ</div>
+    <h1>
+      Услуги и печать
+    </h1>
+  </header>
+
+  <a class="wide-promo" routerLink="/chat">
+    <span>
+      <strong>Не знаете точное название?</strong>
+      <small>Опишите задачу менеджеру, подберём услугу и формат.</small>
+    </span>
+    <mat-icon>arrow_forward</mat-icon>
+  </a>
+
+  <label class="search-box">
+    <input
+      type="search"
+      placeholder="Паспорт, печать A4, ретушь"
+      [value]="searchQuery()"
+      (input)="onSearchInput($event)"
+    />
+    @if (searchQuery()) {
+      <button type="button" class="search-clear" aria-label="Очистить поиск" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    } @else {
+      <mat-icon>search</mat-icon>
+    }
+  </label>
+
+  <div class="hero-services">
+    @for (card of heroCards(); track card.id) {
+      <a class="hero-service" [routerLink]="card.route">
+        <span class="item-icon"><mat-icon>{{ card.icon }}</mat-icon></span>
+        <span>
+          <strong>{{ card.title }}</strong>
+          <small>{{ card.description }}</small>
+        </span>
+        @if (card.badge) {
+          <em>{{ card.badge }}</em>
+        }
+      </a>
+    }
+  </div>
+
+  <section class="catalog">
+    <h2>Каталог</h2>
+    <div class="filter-row">
+      @for (filter of filters(); track filter) {
+        <button
+          type="button"
+          class="filter-chip"
+          [class.filter-chip--active]="activeFilter() === filter"
+          (click)="setFilter(filter)"
+        >
+          {{ filter }}
+        </button>
+      }
+    </div>
+
+    @if (loading()) {
+      <div class="catalog-state">
+        <mat-spinner diameter="34" />
+        <span>Загружаем каталог</span>
+      </div>
+    } @else if (error()) {
+      <div class="catalog-state catalog-state--error">
+        <mat-icon>sync_problem</mat-icon>
+        <span>{{ error() }}</span>
+      </div>
+    } @else if (allGroups().length === 0) {
+      <div class="catalog-state">
+        <mat-icon>inventory_2</mat-icon>
+        <span>Каталог услуг пока пуст</span>
+      </div>
+    } @else if (groups().length === 0) {
+      <div class="catalog-state">
+        <mat-icon>search_off</mat-icon>
+        <span>Ничего не найдено</span>
+      </div>
+    } @else {
+      <div class="group-grid">
+        @for (group of groups(); track group.title) {
+          <article class="service-group">
+            <h3>{{ group.title }}</h3>
+            <div class="service-list">
+              @for (item of group.items; track item.id) {
+                <a class="service-item" [routerLink]="item.route">
+                  <span class="item-icon"><mat-icon>{{ item.icon }}</mat-icon></span>
+                  <span>
+                    <strong>{{ item.title }}</strong>
+                    @if (item.description) {
+                      <small>{{ item.description }}</small>
+                    }
+                  </span>
+                  @if (item.badge) {
+                    <em>{{ item.badge }}</em>
+                  }
+                </a>
+              }
+            </div>
+          </article>
+        }
+      </div>
+    }
+  </section>
+</section>

@@ -1,0 +1,136 @@
+// Card Designs — minimal mobile-first layout + editorial design tokens
+
+.card-designs-container {
+  padding: 1rem;
+  max-width: var(--ed-content-width, 1200px);
+  margin: 0 auto;
+  min-height: 100vh;
+  background: var(--ed-surface, #0a0a0a);
+
+  @media (min-width: 840px) { padding: 2rem; }
+}
+
+.design-selector {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  h1 { margin-bottom: 0.5rem; color: var(--ed-accent, #f59e0b); }
+  p { color: var(--ed-on-surface-variant, #a0a0a0); margin-bottom: 1.5rem; }
+}
+
+.design-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+
+  button {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 0.75rem; min-width: 160px;
+
+    &.selected { background: var(--ed-accent-container, #451a03); color: var(--ed-on-accent-container, #fef3c7); }
+    small { font-size: 0.75rem; opacity: 0.7; margin-top: 0.25rem; }
+  }
+}
+
+.design-preview { position: relative; min-height: 500px; }
+
+.card-container {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 400px;
+  opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+  &.active { opacity: 1; visibility: visible; }
+}
+
+// Base Service Card
+.service-card {
+  width: 100%; border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden;
+  background: var(--ed-surface-container, #1a1a1a); color: var(--ed-on-surface, #f5f5f5);
+
+  .card-content { position: relative; z-index: 2; }
+  .service-title { font-weight: 600; margin-bottom: 0.75rem; }
+  .service-description { color: var(--ed-on-surface-variant, #a0a0a0); margin-bottom: 1rem; }
+  .card-actions { display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+}
+
+// Shared sub-elements across all designs
+.category-badge { background: var(--ed-accent-container, #451a03); color: var(--ed-on-accent-container, #fef3c7); padding: 0.35rem 0.75rem; border-radius: 12px; font-size: 0.8rem; }
+.popular-badge { display: flex; align-items: center; gap: 0.25rem; background: var(--ed-accent-container, #451a03); color: var(--ed-on-accent-container, #fef3c7); padding: 0.25rem 0.5rem; border-radius: 10px; font-size: 0.75rem; }
+
+.features-grid, .service-features { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.feature-item, .feature-chip, .feature-bubble { display: flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; color: var(--ed-on-surface-variant, #a0a0a0);
+  &.feature-chip, &.feature-bubble { background: var(--ed-surface-high, #222); padding: 0.25rem 0.5rem; border-radius: 8px; }
+}
+
+.price-section {
+  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;
+  .original-price, .old-price, .crossed-price { text-decoration: line-through; opacity: 0.6; }
+  .current-price, .new-price, .main-price, .price-value { font-weight: 700; color: var(--ed-accent, #f59e0b); font-size: 1.25rem; }
+  .discount, .discount-badge { background: var(--ed-error, #ef4444); color: var(--ed-on-error, #0a0a0a); padding: 0.15rem 0.4rem; border-radius: 8px; font-size: 0.75rem; }
+}
+
+.rating-section { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;
+  .stars { display: flex; gap: 0.15rem; }
+  .rating-text { font-size: 0.85rem; color: var(--ed-on-surface-variant, #a0a0a0); }
+}
+
+.meta-info { display: flex; gap: 1rem; margin-bottom: 1rem;
+  .meta-item { display: flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; color: var(--ed-on-surface-variant, #a0a0a0); }
+}
+
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1rem; text-align: center;
+  .stat-value { font-weight: 700; color: var(--ed-accent, #f59e0b); }
+  .stat-label { font-size: 0.75rem; color: var(--ed-on-surface-variant, #a0a0a0); }
+}
+
+.features-carousel, .features-list { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+.feature-card { display: flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.5rem; background: var(--ed-surface-high, #222); border-radius: 8px; font-size: 0.85rem; }
+
+// Minimal feature
+.minimal-features, .floating-features, .holo-grid, .retro-features, .organic-features,
+.neon-features, .luxury-features { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.minimal-feature, .floating-feature, .holo-feature, .retro-feature, .organic-feature,
+.neon-feature, .luxury-feature { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--ed-on-surface-variant, #a0a0a0); }
+
+// Price variants
+.minimal-price, .floating-price, .holo-price, .retro-price, .organic-price,
+.neon-price, .luxury-price { margin-bottom: 1rem; font-weight: 700; color: var(--ed-accent, #f59e0b); font-size: 1.25rem; }
+
+// Actions variants
+.minimal-actions, .floating-actions, .holo-actions, .retro-actions, .organic-actions,
+.neon-actions, .cyber-actions, .material-actions, .arctic-actions, .liquid-actions,
+.vintage-actions, .marble-actions, .cosmic-actions, .geometric-actions, .watercolor-actions {
+  display: flex; align-items: center; gap: 0.75rem; margin-top: 1rem;
+}
+
+.contact-buttons, .holo-contacts, .retro-contacts, .organic-contacts, .neon-contacts,
+.luxury-contacts, .cyber-contacts, .material-contacts, .arctic-contacts, .liquid-contacts,
+.vintage-contacts, .marble-contacts, .cosmic-contacts, .geometric-contacts, .watercolor-contacts,
+.secondary-actions, .contact-links {
+  display: flex; gap: 0.5rem;
+}
+
+// Design-specific backgrounds — all simplified
+.card-background, .glass-overlay, .neuro-background, .gradient-mesh, .mesh-overlay,
+.minimal-background, .floating-background, .holographic-background, .holo-reflection,
+.retro-background, .retro-grid, .organic-background, .neon-background, .neon-border,
+.luxury-background, .gold-accents, .matrix-background, .matrix-rain, .matrix-grid,
+.material-3d-background, .elevation-layer-1, .elevation-layer-2, .elevation-layer-3,
+.arctic-background, .frost-overlay, .ice-crystals, .snow-particles,
+.liquid-background, .wave-animation, .vintage-background, .paper-texture, .aged-overlay, .vintage-border,
+.neon-grid, .glow-particles, .marble-background, .marble-texture, .marble-veins, .golden-accents,
+.cosmic-background, .star-field, .nebula-clouds, .cosmic-particles, .planet-ring,
+.geometric-background, .geometric-pattern, .triangular-shapes, .hexagon-grid, .modern-lines,
+.watercolor-background, .watercolor-splash, .paint-drops {
+  display: none;
+}
+
+// Blob elements
+.organic-blob, .blob { display: none; }
+
+// Title elements
+.title-underline, .retro-line, .neon-pulse, .luxury-line { display: none; }
+.floating-badge, .premium-badge, .holo-badge { display: flex; align-items: center; gap: 0.25rem; }
+.feature-dot, .retro-bullet, .organic-check, .neon-icon, .gold-check, .holo-icon { display: flex; align-items: center; justify-content: center; }

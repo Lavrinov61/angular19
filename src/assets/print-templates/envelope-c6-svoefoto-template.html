@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Конверт - Своё Фото</title>
+  <style>
+    @page {
+      size: 162mm 114mm;
+      margin: 0;
+    }
+
+    :root {
+      --ink: #111111;
+      --muted: rgba(17, 17, 17, 0.68);
+      --faint: rgba(17, 17, 17, 0.18);
+      --orange: #f59e0b;
+      --orange-dark: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 162mm;
+      height: 114mm;
+      min-height: 0;
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    body {
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .sheet {
+      position: relative;
+      width: 162mm;
+      height: 114mm;
+      overflow: hidden;
+      background: transparent;
+      isolation: isolate;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .safe-frame {
+      position: absolute;
+      inset: 7mm;
+      border: 0.35mm solid var(--faint);
+      border-radius: 2mm;
+      pointer-events: none;
+    }
+
+    .safe-frame::before,
+    .safe-frame::after {
+      content: "";
+      position: absolute;
+      width: 10mm;
+      height: 10mm;
+      border-color: var(--orange);
+      border-style: solid;
+    }
+
+    .safe-frame::before {
+      left: -0.35mm;
+      top: -0.35mm;
+      border-width: 0.8mm 0 0 0.8mm;
+    }
+
+    .safe-frame::after {
+      right: -0.35mm;
+      bottom: -0.35mm;
+      border-width: 0 0.8mm 0.8mm 0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 50mm 1fr;
+      gap: 7mm;
+      width: 100%;
+      height: 100%;
+      padding: 12mm;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding-top: 1mm;
+    }
+
+    .logo {
+      display: block;
+      width: 43mm;
+      height: auto;
+    }
+
+    .brand-line {
+      width: 39mm;
+      height: 1.1mm;
+      margin: 7mm 0 5mm;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--orange-dark), var(--orange));
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 3.4mm;
+      line-height: 1.18;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .brand-copy {
+      max-width: 43mm;
+      margin: 2mm 0 0;
+      color: var(--muted);
+      font-size: 2.55mm;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .contact {
+      margin-top: auto;
+      display: grid;
+      gap: 1.6mm;
+      font-size: 2.85mm;
+      line-height: 1.18;
+      font-weight: 900;
+    }
+
+    .contact span {
+      color: var(--muted);
+      font-size: 2.25mm;
+      font-weight: 700;
+    }
+
+    .content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding-top: 1mm;
+    }
+
+    .headline {
+      max-width: 75mm;
+      margin: 2mm 0 0;
+      font-size: 11.2mm;
+      line-height: 0.96;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .headline span {
+      display: block;
+      white-space: nowrap;
+    }
+
+    .inside {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      gap: 2mm;
+      margin-top: 6mm;
+      padding: 1.9mm 3.2mm;
+      border: 0.45mm solid var(--ink);
+      border-radius: 2mm;
+      font-size: 3.75mm;
+      line-height: 1;
+      font-weight: 900;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .inside strong {
+      color: var(--orange);
+      font-size: 5.2mm;
+      line-height: 0.8;
+    }
+
+    .care {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.6mm;
+      max-width: 69mm;
+      margin-top: 5mm;
+      color: var(--muted);
+      font-size: 2.45mm;
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .care span {
+      padding: 1.05mm 1.75mm;
+      border: 0.25mm solid var(--faint);
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .photo-stack {
+      position: absolute;
+      right: 1mm;
+      bottom: 22mm;
+      z-index: -1;
+      width: 33mm;
+      height: 25mm;
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    .photo-stack span {
+      position: absolute;
+      display: block;
+      width: 19mm;
+      height: 25mm;
+      border: 0.34mm solid var(--faint);
+      border-radius: 1.4mm;
+      transform-origin: bottom center;
+    }
+
+    .photo-stack span:nth-child(1) {
+      left: 0;
+      bottom: 0;
+      transform: rotate(-8deg);
+    }
+
+    .photo-stack span:nth-child(2) {
+      left: 7mm;
+      bottom: 1mm;
+      border-color: var(--orange);
+      transform: rotate(4deg);
+    }
+
+    .photo-stack span:nth-child(3) {
+      left: 14mm;
+      bottom: -0.4mm;
+      transform: rotate(12deg);
+    }
+
+    .bottom {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 5mm;
+      margin-top: auto;
+      padding-right: 1mm;
+    }
+
+    .addresses {
+      min-width: 0;
+      font-size: 2.9mm;
+      line-height: 1.2;
+      font-weight: 900;
+    }
+
+    .site {
+      padding-bottom: 0.25mm;
+      border-bottom: 0.85mm solid var(--orange);
+      font-size: 3mm;
+      line-height: 1;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <section class="sheet" data-template="c6-envelope-face" aria-label="Конверт Своё Фото">
+    <div class="safe-frame" aria-hidden="true"></div>
+
+    <div class="layout">
+      <aside class="brand">
+        <img class="logo" src="svoefoto-logo-black.png" alt="Своё Фото">
+        <div class="brand-line" aria-hidden="true"></div>
+        <p class="brand-title">Фотостудия и печать</p>
+        <p class="brand-copy">Комплекты фото на документы, печать, ретушь и оформление.</p>
+        <div class="contact">
+          <div>+7 (863) 322-65-75</div>
+          <span>Ежедневно 09:00-19:30</span>
+        </div>
+      </aside>
+
+      <main class="content">
+        <h1 class="headline">
+          <span>Фото на</span>
+          <span>документы</span>
+        </h1>
+        <div class="inside"><strong>+</strong> комплект внутри</div>
+        <div class="care">
+          <span>не сгибать</span>
+          <span>не мочить</span>
+        </div>
+
+        <div class="photo-stack" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <div class="bottom">
+          <div class="addresses">Соборный 21</div>
+          <div class="site">svoefoto.ru</div>
+        </div>
+      </main>
+    </div>
+  </section>
+</body>
+</html>

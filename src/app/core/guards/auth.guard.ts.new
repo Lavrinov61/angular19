@@ -1,0 +1,103 @@
+// filepath: c:\Users\Elena\Downloads\angular19\src\app\core\guards\auth.guard.ts
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { CanActivateFn } from '@angular/router';
+
+import { AuthService } from '../services/auth.service';
+
+/**
+ * Auth Guard to protect routes that require authentication
+ * Redirects unauthenticated users to login page
+ */
+export const authGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  // Проверяем пользователя в сервисе аутентификации
+  const user = authService.user();
+  
+  if (user) {
+    return true;
+  } else {
+    // Store the attempted URL for redirecting after login
+    const returnUrl = state.url;
+    router.navigate(['/auth/login'], { 
+      queryParams: { returnUrl } 
+    });
+    return false;
+  }
+};
+
+/**
+ * Guest Guard to prevent authenticated users from accessing auth pages
+ * Redirects authenticated users to dashboard or specified return URL
+ */
+export const guestGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  const user = authService.user();
+  
+  if (!user) {
+    return true;
+  } else {
+    // Get return URL from query params or default to dashboard
+    const returnUrl = route.queryParams['returnUrl'] || '/dashboard';
+    router.navigate([returnUrl]);
+    return false;
+  }
+};
+
+/**
+ * Admin Guard to protect admin routes
+ * Requires user to be authenticated and have admin role
+ */
+export const adminGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  const user = authService.user();
+  const profile = authService.profile();
+  
+  if (user && profile?.role === 'admin') {
+    return true;
+  } else if (user) {
+    // User is authenticated but not admin
+    router.navigate(['/dashboard']);
+    return false;
+  } else {
+    // User is not authenticated
+    const returnUrl = state.url;
+    router.navigate(['/auth/login'], { 
+      queryParams: { returnUrl } 
+    });
+    return false;
+  }
+};
+
+/**
+ * Phone Verification Guard
+ * Requires user to have verified phone number
+ */
+export const phoneVerifiedGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  const user = authService.user();
+  const profile = authService.profile();
+  
+  if (user && profile?.phoneVerified) {
+    return true;
+  } else if (user) {
+    // User is authenticated but phone not verified
+    router.navigate(['/auth/phone-verification']);
+    return false;
+  } else {
+    // User is not authenticated
+    const returnUrl = state.url;
+    router.navigate(['/auth/login'], { 
+      queryParams: { returnUrl } 
+    });
+    return false;
+  }
+};

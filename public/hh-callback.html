@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hh.ru OAuth — код авторизации</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 560px;
+            width: 90%;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 { font-size: 1.4rem; color: #333; margin: 0 0 8px; }
+        .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 24px; }
+        .code-box {
+            background: #f0f4ff;
+            border: 2px solid #4a6cf7;
+            border-radius: 8px;
+            padding: 16px 20px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            cursor: text;
+            user-select: all;
+        }
+        .copy-btn {
+            background: #4a6cf7;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .copy-btn:hover { background: #3a5ce0; }
+        .copy-btn.copied { background: #2ecc71; }
+        .hint {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        .error { color: #e74c3c; }
+        code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="card" id="card">
+        <h1>hh.ru OAuth</h1>
+        <p class="subtitle" id="subtitle"></p>
+        <div id="content"></div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const error = params.get('error');
+        const subtitle = document.getElementById('subtitle');
+        const content = document.getElementById('content');
+
+        if (code) {
+            subtitle.textContent = 'Код авторизации получен. Скопируйте его в скрипт.';
+            content.innerHTML = `
+                <div class="code-box" id="codeBox" onclick="selectAll()">${escapeHtml(code)}</div>
+                <button class="copy-btn" id="copyBtn" onclick="copyCode()">Скопировать код</button>
+                <p class="hint">Вставьте код в <code>scripts/hh_oauth_setup.py</code> при запросе</p>
+            `;
+        } else if (error) {
+            subtitle.innerHTML = '<span class="error">Ошибка авторизации</span>';
+            const desc = params.get('error_description') || '';
+            content.innerHTML = `<p class="error">${escapeHtml(error)}${desc ? ': ' + escapeHtml(desc) : ''}</p>`;
+        } else {
+            subtitle.textContent = 'Параметр code не найден в URL';
+            content.innerHTML = `<p class="error">Откройте страницу через redirect_uri после авторизации на hh.ru</p>`;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function selectAll() {
+            const box = document.getElementById('codeBox');
+            if (box) {
+                const range = document.createRange();
+                range.selectNodeContents(box);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+
+        function copyCode() {
+            const btn = document.getElementById('copyBtn');
+            navigator.clipboard.writeText(code).then(() => {
+                btn.textContent = 'Скопировано!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Скопировать код';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(() => {
+                selectAll();
+                document.execCommand('copy');
+                btn.textContent = 'Скопировано!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Скопировать код';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

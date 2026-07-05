@@ -1,0 +1,5 @@
+// App layout — дублирует inline styles из app.component.ts для SSR
+.nav-rail {
+  position: fixed; top: 0; left: 0; z-index: 1000;
+  @media (max-width: 599px) { display: none; }
+}

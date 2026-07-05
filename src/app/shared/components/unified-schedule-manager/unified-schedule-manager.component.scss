@@ -1,0 +1,192 @@
+// Unified Schedule Manager — layout only, mobile-first + Material tokens
+
+.unified-schedule-container {
+  padding: 8px;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  @media (min-width: 840px) { padding: 16px; }
+
+  .schedule-header {
+    margin-bottom: 24px;
+
+    .schedule-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+
+      @media (min-width: 1200px) { justify-content: space-between; }
+
+      .month-nav { display: flex; align-items: center; gap: 8px; mat-form-field { width: 180px; } }
+      .schedule-actions { display: flex; gap: 8px; }
+    }
+  }
+
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px;
+    text-align: center;
+    p { margin-top: 16px; color: var(--mat-sys-on-surface-variant); }
+  }
+
+  .calendar-view {
+    .calendar-stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: var(--mat-sys-surface-container);
+      border-radius: 12px;
+
+      .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px;
+        background: var(--mat-sys-surface);
+        border-radius: 8px;
+        min-width: 80px;
+        .stat-number { color: var(--mat-sys-on-surface); }
+        .stat-label { color: var(--mat-sys-on-surface-variant); margin-top: 4px; }
+        &.success .stat-number { color: var(--mat-sys-tertiary); }
+        &.warning .stat-number { color: var(--mat-sys-error); }
+      }
+    }
+
+    .calendar-grid {
+      background: var(--mat-sys-surface);
+      border-radius: 12px;
+      border: 1px solid var(--mat-sys-outline-variant);
+      overflow: hidden;
+
+      .weekdays {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        background: var(--mat-sys-surface-container);
+        .weekday { padding: 12px 8px; text-align: center; color: var(--mat-sys-on-surface-variant); border-right: 1px solid var(--mat-sys-outline-variant); &:last-child { border-right: none; } }
+      }
+
+      .calendar-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+
+        .day-cell {
+          position: relative;
+          min-height: 80px;
+          border-right: 1px solid var(--mat-sys-outline-variant);
+          border-bottom: 1px solid var(--mat-sys-outline-variant);
+          padding: 4px;
+          cursor: pointer;
+
+          @media (min-width: 840px) { min-height: 120px; padding: 8px; }
+
+          &:hover { background-color: var(--mat-sys-surface-container); }
+          &.selected { background-color: var(--mat-sys-primary-container); }
+          &.today .day-number { background-color: var(--mat-sys-tertiary); color: var(--mat-sys-on-tertiary); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+          &.other-month { background-color: var(--mat-sys-surface-container-low); color: var(--mat-sys-outline); pointer-events: none; }
+          &.has-shifts { background-color: var(--mat-sys-primary-container); }
+
+          .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            .shifts-count { background-color: var(--mat-sys-primary); color: var(--mat-sys-on-primary); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; }
+          }
+
+          .shifts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+
+            .shift-item {
+              background-color: var(--mat-sys-primary-container);
+              border: 1px solid var(--mat-sys-outline-variant);
+              border-radius: 4px;
+              padding: 2px 4px;
+              cursor: pointer;
+
+              @media (min-width: 840px) { padding: 4px 6px; }
+
+              &:hover { background-color: var(--mat-sys-secondary-container); }
+              &.selected { background-color: var(--mat-sys-primary); color: var(--mat-sys-on-primary); }
+              &.assigned { background-color: var(--mat-sys-tertiary-container); border-color: var(--mat-sys-tertiary); &:hover { background-color: var(--mat-sys-tertiary-container); } }
+              .shift-time { margin-bottom: 2px; }
+              .shift-employee, .shift-open { opacity: 0.8; }
+            }
+          }
+
+          .add-shift-btn { position: absolute; bottom: 4px; right: 4px; width: 24px; height: 24px; opacity: 0; }
+          &:hover .add-shift-btn { opacity: 1; }
+        }
+      }
+    }
+  }
+
+  .list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .day-card .shifts-table .shift-row {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+
+      @media (min-width: 840px) { flex-direction: row; align-items: center; gap: 0; }
+
+      &:hover { background-color: var(--mat-sys-surface-container); }
+      &.selected { background-color: var(--mat-sys-primary-container); }
+
+      .shift-time, .shift-employee { display: flex; align-items: center; margin-right: 24px; .mat-icon { margin-right: 8px; color: var(--mat-sys-on-surface-variant); } }
+      .shift-actions { display: flex; gap: 4px; align-self: flex-end; @media (min-width: 840px) { margin-left: auto; align-self: auto; } }
+    }
+  }
+
+  .analytics-view .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+
+    .analytics-card .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 16px;
+
+      .metric {
+        text-align: center;
+        padding: 16px;
+        background-color: var(--mat-sys-surface-container);
+        border-radius: 8px;
+        .metric-value { color: var(--mat-sys-primary); }
+        .metric-label { color: var(--mat-sys-on-surface-variant); margin-top: 4px; }
+      }
+    }
+  }
+
+  .no-data-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 24px;
+    text-align: center;
+    .mat-icon { color: var(--mat-sys-outline); margin-bottom: 16px; }
+    h3 { margin: 16px 0 8px; color: var(--mat-sys-on-surface); }
+    p { color: var(--mat-sys-on-surface-variant); margin-bottom: 24px; }
+  }
+}

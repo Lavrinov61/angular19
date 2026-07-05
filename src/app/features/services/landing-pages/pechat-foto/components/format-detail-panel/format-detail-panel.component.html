@@ -1,0 +1,170 @@
+<div class="panel-overlay" (click)="close()" (keydown.enter)="close()" tabindex="0"></div>
+
+<div class="panel">
+
+  <!-- Заголовок -->
+  <div class="panel-header">
+    <div class="panel-title">
+      <mat-icon>photo_library</mat-icon>
+      <div>
+        <h3>{{ format().name }}</h3>
+        <span class="item-count">{{ items().length }} фото · {{ totalQty() }} экз.</span>
+      </div>
+    </div>
+    <button mat-icon-button class="close-btn" (click)="close()" aria-label="Закрыть">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Batch action: применить тип печати ко всем -->
+  @if (hasPaperChoice() && items().length > 1) {
+    <div class="batch-bar">
+      <span class="batch-label">Применить ко всем:</span>
+      @for (tier of printTierOptions(); track tier) {
+        <button
+          type="button"
+          class="paper-chip"
+          [class.active]="isPrintTierAppliedToAll(tier)"
+          (click)="applyPrintTierToAll(tier)"
+        >
+          {{ printTierLabel(tier) }}
+          <span>{{ printTierCount(tier) }}</span>
+        </button>
+      }
+    </div>
+  }
+
+  @if (format().marginsRequired) {
+    <div class="margins-notice">
+      <mat-icon>border_all</mat-icon>
+      Формат {{ format().name }} печатается только с полями 3 мм
+    </div>
+  }
+
+  @if (isCustomFormat()) {
+    <div class="margins-notice custom-size-notice">
+      <mat-icon>crop</mat-icon>
+      Нестандартные размеры считаются по минимальному подходящему листу. Обрезка или подгонка добавляет {{ customCropFee }} ₽ к каждому фото.
+    </div>
+  }
+
+  <!-- Сетка фото -->
+  <div class="photos-grid">
+    @for (item of items(); track item.id) {
+      <div class="photo-card" [class.error]="item.status === 'error'">
+
+        <!-- Превью -->
+        <div class="photo-preview">
+          <img [src]="item.previewUrl" [alt]="item.file.name" loading="lazy" />
+
+          @if (item.status === 'uploading' || item.status === 'pending') {
+            <div class="photo-overlay uploading">
+              <mat-icon class="spin">refresh</mat-icon>
+              <span>{{ item.uploadProgress }}%</span>
+              <mat-progress-bar mode="determinate" [value]="item.uploadProgress" />
+            </div>
+          }
+
+          @if (item.status === 'error') {
+            <div class="photo-overlay error-overlay">
+              <mat-icon>error_outline</mat-icon>
+              <span>Ошибка</span>
+              <button mat-stroked-button (click)="retryUpload(item.id)">
+                Повторить
+              </button>
+            </div>
+          }
+
+          <!-- Кнопка удалить -->
+          <button class="delete-btn" (click)="removeItem(item.id)" aria-label="Удалить">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Настройки -->
+        <div class="photo-controls">
+
+          <!-- Тип печати -->
+          @if (hasPaperChoice()) {
+            <div class="paper-toggle">
+              @for (tier of printTierOptions(); track tier) {
+                <button
+                  class="paper-btn"
+                  [class.active]="isItemPrintTier(item, tier)"
+                  (click)="setPrintTier(item, tier)"
+                >
+                  {{ printTierLabel(tier) }}
+                </button>
+              }
+            </div>
+          }
+
+          @if (isCustomFormat()) {
+            <div class="custom-size-controls">
+              <div class="custom-size-head">
+                <span>{{ customSizeForItem(item).label }}</span>
+                <small>{{ customSizeForItem(item).sizeLabel }}</small>
+              </div>
+
+              <div class="custom-size-toggle">
+                @for (option of customSizeOptions; track option.id) {
+                  <button
+                    type="button"
+                    class="custom-size-btn"
+                    [class.active]="isItemCustomSize(item, option.id)"
+                    (click)="setCustomSize(item, option.id)"
+                  >
+                    {{ option.shortLabel }}
+                  </button>
+                }
+              </div>
+
+              @if (customSizeForItem(item).presetId === 'custom') {
+                <label class="custom-size-input">
+                  <span>Размер</span>
+                  <input
+                    type="text"
+                    [value]="customSizeInputValue(item)"
+                    placeholder="6×9 см"
+                    (input)="updateCustomSizeText(item, $event)"
+                  />
+                </label>
+              }
+
+              <button
+                type="button"
+                class="custom-crop-btn"
+                [class.active]="customSizeForItem(item).needsCropping"
+                (click)="toggleCustomCropping(item)"
+              >
+                <mat-icon>{{ customSizeForItem(item).needsCropping ? 'check_circle' : 'radio_button_unchecked' }}</mat-icon>
+                +{{ customCropFee }} ₽ обрезка
+              </button>
+            </div>
+          }
+
+          <!-- Количество -->
+          <div class="qty-control">
+            <button class="qty-btn" (click)="decrementQty(item)" aria-label="Уменьшить">
+              <mat-icon>{{ item.quantity === 1 ? 'delete' : 'remove' }}</mat-icon>
+            </button>
+            <span class="qty-value">{{ item.quantity }}</span>
+            <button class="qty-btn" (click)="incrementQty(item)" aria-label="Увеличить">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Подвал -->
+  <div class="panel-footer">
+    <button mat-flat-button class="done-btn" (click)="close()">
+      <mat-icon>check</mat-icon>
+      Готово
+    </button>
+  </div>
+
+</div>

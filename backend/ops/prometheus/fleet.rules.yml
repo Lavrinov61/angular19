@@ -1,0 +1,63 @@
+groups:
+  - name: fleet
+    interval: 30s
+    rules:
+      - alert: FleetAllPrintersOffline
+        expr: count(printer_is_online == 0) == count(printer_is_online) and count(printer_is_online) > 0
+        for: 5m
+        labels:
+          severity: critical
+          service: fleet
+        annotations:
+          summary: "Все {{ $value }} принтеров offline"
+          description: "Все активные принтеры находятся offline >5m. Требуется проверка SNMP и сетевого периметра."
+
+      - alert: FleetAlertsActiveSpike
+        expr: increase(printer_alerts_raised_total[10m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+          service: fleet
+        annotations:
+          summary: "Вспышка алертов: {{ $value }} за 10m"
+          description: "Fleet генерирует >5 новых алертов за 10m. Проверить SNMP polls + уровень расходников."
+
+      - alert: FleetDashboardSummarySlow
+        expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{route=~"/api/fleet/dashboard/summary"}[5m])) by (le)) > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          service: fleet
+        annotations:
+          summary: "Fleet dashboard p95 latency >100ms"
+          description: "p95 latency summary endpoint = {{ $value }}s. Возможна перегрузка PG или рост parка принтеров."
+
+      - alert: PrinterPollTimeoutRate
+        expr: (rate(printer_telemetry_polls_total{result="timeout"}[5m]) / rate(printer_telemetry_polls_total[5m])) > 0.3
+        for: 3m
+        labels:
+          severity: warning
+          service: fleet
+        annotations:
+          summary: "Принтер {{ $labels.printer }} timeouts >30%"
+          description: "SNMP timeout rate = {{ $value | humanizePercentage }} у принтера {{ $labels.printer }}. Проверить сетевое состояние."
+
+      - alert: FleetSupplyCritical
+        expr: printer_toner_pct < 10 or printer_paper_pct < 10
+        for: 30m
+        labels:
+          severity: warning
+          service: fleet
+        annotations:
+          summary: "Критически низкий уровень расходника на {{ $labels.printer }}"
+          description: "{{ $labels.printer }} {{ $labels.color }}{{ $labels.tray }} = {{ $value }}%. Нужна замена."
+
+      - alert: FleetPrinterStaleOffline
+        expr: (time() - timestamp(printer_is_online == 0)) > 3600
+        for: 5m
+        labels:
+          severity: info
+          service: fleet
+        annotations:
+          summary: "Принтер {{ $labels.printer }} offline >1h"
+          description: "{{ $labels.printer }} не отвечает на SNMP >1 часа."
